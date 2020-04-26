@@ -1,0 +1,19 @@
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  vertical-align: baseline;
+  position: absolute;
+}
+
+body {
+  overflow: hidden;
+  background-color: black;
+  color: white;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
