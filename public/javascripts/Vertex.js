@@ -9,10 +9,13 @@ class Vertex {
 
     visible;
 
+    text;
+
     constructor(x, y, size, color) {
         this.x = x;
         this.y = y;
         this.size = size;
         this.color = color;
+        this.text = Math.random().toString(36).substring(7);
     }
 }

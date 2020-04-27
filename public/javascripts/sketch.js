@@ -6,12 +6,22 @@ let vertices = [];
 let camera = {x: 0, y: 0, height: window.innerHeight, width: window.innerWidth};
 
 let blur;
+
+let A_BITMAP;
+let B_BITMAP;
+let C_BITMAP;
+let D_BITMAP;
+
 // noinspection JSUnusedGlobalSymbols
 function preload() {
     blur = loadImage('images/blur.png');
+    A_BITMAP = loadImage('images/AADBBCDADA.png');
+    B_BITMAP = loadImage('images/AADBBCDADB.png');
+    C_BITMAP = loadImage('images/AADBBCDADC.png');
+    D_BITMAP = loadImage('images/AADBBCDADD.png');
 }
 
-const NUM_VERTICES = 2048;
+const NUM_VERTICES = 4096;
 
 let QUAD_HEAD;
 
@@ -53,6 +63,8 @@ function draw() {
     stroke(255);
     noFill();
 
+
+
     //drawScreenCrosshairs();
     printMouseCoordinates();
     drift();
@@ -62,23 +74,36 @@ function draw() {
     drawCrosshairs();
 
 
+
     const visibleVertices = getVisibleVertices();
-    drawQuadtree();
+    //drawQuadtree();
     HIGHLIGHTED = highlightVertex();
 
     doGlow = visibleVertices.length <= GLOW_THRESHOLD;
 
     for (const v of visibleVertices) {
         glowCircle(v);
+        nodeText(v);
         v.visible = false;
     }
+    testDrawBitmaps();
+}
+
+function testDrawBitmaps() {
+    const dim = QUAD_HEAD.r;
+    image(A_BITMAP, -dim, -dim, dim, dim, 0, 0);
+    image(B_BITMAP, 0, -dim, dim, dim, 0, 0);
+    image(C_BITMAP, -dim, 0, dim, dim, 0, 0);
+    image(D_BITMAP, 0, 0, dim, dim, 0, 0);
 }
 
 /**
  * 0.5 is "correct", anything greater will render more outside the viewport,
  * anything less will render only a percentage of the viewport.
  * There are many, many optimizations to be made just in the way that we handle
- * this parameter.
+ * this parameter. However, the total view amount should always be at least 0.5,
+ * because we need to be able to render nodes who's own circle rendering falls
+ * outside their quad.
  *
  * For example:
  *
@@ -106,6 +131,8 @@ function getVisibleVertices() {
  * The radius of the cursor. This is in order to deal with selecting nodes
  * that are bigger than the quads the contain them. Eventually, this
  * should be exactly equal to the radius of the largest node in the dataset.
+ *
+ * If you ever are trying to select a node and it's not working, this might be a cause.
  * @type {number}
  */
 const POINTER_SIZE = 10;
@@ -120,7 +147,7 @@ function highlightVertex() {
     push();
     fill(255, 0.5);
     rectMode(RADIUS);
-    rect(mP.x, -mP.y, POINTER_SIZE); //TODO debug, remove
+    //rect(mP.x, -mP.y, POINTER_SIZE); //TODO debug, remove
     pop();
 
     if (nodes.length === 0) {
@@ -144,6 +171,7 @@ function highlightVertex() {
     return h;
 }
 
+
 function drawQuadtree() {
     push();
     rectMode(RADIUS);
@@ -161,12 +189,18 @@ function drawQuadtree() {
         else continue;
 
         rect(q.x, -q.y, q.r, q.r);
+        push();
+        noStroke();
+        fill(255);
+        textAlign(CENTER, CENTER);
+        textSize(q.r);
         text(q.direction, q.x, -q.y);
+        pop();
     }
     pop();
 }
 
-const BLUR_SIZE = 2.27 //shouldn't this always be 2*offset?
+const BLUR_SIZE = 2.27
 function glowCircle(v) {
     push();
     stroke(v.color);
@@ -188,6 +222,24 @@ function glowCircle(v) {
     pop();
 }
 
+const TEXT_DRAW_THRESHOLD = 7.5;
+const TEXT_OFFSET = 0.25;
+function nodeText(v) {
+    const zF = getZoomFactor();
+
+    if (zF.x * (v.size / 2) < TEXT_DRAW_THRESHOLD) {
+        return;
+    }
+
+    push();
+    noStroke();
+    fill(255);
+    textSize(v.size / 2);
+    textAlign(CENTER);
+    text(v.text, v.x, - v.y + v.size + v.size * TEXT_OFFSET);
+    pop();
+}
+
 function screen2virtual(point) {
     let x = point.x;
     let y = point.y;
@@ -200,7 +252,6 @@ function getVirtualMouseCoordinates() {
     // noinspection JSUnresolvedVariable
     return screen2virtual({x: mouseX, y: mouseY});
 }
-
 
 function map(n, a, b, c, d) {
     return (n - a) / (b - a) * (d - c) + c;
@@ -267,9 +318,13 @@ function mouseWheel(e) {
  * Updates the view based on the global "camera"
  */
 function setView() {
-    const zoomFactor = {x: width /  camera.width, y: height / camera.height};
+    const zoomFactor = getZoomFactor();
     translate(width / 2 - (camera.x * zoomFactor.x), height / 2 + (camera.y * zoomFactor.y));
     scale(zoomFactor.x, zoomFactor.y);
+}
+
+function getZoomFactor() {
+    return {x: width /  camera.width, y: height / camera.height};
 }
 
 function zoomCamera(toward, zoom) {
@@ -279,8 +334,8 @@ function zoomCamera(toward, zoom) {
         camera.height = height * ((zoom - 1) / 2 + 1);
         camera.width = width * ((zoom - 1) / 2 + 1);
     } else {
-        camera.height = height * (1 / (-zoom + 2));
-        camera.width = width * (1 / (-zoom + 2));
+        camera.height = height * (0.5 / Math.pow(2, -0.25 * zoom));
+        camera.width = width * (0.5 / Math.pow(2, -0.25 * zoom));
     }
 
     const pos = calculateZoomPos(toward, oldWidth, oldHeight);
