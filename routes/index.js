@@ -1,5 +1,13 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
+
+const mongoDB = 'mongodb://127.0.0.1/my_database'
+mongoose.connect(mongoDB, {useNewUrlParser: true});
+
+const db = mongoose.connection;
+
+db.on('error', console.error.bind(console, 'MongoDB connection error: '));
 
 /* GET home page. */
 router.get('/', function(req, res, next) {

@@ -2,6 +2,7 @@ let canvas = null;
 let zoom = 1;
 
 let vertices = [];
+let edges = [];
 
 let camera = {x: 0, y: 0, height: window.innerHeight, width: window.innerWidth};
 
@@ -15,13 +16,16 @@ let D_BITMAP;
 // noinspection JSUnusedGlobalSymbols
 function preload() {
     blur = loadImage('images/blur.png');
-    A_BITMAP = loadImage('images/AADBBCDADA.png');
-    B_BITMAP = loadImage('images/AADBBCDADB.png');
-    C_BITMAP = loadImage('images/AADBBCDADC.png');
-    D_BITMAP = loadImage('images/AADBBCDADD.png');
+    //A_BITMAP = loadImage('images/AADBBCDADA.png');
+    //B_BITMAP = loadImage('images/AADBBCDADB.png');
+    //C_BITMAP = loadImage('images/AADBBCDADC.png');
+    //D_BITMAP = loadImage('images/AADBBCDADD.png');
 }
 
-const NUM_VERTICES = 4096;
+const NUM_VERTICES = 200;
+const NUM_EDGES = 15;
+
+const MAX_CURVE_ANGLE = 180;
 
 let QUAD_HEAD;
 
@@ -34,10 +38,23 @@ function setup() {
     }
     colorMode(RGB);
 
+    const u = Math.floor(Math.random() * NUM_VERTICES - 1);
+    for (let i = 0; i < NUM_EDGES; i++) {
+        edges.push({u: u,
+                    v: Math.floor(Math.random() * NUM_VERTICES - 1),
+                    cUrad: Math.random() / 2,
+                    cUang: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
+                    cVrad: Math.random() / 2,
+                    cVang: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2});
+    }
+
+
     QUAD_HEAD = new Quad(0, 0, radius(), null,  null, "A");
     for (const v of vertices) {
         QUAD_HEAD.insert(v);
     }
+
+    angleMode(DEGREES);
 }
 
 function radius() {
@@ -63,8 +80,6 @@ function draw() {
     stroke(255);
     noFill();
 
-
-
     //drawScreenCrosshairs();
     printMouseCoordinates();
     drift();
@@ -72,8 +87,6 @@ function draw() {
     printFPS();
     setView();
     drawCrosshairs();
-
-
 
     const visibleVertices = getVisibleVertices();
     //drawQuadtree();
@@ -86,8 +99,53 @@ function draw() {
         nodeText(v);
         v.visible = false;
     }
-    testDrawBitmaps();
+
+    for (const e of edges) {
+        drawEdge(e);
+    }
+
+    //testDrawBitmaps();
 }
+
+function drawEdge(e) {
+    const u = vertices[e.u];
+    const v = vertices[e.v];
+
+    const uVec = createVector(u.x, u.y);
+    const vVec = createVector(v.x, v.y);
+
+    push();
+    uVec.lerp(vVec, e.cUrad);
+    vVec.lerp(uVec, e.cVrad);
+    uVec.sub(u.x, u.y);
+    vVec.sub(v.x, v.y);
+    uVec.rotate(e.cUang);
+    vVec.rotate(e.cVang);
+    uVec.add(u.x, u.y);
+    vVec.add(v.x, v.y);
+
+    stroke(u.color);
+    //bezier(u.x, -u.y, uVec.x, -uVec.y, vVec.x, -vVec.y, v.x, -v.y);
+
+    stroke('white');
+    beginShape();
+    vertex(u.x, -u.y);
+    colorMode(HSB)
+    for (let t = 0; t < 1; t += 0.01) {
+        let tV = {x: Math.pow(1 - t, 3) * u.x + 3 * Math.pow(1 - t, 2) * t * uVec.x + 3 * (1 - t) * Math.pow(t, 2) * vVec.x + Math.pow(t, 3) * v.x,
+                 y: Math.pow(1 - t, 3) * -u.y + 3 * Math.pow(1 - t, 2) * t * -uVec.y + 3 * (1 - t) * Math.pow(t, 2) * -vVec.y + Math.pow(t, 3) * -v.y}
+        stroke(lerpColor(u.color, v.color, t))
+        strokeWeight(lerp(u.size / 5, v.size / 5, t));
+        vertex(tV.x, tV.y);
+        endShape();
+        beginShape();
+        vertex(tV.x, tV.y);
+    }
+    vertex(v.x, -v.y);
+    endShape();
+    pop();
+}
+
 
 function testDrawBitmaps() {
     const dim = QUAD_HEAD.r;
@@ -201,21 +259,26 @@ function drawQuadtree() {
 }
 
 const BLUR_SIZE = 2.27
+const GLOW_SPEED = 10;
 function glowCircle(v) {
     push();
     stroke(v.color);
     strokeWeight(0.15 * v.size);
+
+    let h = v.color.levels;
+
     if (doGlow) {
-        tint(v.color);
+        tint(h[0], h[1], h[2], v.glowPacity);
+        v.glowPacity = min(255, v.glowPacity + GLOW_SPEED);
         image(blur, v.x - BLUR_SIZE * 0.5 * v.size,
                   - v.y - BLUR_SIZE * 0.5 * v.size,
                  BLUR_SIZE * v.size,
                  BLUR_SIZE *  v.size, 0, 0);
+    } else {
+        v.glowPacity = 0;
     }
 
     if (HIGHLIGHTED === v) {
-        let h = v.color.levels;
-        console.log(h);
         fill(h[0], h[1], h[2], 75);
     }
     circle(v.x, -v.y, v.size);
