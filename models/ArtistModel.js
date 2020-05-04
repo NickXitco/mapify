@@ -18,3 +18,5 @@ const ArtistSchema = new Schema({
 })
 
 const Artist = mongoose.model('Artist', ArtistSchema);
+
+module.exports = Artist;

@@ -38,10 +38,10 @@ function setup() {
     }
     colorMode(RGB);
 
-    const u = Math.floor(Math.random() * NUM_VERTICES - 1);
+    const u = Math.ceil(Math.random() * NUM_VERTICES - 1);
     for (let i = 0; i < NUM_EDGES; i++) {
         edges.push({u: u,
-                    v: Math.floor(Math.random() * NUM_VERTICES - 1),
+                    v: Math.ceil(Math.random() * NUM_VERTICES - 1),
                     cUrad: Math.random() / 2,
                     cUang: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
                     cVrad: Math.random() / 2,
@@ -54,7 +54,13 @@ function setup() {
         QUAD_HEAD.insert(v);
     }
 
-    angleMode(DEGREES);
+    angleMode(DEGREES)
+
+
+    const url = 'quad' + '/' + vertices[u].x + '/' + vertices[u].y;
+    fetch(url)
+        .then(response => response.json())
+        .then(data => console.log(data));
 }
 
 function radius() {

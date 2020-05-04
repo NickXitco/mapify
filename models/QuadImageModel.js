@@ -10,3 +10,5 @@ const QuadImageSchema = new Schema({
 })
 
 const QuadImage = mongoose.model('QuadImage', QuadImageSchema);
+
+module.exports = QuadImage;

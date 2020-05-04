@@ -18,3 +18,5 @@ const QuadSchema = new Schema({
 })
 
 const Quad = mongoose.model('Quad', QuadSchema);
+
+module.exports = Quad;
