@@ -4,5 +4,4 @@ class QuadFinder {
     }
 }
 
-
 module.exports = QuadFinder;

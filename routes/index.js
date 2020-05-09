@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 
-const mongoDB = 'mongodb://127.0.0.1/my_database'
+const mongoDB = 'mongodb://127.0.0.1/mapifyDB'
 mongoose.connect(mongoDB, {useNewUrlParser: true});
 mongoose.set('useUnifiedTopology', true);
 
@@ -17,19 +17,13 @@ router.get('/', function (req, res) {
 
 module.exports = router;
 
-/*
-require('../models/ColorModel');
 
-const c = mongoose.model('Color');
-const cInst = new c({r: 155, g: 189, b: 211, a: 32});
-cInst.save(function (err) {
-    if (err) return handleError(err);
-});
+const dbCleaner = require('../backend/DatabaseCleaner');
+//dbCleaner.cleanDB();
 
-console.log(cInst);
-
-function handleError(err) {
-    console.log(err)
-}
-
-*/
+const dbPopulator = require('../backend/populateDatabase');
+dbPopulator.populateQuads().then(r => {
+    if (r) {
+        console.log("Population successful!");
+    }
+})
