@@ -90,10 +90,10 @@ function drift(camera) {
 const POINTER_SIZE = 10;
 function highlightVertex(quadRoot) {
     const mP = getVirtualMouseCoordinates();
-    const nodes = quadRoot.getNodesInRange({x: mP.x - 0.5 * POINTER_SIZE,
-            y: mP.y + 0.5 * POINTER_SIZE},
-        {x: mP.x + 0.5 * POINTER_SIZE,
-            y: mP.y - 0.5 * POINTER_SIZE});
+    const nodes = quadRoot.getNodesInRange( {x: mP.x - 0.5 * POINTER_SIZE,
+                                                y: mP.y + 0.5 * POINTER_SIZE},
+                                            {x: mP.x + 0.5 * POINTER_SIZE,
+                                                y: mP.y - 0.5 * POINTER_SIZE});
 
     push();
     fill(255, 0.5);

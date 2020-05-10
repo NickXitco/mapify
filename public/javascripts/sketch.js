@@ -89,6 +89,16 @@ function draw() {
 
 
 function necessitatesUpdate(camera, visibleQuads) {
+
+    /* TODO
+        This is a silly way and a non accurate way of representing this.
+        What we should really be doing is, if the width(/height) of the image as displayed on the screen
+        is greater than that of the actual image (i.e., the image is being scaled up), then we should
+        load the next quads.
+        Likewise, if we measure the image as displayed on the screen to be half as large as the actual image,
+        we should unload those 4 quads and load the larger one.
+     */
+
     for (const quad of visibleQuads) {
         if (quad.fullyContained && !fullyContains(camera, quad)) {
             return true;
@@ -112,6 +122,10 @@ function pointInView(camera, p) {
 }
 
 function updateVisibleQuads(camera) {
+
+    /* TODO
+        If we get a bad/no response from the fetch, don't update visible quads, or else we'll get a blank screen.
+     */
     const url = 'quads' + '/' + camera.x + '/' + camera.y + '/' + camera.width + '/' + camera.height;
     fetch(url)
         .then(response => response.json())
@@ -143,6 +157,7 @@ function getCached(q) {
 
 function drawVisibleQuads(visibleQuads) {
     push();
+    textAlign(CENTER, CENTER);
     for (const q of visibleQuads) {
         noStroke();
         textSize(q.r / 10);
