@@ -40,7 +40,7 @@ class QuadtreeHelpers {
             fill(255);
             textAlign(CENTER, CENTER);
             textSize(q.r);
-            text(q.direction, q.x, -q.y);
+            text(q.name, q.x, -q.y);
             pop();
         }
         pop();

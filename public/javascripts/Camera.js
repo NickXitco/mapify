@@ -54,4 +54,13 @@ class Camera {
         translate(width / 2 - (this.x * zoomFactor.x), height / 2 + (this.y * zoomFactor.y));
         scale(zoomFactor.x, zoomFactor.y);
     }
+
+    contains(q) {
+        const l1 = {x: this.x - this.width / 2, y: this.y + this.height / 2};
+        const r1 = {x: this.x + this.width / 2, y: this.y - this.height / 2};
+        const l2 = {x: q.x - q.r, y: q.y + q.r};
+        const r2 = {x: q.x + q.r, y: q.y - q.r};
+
+        return !((l1.x >= r2.x || l2.x >= r1.x) || (l1.y <= r2.y || l2.y <= r1.y));
+    }
 }

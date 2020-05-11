@@ -1,20 +1,13 @@
 let canvas = null;
 
-let vertices = [];
-let edges = [];
-
 let camera = new Camera(0, 0, window.innerHeight, window.innerWidth, 3);
 
 let blur;
-
-
 
 const NUM_VERTICES = 256;
 const NUM_EDGES = 15;
 
 const MAX_CURVE_ANGLE = 180;
-
-let quadRoot;
 
 let visibleQuads = [];
 
@@ -28,6 +21,11 @@ let previousHoverPoint = {x: Infinity, y: Infinity};
 let hoveredArtist = null;
 let infoBoxT = 0;
 
+let loading = true;
+
+let quadHead;
+let quadLookup = {};
+
 // noinspection JSUnusedGlobalSymbols
 function preload() {
     blur = loadImage('images/blur.png');
@@ -36,35 +34,34 @@ function preload() {
 // noinspection JSUnusedGlobalSymbols
 function setup() {
     canvas = createCanvas(window.innerWidth, window.innerHeight);
-    colorMode(HSB);
-    for (let i = 0; i < NUM_VERTICES; i++) {
-        vertices.push(new Vertex(2 * width * (Math.random() - 0.5), 2 * height * (Math.random() - 0.5), Math.random() * 10, color(random(359), random(100), 100)));
-    }
-    colorMode(RGB);
-
-    quadRoot = new Quad(0, 0, QuadtreeHelpers.radius(vertices), null,  null, "A");
-    for (const v of vertices) {
-        quadRoot.insert(v);
-    }
-
     camera.zoomCamera({x: 0, y:0 });
-    updateVisibleQuads(camera);
+
+    loadInitialQuads();//TODO loadInitialQuads, probably the first 16? but load the first 128 (or more?) into memory
 
     angleMode(DEGREES);
-    //testFetch(u);
 }
 
-/**
- * The maximum number of nodes on the screen
- * in order to enable glow. This parameter
- * should be changed dynamically, eventually.
- * @type {number}
- */
-const GLOW_THRESHOLD = 20;
-let doGlow = false;
+async function loadInitialQuads() {
+    const response = await fetch('quad/A'); //TODO validation on this response
+    const data = await response.json();
+    quadHead = new Quad(data.x, data.y, data.r, null, null, "A", loadImage('data:image/png;base64, ' + data.image));
+
+    quadHead.split()
+    quadHead.A.split();
+    quadHead.B.split();
+    quadHead.C.split();
+    quadHead.D.split();
+
+    loading = false;
+}
 
 // noinspection JSUnusedGlobalSymbols
 function draw() {
+    if (loading) {
+        drawLoading();
+        return;
+    }
+
     background(3);
     stroke(255);
     noFill();
@@ -75,28 +72,66 @@ function draw() {
     push();
     camera.setView();
 
+    /* TODO draw quads on screen
+        - These should be pulled from memory, always
+        - We should constantly be trying to expand the quadtree and load quads and quad images into memory
+        - Quad images should go in a cache, so that images offscreen and not having been loaded in a while
+          can be unloaded
+        - We should aim to make requests for single quads, and if we make requests for multiple quads, to not
+          load them all at once.
+        - Do not update a cache or any complex data structure asynchronously, this always causes problems,
+          any updates to a data structure should be done in the draw loop, and should be loading from a
+          list that can be updated synchronously safely.
+     */
+
+    /*
     if (canCreateNewRequest && necessitatesUpdate(camera, visibleQuads, currentBounds)) {
         updateVisibleQuads(camera);
     }
+     */
 
-    drawQuads(quadCache.listify(), true);
-    drawQuads(visibleQuads, false);
-
-    getHoveredArtist();
-    drawInfoBox(hoveredArtist, infoBoxT);
-
-
-    //const visibleVertices = QuadtreeHelpers.getVisibleVertices(quadRoot, camera);
-    //QuadtreeHelpers.drawQuadtree(quadRoot);
-    //highlightedVertex = highlightVertex(quadRoot);
-
-    //doGlow = visibleVertices.length <= GLOW_THRESHOLD;
-    //DrawingHelpers.drawEdges(edges);
-    //DrawingHelpers.drawVertices(visibleVertices);
+    drawOnscreenQuads(quadHead, camera);
 
     pop();
     Debug.debugAll(camera);
 }
+
+function drawLoading() {
+
+}
+
+function drawOnscreenQuads(quadHead, camera) {
+    let quads = [];
+    let stack = [];
+    stack.push(quadHead);
+    while (stack.length > 0) {
+        const q = stack.pop();
+        if (camera.contains(q)) {
+            if (q.isLeaf()) {
+                quads.push(q);
+            } else {
+                stack.push(q.A);
+                stack.push(q.B);
+                stack.push(q.C);
+                stack.push(q.D);
+            }
+        }
+    }
+
+    push();
+    rectMode(RADIUS);
+    noFill();
+    stroke('white');
+    strokeWeight(50);
+    for (const quad of quads) {
+        if (quad.image) {
+            image(quad.image, quad.x - quad.r, -(quad.y + quad.r), quad.r * 2, quad.r * 2, 0, 0);
+        }
+        rect(quad.x, quad.y, quad.r, quad.r);
+    }
+    pop();
+}
+
 
 function drawInfoBox(hoveredArtist) {
     if (!hoveredArtist) { return; }
@@ -153,7 +188,6 @@ function getHoveredArtist() {
 function sufficientlyFar(sufficiency, a, b) {
     return Math.hypot(a.x - b.x, a.y-b.y) > sufficiency;
 }
-
 
 const TILE_WIDTH = 1024;
 function necessitatesUpdate(camera, visibleQuads, currentBounds) {
@@ -231,8 +265,6 @@ function drawQuads(quads, skipVisible) {
     }
     pop();
 }
-
-
 
 window.onresize = function() {
     const w = window.innerWidth;

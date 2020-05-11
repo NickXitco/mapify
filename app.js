@@ -10,8 +10,8 @@ dbInitializer.initDB();
 
 const indexRouter = require('./routes/index');
 const quadsRouter = require('./routes/quadsRouter');
+const quadRouter = require('./routes/quadRouter');
 const artistRouter = require('./routes/artistRouter');
-
 
 const app = express();
 
@@ -24,6 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/quads', quadsRouter);
+app.use('/quad', quadRouter);
 app.use('/artist', artistRouter);
 
 // catch 404 and forward to error handler

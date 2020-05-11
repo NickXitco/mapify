@@ -10,18 +10,21 @@ class Quad {
 
     parent;
 
+    nodes;
     n;
 
-    direction;
+    image;
 
-    constructor(x, y, r, parent, n, direction) {
+    name;
+
+    constructor(x, y, r, parent, n, name, image) {
         this.x = x;
         this.y = y;
         this.r = r;
         this.parent = parent;
         this.n = n;
-        this.direction = direction;
-        this.visible = false;
+        this.name = name;
+        this.image = image;
     }
 
     contains(x, y) {
@@ -31,10 +34,10 @@ class Quad {
 
     split() {
         const half = this.r / 2;
-        this.A = new Quad(this.x - half, this.y + half, half, this, null, "A");
-        this.B = new Quad(this.x + half, this.y + half, half, this, null, "B");
-        this.C = new Quad(this.x - half, this.y - half, half, this, null, "C");
-        this.D = new Quad(this.x + half, this.y - half, half, this, null, "D");
+        this.A = new Quad(this.x - half, this.y + half, half, this, null, this.name + "A", null);
+        this.B = new Quad(this.x + half, this.y + half, half, this, null, this.name + "B", null);
+        this.C = new Quad(this.x - half, this.y - half, half, this, null, this.name + "C", null);
+        this.D = new Quad(this.x + half, this.y - half, half, this, null, this.name + "D", null);
     }
 
     insert(n) {

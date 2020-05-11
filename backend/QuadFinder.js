@@ -1,7 +1,8 @@
-class QuadFinder {
-    static findQuad(x, y) {
-        return x + y;
-    }
+const mongoose = require('mongoose');
+
+async function findQuad(name) {
+    const Quad = mongoose.model('Quad');
+    return await Quad.findOne({name: name}).exec()
 }
 
-module.exports = QuadFinder;
+module.exports = {findQuad};
