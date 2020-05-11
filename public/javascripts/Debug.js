@@ -51,6 +51,17 @@ class Debug {
         pop();
     }
 
+    static debugHovered() {
+        push();
+        translate(0, 0);
+        scale(1);
+        fill("lime");
+        noStroke();
+        let name = (hoveredArtist !== null) ? hoveredArtist.name : "None";
+        text("Hovered Artist: " + name, 10, 175);
+        pop();
+    }
+
     static debugAll(camera) {
         push();
         camera.setView();
@@ -58,6 +69,7 @@ class Debug {
         pop();
         Debug.debugCamera();
         //Debug.drawScreenCrosshairs();
+        Debug.debugHovered();
         Debug.printFPS();
         Debug.printMouseCoordinates();
     }

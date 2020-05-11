@@ -9,8 +9,8 @@ const dbInitializer = require('./backend/DatabaseInitializer');
 dbInitializer.initDB();
 
 const indexRouter = require('./routes/index');
-const quadRouter = require('./routes/quadRouter');
 const quadsRouter = require('./routes/quadsRouter');
+const artistRouter = require('./routes/artistRouter');
 
 
 const app = express();
@@ -23,8 +23,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/quad', quadRouter);
 app.use('/quads', quadsRouter);
+app.use('/artist', artistRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

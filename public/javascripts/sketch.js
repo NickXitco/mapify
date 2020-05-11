@@ -7,7 +7,7 @@ let camera = new Camera(0, 0, window.innerHeight, window.innerWidth, 3);
 
 let blur;
 
-let highlightedVertex;
+
 
 const NUM_VERTICES = 256;
 const NUM_EDGES = 15;
@@ -18,9 +18,15 @@ let quadRoot;
 
 let visibleQuads = [];
 
-let quadCache = [];
+let quadCache = new Cache(50);
 
-let updating = false;
+let currentBounds = {leftmost: -Infinity, rightmost: Infinity, topmost: Infinity, bottommost: -Infinity};
+
+let canCreateNewRequest = true;
+
+let previousHoverPoint = {x: Infinity, y: Infinity};
+let hoveredArtist = null;
+let infoBoxT = 0;
 
 // noinspection JSUnusedGlobalSymbols
 function preload() {
@@ -69,11 +75,16 @@ function draw() {
     push();
     camera.setView();
 
-    if (necessitatesUpdate(camera, visibleQuads) && !updating) {
-        updating = true;
+    if (canCreateNewRequest && necessitatesUpdate(camera, visibleQuads, currentBounds)) {
         updateVisibleQuads(camera);
     }
-    drawVisibleQuads(visibleQuads);
+
+    drawQuads(quadCache.listify(), true);
+    drawQuads(visibleQuads, false);
+
+    getHoveredArtist();
+    drawInfoBox(hoveredArtist, infoBoxT);
+
 
     //const visibleVertices = QuadtreeHelpers.getVisibleVertices(quadRoot, camera);
     //QuadtreeHelpers.drawQuadtree(quadRoot);
@@ -87,86 +98,115 @@ function draw() {
     Debug.debugAll(camera);
 }
 
+function drawInfoBox(hoveredArtist) {
+    if (!hoveredArtist) { return; }
+    push();
+    noStroke();
+    fill(0, 200);
+    rect(hoveredArtist.x, -(hoveredArtist.y + hoveredArtist.size / 2), infoBoxT * 100, hoveredArtist.size);
+    infoBoxT = min(infoBoxT += 0.1, 1);
+    pop();
+}
 
-function necessitatesUpdate(camera, visibleQuads) {
+function getHoveredArtist() {
+    if (!sufficientlyFar(1.5, {x: mouseX, y: mouseY}, previousHoverPoint) || camera.zoom > 10) {
+        return;
+    }
+    infoBoxT = 0;
+    previousHoverPoint = {x: mouseX, y: mouseY};
+    const point = getVirtualMouseCoordinates();
+    const url = 'artist' + '/' + point.x + '/' + point.y;
+    fetch(url).then(response => {
+        if (response.status === 200) {
+            response.json().then(data => {
+                if (Object.keys(data)[0]) {
+                    hoveredArtist = data;
+                } else {
+                    hoveredArtist = null;
+                }
+            });
+        }
+    });
+}
 
-    /* TODO
-        This is a silly way and a non accurate way of representing this.
-        What we should really be doing is, if the width(/height) of the image as displayed on the screen
-        is greater than that of the actual image (i.e., the image is being scaled up), then we should
-        load the next quads.
-        Likewise, if we measure the image as displayed on the screen to be half as large as the actual image,
-        we should unload those 4 quads and load the larger one.
-     */
+function sufficientlyFar(sufficiency, a, b) {
+    return Math.hypot(a.x - b.x, a.y-b.y) > sufficiency;
+}
+
+
+const TILE_WIDTH = 1024;
+function necessitatesUpdate(camera, visibleQuads, currentBounds) {
+    if (checkBounds(camera, currentBounds)) {
+        return true;
+    }
 
     for (const quad of visibleQuads) {
-        if (quad.fullyContained && !fullyContains(camera, quad)) {
-            return true;
-        } else if (!quad.fullyContained && fullyContains(camera, quad)) {
+        const relativeScale = (quad.r * 2 * camera.getZoomFactor().x) / (TILE_WIDTH);
+        if (relativeScale < 0.5 || relativeScale > 1) {
             return true;
         }
     }
     return false;
 }
 
-function fullyContains(camera, quad) {
-    const l2 = {x: quad.x - quad.r, y: quad.y + quad.r};
-    const r2 = {x: quad.x + quad.r, y: quad.y - quad.r};
-
-    return pointInView(camera, l2) && pointInView(camera, r2);
-}
-
-function pointInView(camera, p) {
-    return  p.x <= camera.x + camera.width / 2 && p.x >= camera.x - camera.width / 2 &&
-            p.y >= camera.y - camera.height / 2 && p.y <= camera.y + camera.height / 2;
+function checkBounds(camera, currentBounds) {
+    if (currentBounds.leftmost >= camera.x - camera.width / 2 && currentBounds.leftmost > -27496) { return true; }
+    if (currentBounds.rightmost <= camera.x + camera.width / 2 && currentBounds.rightmost < 27496) { return true; }
+    if (currentBounds.topmost <= camera.y + camera.height / 2 && currentBounds.topmost < 27496) { return true; }
+    if (currentBounds.bottommost >= camera.y - camera.height / 2 && currentBounds.bottommost > -27496) { return true; }
+    return false;
 }
 
 function updateVisibleQuads(camera) {
+    const url = 'quads' + '/' + camera.x + '/' + camera.y + '/' + camera.width + '/' + camera.height + '/' + camera.getZoomFactor().x;
+    canCreateNewRequest = false;
+    fetch(url).then(response => {
+            if (response.status === 200) {
+                response.json().then(data => {
+                    let temp = [];
+                    for (const q of data.renderQuads) {
+                        const cached = quadCache.get(q);
+                        if (!cached) {
+                            const image = (q.image !== "") ? loadImage('data:image/png;base64, ' + q.image) : null;
+                            const newQuad = {name: q.name, x: q.x, y: q.y, r: q.r, image: image, fullyContained: q.fullyContained};
+                            temp.push(newQuad);
+                        } else {
+                            temp.push(cached);
+                        }
+                    }
 
-    /* TODO
-        If we get a bad/no response from the fetch, don't update visible quads, or else we'll get a blank screen.
-     */
-    const url = 'quads' + '/' + camera.x + '/' + camera.y + '/' + camera.width + '/' + camera.height;
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            let temp = [];
-            for (const q of data) {
-                const cached = getCached(q);
-                if (cached === null) {
-                    const newQuad = {name: q.name, x: q.x, y: q.y, r: q.r, image: loadImage('data:image/png;base64, ' + q.image), fullyContained: q.fullyContained};
-                    temp.push(newQuad);
-                    quadCache.push(newQuad);
-                } else {
-                    temp.push(cached);
-                }
+                    for (const q of temp) {
+                        quadCache.insert(q, q.name);
+                    }
+
+                    currentBounds = data.bounds;
+                    visibleQuads = temp;
+                });
             }
-            visibleQuads = temp;
-            updating = false;
+            canCreateNewRequest = true;
         });
 }
 
-function getCached(q) {
-    for (const quad of quadCache) {
-        if (quad.name === q.name) {
-            return quad;
-        }
-    }
-    return null;
-}
-
-function drawVisibleQuads(visibleQuads) {
+function drawQuads(quads, skipVisible) {
     push();
-    textAlign(CENTER, CENTER);
-    for (const q of visibleQuads) {
-        noStroke();
-        textSize(q.r / 10);
-        image(q.image, q.x - q.r, -(q.y + q.r), q.r * 2, q.r * 2, 0, 0);
-        fill('white');
-        text(q.name, q.x, -q.y);
-        noFill();
-        stroke('white');
-        rect(q.x - q.r, -(q.y + q.r), q.r * 2, q.r * 2);
+    for (const q of quads) {
+        if (skipVisible && visibleQuads.includes(q.name)) { continue; }
+        if (q.image) {
+            noStroke();
+            textSize(q.r / 10);
+            image(q.image, q.x - q.r, -(q.y + q.r), q.r * 2, q.r * 2, 0, 0);
+            fill('white');
+            textAlign(CENTER, CENTER);
+            text(q.name, q.x, -q.y);
+            textSize(q.r / 20);
+            fill('green')
+            textAlign(LEFT, TOP);
+            text('Actual Size: (' + q.image.width + ', ' + q.image.height + ')', q.x - q.r, -(q.y + q.r));
+            text('Displayed Size: (' + q.r * 2 * camera.getZoomFactor().x + ', ' + q.r * 2 * camera.getZoomFactor().y + ')', q.x - q.r, -(q.y + q.r * 0.95));
+            noFill();
+            stroke('white');
+            rect(q.x - q.r, -(q.y + q.r), q.r * 2, q.r * 2);
+        }
     }
     pop();
 }

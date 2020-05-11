@@ -36,8 +36,6 @@ function zoom() {
     }
 }
 
-
-
 // noinspection JSUnusedGlobalSymbols
 function mousePressed() {
     dragging = true;
