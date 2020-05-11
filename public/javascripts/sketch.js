@@ -103,13 +103,34 @@ function drawInfoBox(hoveredArtist) {
     push();
     noStroke();
     fill(0, 200);
-    rect(hoveredArtist.x, -(hoveredArtist.y + hoveredArtist.size / 2), infoBoxT * 100, hoveredArtist.size);
+
+    const name = hoveredArtist.name.toUpperCase();
+    const genre = (hoveredArtist.genres.length > 0) ? hoveredArtist.genres[0].toUpperCase() : "";
+    const boxLength = Math.max(name.length, genre.length);
+
+    beginShape();
+    vertex(hoveredArtist.x, -(hoveredArtist.y + 1.2 * hoveredArtist.size / 2));
+    vertex(hoveredArtist.x + infoBoxT * boxLength * hoveredArtist.size * 0.5, -(hoveredArtist.y + 1.2 * hoveredArtist.size / 2));
+    vertex(hoveredArtist.x + infoBoxT * boxLength * hoveredArtist.size * 0.5, -(hoveredArtist.y - 1.2 * hoveredArtist.size / 2));
+    vertex(hoveredArtist.x, -(hoveredArtist.y - 1.2 * hoveredArtist.size / 2));
+    bezierVertex(hoveredArtist.x + 0.8 * hoveredArtist.size, -(hoveredArtist.y - 1.2 * hoveredArtist.size / 2),
+                 hoveredArtist.x + 0.8 * hoveredArtist.size, -(hoveredArtist.y + 1.2 * hoveredArtist.size / 2),
+                     hoveredArtist.x, -(hoveredArtist.y + 1.2 * hoveredArtist.size / 2));
+    endShape();
+
+    fill('white');
+    textSize(hoveredArtist.size / 2);
+    textAlign(LEFT, TOP);
+    text(name, hoveredArtist.x + 0.8 * hoveredArtist.size, -(hoveredArtist.y + hoveredArtist.size / 2));
+    text(genre, hoveredArtist.x + 0.8 * hoveredArtist.size, -(hoveredArtist.y));
+
+    //rect(hoveredArtist.x, -(hoveredArtist.y + 1.2 * hoveredArtist.size / 2), infoBoxT * 100, hoveredArtist.size * 1.2);
     infoBoxT = min(infoBoxT += 0.1, 1);
     pop();
 }
 
 function getHoveredArtist() {
-    if (!sufficientlyFar(1.5, {x: mouseX, y: mouseY}, previousHoverPoint) || camera.zoom > 10) {
+    if (!sufficientlyFar(10, {x: mouseX, y: mouseY}, previousHoverPoint) || camera.zoom > 1) {
         return;
     }
     infoBoxT = 0;
