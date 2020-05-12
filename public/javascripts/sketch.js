@@ -4,9 +4,6 @@ let camera = new Camera(0, 0, window.innerHeight, window.innerWidth, 3);
 
 let blur;
 
-const NUM_VERTICES = 256;
-const NUM_EDGES = 15;
-
 const MAX_CURVE_ANGLE = 180;
 
 let visibleQuads = [];
@@ -25,12 +22,14 @@ let loading = true;
 
 let quadHead;
 
-let edgeDrawing;
+let edgeDrawing = false;
 
 let unprocessedResponses = [];
 
 let unloadedQuads = new Set();
 let loadingQuads = new Set();
+
+let edges = [];
 
 // noinspection JSUnusedGlobalSymbols
 function preload() {
@@ -111,7 +110,9 @@ function draw() {
     drawOnscreenQuads(quadHead, camera);
     loadUnloaded();
 
-    getHoveredArtist();
+    if (!edgeDrawing) {
+        getHoveredArtist();
+    }
     drawInfoBox(hoveredArtist);
 
     drawEdges();
@@ -124,7 +125,11 @@ function draw() {
 }
 
 function drawEdges() {
-
+    if (hoveredArtist && edgeDrawing) {
+        for (const e of edges) {
+            DrawingHelpers.drawEdge(e);
+        }
+    }
 }
 
 function processOne() {
@@ -257,6 +262,17 @@ function getHoveredArtist() {
                 if (Object.keys(data)[0]) {
                     if ((!hoveredArtist || data.id !== hoveredArtist.id) && mouseOnNode(data)){
                         hoveredArtist = data;
+                        let tempEdges = [];
+                        for (const related of data.related) {
+                            const r = {x: related.x, y: related.y, size: related.size, color: rgbToHSB(related.r, related.g, related.b)};
+                            const n = {x: hoveredArtist.x, y: hoveredArtist.y, size: hoveredArtist.size, color: rgbToHSB(hoveredArtist.r, hoveredArtist.g, hoveredArtist.b)};
+                            tempEdges.push({u: n, v: r, cUrad: Math.random() / 2,
+                                cUang: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
+                                cVrad: Math.random() / 2,
+                                cVang: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
+                                tMax: 0});
+                        }
+                        edges = tempEdges;
                         infoBoxT = 0;
                     }
                 } else {
@@ -265,6 +281,39 @@ function getHoveredArtist() {
             });
         }
     });
+}
+
+function rgbToHSB(r, g, b) {
+    let rabs, gabs, babs, rr, gg, bb, h, s, v, diff, diffc, percentRoundFn;
+    rabs = r / 255;
+    gabs = g / 255;
+    babs = b / 255;
+    v = Math.max(rabs, gabs, babs),
+        diff = v - Math.min(rabs, gabs, babs);
+    diffc = c => (v - c) / 6 / diff + 1 / 2;
+    percentRoundFn = num => Math.round(num * 100) / 100;
+    if (diff === 0) {
+        h = s = 0;
+    } else {
+        s = diff / v;
+        rr = diffc(rabs);
+        gg = diffc(gabs);
+        bb = diffc(babs);
+
+        if (rabs === v) {
+            h = bb - gg;
+        } else if (gabs === v) {
+            h = (1 / 3) + rr - bb;
+        } else if (babs === v) {
+            h = (2 / 3) + gg - rr;
+        }
+        if (h < 0) {
+            h += 1;
+        }else if (h > 1) {
+            h -= 1;
+        }
+    }
+    return color('hsb(' + Math.round(h * 360) + ', ' + percentRoundFn(s * 100) + '%, ' + percentRoundFn(v * 100) + '%)');
 }
 
 function mouseOnNode(data) {

@@ -41,6 +41,11 @@ async function findArtist(x, y) {
         return {};
     }
 
+    let related = [];
+    for (const r of closest.related) {
+        related.push(await Artist.findOne({id: r}).exec());
+    }
+
     return {
         name: closest.name,
         id: closest.id,
@@ -53,7 +58,7 @@ async function findArtist(x, y) {
         g: closest.g,
         b: closest.b,
         genres: closest.genres,
-        related: closest.related
+        related: related
     };
 }
 

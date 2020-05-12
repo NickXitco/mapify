@@ -4,6 +4,7 @@
  */
 let dragging = false;
 let drag; //stored as screen coordinates
+let start;
 
 const DRIFT_THRESHOLD = 0.1;
 let drifting = false;
@@ -40,12 +41,7 @@ function zoom() {
 function mousePressed() {
     dragging = true;
     drag = {x: mouseX, y: mouseY};
-}
-
-function mouseClicked() {
-    if (hoveredArtist) {
-        edgeDrawing = true;
-    }
+    start = {x: mouseX, y: mouseY};
 }
 
 // noinspection JSUnusedGlobalSymbols
@@ -65,6 +61,17 @@ function mouseReleased() {
     const oldDrag = camera.screen2virtual(drag);
     camera.x += (oldDrag.x - newDrag.x);
     camera.y += (oldDrag.y - newDrag.y);
+
+    if (dist(start.x, start.y, drag.x, drag.y) < 5) {
+        if (edgeDrawing) {
+            edgeDrawing = false;
+            hoveredArtist = null;
+        }
+
+        if (hoveredArtist) {
+            edgeDrawing = true;
+        }
+    }
 
     driftVec = createVector(winMouseX - pwinMouseX, winMouseY - pwinMouseY);
     drifting = true;
