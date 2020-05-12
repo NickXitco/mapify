@@ -62,6 +62,17 @@ class Debug {
         pop();
     }
 
+    static canvasSize() {
+        push();
+        translate(0, 0);
+        scale(1);
+        fill("lime");
+        noStroke();
+        text("Canvas Width: " + width, 10, 200);
+        text("Canvas Height: " + height, 10, 225);
+        pop();
+    }
+
     static debugAll(camera) {
         push();
         camera.setView();
@@ -70,6 +81,7 @@ class Debug {
         Debug.debugCamera();
         //Debug.drawScreenCrosshairs();
         Debug.debugHovered();
+        Debug.canvasSize();
         Debug.printFPS();
         Debug.printMouseCoordinates();
     }

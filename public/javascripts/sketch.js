@@ -24,7 +24,11 @@ let infoBoxT = 0;
 let loading = true;
 
 let quadHead;
-let quadLookup = {};
+
+let unprocessedResponses = [];
+
+let unloadedQuads = new Set();
+let loadingQuads = new Set();
 
 // noinspection JSUnusedGlobalSymbols
 function preload() {
@@ -44,15 +48,31 @@ function setup() {
 async function loadInitialQuads() {
     const response = await fetch('quad/A'); //TODO validation on this response
     const data = await response.json();
-    quadHead = new Quad(data.x, data.y, data.r, null, null, "A", loadImage('data:image/png;base64, ' + data.image));
+    quadHead = new Quad(data.x, data.y, data.r, null, null, "A", null);
+    loadingQuads.add(quadHead);
+    await quadHead.fetchImage();
+    quadHead.splitDown(4);
 
-    quadHead.split()
-    quadHead.A.split();
-    quadHead.B.split();
-    quadHead.C.split();
-    quadHead.D.split();
-
+    //addUnloadedToList(quadHead);
     loading = false;
+}
+
+function addUnloadedToList(quadHead) {
+    let stack = [];
+    stack.push(quadHead);
+    while (stack.length > 0) {
+        let q = stack.pop();
+        if (!q.image) {
+            unloadedQuads.add(q);
+        }
+
+        if (!q.leaf) {
+            stack.push(q.A);
+            stack.push(q.B);
+            stack.push(q.C);
+            stack.push(q.D);
+        }
+    }
 }
 
 // noinspection JSUnusedGlobalSymbols
@@ -91,9 +111,35 @@ function draw() {
      */
 
     drawOnscreenQuads(quadHead, camera);
+    loadUnloaded();
 
+    if (frameCount % 5 === 0) {
+        processOne();
+    }
     pop();
     Debug.debugAll(camera);
+}
+
+function processOne() {
+    if (unprocessedResponses.length > 0) {
+        const r = unprocessedResponses.pop();
+        const q = r.quad;
+        if (r.data.image !== "") {
+            q.image = loadImage('data:image/png;base64, ' + r.data.image);
+        }
+        if (q.leaf && !r.data.leaf) {
+            q.split();
+        }
+        loadingQuads.delete(quad);
+    }
+}
+
+function loadUnloaded() {
+    for (const quad of unloadedQuads) {
+        loadingQuads.add(quad);
+        unloadedQuads.delete(quad);
+        quad.fetchImage().then();
+    }
 }
 
 function drawLoading() {
@@ -101,19 +147,35 @@ function drawLoading() {
 }
 
 function drawOnscreenQuads(quadHead, camera) {
-    let quads = [];
+    let quads = new Set();
     let stack = [];
     stack.push(quadHead);
+    const scale = camera.getZoomFactor().x;
     while (stack.length > 0) {
-        const q = stack.pop();
+        let q = stack.pop();
         if (camera.contains(q)) {
-            if (q.isLeaf()) {
-                quads.push(q);
-            } else {
-                stack.push(q.A);
-                stack.push(q.B);
-                stack.push(q.C);
-                stack.push(q.D);
+            if (!q.image) {
+                if (!loadingQuads.has(q)) {
+                    unloadedQuads.add(q);
+                }
+            }
+            if ((q.r * 2 * scale) / TILE_WIDTH > 1) {
+                if (q.leaf) {
+                    while (!q.image && q.name !== "A") {
+                        q = q.parent;
+                    }
+                    quads.add(q);
+                } else {
+                    stack.push(q.A);
+                    stack.push(q.B);
+                    stack.push(q.C);
+                    stack.push(q.D);
+                }
+            } else if ((q.r * 2 * scale) / TILE_WIDTH >= 0.5) {
+                while (!q.image && q.name !== "A") {
+                    q = q.parent;
+                }
+                quads.add(q);
             }
         }
     }
@@ -122,12 +184,24 @@ function drawOnscreenQuads(quadHead, camera) {
     rectMode(RADIUS);
     noFill();
     stroke('white');
-    strokeWeight(50);
-    for (const quad of quads) {
-        if (quad.image) {
-            image(quad.image, quad.x - quad.r, -(quad.y + quad.r), quad.r * 2, quad.r * 2, 0, 0);
+    for (const q of [...quads].sort((a, b) => a.name.length - b.name.length)) { //TODO may not even need to sort this, since set preserves insertion order
+        if (q.image) {
+            noStroke();
+            textSize(q.r / 10);
+            image(q.image, q.x - q.r, -(q.y + q.r), q.r * 2, q.r * 2, 0, 0);
+            fill('white');
+            textAlign(CENTER, CENTER);
+            text(q.name, q.x, -q.y);
+            textSize(q.r / 20);
+            fill('green')
+            textAlign(LEFT, TOP);
+            text('Actual Size: (' + q.image.width + ', ' + q.image.height + ')', q.x - q.r, -(q.y + q.r));
+            text('Displayed Size: (' + q.r * 2 * camera.getZoomFactor().x + ', ' + q.r * 2 * camera.getZoomFactor().y + ')', q.x - q.r, -(q.y + q.r * 0.95));
+            noFill();
+            stroke('white');
+            strokeWeight(quad.r / 100);
+            rect(q.x, -q.y, q.r, q.r);
         }
-        rect(quad.x, quad.y, quad.r, quad.r);
     }
     pop();
 }
