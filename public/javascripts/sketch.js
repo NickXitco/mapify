@@ -25,6 +25,8 @@ let loading = true;
 
 let quadHead;
 
+let edgeDrawing;
+
 let unprocessedResponses = [];
 
 let unloadedQuads = new Set();
@@ -104,20 +106,25 @@ function draw() {
           list that can be updated synchronously safely.
      */
 
-    /*
-    if (canCreateNewRequest && necessitatesUpdate(camera, visibleQuads, currentBounds)) {
-        updateVisibleQuads(camera);
-    }
-     */
+
 
     drawOnscreenQuads(quadHead, camera);
     loadUnloaded();
+
+    getHoveredArtist();
+    drawInfoBox(hoveredArtist);
+
+    drawEdges();
 
     if (frameCount % 5 === 0) {
         processOne();
     }
     pop();
     Debug.debugAll(camera);
+}
+
+function drawEdges() {
+
 }
 
 function processOne() {
@@ -146,6 +153,7 @@ function drawLoading() {
     //TODO loading screen?
 }
 
+const TILE_WIDTH = 1024;
 function drawOnscreenQuads(quadHead, camera) {
     let quads = new Set();
     let stack = [];
@@ -191,16 +199,16 @@ function drawOnscreenQuads(quadHead, camera) {
             image(q.image, q.x - q.r, -(q.y + q.r), q.r * 2, q.r * 2, 0, 0);
             fill('white');
             textAlign(CENTER, CENTER);
-            text(q.name, q.x, -q.y);
+            //text(q.name, q.x, -q.y);
             textSize(q.r / 20);
             fill('green')
             textAlign(LEFT, TOP);
-            text('Actual Size: (' + q.image.width + ', ' + q.image.height + ')', q.x - q.r, -(q.y + q.r));
-            text('Displayed Size: (' + q.r * 2 * camera.getZoomFactor().x + ', ' + q.r * 2 * camera.getZoomFactor().y + ')', q.x - q.r, -(q.y + q.r * 0.95));
+            //text('Actual Size: (' + q.image.width + ', ' + q.image.height + ')', q.x - q.r, -(q.y + q.r));
+            //text('Displayed Size: (' + q.r * 2 * camera.getZoomFactor().x + ', ' + q.r * 2 * camera.getZoomFactor().y + ')', q.x - q.r, -(q.y + q.r * 0.95));
             noFill();
             stroke('white');
             strokeWeight(quad.r / 100);
-            rect(q.x, -q.y, q.r, q.r);
+            //rect(q.x, -q.y, q.r, q.r);
         }
     }
     pop();
@@ -232,16 +240,14 @@ function drawInfoBox(hoveredArtist) {
     text(name, hoveredArtist.x + 0.8 * hoveredArtist.size, -(hoveredArtist.y + hoveredArtist.size / 2));
     text(genre, hoveredArtist.x + 0.8 * hoveredArtist.size, -(hoveredArtist.y));
 
-    //rect(hoveredArtist.x, -(hoveredArtist.y + 1.2 * hoveredArtist.size / 2), infoBoxT * 100, hoveredArtist.size * 1.2);
     infoBoxT = min(infoBoxT += 0.1, 1);
     pop();
 }
 
 function getHoveredArtist() {
-    if (!sufficientlyFar(10, {x: mouseX, y: mouseY}, previousHoverPoint) || camera.zoom > 1) {
+    if (!sufficientlyFar(3, {x: mouseX, y: mouseY}, previousHoverPoint) || camera.zoom > 1) {
         return;
     }
-    infoBoxT = 0;
     previousHoverPoint = {x: mouseX, y: mouseY};
     const point = getVirtualMouseCoordinates();
     const url = 'artist' + '/' + point.x + '/' + point.y;
@@ -249,13 +255,23 @@ function getHoveredArtist() {
         if (response.status === 200) {
             response.json().then(data => {
                 if (Object.keys(data)[0]) {
-                    hoveredArtist = data;
+                    if ((!hoveredArtist || data.id !== hoveredArtist.id) && mouseOnNode(data)){
+                        hoveredArtist = data;
+                        infoBoxT = 0;
+                    }
                 } else {
                     hoveredArtist = null;
                 }
             });
         }
     });
+}
+
+function mouseOnNode(data) {
+    const mP = getVirtualMouseCoordinates();
+    const d = dist(mP.x, mP.y, data.x, data.y);
+    return d <= (data.size / 2);
+
 }
 
 function sufficientlyFar(sufficiency, a, b) {

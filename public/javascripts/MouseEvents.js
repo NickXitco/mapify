@@ -42,6 +42,12 @@ function mousePressed() {
     drag = {x: mouseX, y: mouseY};
 }
 
+function mouseClicked() {
+    if (hoveredArtist) {
+        edgeDrawing = true;
+    }
+}
+
 // noinspection JSUnusedGlobalSymbols
 function mouseDragged() {
     if (dragging) {
