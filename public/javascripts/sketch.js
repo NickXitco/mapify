@@ -204,16 +204,16 @@ function drawOnscreenQuads(quadHead, camera) {
             image(q.image, q.x - q.r, -(q.y + q.r), q.r * 2, q.r * 2, 0, 0);
             fill('white');
             textAlign(CENTER, CENTER);
-            //text(q.name, q.x, -q.y);
+            text(q.name, q.x, -q.y);
             textSize(q.r / 20);
             fill('green')
             textAlign(LEFT, TOP);
-            //text('Actual Size: (' + q.image.width + ', ' + q.image.height + ')', q.x - q.r, -(q.y + q.r));
-            //text('Displayed Size: (' + q.r * 2 * camera.getZoomFactor().x + ', ' + q.r * 2 * camera.getZoomFactor().y + ')', q.x - q.r, -(q.y + q.r * 0.95));
+            text('Actual Size: (' + q.image.width + ', ' + q.image.height + ')', q.x - q.r, -(q.y + q.r));
+            text('Displayed Size: (' + q.r * 2 * camera.getZoomFactor().x + ', ' + q.r * 2 * camera.getZoomFactor().y + ')', q.x - q.r, -(q.y + q.r * 0.95));
             noFill();
             stroke('white');
             strokeWeight(quad.r / 100);
-            //rect(q.x, -q.y, q.r, q.r);
+            rect(q.x, -q.y, q.r, q.r);
         }
     }
     pop();

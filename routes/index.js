@@ -16,24 +16,3 @@ router.get('/', function (req, res) {
 });
 
 module.exports = router;
-
-//TODO commenting these in and out is really really bad practice, just make another node configuration
-
-
-const dbCleaner = require('../backend/DatabaseCleaner');
-//dbCleaner.cleanDB();
-
-const dbPopulator = require('../backend/populateDatabase');
-/*
-dbPopulator.populateQuads().then(r => {
-    if (r) {
-        console.log("Quad population successful!");
-    }
-})
-
-dbPopulator.populateArtists().then(r => {
-    if (r) {
-        console.log("Artist population successful!");
-    }
-})
- */

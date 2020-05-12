@@ -2,17 +2,49 @@ const mongoose = require('mongoose');
 const readLine = require('readline');
 const fs = require('fs');
 const ImageEncoder = require('../backend/ImageEncoder');
+const DatabaseInitializer = require('../backend/DatabaseInitializer');
+const mongoDB = 'mongodb://127.0.0.1/mapifyDB';
+
+mongoose.connect(mongoDB, {useNewUrlParser: true});
+mongoose.set('useUnifiedTopology', true);
+
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error: '));
+
+const myArgs = process.argv.slice(2);
+DatabaseInitializer.initDB();
+
+switch (myArgs[0]) {
+    case 'all':
+        console.log('Populating Database...')
+        populateDatabase().then(r => {if (r) console.log('Database Population Complete!')});
+        break;
+    case 'quads':
+        console.log('Populating Quads...')
+        populateQuads().then(r => {if (r) console.log('Quad Population Complete!')});
+        break;
+    case 'artists':
+        console.log('Populating Artists...')
+        populateArtists().then(r => {if (r) console.log('Artist Population Complete!')});
+        break;
+    default:
+        console.log('Argument Error');
+        console.error(myArgs);
+}
+
+
 
 async function populateQuads() {
     const Quad = mongoose.model('Quad');
 
     const readInterface = readLine.createInterface({
-        input: fs.createReadStream('./resources/quads/quadInfo.tsv'),
+        input: fs.createReadStream('../resources/quads/quadInfoNodeList.tsv'),
         output: process.stdout,
         console: false
     });
 
     let count = 0;
+    let longestLine = 0;
 
     for await (const line of readInterface) {
         const split = line.split('\t');
@@ -22,10 +54,11 @@ async function populateQuads() {
         const r = parseFloat(split[3]);
         const leaf = split[4] === "true";
         const image = ImageEncoder.encodeImage(name).toString('base64');
-        const leafNodes = [];
+        const nodes = [];
         for (let i = 5; i < split.length; i++) {
-            leafNodes.push(split[i]);
+            nodes.push(split[i]);
         }
+        longestLine = Math.max(longestLine, split.length);
         Quad.create({
             name: name,
             x: x,
@@ -33,7 +66,7 @@ async function populateQuads() {
             r: r,
             image: image,
             leaf: leaf,
-            leafNodes: leafNodes
+            nodes: nodes
         }, (err, _) => {
             if (err) {
                 console.log(err);
@@ -41,6 +74,7 @@ async function populateQuads() {
             count++;
             if (count % 10000 === 0) {
                 console.log(count + " quads populated.");
+                console.log(`Current longest line: ${longestLine}`);
             }
         });
     }
