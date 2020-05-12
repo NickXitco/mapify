@@ -11,7 +11,7 @@ const MAX_CURVE_ANGLE = 180;
 
 let visibleQuads = [];
 
-let quadCache = new Cache(50);
+let quadCache = new Cache(100);
 
 let currentBounds = {leftmost: -Infinity, rightmost: Infinity, topmost: Infinity, bottommost: -Infinity};
 
@@ -143,7 +143,7 @@ function loadUnloaded() {
 }
 
 function drawLoading() {
-
+    //TODO loading screen?
 }
 
 function drawOnscreenQuads(quadHead, camera) {
@@ -184,7 +184,7 @@ function drawOnscreenQuads(quadHead, camera) {
     rectMode(RADIUS);
     noFill();
     stroke('white');
-    for (const q of [...quads].sort((a, b) => a.name.length - b.name.length)) { //TODO may not even need to sort this, since set preserves insertion order
+    for (const q of [...quads].sort((a, b) => a.name.length - b.name.length)) {
         if (q.image) {
             noStroke();
             textSize(q.r / 10);
@@ -205,7 +205,6 @@ function drawOnscreenQuads(quadHead, camera) {
     }
     pop();
 }
-
 
 function drawInfoBox(hoveredArtist) {
     if (!hoveredArtist) { return; }
@@ -261,83 +260,6 @@ function getHoveredArtist() {
 
 function sufficientlyFar(sufficiency, a, b) {
     return Math.hypot(a.x - b.x, a.y-b.y) > sufficiency;
-}
-
-const TILE_WIDTH = 1024;
-function necessitatesUpdate(camera, visibleQuads, currentBounds) {
-    if (checkBounds(camera, currentBounds)) {
-        return true;
-    }
-
-    for (const quad of visibleQuads) {
-        const relativeScale = (quad.r * 2 * camera.getZoomFactor().x) / (TILE_WIDTH);
-        if (relativeScale < 0.5 || relativeScale > 1) {
-            return true;
-        }
-    }
-    return false;
-}
-
-function checkBounds(camera, currentBounds) {
-    if (currentBounds.leftmost >= camera.x - camera.width / 2 && currentBounds.leftmost > -27496) { return true; }
-    if (currentBounds.rightmost <= camera.x + camera.width / 2 && currentBounds.rightmost < 27496) { return true; }
-    if (currentBounds.topmost <= camera.y + camera.height / 2 && currentBounds.topmost < 27496) { return true; }
-    if (currentBounds.bottommost >= camera.y - camera.height / 2 && currentBounds.bottommost > -27496) { return true; }
-    return false;
-}
-
-function updateVisibleQuads(camera) {
-    const url = 'quads' + '/' + camera.x + '/' + camera.y + '/' + camera.width + '/' + camera.height + '/' + camera.getZoomFactor().x;
-    canCreateNewRequest = false;
-    fetch(url).then(response => {
-            if (response.status === 200) {
-                response.json().then(data => {
-                    let temp = [];
-                    for (const q of data.renderQuads) {
-                        const cached = quadCache.get(q);
-                        if (!cached) {
-                            const image = (q.image !== "") ? loadImage('data:image/png;base64, ' + q.image) : null;
-                            const newQuad = {name: q.name, x: q.x, y: q.y, r: q.r, image: image, fullyContained: q.fullyContained};
-                            temp.push(newQuad);
-                        } else {
-                            temp.push(cached);
-                        }
-                    }
-
-                    for (const q of temp) {
-                        quadCache.insert(q, q.name);
-                    }
-
-                    currentBounds = data.bounds;
-                    visibleQuads = temp;
-                });
-            }
-            canCreateNewRequest = true;
-        });
-}
-
-function drawQuads(quads, skipVisible) {
-    push();
-    for (const q of quads) {
-        if (skipVisible && visibleQuads.includes(q.name)) { continue; }
-        if (q.image) {
-            noStroke();
-            textSize(q.r / 10);
-            image(q.image, q.x - q.r, -(q.y + q.r), q.r * 2, q.r * 2, 0, 0);
-            fill('white');
-            textAlign(CENTER, CENTER);
-            text(q.name, q.x, -q.y);
-            textSize(q.r / 20);
-            fill('green')
-            textAlign(LEFT, TOP);
-            text('Actual Size: (' + q.image.width + ', ' + q.image.height + ')', q.x - q.r, -(q.y + q.r));
-            text('Displayed Size: (' + q.r * 2 * camera.getZoomFactor().x + ', ' + q.r * 2 * camera.getZoomFactor().y + ')', q.x - q.r, -(q.y + q.r * 0.95));
-            noFill();
-            stroke('white');
-            rect(q.x - q.r, -(q.y + q.r), q.r * 2, q.r * 2);
-        }
-    }
-    pop();
 }
 
 window.onresize = function() {
