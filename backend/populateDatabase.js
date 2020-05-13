@@ -23,6 +23,10 @@ switch (myArgs[0]) {
         console.log('Populating Quads...')
         populateQuads().then(r => {if (r) console.log('Quad Population Complete!')});
         break;
+    case 'quadNodes':
+        console.log('Populating Quad Nodes...')
+        setQuadNodeLists().then(r => {if (r) console.log('Quad Nodes Population Complete!')});
+        break;
     case 'artists':
         console.log('Populating Artists...')
         populateArtists().then(r => {if (r) console.log('Artist Population Complete!')});
@@ -32,9 +36,8 @@ switch (myArgs[0]) {
         console.error(myArgs);
 }
 
-
-
 async function populateQuads() {
+    const Artist = mongoose.model('Artist');
     const Quad = mongoose.model('Quad');
 
     const readInterface = readLine.createInterface({
@@ -56,9 +59,10 @@ async function populateQuads() {
         const image = ImageEncoder.encodeImage(name).toString('base64');
         const nodes = [];
         for (let i = 5; i < split.length; i++) {
-            nodes.push(split[i]);
+            nodes.push(await Artist.findOne({id: split[i]}).exec());
         }
         longestLine = Math.max(longestLine, split.length);
+
         Quad.create({
             name: name,
             x: x,

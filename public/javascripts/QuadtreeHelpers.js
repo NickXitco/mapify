@@ -7,17 +7,6 @@ class QuadtreeHelpers {
         return r;
     }
 
-    static getVisibleVertices(headQuad, camera) {
-        const nodes = headQuad.getNodesInRange({x: camera.x - VIEW_AMOUNT * camera.width,
-                y: camera.y + VIEW_AMOUNT * camera.height},
-            {x: camera.x + VIEW_AMOUNT * camera.width,
-                y: camera.y - VIEW_AMOUNT * camera.height});
-        for (const n of nodes) {
-            n.visible = true;
-        }
-        return nodes;
-    }
-
     static drawQuadtree(quadRoot) {
         push();
         rectMode(RADIUS);

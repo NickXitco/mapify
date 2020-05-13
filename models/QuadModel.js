@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
+const ArtistSchema = mongoose.model('Artist').schema;
 
 const QuadSchema = new Schema({
     name: String,
@@ -9,7 +10,7 @@ const QuadSchema = new Schema({
     r: Number,
     image: String,
     leaf: Boolean,
-    leafNodes: [String]
+    nodes: [ArtistSchema]
 })
 
 const Quad = mongoose.model('Quad', QuadSchema);

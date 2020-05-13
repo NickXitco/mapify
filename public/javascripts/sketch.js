@@ -1,36 +1,25 @@
 let canvas = null;
-
 let camera = new Camera(0, 0, window.innerHeight, window.innerWidth, 3);
-
-let blur;
 
 const MAX_CURVE_ANGLE = 180;
 
-let visibleQuads = [];
-
-let quadCache = new Cache(100);
-
-let currentBounds = {leftmost: -Infinity, rightmost: Infinity, topmost: Infinity, bottommost: -Infinity};
-
-let canCreateNewRequest = true;
-
-let previousHoverPoint = {x: Infinity, y: Infinity};
 let hoveredArtist = null;
 let infoBoxT = 0;
 
 let loading = true;
 
 let quadHead;
-
-let edgeDrawing = false;
-
 let unprocessedResponses = [];
 
 let unloadedQuads = new Set();
 let loadingQuads = new Set();
 
+let edgeDrawing = false;
 let edges = [];
 
+let nodeLookup = {};
+
+let blur;
 // noinspection JSUnusedGlobalSymbols
 function preload() {
     blur = loadImage('images/blur.png');
@@ -51,7 +40,7 @@ async function loadInitialQuads() {
     const data = await response.json();
     quadHead = new Quad(data.x, data.y, data.r, null, null, "A", null);
     loadingQuads.add(quadHead);
-    await quadHead.fetchImage();
+    await quadHead.fetchQuad();
     quadHead.splitDown(4);
 
     //addUnloadedToList(quadHead);
@@ -91,21 +80,8 @@ function draw() {
     zoom();
 
     push();
+    drawInfoBox(hoveredArtist);
     camera.setView();
-
-    /* TODO draw quads on screen
-        - These should be pulled from memory, always
-        - We should constantly be trying to expand the quadtree and load quads and quad images into memory
-        - Quad images should go in a cache, so that images offscreen and not having been loaded in a while
-          can be unloaded
-        - We should aim to make requests for single quads, and if we make requests for multiple quads, to not
-          load them all at once.
-        - Do not update a cache or any complex data structure asynchronously, this always causes problems,
-          any updates to a data structure should be done in the draw loop, and should be loading from a
-          list that can be updated synchronously safely.
-     */
-
-
 
     drawOnscreenQuads(quadHead, camera);
     loadUnloaded();
@@ -113,7 +89,6 @@ function draw() {
     if (!edgeDrawing) {
         getHoveredArtist();
     }
-    drawInfoBox(hoveredArtist);
 
     drawEdges();
 
@@ -136,12 +111,25 @@ function processOne() {
     if (unprocessedResponses.length > 0) {
         const r = unprocessedResponses.pop();
         const q = r.quad;
+
+        let nodes = [];
+
+        for (const node of r.data.nodes) {
+            if (!nodeLookup.hasOwnProperty(node.id)) {
+                nodeLookup[node.id] = new Artist(node.name, node.id, node.followers, node.popularity, node.x, node.y,
+                                                 node.size, color(node.r, node.g, node.b), node.genres, node.related);
+            }
+            nodes.push(nodeLookup[node.id]);
+        }
+
+        q.nodeQuadTreeFromList(nodes);
         if (r.data.image !== "") {
             q.image = loadImage('data:image/png;base64, ' + r.data.image);
         }
         if (q.leaf && !r.data.leaf) {
             q.split();
         }
+        q.loaded = true;
         loadingQuads.delete(quad);
     }
 }
@@ -150,7 +138,7 @@ function loadUnloaded() {
     for (const quad of unloadedQuads) {
         loadingQuads.add(quad);
         unloadedQuads.delete(quad);
-        quad.fetchImage().then();
+        quad.fetchQuad().then();
     }
 }
 
@@ -210,6 +198,7 @@ function drawOnscreenQuads(quadHead, camera) {
             textAlign(LEFT, TOP);
             text('Actual Size: (' + q.image.width + ', ' + q.image.height + ')', q.x - q.r, -(q.y + q.r));
             text('Displayed Size: (' + q.r * 2 * camera.getZoomFactor().x + ', ' + q.r * 2 * camera.getZoomFactor().y + ')', q.x - q.r, -(q.y + q.r * 0.95));
+            text('Number of Nodes Inside: ' + q.renderableNodes.length, q.x - q.r, -(q.y + q.r * 0.90));
             noFill();
             stroke('white');
             strokeWeight(quad.r / 100);
@@ -250,37 +239,41 @@ function drawInfoBox(hoveredArtist) {
 }
 
 function getHoveredArtist() {
-    if (!sufficientlyFar(3, {x: mouseX, y: mouseY}, previousHoverPoint) || camera.zoom > 1) {
-        return;
-    }
-    previousHoverPoint = {x: mouseX, y: mouseY};
-    const point = getVirtualMouseCoordinates();
-    const url = 'artist' + '/' + point.x + '/' + point.y;
-    fetch(url).then(response => {
-        if (response.status === 200) {
-            response.json().then(data => {
-                if (Object.keys(data)[0]) {
-                    if ((!hoveredArtist || data.id !== hoveredArtist.id) && mouseOnNode(data)){
-                        hoveredArtist = data;
-                        let tempEdges = [];
-                        for (const related of data.related) {
-                            const r = {x: related.x, y: related.y, size: related.size, color: rgbToHSB(related.r, related.g, related.b)};
-                            const n = {x: hoveredArtist.x, y: hoveredArtist.y, size: hoveredArtist.size, color: rgbToHSB(hoveredArtist.r, hoveredArtist.g, hoveredArtist.b)};
-                            tempEdges.push({u: n, v: r, cUrad: Math.random() / 2,
-                                cUang: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
-                                cVrad: Math.random() / 2,
-                                cVang: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
-                                tMax: 0});
-                        }
-                        edges = tempEdges;
-                        infoBoxT = 0;
-                    }
-                } else {
-                    hoveredArtist = null;
+    let stack = [];
+    const mP = getVirtualMouseCoordinates();
+    stack.push(quadHead);
+    let foundQuad;
+    while (stack.length > 0) {
+        let q = stack.pop();
+        if (q.contains(mP.x, mP.y)) {
+            if (q.leaf) {
+                while (!q.loaded && q.name !== "A") {
+                    q = q.parent;
                 }
-            });
+                foundQuad = q;
+                break;
+            }
+
+            stack.push(q.A);
+            stack.push(q.B);
+            stack.push(q.C);
+            stack.push(q.D);
         }
-    });
+    }
+
+    let closest = null;
+    let closestDistance = Infinity;
+    for (const node of foundQuad.renderableNodes) {
+        let d = dist(mP.x, mP.y, node.x, node.y);
+        if (d < node.size / 2) {
+            if (d < closestDistance) {
+                closest = node;
+                closestDistance = d;
+            }
+        }
+    }
+
+    hoveredArtist = closest;
 }
 
 function rgbToHSB(r, g, b) {

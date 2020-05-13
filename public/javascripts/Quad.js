@@ -10,7 +10,7 @@ class Quad {
 
     parent;
 
-    nodes;
+    renderableNodes;
     n;
 
     image;
@@ -18,6 +18,8 @@ class Quad {
     name;
 
     leaf;
+
+    loaded;
 
     constructor(x, y, r, parent, n, name, image) {
         this.x = x;
@@ -27,7 +29,16 @@ class Quad {
         this.n = n;
         this.name = name;
         this.image = image;
+
         this.leaf = true;
+        this.loaded = false;
+        this.renderableNodes = [];
+    }
+
+    nodeQuadTreeFromList(nodes) {
+        for (const node of nodes) {
+            this.insert(node);
+        }
     }
 
     contains(x, y) {
@@ -45,6 +56,11 @@ class Quad {
     }
 
     insert(n) {
+        if (this.containsRect({x: n.x - n.size / 2, y: n.y + n.size / 2}, {x: n.x + n.size / 2, y: n.y - n.size / 2})) {
+            this.renderableNodes.push(n);
+            if (n.quad) { return true; }
+        }
+
         if (!this.contains(n.x, n.y)) {
             return false;
         }
@@ -62,10 +78,10 @@ class Quad {
             this.insert(temp);
         }
 
-        if (this.A.insert(n)) return true;
-        if (this.B.insert(n)) return true;
-        if (this.C.insert(n)) return true;
-        if (this.D.insert(n)) return true;
+        this.A.insert(n);
+        this.B.insert(n);
+        this.C.insert(n);
+        this.D.insert(n);
 
         return false;
     }
@@ -75,43 +91,6 @@ class Quad {
         const r2 = {x: this.x + this.r, y: this.y - this.r};
 
         return !((l1.x >= r2.x || l2.x >= r1.x) || (l1.y <= r2.y || l2.y <= r1.y));
-    }
-
-    getNodes() {
-        let nodes = [];
-        let stack = [];
-        stack.push(this);
-        while (stack.length > 0) {
-            const q = stack.pop();
-            if (q.leaf && q.n != null) {
-                nodes.push(q.n);
-            } else if (!q.leaf) {
-                stack.push(q.A);
-                stack.push(q.B);
-                stack.push(q.C);
-                stack.push(q.D);
-            }
-        }
-        return nodes;
-    }
-
-    getNodesInRange(l1, r1) {
-        let nodes = [];
-        let stack = [];
-        stack.push(this);
-        while (stack.length > 0) {
-            const q = stack.pop();
-            if (!q.containsRect(l1, r1)) continue;
-            if (q.leaf && q.n != null) {
-                nodes.push(q.n);
-            } else if (!q.leaf) {
-                stack.push(q.A);
-                stack.push(q.B);
-                stack.push(q.C);
-                stack.push(q.D);
-            }
-        }
-        return nodes;
     }
 
     splitDown(toLevel) {
@@ -129,7 +108,7 @@ class Quad {
         }
     }
 
-    async fetchImage() {
+    async fetchQuad() {
         const response = await fetch('quad/' + this.name); //TODO validation on this response
         const data = await response.json();
         unprocessedResponses.push({quad: this, data: data});

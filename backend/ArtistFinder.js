@@ -28,7 +28,7 @@ async function findArtist(x, y) {
 
     let closest = null;
     let closestDistance = Infinity;
-    for (const id of bottomQuad.leafNodes) {
+    for (const id of bottomQuad.nodes) {
         const artist = await Artist.findOne({id: id}).exec();
         const d = distance(x, y, artist.x, artist.y);
         if (d < closestDistance && d < (artist.size / 2)) {

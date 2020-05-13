@@ -90,54 +90,6 @@ function drift(camera) {
     }
 }
 
-/**
- * The radius of the cursor. This is in order to deal with selecting nodes
- * that are bigger than the quads the contain them. Eventually, this
- * should be exactly equal to the radius of the largest node in the dataset.
- *
- * If you ever are trying to select a node and it's not working, this might be a cause.
- * @type {number}
- */
-const POINTER_SIZE = 10;
-function highlightVertex(quadRoot) {
-    const mP = getVirtualMouseCoordinates();
-    const nodes = quadRoot.getNodesInRange( {x: mP.x - 0.5 * POINTER_SIZE,
-                                                y: mP.y + 0.5 * POINTER_SIZE},
-                                            {x: mP.x + 0.5 * POINTER_SIZE,
-                                                y: mP.y - 0.5 * POINTER_SIZE});
-
-    push();
-    fill(255, 0.5);
-    rectMode(RADIUS);
-    //rect(mP.x, -mP.y, POINTER_SIZE); //TODO debug, remove
-    pop();
-
-    if (nodes.length === 0) {
-        highlightedVertex = null;
-        return;
-    }
-    let h;
-    let hD = Infinity;
-    for (const n of nodes) {
-        let d = dist(mP.x, mP.y, n.x, n.y);
-        if (d < hD && d <= n.size / 2) {
-            h = n;
-            hD = d;
-        }
-    }
-
-    if (h === undefined) {
-        highlightedVertex = null;
-        return;
-    }
-
-    if (highlightedVertex == null) {
-        Utils.randomEdges(h);
-    }
-
-    return h;
-}
-
 function getVirtualMouseCoordinates() {
     // noinspection JSUnresolvedVariable
     return camera.screen2virtual({x: mouseX, y: mouseY});

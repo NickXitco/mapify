@@ -45,6 +45,14 @@ class Camera {
         return {x: x, y: y};
     }
 
+    virtual2screen(point) {
+        let x = point.x;
+        let y = point.y;
+        x = Utils.map(x, this.x - (this.width / 2), this.x + (this.width / 2), 0, width);
+        y = Utils.map(y, this.y + (this.height / 2), this.y - (this.height / 2), 0, height);
+        return {x: x, y: y};
+    }
+
     getZoomFactor() {
         return {x: width /  this.width, y: height / this.height};
     }
