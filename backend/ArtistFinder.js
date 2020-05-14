@@ -1,65 +1,32 @@
 const mongoose = require('mongoose')
 
-async function findArtist(x, y) {
-    const Quad = mongoose.model('Quad');
+async function findArtist(id) {
     const Artist = mongoose.model('Artist');
-    const queue = [];
-    let bottomQuad;
-
-    const head = await Quad.findOne({name: "A"}).exec();
-    queue.push({name: head.name, x: head.x, y: head.y, r: head.r});
-
-    while (queue.length > 0) {
-        const q = queue.shift();
-        if (contains(x, y, q)) {
-            const qActual = await Quad.findOne({name: q.name}).exec();
-            if (qActual.leaf) {
-                bottomQuad = qActual;
-            } else {
-                const half = q.r / 2;
-                queue.push({name: q.name + "A", x: q.x - half, y: q.y + half, r: half});
-                queue.push({name: q.name + "B", x: q.x + half, y: q.y + half, r: half});
-                queue.push({name: q.name + "C", x: q.x - half, y: q.y - half, r: half});
-                queue.push({name: q.name + "D", x: q.x + half, y: q.y - half, r: half});
-            }
-        }
-    }
-
-
-    let closest = null;
-    let closestDistance = Infinity;
-    for (const id of bottomQuad.nodes) {
-        const artist = await Artist.findOne({id: id}).exec();
-        const d = distance(x, y, artist.x, artist.y);
-        if (d < closestDistance && d < (artist.size / 2)) {
-            closest = artist;
-            closestDistance = d;
-        }
-    }
-
-    if (!closest) {
-        return {};
-    }
-
-    let related = [];
-    for (const r of closest.related) {
-        related.push(await Artist.findOne({id: r}).exec());
-    }
+    const artist = await Artist.findOne({id: id}).exec();
 
     return {
-        name: closest.name,
-        id: closest.id,
-        followers: closest.followers,
-        popularity: closest.popularity,
-        size: closest.size,
-        x: closest.x,
-        y: closest.y,
-        r: closest.r,
-        g: closest.g,
-        b: closest.b,
-        genres: closest.genres,
-        related: related
+        name: artist.name,
+        id: artist.id,
+        followers: artist.followers,
+        popularity: artist.popularity,
+        size: artist.size,
+        x: artist.x,
+        y: artist.y,
+        r: artist.r,
+        g: artist.g,
+        b: artist.b,
+        genres: artist.genres,
+        related: await Artist.find().where('id').in(artist.related).exec()
     };
+}
+
+async function findArtistSearch(searchterm) {
+    const Artist = mongoose.model('Artist');
+
+    const artist = await Artist.findOne({name: searchterm}).exec();
+    if (artist) {
+        return await findArtist(artist.id);
+    }
 }
 
 function distance(x1, y1, x2, y2) {
@@ -71,4 +38,4 @@ function contains(x, y, q) {
             y >= q.y - q.r && y <= q.y + q.r;
 }
 
-module.exports = {findArtist};
+module.exports = {findArtist, findArtistSearch};

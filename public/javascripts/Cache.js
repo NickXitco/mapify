@@ -32,9 +32,10 @@ class Cache {
 
     insert(item, id) {
         const cacheItem = new CacheItem(item, id);
+        let evicted = null;
         if (!this.has(id)) {
             if (this.currentSize === this.capacity) {
-                this.evict();
+                evicted = this.evict();
             }
             if (this.headItem === null) {
                 this.headItem = cacheItem;
@@ -47,21 +48,22 @@ class Cache {
             this.map[id] = cacheItem;
             this.currentSize++;
         } else {
-            this.remove(id);
-            this.insert(item, id);
+            this.bubbleUp(id);
         }
+        return evicted;
     }
 
-    remove(id) {
+    bubbleUp(id) {
         if (!this.has(id)) {
-            return false;
+            return;
         }
 
         const cacheItem = this.get(id);
         if (this.headItem === cacheItem) {
-            this.headItem = cacheItem.next;
-            this.headItem.prev = null;
-        } else if (this.tailItem === cacheItem) {
+            return;
+        }
+
+        if (this.tailItem === cacheItem) {
             this.tailItem = cacheItem.prev;
             this.tailItem.next = null;
         } else {
@@ -69,23 +71,19 @@ class Cache {
             cacheItem.prev.next = cacheItem.next;
         }
 
-        delete this.map[id];
-
-        this.currentSize--;
-
-        return true;
+        this.headItem.prev = cacheItem;
+        cacheItem.next = this.headItem;
+        this.headItem = cacheItem;
+        cacheItem.prev = null;
     }
 
     evict() {
+        let evicted = this.tailItem;
+        delete this.map[this.tailItem.id];
         this.tailItem = this.tailItem.prev;
         this.tailItem.next = null;
         this.currentSize--;
-    }
-
-    clear() {
-        this.tailItem = null;
-        this.headItem = null;
-        this.currentSize = 0;
+        return evicted.item;
     }
 
     has(id) {
@@ -94,24 +92,6 @@ class Cache {
 
     get(id) {
         return this.map[id];
-    }
-
-    listify() {
-        const list = [];
-        let current = this.headItem;
-        if (current === null) { return list; }
-        while (current !== null) {
-            list.push(current.item);
-            current = current.next;
-        }
-
-        if (list[0].hasOwnProperty('name')) {
-            list.sort((a, b) => {
-                return a.name.length - b.name.length;
-            });
-        }
-
-        return list;
     }
 }
 

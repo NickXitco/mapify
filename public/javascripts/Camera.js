@@ -25,7 +25,6 @@ class Camera {
             this.width = width * (65 / (1 + Math.exp(-1 * (this.zoom - 5))));
         }
 
-
         const pos = this.calculateZoomPos(toward, oldWidth, oldHeight);
         this.x = pos.x;
         this.y = pos.y;

@@ -30,14 +30,18 @@ class DrawingHelpers {
         stroke('white');
         beginShape();
         vertex(u.x, -u.y);
-        colorMode(HSB)
 
-        let uHue = hue(u.color);
-        let vHue = hue(v.color);
-        let uSat = saturation(u.color);
-        let vSat = saturation(v.color);
+
+        let uHSV = DrawingHelpers.rgb2hsv(red(u.color), green(u.color), blue(u.color));
+        let vHSV = DrawingHelpers.rgb2hsv(red(v.color), green(v.color), blue(v.color));
+
+        let uHue = uHSV.h;
+        let vHue = vHSV.h;
+        let uSat = uHSV.s;
+        let vSat = vHSV.s;
+
         let dir;
-
+        colorMode(HSB);
         if (vHue > uHue) {
             if (uHue >= 145) {
                 dir = 1;
@@ -55,6 +59,7 @@ class DrawingHelpers {
                 dir = -1;
             }
         }
+
 
         for (let t = 0; t < DrawingHelpers.edgeEase(e.tMax); t += 0.01) {
             let tV = {x: Math.pow(1 - t, 3) * u.x + 3 * Math.pow(1 - t, 2) * t * uVec.x + 3 * (1 - t) * Math.pow(t, 2) * vVec.x + Math.pow(t, 3) * v.x,
@@ -75,6 +80,43 @@ class DrawingHelpers {
         pop();
 
         e.tMax = min(1, e.tMax + (EASE_SPEED / dist(u.x, u.y, v.x, v.y)));
+    }
+
+    static rgb2hsv(r, g, b) {
+        let rabs, gabs, babs, rr, gg, bb, h, s, v, diff, diffc, percentRoundFn;
+        rabs = r / 255;
+        gabs = g / 255;
+        babs = b / 255;
+        v = Math.max(rabs, gabs, babs),
+            diff = v - Math.min(rabs, gabs, babs);
+        diffc = c => (v - c) / 6 / diff + 1 / 2;
+        percentRoundFn = num => Math.round(num * 100) / 100;
+        if (diff === 0) {
+            h = s = 0;
+        } else {
+            s = diff / v;
+            rr = diffc(rabs);
+            gg = diffc(gabs);
+            bb = diffc(babs);
+
+            if (rabs === v) {
+                h = bb - gg;
+            } else if (gabs === v) {
+                h = (1 / 3) + rr - bb;
+            } else if (babs === v) {
+                h = (2 / 3) + gg - rr;
+            }
+            if (h < 0) {
+                h += 1;
+            }else if (h > 1) {
+                h -= 1;
+            }
+        }
+        return {
+            h: Math.round(h * 360),
+            s: percentRoundFn(s * 100),
+            v: percentRoundFn(v * 100)
+        };
     }
 
     static nodeText(v) {

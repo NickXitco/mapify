@@ -3,8 +3,8 @@ const router = express.Router();
 
 const ArtistFinder = require('../backend/ArtistFinder');
 
-router.get('/:id', (req, res) => {
-    ArtistFinder.findArtist(req.params.id).then(response => {
+router.get('/:search', (req, res) => {
+    ArtistFinder.findArtistSearch(req.params.search).then(response => {
         res.send(response);
     });
 })

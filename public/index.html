@@ -2,23 +2,68 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="stylesheets/style.css">
-    <script lang="javascript" type="text/javascript" src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.min.js"></script>
-
-    <script src="javascripts/Camera.js"></script>
-    <script src="javascripts/Debug.js"></script>
-    <script src="javascripts/Utils.js"></script>
-    <script src="javascripts/MouseEvents.js"></script>
-    <script src="javascripts/QuadtreeHelpers.js"></script>
-    <script src="javascripts/DrawingHelpers.js"></script>
-
-    <script src="javascripts/Cache.js"></script>
-
-    <script src="javascripts/Quad.js"></script>
-    <script src="javascripts/Artist.js"></script>
-
-    <script src="javascripts/sketch.js"></script>
+    <link rel="stylesheet" href="https://use.typekit.net/odg2bvl.css">
     <title></title>
 </head>
 <body>
+    <div id="infoBox">
+        <p class="infoBoxText" id="infoBoxArtistName">Ed Sheeran</p>
+        <p class="infoBoxText" id="infoBoxArtistGenre">Pop</p>
+    </div>
+
+    <div id="sidebar">
+        <div id="sidebar-stroke"></div>
+        <div id="name-and-picture">
+            <div id="picture"></div>
+            <div id="name">
+                <h1>Ed Sheeran</h1>
+            </div>
+        </div>
+
+        <div id="followersSection">
+            <p id="followerCount">6.7 Million</p>
+            <p id="followers">Followers</p>
+            <p id="followerRanking">(#1)</p>
+        </div>
+
+        <div id="genresSection">
+            <h2>Genres</h2>
+            <div id="genresTable">
+                <p>Pop</p>
+                <p>Pop</p>
+                <p>Pop</p>
+                <p>Pop</p>
+            </div>
+        </div>
+
+        <div id="relatedArtistsSection">
+            <h2>Related Artists</h2>
+            <p>Shawn Mendes</p>
+        </div>
+    </div>
+
+    <div id="searchBox">
+        <label>
+            <input id="searchInput" type="text" placeholder="search for an artist...">
+        </label>
+    </div>
 </body>
+
+
+
+<script src="javascripts/Cache.js"></script>
+<script src="javascripts/PriorityQueue.js"></script>
+
+<script src="javascripts/Camera.js"></script>
+<script src="javascripts/Debug.js"></script>
+<script src="javascripts/Utils.js"></script>
+<script src="javascripts/MouseEvents.js"></script>
+<script src="javascripts/QuadtreeHelpers.js"></script>
+<script src="javascripts/DrawingHelpers.js"></script>
+
+<script src="javascripts/Quad.js"></script>
+<script src="javascripts/Artist.js"></script>
+
+<script lang="javascript" type="text/javascript" src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.min.js"></script>
+<script src="javascripts/sketch.js"></script>
 </html>

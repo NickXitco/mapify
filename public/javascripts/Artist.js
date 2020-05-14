@@ -18,6 +18,8 @@ class Artist {
 
     quad;
 
+    loaded;
+
     constructor(name, id, followers, popularity, x, y, size, color, genres, relatedIDs) {
         this.name = name;
         this.id = id;
@@ -29,8 +31,10 @@ class Artist {
         this.color = color;
         this.genres = genres;
         this.relatedIDs = relatedIDs;
+
         this.relatedVertices = [];
         this.quad = null;
+        this.loaded = false;
     }
 
 }

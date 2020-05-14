@@ -12,5 +12,6 @@
     <orderEntry type="library" name="p5.js" level="application" />
     <orderEntry type="library" name="p5.dom" level="application" />
     <orderEntry type="library" name="p5.sound" level="application" />
+    <orderEntry type="library" name="odg2bvl" level="application" />
   </component>
 </module>

@@ -11,6 +11,7 @@ const indexRouter = require('./routes/index');
 const quadsRouter = require('./routes/quadsRouter');
 const quadRouter = require('./routes/quadRouter');
 const artistRouter = require('./routes/artistRouter');
+const artistSearchRouter = require('./routes/artistSearchRouter');
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use('/', indexRouter);
 app.use('/quads', quadsRouter);
 app.use('/quad', quadRouter);
 app.use('/artist', artistRouter);
+app.use('/artistSearch', artistSearchRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
