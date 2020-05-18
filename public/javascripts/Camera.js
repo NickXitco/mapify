@@ -30,6 +30,14 @@ class Camera {
         this.y = pos.y;
     }
 
+    /**
+     * Approximate inverse of the zoom camera function
+     * @param w
+     */
+    zoomFromWidth(w) {
+        this.zoom = 2.88539 * Math.log(0.0001220703125 * w);
+    }
+
     calculateZoomPos(toward, oldWidth, oldHeight) {
         const x = ((this.x - toward.x)/ oldWidth) * this.width + toward.x;
         const y = ((this.y - toward.y)/ oldHeight) * this.height + toward.y;

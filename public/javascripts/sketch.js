@@ -1,12 +1,12 @@
 let canvas = null;
-let camera = new Camera(0, 0, window.innerHeight, window.innerWidth, 3);
+let camera = new Camera(0, 0, window.innerHeight, window.innerWidth, 1);
+let loading = true;
 
 const MAX_CURVE_ANGLE = 180;
 
 let hoveredArtist = null;
-let hoverLoading = false;
-
-let loading = true;
+let clickedLoading = false;
+let clickedArtist = null;
 
 let darkenOpacity = 0;
 
@@ -26,51 +26,134 @@ let edges = [];
 let nodeLookup = {};
 let nodeOccurences = {};
 
-let searchPoint = null;
-
 let infoBox = document.getElementById("infoBox");
 let infoBoxArtistName = document.getElementById("infoBoxArtistName");
 let infoBoxArtistGenre = document.getElementById("infoBoxArtistGenre");
 
+let searchPoint = null;
 let searchInput = document.getElementById("searchInput");
+let suggestionTexts = [document.getElementById("suggestionText1"), document.getElementById("suggestionText2"), document.getElementById("suggestionText3"), document.getElementById("suggestionText4"), document.getElementById("suggestionText5")];
+let suggestionBoxes = [document.getElementById("suggestion1"), document.getElementById("suggestion2"), document.getElementById("suggestion3"), document.getElementById("suggestion4"), document.getElementById("suggestion5")];
+let searchDiv = document.getElementById("searchBox");
+let recentSuggestedArtists = [];
+let searchHover = false;
 
-searchInput.onchange = async function () {
-    if (searchInput.value.length > 3) {
+let sidebar = document.getElementById("sidebar");
+let sidebarStroke = document.getElementById("sidebarStroke");
+let sidebarArtistName = document.getElementById("sidebarArtistName");
+let sidebarFollowersCount = document.getElementById("followerCount");
+let sidebarFollowersWord = document.getElementById("followers");
+let sidebarFollowersRanking = document.getElementById("followerRanking");
+let genresList = document.getElementById("genresList");
+let relatedArtistsList = document.getElementById("relatedArtistsList");
+let sidebarPicture = document.getElementById("sidebarPicture");
+let sidebarOpenAmount = 0;
+let sidebarArtist = null;
+let sidebarHover = false;
+
+async function getClickedSuggestion(index) {
+    if (recentSuggestedArtists.length >= index) {
+        loadArtistFromSearch(recentSuggestedArtists[index - 1].id, true).then();
+        resetSidebar(false);
+    }
+}
+
+async function getClickedRelated(id) {
+    loadArtistFromSearch(id, true).then();
+}
+
+
+searchInput.onkeyup = async function (e) {
+    if (e.key === 'Enter' && searchInput.value.length > 0) {
+        loadArtistFromSearch(searchInput.value, false).then();
+        resetSidebar(false);
+    }
+
+    let suggestionsHeight = 34;
+
+    if (searchInput.value.length > 2) {
         const url = "artistSearch/" + searchInput.value;
         const response = await fetch(url);
         const data = await response.json();
-        
-        if (data) {
-            if (!nodeLookup.hasOwnProperty(data.id)) {
-                nodeLookup[data.id] = new Artist(data.name, data.id, data.followers, data.popularity, data.x, data.y,
-                    data.size, color(data.r, data.g, data.b), data.genres, data.related);
-            }
 
-            if (!nodeOccurences.hasOwnProperty(data.id)) {
-                nodeOccurences[data.id] = 1;
+        if (data.length === 0) {
+            suggestionTexts[0].innerText = "No Results Found.";
+            suggestionTexts[0].fontWeight = "600";
+            suggestionBoxes[i].style.display = "block";
+            suggestionsHeight += 20;
+
+            for (let i = 1; i < suggestionTexts.length; i++) {
+                suggestionBoxes[i].style.display = "none";
+                suggestionTexts[i].style.height = "0";
+            }
+        } else {
+            suggestionTexts[0].fontWeight = "300";
+        }
+
+        recentSuggestedArtists = data;
+
+        for (let i = 0; i < suggestionTexts.length; i++) {
+            if (data.length >= i + 1) {
+                suggestionTexts[i].innerText = data[i].name;
+                suggestionBoxes[i].style.display = "block";
+                suggestionsHeight += 20;
             } else {
-                nodeOccurences[data.id]++;
+                suggestionTexts[i].innerText = "";
+                suggestionBoxes[i].style.display = "none";
             }
-
-            const node = nodeLookup[data.id];
-            searchPoint = node;
-
-            for (const related of node.related) {
-                let relatedNode = nodeLookup[related.id];
-                if (relatedNode) {
-                    node.relatedVertices.push(relatedNode);
-                    nodeOccurences[related.id]++;
-                } else {
-                    let newNode = new Artist(related.name, related.id, related.followers, related.popularity, related.x, related.y,
-                        related.size, color(related.r, related.g, related.b), related.genres, related.related);
-                    nodeLookup[node.id] = newNode
-                    nodeOccurences[node.id] = 1;
-                    node.relatedVertices.push(newNode);
-                }
-            }
-            node.loaded = true;
+        }
+    } else {
+        for (let i = 0; i < suggestionTexts.length; i++) {
+            suggestionTexts[i].innerText = "";
+            suggestionBoxes[i].style.display = "none";
         }
     }
+
+    searchDiv.style.height = suggestionsHeight + "px";
+}
+
+async function loadArtistFromSearch(query, isQueryID) {
+    const response = await fetch('artist/' + query + "/" + isQueryID);
+    const data = await response.json();
+    if (!data) {
+        return;
+    }
+
+    createNewNode(data);
+    let node = nodeLookup[data.id];
+
+    for (const r of data.related) {
+        createNewNode(r);
+        node.relatedVertices.add(nodeLookup[r.id]);
+    }
+    node.loaded = true;
+
+    searchPoint = node;
+    clickedArtist = node;
+    edgeDrawing = true;
+}
+
+function createNewNode(data) {
+    let exists = true;
+    if (!nodeLookup.hasOwnProperty(data.id)) {
+        nodeLookup[data.id] = new Artist(data);
+        exists = false;
+    }
+
+    if (!nodeOccurences.hasOwnProperty(data.id)) {
+        nodeOccurences[data.id] = 1;
+    } else {
+        nodeOccurences[data.id]++;
+    }
+
+    if (exists) {
+        const q = nodeLookup[data.id].quad;
+        if (q) {
+            q.n = null;
+        }
+        nodeLookup[data.id].quad = null;
+    }
+    quadHead.insert(nodeLookup[data.id]);
 }
 
 let blur;
@@ -84,7 +167,7 @@ function setup() {
     canvas = createCanvas(window.innerWidth, window.innerHeight);
     camera.zoomCamera({x: 0, y:0 });
 
-    loadInitialQuads();//TODO loadInitialQuads, probably the first 16? but load the first 128 (or more?) into memory
+    loadInitialQuads().then();//TODO loadInitialQuads, probably the first 16? but load the first 128 (or more?) into memory
 
     angleMode(DEGREES);
     rectMode(RADIUS);
@@ -97,7 +180,6 @@ async function loadInitialQuads() {
     loadingQuads.add(quadHead);
     await quadHead.fetchQuad();
     quadHead.splitDown(4);
-
     loading = false;
 }
 
@@ -118,10 +200,10 @@ function draw() {
     if (searchPoint) {
         camera.x = searchPoint.x;
         camera.y = searchPoint.y;
-        camera.zoom = Math.sqrt(3.3 * searchPoint.size) - 17;
-        camera.zoomCamera({x: camera.x, y: camera.y});
+        camera.zoomFromWidth(searchPoint.size * 50);
+        camera.zoomCamera({x: searchPoint.x, y: searchPoint.y});
 
-        hoveredArtist = searchPoint;
+        clickedArtist = searchPoint;
         edgeDrawing = true;
         newEdges = true;
         searchPoint = null;
@@ -133,13 +215,10 @@ function draw() {
     drawOnscreenQuads(quadHead, camera);
 
     loadUnloaded();
+    getHoveredArtist();
 
-    if (!edgeDrawing) {
-        getHoveredArtist();
-    }
-
-    if (edgeDrawing && hoveredArtist && !hoveredArtist.loaded && !hoverLoading) {
-        loadArtist(hoveredArtist).then();
+    if (clickedArtist && !clickedArtist.loaded && !clickedLoading) {
+        loadArtist(clickedArtist).then();
     }
 
     if (edgeDrawing) {
@@ -154,24 +233,127 @@ function draw() {
         darkenOpacity = 0;
     }
 
-    if (edgeDrawing && hoveredArtist.loaded) {
-        drawEdges();
-        drawRelatedNodes();
+    if (edgeDrawing && clickedArtist && clickedArtist.loaded) {
+        drawEdges(clickedArtist);
+        drawRelatedNodes(clickedArtist);
+    }
+
+    if (clickedArtist && clickedArtist.loaded && sidebarArtist !== clickedArtist) {
+        setSidebar(clickedArtist);
     }
 
     if (frameCount % 5 === 0) {
         processOne();
     }
 
+    if (clickedArtist && sidebarOpenAmount < 1) {
+        openSidebar();
+    }
+
     pop();
 
     drawInfoBox(hoveredArtist);
 
-    Debug.debugAll(camera);
+    //Debug.debugAll(camera);
 }
 
-function drawRelatedNodes() {
-    for (const related of hoveredArtist.relatedVertices) {
+function setSidebar(artist) {
+    sidebarArtist = clickedArtist;
+    sidebar.style.display = "block";
+    let fontSize = 60;
+    sidebarArtistName.style.fontSize = fontSize + "px";
+    sidebarArtistName.innerText = artist.name;
+    while (sidebarArtistName.clientHeight > 150 || sidebarArtistName.clientWidth > 400) {
+        fontSize -= 2;
+        sidebarArtistName.style.fontSize = fontSize + "px"
+    }
+
+    if (artist.followers >= 1000000) {
+        sidebarFollowersCount.innerText = (artist.followers * 1.0 / 1000000).toFixed(1).toString() + " Million";
+    } else if (artist.followers >= 1000) {
+        sidebarFollowersCount.innerText = (artist.followers * 1.0 / 1000).toFixed(1).toString() + " Thousand";
+    } else {
+        sidebarFollowersCount.innerText = artist.followers;
+    }
+
+    if (artist.followers === 1) {
+        sidebarFollowersWord.innerText = "Follower";
+    } else {
+        sidebarFollowersWord.innerText = "Followers";
+    }
+
+    if (artist.rank) {
+        sidebarFollowersRanking.innerText = "(#" + artist.rank + ")";
+    } else {
+        sidebarFollowersRanking.innerText = "";
+    }
+
+    if (artist.genres) {
+        for (const genre of artist.genres) {
+            const newGenre = document.createElement("li");
+            newGenre.className = "sidebarListItem";
+            newGenre.innerText = genre;
+            genresList.appendChild(newGenre);
+        }
+    } else {
+        //TODO don't show genre text at all;
+    }
+
+    if (artist.relatedVertices) {
+        for (const r of artist.relatedVertices) {
+            const newRelated = document.createElement("li");
+            const id = r.id.valueOf();
+            newRelated.className = "sidebarListItem";
+            newRelated.innerText = r.name;
+            newRelated.onclick = () => {
+                getClickedRelated(id).then();
+                resetSidebar(false);
+            };
+            relatedArtistsList.appendChild(newRelated);
+        }
+    } else {
+        //TODO don't show related text at all;
+    }
+
+    sidebarPicture.style.boxShadow = "0 0 13px 1px " + artist.color.toString();
+    sidebarStroke.style.boxShadow = "0 0 13px 1px " + artist.color.toString();
+    sidebarStroke.style.background = artist.color.toString();
+    searchInput.style.borderColor = artist.color.toString();
+    searchInput.style.boxShadow = "0 0 6px 0.5px " + artist.color.toString();
+}
+
+function resetSidebar(removeFromFlow) {
+    sidebarArtistName.innerText = "";
+    sidebarFollowersRanking.innerText = "";
+    sidebarFollowersWord.innerText = "";
+    sidebarFollowersCount.innerText = "";
+    while (genresList.firstChild) {
+        genresList.removeChild(genresList.lastChild);
+    }
+
+    while (relatedArtistsList.firstChild) {
+        relatedArtistsList.removeChild(relatedArtistsList.lastChild);
+    }
+
+    searchInput.style.borderColor = "white";
+    searchInput.style.boxShadow = "0 0 6px 0.5px white";
+
+    if (removeFromFlow) {
+        sidebar.style.display = "none";
+        sidebarOpenAmount = 0;
+    }
+}
+
+function openSidebar() {
+    /*
+    const twentyFive = width / 4;
+    sidebar.style.width = (easeOutQuart(sidebarOpenAmount) * twentyFive) + "px";
+    sidebarOpenAmount = Math.min(1, sidebarOpenAmount + 0.05);
+     */
+}
+
+function drawRelatedNodes(clickedArtist) {
+    for (const related of clickedArtist.relatedVertices) {
         push();
         fill(color(red(related.color), green(related.color), blue(related.color), 127));
         stroke(related.color);
@@ -180,10 +362,10 @@ function drawRelatedNodes() {
         pop();
     }
     push();
-    fill(0, 200);
-    stroke(hoveredArtist.color);
-    strokeWeight(hoveredArtist.size / 5);
-    circle(hoveredArtist.x, -hoveredArtist.y, hoveredArtist.size);
+    fill(0, 255);
+    stroke(clickedArtist.color);
+    strokeWeight(clickedArtist.size / 5);
+    circle(clickedArtist.x, -clickedArtist.y, clickedArtist.size);
     pop();
 }
 
@@ -193,35 +375,27 @@ function easeOutQuart(x) {
 }
 
 async function loadArtist(artist) {
-    hoverLoading = true;
-    const response = await fetch('artist/' + artist.id);
+    clickedLoading = true;
+    const response = await fetch('artist/' + artist.id + "/true");
     const data = await response.json();
-    let node = nodeLookup[artist.id]
-    if (node) {
-        for (const related of data.related) {
-            let relatedNode = nodeLookup[related.id];
-            if (relatedNode) {
-                node.relatedVertices.push(relatedNode);
-                nodeOccurences[related.id]++;
-            } else {
-                let newNode = new Artist(related.name, related.id, related.followers, related.popularity, related.x, related.y,
-                    related.size, color(related.r, related.g, related.b), related.genres, related.related);
-                nodeLookup[node.id] = newNode
-                nodeOccurences[node.id] = 1;
-                node.relatedVertices.push(newNode);
-            }
-        }
-        node.loaded = true;
+
+    createNewNode(data);
+    let node = nodeLookup[data.id];
+
+    for (const r of data.related) {
+        createNewNode(r);
+        node.relatedVertices.add(nodeLookup[r.id]);
     }
-    hoverLoading = false;
+    node.loaded = true;
+    clickedLoading = false;
 }
 
-function drawEdges() {
+function drawEdges(clickedArtist) {
     if (newEdges) {
         edges = [];
-        for (const related of hoveredArtist.relatedVertices) {
+        for (const related of clickedArtist.relatedVertices) {
             edges.push({
-                u: hoveredArtist,
+                u: clickedArtist,
                 v: related,
                 cUrad: Math.random() / 2,
                 cUang: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
@@ -243,26 +417,12 @@ function processOne() {
         const r = unprocessedResponses.pop();
         const q = r.quad;
 
-        let nodes = [];
-
-        for (const node of r.data.nodes) {
-            if (!nodeLookup.hasOwnProperty(node.id)) {
-                nodeLookup[node.id] = new Artist(node.name, node.id, node.followers, node.popularity, node.x, node.y,
-                                                 node.size, color(node.r, node.g, node.b), node.genres, node.related);
-            }
-            nodes.push(nodeLookup[node.id]);
-
-            if (!nodeOccurences.hasOwnProperty(node.id)) {
-                nodeOccurences[node.id] = 1;
-            } else {
-                nodeOccurences[node.id]++;
-            }
-        }
-
-        q.nodeQuadTreeFromList(nodes);
-
         if (q.leaf && !r.data.leaf) {
             q.split();
+        }
+
+        for (const node of r.data.nodes) {
+            createNewNode(node);
         }
 
         if (r.data.image !== "") {
@@ -355,7 +515,7 @@ function drawOnscreenQuads(quadHead, camera) {
             textAlign(LEFT, TOP);
             //text('Actual Size: (' + q.image.width + ', ' + q.image.height + ')', q.x - q.r, -(q.y + q.r));
             //text('Displayed Size: (' + q.r * 2 * camera.getZoomFactor().x + ', ' + q.r * 2 * camera.getZoomFactor().y + ')', q.x - q.r, -(q.y + q.r * 0.95));
-            //text('Number of Nodes Inside: ' + q.renderableNodes.length, q.x - q.r, -(q.y + q.r * 0.90));
+            //text('Number of Nodes Inside: ' + q.renderableNodes.size, q.x - q.r, -(q.y + q.r * 0.90));
             noFill();
             stroke('white');
             strokeWeight(quad.r / 100);
@@ -366,16 +526,15 @@ function drawOnscreenQuads(quadHead, camera) {
 }
 
 function drawInfoBox(hoveredArtist) {
-    if (!hoveredArtist || edgeDrawing) {
+    if (!hoveredArtist) {
         infoBox.style.visibility = "hidden";
         return;
     }
     push();
     const point = camera.virtual2screen({x: hoveredArtist.x, y: hoveredArtist.y});
     infoBox.style.visibility = "visible";
-    infoBox.style.borderColor = hoveredArtist.color.toString('rgba%');
-    infoBox.style.left = (point.x) + "px";
-    infoBox.style.top = (point.y) + "px";
+    infoBox.style.borderColor = hoveredArtist.color.toString();
+    infoBox.style.boxShadow = "0 0 3px 1px " + hoveredArtist.color.toString();
 
     infoBoxArtistName.innerText = hoveredArtist.name;
     if (hoveredArtist.genres.length > 0) {
@@ -384,35 +543,51 @@ function drawInfoBox(hoveredArtist) {
         infoBoxArtistGenre.innerText = "";
     }
 
-    const width = Math.max(infoBoxArtistName.clientWidth, infoBoxArtistGenre.clientWidth);
-    const height = infoBoxArtistName.clientHeight + infoBoxArtistGenre.clientHeight;
+    const w = Math.max(infoBoxArtistName.clientWidth, infoBoxArtistGenre.clientWidth);
+    const h = infoBoxArtistName.clientHeight + infoBoxArtistGenre.clientHeight;
 
-    infoBox.style.width = width + "px";
-    infoBox.style.height = height + "px";
+    infoBox.style.width = w + "px";
+    infoBox.style.height = h + "px";
 
-    /*
-    stroke(hoveredArtist.color);
-    strokeWeight(4);
-    line(point.x, point.y, point.x + 50, point.y + 50);
-    line(point.x, point.y, point.x + 50 + width, point.y + 50 + height);
-    line(point.x, point.y, point.x + width + 2, point.y + 52 );
-     */
+    if (point.x >= width / 2) {
+        infoBox.style.left = (point.x - w - 6) + "px";
+        infoBox.style.borderRadius =  "50px 0 100px 0";
+        infoBox.style.textAlign = "left";
+        infoBoxArtistName.style.float = "left";
+        infoBoxArtistGenre.style.float = "left";
+        infoBoxArtistName.style.padding = "10px 50px 0 20px";
+        infoBoxArtistGenre.style.padding = "0 75px 10px 20px";
+    } else {
+        infoBox.style.left = (point.x) + "px";
+        infoBox.style.borderRadius =  "0 50px 0 100px";
+        infoBox.style.textAlign = "right";
+        infoBoxArtistName.style.float = "right";
+        infoBoxArtistGenre.style.float = "right";
+        infoBoxArtistName.style.padding = "10px 20px 0 50px";
+        infoBoxArtistGenre.style.padding = "0 20px 10px 75px";
+    }
+
+    infoBox.style.top = (point.y) + "px";
+
 
     pop();
 }
 
 function getHoveredArtist() {
+    if (searchHover || sidebarHover) {
+        hoveredArtist = null;
+        return;
+    }
+
     let stack = [];
     const mP = getVirtualMouseCoordinates();
     stack.push(quadHead);
     let foundQuad;
     while (stack.length > 0) {
         let q = stack.pop();
+
         if (q.contains(mP.x, mP.y)) {
             if (q.leaf) {
-                while (!q.loaded && q.name !== "A") {
-                    q = q.parent;
-                }
                 foundQuad = q;
                 break;
             }
@@ -425,6 +600,7 @@ function getHoveredArtist() {
     }
 
     if (!foundQuad) {
+        hoveredArtist = null;
         return;
     }
 
@@ -447,8 +623,13 @@ function getHoveredArtist() {
         }
     }
 
-    if (hoveredArtist !== closest) {
-        newEdges = true;
+    if (clickedArtist) {
+        if (clickedArtist.relatedVertices.has(closest) || closest === clickedArtist) {
+            hoveredArtist = closest;
+        } else {
+            hoveredArtist = null;
+            return;
+        }
     }
 
     hoveredArtist = closest;

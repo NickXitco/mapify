@@ -32,13 +32,7 @@ class Quad {
 
         this.leaf = true;
         this.loaded = false;
-        this.renderableNodes = [];
-    }
-
-    nodeQuadTreeFromList(nodes) {
-        for (const node of nodes) {
-            this.insert(node);
-        }
+        this.renderableNodes = new Set();
     }
 
     contains(x, y) {
@@ -56,34 +50,42 @@ class Quad {
     }
 
     insert(n) {
-        if (this.containsRect({x: n.x - n.size / 2, y: n.y + n.size / 2}, {x: n.x + n.size / 2, y: n.y - n.size / 2})) {
-            this.renderableNodes.push(n);
-            if (n.quad) { return true; }
+        let stack = [];
+        stack.push(this);
+        while (stack.length > 0) {
+            const q = stack.pop();
+            if (q.containsRect({x: n.x - n.size / 2, y: n.y + n.size / 2}, {x: n.x + n.size / 2, y: n.y - n.size / 2})) {
+                if (n.size / q.r > 0.011) {
+                    q.renderableNodes.add(n);
+                }
+
+                if (q.contains(n.x, n.y) && !n.quad) {
+                    if (q.leaf && q.n === null) {
+                        q.n = n;
+                        n.quad = q;
+                        continue;
+                    }
+
+                    if (q.leaf) {
+                        const temp = q.n;
+                        q.n = null;
+                        temp.quad = null;
+                        q.split();
+                        q.insert(temp);
+                        for (const n of q.renderableNodes) {
+                            q.insert(n);
+                        }
+                    }
+                }
+
+                if (!q.leaf) {
+                    stack.push(q.A);
+                    stack.push(q.B);
+                    stack.push(q.C);
+                    stack.push(q.D);
+                }
+            }
         }
-
-        if (!this.contains(n.x, n.y)) {
-            return false;
-        }
-
-        if (this.leaf && this.n === null) {
-            this.n = n;
-            n.quad = this;
-            return true;
-        }
-
-        if (this.leaf) {
-            const temp = this.n;
-            this.n = null;
-            this.split();
-            this.insert(temp);
-        }
-
-        this.A.insert(n);
-        this.B.insert(n);
-        this.C.insert(n);
-        this.D.insert(n);
-
-        return false;
     }
 
     containsRect(l1, r1) {
@@ -128,6 +130,6 @@ class Quad {
                 nodeOccurences[node.id]--;
             }
         }
-        this.renderableNodes = [];
+        this.renderableNodes.clear();
     }
 }

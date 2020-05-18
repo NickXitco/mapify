@@ -39,9 +39,11 @@ function zoom() {
 
 // noinspection JSUnusedGlobalSymbols
 function mousePressed() {
-    dragging = true;
-    drag = {x: mouseX, y: mouseY};
-    start = {x: mouseX, y: mouseY};
+    if (!searchHover && !sidebarHover) {
+        dragging = true;
+        drag = {x: mouseX, y: mouseY};
+        start = {x: mouseX, y: mouseY};
+    }
 }
 
 // noinspection JSUnusedGlobalSymbols
@@ -57,25 +59,31 @@ function mouseDragged() {
 
 // noinspection JSUnusedGlobalSymbols
 function mouseReleased() {
-    const newDrag = getVirtualMouseCoordinates();
-    const oldDrag = camera.screen2virtual(drag);
-    camera.x += (oldDrag.x - newDrag.x);
-    camera.y += (oldDrag.y - newDrag.y);
+    if (dragging) {
+        const newDrag = getVirtualMouseCoordinates();
+        const oldDrag = camera.screen2virtual(drag);
+        camera.x += (oldDrag.x - newDrag.x);
+        camera.y += (oldDrag.y - newDrag.y);
 
-    if (dist(start.x, start.y, drag.x, drag.y) < 5) {
-        if (edgeDrawing) {
-            edgeDrawing = false;
-            hoveredArtist = null;
+        if (dist(start.x, start.y, drag.x, drag.y) < 5) {
+            if (hoveredArtist) {
+                if (hoveredArtist !== clickedArtist) {
+                    newEdges = true;
+                    clickedArtist = hoveredArtist;
+                    resetSidebar(false);
+                }
+                edgeDrawing = true;
+            } else {
+                edgeDrawing = false;
+                clickedArtist = null;
+                resetSidebar(true);
+            }
         }
 
-        if (hoveredArtist) {
-            edgeDrawing = true;
-        }
+        driftVec = createVector(winMouseX - pwinMouseX, winMouseY - pwinMouseY);
+        drifting = true;
+        dragging = false;
     }
-
-    driftVec = createVector(winMouseX - pwinMouseX, winMouseY - pwinMouseY);
-    drifting = true;
-    dragging = false;
 }
 
 function drift(camera) {

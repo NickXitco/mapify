@@ -1,8 +1,17 @@
 const mongoose = require('mongoose')
 
-async function findArtist(id) {
+async function findArtist(query, isQueryID) {
     const Artist = mongoose.model('Artist');
-    const artist = await Artist.findOne({id: id}).exec();
+    let artist;
+    if (isQueryID) {
+        artist = await Artist.findOne({id: query}).exec();
+    } else {
+        artist = await Artist.findOne({name: query}).exec();
+    }
+
+    if (!artist) {
+        return {};
+    }
 
     return {
         name: artist.name,
@@ -22,20 +31,8 @@ async function findArtist(id) {
 
 async function findArtistSearch(searchterm) {
     const Artist = mongoose.model('Artist');
-
-    const artist = await Artist.findOne({name: searchterm}).exec();
-    if (artist) {
-        return await findArtist(artist.id);
-    }
-}
-
-function distance(x1, y1, x2, y2) {
-    return Math.hypot((x2 - x1), (y2 - y1));
-}
-
-function contains(x, y, q) {
-    return  x <= q.x + q.r && x >= q.x - q.r &&
-            y >= q.y - q.r && y <= q.y + q.r;
+    const searchRegex = new RegExp(searchterm, 'i');
+    return Artist.find({name: searchRegex}).sort({followers: -1, name: 1}).limit(5).exec();
 }
 
 module.exports = {findArtist, findArtistSearch};

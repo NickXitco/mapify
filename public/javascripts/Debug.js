@@ -2,7 +2,7 @@ class Debug {
     static drawCrosshairs() {
         push();
         strokeWeight(3);
-        stroke("lime");
+        stroke("white");
         line(0, 10, 0, -10);
         line(-10, 0, 10, 0);
         pop();
@@ -13,7 +13,7 @@ class Debug {
         push();
         translate(0, 0);
         scale(1);
-        fill("lime");
+        fill("white");
         noStroke();
         text(mP.x, 10, 25);
         text(mP.y, 10, 50);
@@ -42,7 +42,7 @@ class Debug {
         push();
         translate(0, 0);
         scale(1);
-        fill("lime");
+        fill("white");
         noStroke();
         text("Camera Center: (" + camera.x + ", " + camera.y + ")", 10, 75);
         text("Camera Width: " + camera.width, 10, 100);
@@ -55,7 +55,7 @@ class Debug {
         push();
         translate(0, 0);
         scale(1);
-        fill("lime");
+        fill("white");
         noStroke();
         let name = (hoveredArtist !== null) ? hoveredArtist.name : "None";
         text("Hovered Artist: " + name, 10, 175);
@@ -66,7 +66,7 @@ class Debug {
         push();
         translate(0, 0);
         scale(1);
-        fill("lime");
+        fill("white");
         noStroke();
         text("Canvas Width: " + width, 10, 200);
         text("Canvas Height: " + height, 10, 225);

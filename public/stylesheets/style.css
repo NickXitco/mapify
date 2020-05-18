@@ -25,15 +25,15 @@ body {
   user-select: none;
 
   visibility: hidden;
-  width: 20%;
-  height: 15%;
 
-  background-color: rgba(0, 0, 0, .85);
+  background-color: rgba(0, 0, 0, .90);
   position: absolute;
   z-index: 1000;
   display: block;
   border: solid 3px;
-  border-radius: 0 50px 0 100px;
+
+  box-shadow: 0 0 3px 3px white;
+
   overflow: hidden;
 }
 
@@ -46,22 +46,18 @@ body {
   display: inline;
   position: static;
   z-index: 1001;
-  text-align: right;
-  float: right;
   white-space: nowrap;
 }
 
 #infoBoxArtistName {
   font-weight: 600;
   text-transform: uppercase;
-  padding: 10px 20px 0 50px;
   vertical-align: text-bottom;
 }
 
 #infoBoxArtistGenre {
   font-weight: 100;
   text-transform: lowercase;
-  padding: 0 20px 10px 75px;
   vertical-align: text-top;
 }
 
@@ -70,30 +66,28 @@ a {
 }
 
 #sidebar {
-  visibility: hidden;
-  background: rgba(26, 26, 26, 0.66);
-  width: 0;
+  visibility: visible;
+  background: rgba(0, 0, 0, 0.90);
+  width: 25%;
   height: 100%;
   float: right;
   position: relative;
   z-index: 2000;
-  display: grid;
-  grid-template-rows: 210px 50px 200px auto;
+  display: none;
+  grid-template-rows: 210px 75px 250px auto;
 }
 
-#sidebar-stroke {
+#sidebarStroke {
   opacity: 1;
-  background: lime;
   width: 2px;
   height: 100%;
   display: block;
   float: left;
-  box-shadow: 0 0 13px 1px lime;
 }
 
-#name-and-picture {
+#nameAndPicture {
+  position: relative;
   opacity: 1;
-  border: 2px dashed red;
   width: 100%;
   height: 210px;
   display: grid;
@@ -101,17 +95,16 @@ a {
   grid-row: 1;
 }
 
-#picture {
-  border: 2px dashed green;
+#sidebarPicture {
   width: 150px;
   height: 150px;
   display: block;
   margin: 30px;
+  border-radius: 50%;
   grid-column: 1;
 }
 
 #name {
-  border: 2px dashed blue;
   display: flex;
   align-items: center;
   height: 210px;
@@ -121,29 +114,33 @@ a {
 }
 
 #followersSection {
-  grid-row: 2;
+  position: relative;
   width: 100%;
   margin: 30px;
 }
 
 #genresSection {
-  grid-row: 3;
-  width: 100%;
-  height: 100%;
+  position: relative;
+  width: 90%;
   margin: 30px;
 }
 
-#genresTable {
+#genresList {
+  position: relative;
   width: 100%;
-  display: grid;
-  grid-template-rows: 25% 25% 25% 25%;
-  grid-template-columns: 50% 50%;
+  columns: 2;
+}
+
+#relatedArtistsList {
+  width: 100%;
+  columns: 1;
+  position: relative;
 }
 
 #relatedArtistsSection {
   grid-row: 4;
   width: 100%;
-  position: static;
+  position: relative;
   margin: 30px;
 }
 
@@ -153,7 +150,7 @@ a {
   font-style: normal;
   color: white;
   text-transform: uppercase;
-  font-size: 24px;
+  font-size: 29px;
 }
 
 #followers {
@@ -162,7 +159,7 @@ a {
   font-style: normal;
   color: white;
   text-transform: uppercase;
-  font-size: 24px;
+  font-size: 29px;
 }
 
 #followerRanking {
@@ -171,12 +168,33 @@ a {
   font-style: italic;
   color: white;
   text-transform: uppercase;
-  font-size: 24px;
+  font-size: 29px;
 }
 
 p {
+  font-family: montserrat, sans-serif;
   display: inline-block;
   position: static;
+}
+
+.sidebarListItem {
+  font-family: montserrat, sans-serif;
+  font-size: 26px;
+  text-transform: uppercase;
+  font-weight: 200;
+  position: static;
+  list-style: none;
+}
+
+.sidebarListItem:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+#relatedArtistsSection p {
+  font-size: 26px;
+  text-transform: uppercase;
+  font-weight: 200;
 }
 
 h1 {
@@ -185,8 +203,9 @@ h1 {
   font-style: normal;
   color: white;
   text-transform: uppercase;
-  font-size: 58px;
+  font-size: 61px;
   position: static;
+  margin-right: 30px;
 }
 
 h2 {
@@ -200,25 +219,74 @@ h2 {
 }
 
 #searchBox {
-  background: rgba(0,0,0,0.8);
-  border: lime 2px solid;
   width: 200px;
-  height: 20px;
+  height: 34px;
   position: relative;
   z-index: 2000;
   float: right;
   top: 20px;
   right: 20px;
-  padding: 5px;
+
+  display: grid;
+  grid-template-rows: 34px 200px;
+
+  user-select: none;
+}
+
+#searchBar {
+  width: 200px;
+  height: 34px;
 }
 
 #searchInput {
   font-family: montserrat, sans-serif;
   font-weight: 300;
-  background: none;
   color: white;
-  display:flex;
-  align-items:center;
-  width:200px;
-  height:20px;
+  display: flex;
+  align-items: center;
+  width: 186px;
+  height: 20px;
+
+  background: rgba(0,0,0,0.6);
+  border: white 2px solid;
+
+  box-shadow: 0 0 6px 1px white;
+
+  padding: 5px;
+  grid-row: 1;
+  user-select: none
 }
+
+#suggestions {
+  width: 100%;
+  height: 100%;
+  grid-row: 2;
+  display: grid;
+  grid-template-rows: 40px 40px 40px 40px 40px;
+  justify-items: center;
+}
+
+.suggestion {
+  background: rgba(15,15,15,0.5);
+  height: 40px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+#suggestion1 {grid-row: 1; display: none}
+#suggestion2 {grid-row: 2; display: none}
+#suggestion3 {grid-row: 3; display: none}
+#suggestion4 {grid-row: 4; display: none}
+#suggestion5 {grid-row: 5; display: none}
+
+.suggestedArtist p:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.suggestedArtist {
+  padding: 10px;
+  z-index: 3000;
+}
+

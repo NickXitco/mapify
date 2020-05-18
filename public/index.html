@@ -11,41 +11,63 @@
         <p class="infoBoxText" id="infoBoxArtistGenre">Pop</p>
     </div>
 
-    <div id="sidebar">
-        <div id="sidebar-stroke"></div>
-        <div id="name-and-picture">
-            <div id="picture"></div>
+    <div id="sidebar" onmouseenter="sidebarHover = true" onmouseleave="sidebarHover = false">
+        <div id="sidebarStroke"></div>
+        <div id="nameAndPicture">
+            <div id="sidebarPicture"></div>
             <div id="name">
-                <h1>Ed Sheeran</h1>
+                <h1 id="sidebarArtistName"></h1>
             </div>
         </div>
 
         <div id="followersSection">
-            <p id="followerCount">6.7 Million</p>
-            <p id="followers">Followers</p>
-            <p id="followerRanking">(#1)</p>
+            <p id="followerCount"></p>
+            <p id="followers"></p>
+            <p id="followerRanking"></p>
         </div>
 
         <div id="genresSection">
             <h2>Genres</h2>
-            <div id="genresTable">
-                <p>Pop</p>
-                <p>Pop</p>
-                <p>Pop</p>
-                <p>Pop</p>
-            </div>
+            <ul id="genresList"></ul>
         </div>
 
         <div id="relatedArtistsSection">
             <h2>Related Artists</h2>
-            <p>Shawn Mendes</p>
+            <ul id="relatedArtistsList"></ul>
         </div>
     </div>
 
-    <div id="searchBox">
-        <label>
+    <div id="searchBox" onmouseenter="searchHover = true" onmouseleave="searchHover = false">
+        <div id="searchBar">
             <input id="searchInput" type="text" placeholder="search for an artist...">
-        </label>
+        </div>
+        <div id="suggestions">
+            <div class="suggestion" id="suggestion1">
+                <div class="suggestedArtist">
+                    <p id="suggestionText1" onclick="getClickedSuggestion(1)"></p>
+                </div>
+            </div>
+            <div class="suggestion" id="suggestion2">
+                <div class="suggestedArtist">
+                    <p id="suggestionText2" onclick="getClickedSuggestion(2)"></p>
+                </div>
+            </div>
+            <div class="suggestion" id="suggestion3">
+                <div class="suggestedArtist">
+                    <p id="suggestionText3" onclick="getClickedSuggestion(3)"></p>
+                </div>
+            </div>
+            <div class="suggestion" id="suggestion4">
+                <div class="suggestedArtist">
+                    <p id="suggestionText4" onclick="getClickedSuggestion(4)"></p>
+                </div>
+            </div>
+            <div class="suggestion" id="suggestion5">
+                <div class="suggestedArtist">
+                    <p id="suggestionText5" onclick="getClickedSuggestion(5)"></p>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 

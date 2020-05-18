@@ -20,19 +20,19 @@ class Artist {
 
     loaded;
 
-    constructor(name, id, followers, popularity, x, y, size, color, genres, relatedIDs) {
-        this.name = name;
-        this.id = id;
-        this.followers = followers;
-        this.popularity = popularity;
-        this.x = x;
-        this.y = y;
-        this.size = size;
-        this.color = color;
-        this.genres = genres;
-        this.relatedIDs = relatedIDs;
+    constructor(doc) {
+        this.name = doc.name;
+        this.id = doc.id;
+        this.followers = doc.followers;
+        this.popularity = doc.popularity;
+        this.x = doc.x;
+        this.y = doc.y;
+        this.size = doc.size;
+        this.color = color(doc.r, doc.g, doc.b);
+        this.genres = doc.genres;
+        this.relatedIDs = doc.relatedIDs;
 
-        this.relatedVertices = [];
+        this.relatedVertices = new Set();
         this.quad = null;
         this.loaded = false;
     }
