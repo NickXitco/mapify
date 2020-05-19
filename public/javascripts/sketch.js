@@ -51,22 +51,28 @@ let sidebarOpenAmount = 0;
 let sidebarArtist = null;
 let sidebarHover = false;
 
+let timingEvents = {};
+
 async function getClickedSuggestion(index) {
     if (recentSuggestedArtists.length >= index) {
-        loadArtistFromSearch(recentSuggestedArtists[index - 1].id, true).then();
-        resetSidebar(false);
+        loadArtistFromSearch(recentSuggestedArtists[index - 1].id, true).then(_ => {
+            resetSidebar(false);}
+            );
     }
 }
 
 async function getClickedRelated(id) {
-    loadArtistFromSearch(id, true).then();
+    loadArtistFromSearch(id, true).then(_ => {
+        resetSidebar(false);}
+    );
 }
 
 
 searchInput.onkeyup = async function (e) {
     if (e.key === 'Enter' && searchInput.value.length > 0) {
-        loadArtistFromSearch(searchInput.value, false).then();
-        resetSidebar(false);
+        loadArtistFromSearch(searchInput.value, false).then(_ => {
+            resetSidebar(false);
+        });
     }
 
     let suggestionsHeight = 34;
@@ -190,9 +196,11 @@ function draw() {
         return;
     }
 
-    background(3);
-    stroke(255);
-    noFill();
+    const t0 = performance.now();
+    //background(3); //TODO only do this if it's strictly necessary given the current camera. Otherwise it's a waste of an operation
+
+    const t1 = performance.now();
+    timingEvents['Drawing Setup'] = t1 - t0;
 
     drift(camera);
     zoom();
@@ -212,7 +220,13 @@ function draw() {
     push();
     camera.setView();
 
+    const t2 = performance.now();
+    timingEvents['Camera Moves'] = t2 - t1;
+
     drawOnscreenQuads(quadHead, camera);
+
+    const t3 = performance.now();
+    //timingEvents['Quad Drawing'] = t3 - t2;
 
     loadUnloaded();
     getHoveredArtist();
@@ -220,6 +234,9 @@ function draw() {
     if (clickedArtist && !clickedArtist.loaded && !clickedLoading) {
         loadArtist(clickedArtist).then();
     }
+
+    const t4 = performance.now();
+    timingEvents['Get Hovered Artist'] = t4 - t3;
 
     if (edgeDrawing) {
         push();
@@ -233,30 +250,49 @@ function draw() {
         darkenOpacity = 0;
     }
 
+    const t5 = performance.now();
+    timingEvents['Darken Scene'] = t5 - t4;
+
+    let t6 = performance.now();
+    let t7 = performance.now();
     if (edgeDrawing && clickedArtist && clickedArtist.loaded) {
         drawEdges(clickedArtist);
+        t6 = performance.now();
         drawRelatedNodes(clickedArtist);
+        t7 = performance.now();
     }
+
+    timingEvents['Draw Related Edges'] = t6 - t5;
+    timingEvents['Draw Related Nodes'] = t7 - t6;
 
     if (clickedArtist && clickedArtist.loaded && sidebarArtist !== clickedArtist) {
         setSidebar(clickedArtist);
-    }
-
-    if (frameCount % 5 === 0) {
-        processOne();
     }
 
     if (clickedArtist && sidebarOpenAmount < 1) {
         openSidebar();
     }
 
-    pop();
+    const t8 = performance.now();
+    timingEvents['Sidebar'] = t8 - t7;
 
+    if (frameCount % 4 === 0) { //TODO adjust this until it feels right, or adjust it dynamically?
+        processOne();
+    }
+
+    const t9 = performance.now();
+    timingEvents['Quad Processing'] = t9 - t8;
+
+    pop();
     drawInfoBox(hoveredArtist);
 
-    //Debug.debugAll(camera);
+    const t10 = performance.now();
+    timingEvents['Info Box'] = t10 - t9;
+    timingEvents['Total'] = t10 - t0;
+    Debug.debugAll(camera, timingEvents);
 }
 
+const SIDEBAR_GENRE_LIMIT = 10;
 function setSidebar(artist) {
     sidebarArtist = clickedArtist;
     sidebar.style.display = "block";
@@ -289,11 +325,16 @@ function setSidebar(artist) {
     }
 
     if (artist.genres) {
+        let genreCount = 0;
         for (const genre of artist.genres) {
             const newGenre = document.createElement("li");
             newGenre.className = "sidebarListItem";
             newGenre.innerText = genre;
             genresList.appendChild(newGenre);
+            genreCount++;
+            if (genreCount === SIDEBAR_GENRE_LIMIT) {
+                break;
+            }
         }
     } else {
         //TODO don't show genre text at all;
@@ -307,7 +348,6 @@ function setSidebar(artist) {
             newRelated.innerText = r.name;
             newRelated.onclick = () => {
                 getClickedRelated(id).then();
-                resetSidebar(false);
             };
             relatedArtistsList.appendChild(newRelated);
         }
@@ -323,6 +363,7 @@ function setSidebar(artist) {
 }
 
 function resetSidebar(removeFromFlow) {
+    sidebarArtist = null;
     sidebarArtistName.innerText = "";
     sidebarFollowersRanking.innerText = "";
     sidebarFollowersWord.innerText = "";
@@ -341,15 +382,14 @@ function resetSidebar(removeFromFlow) {
     if (removeFromFlow) {
         sidebar.style.display = "none";
         sidebarOpenAmount = 0;
+        sidebar.style.left =  width / 4 + "px";
     }
 }
 
 function openSidebar() {
-    /*
     const twentyFive = width / 4;
-    sidebar.style.width = (easeOutQuart(sidebarOpenAmount) * twentyFive) + "px";
+    sidebar.style.left = Utils.map(easeOutQuart(sidebarOpenAmount), 0, 1, twentyFive, 0) + "px";
     sidebarOpenAmount = Math.min(1, sidebarOpenAmount + 0.05);
-     */
 }
 
 function drawRelatedNodes(clickedArtist) {
@@ -417,6 +457,14 @@ function processOne() {
         const r = unprocessedResponses.pop();
         const q = r.quad;
 
+        /* TODO
+            Implement some sort of system that loads quads that we can see first
+        if (!camera.contains(q)) {
+            unprocessedResponses.push(r);
+            return;
+        }
+         */
+
         if (q.leaf && !r.data.leaf) {
             q.split();
         }
@@ -429,8 +477,11 @@ function processOne() {
             loadImage('data:image/png;base64, ' + r.data.image, (img) => {
                 q.image = img;
                 q.loaded = true;
-                loadingQuads.delete(quad);
+                loadingQuads.delete(q);
             });
+        } else {
+            q.loaded = true;
+            loadingQuads.delete(q);
         }
 
         /*
@@ -457,6 +508,8 @@ function drawLoading() {
 
 const TILE_WIDTH = 1024;
 function drawOnscreenQuads(quadHead, camera) {
+    const q0 = performance.now();
+
     let quads = new Set();
     let stack = [];
     stack.push(quadHead);
@@ -464,7 +517,7 @@ function drawOnscreenQuads(quadHead, camera) {
     while (stack.length > 0) {
         let q = stack.pop();
         if (camera.contains(q)) {
-            if (!q.image) {
+            if (!q.loaded) {
                 if (!loadingQuads.has(q) && !unloadedQuads.has(q)) {
                     unloadedQuads.add(q);
                     unloadedQuadsPriorityQueue.push(q);
@@ -472,10 +525,16 @@ function drawOnscreenQuads(quadHead, camera) {
             }
             if ((q.r * 2 * scale) / TILE_WIDTH > 1) {
                 if (q.leaf) {
-                    while (!q.image && q.name !== "A") {
+                    while (!q.loaded && q.name !== "A") {
                         q = q.parent;
                     }
                     quads.add(q);
+                    if (!q.image) {
+                        while (!q.image && q.name !== "A") {
+                            q = q.parent;
+                        }
+                        quads.add(q);
+                    }
                 } else {
                     stack.push(q.A);
                     stack.push(q.B);
@@ -483,18 +542,31 @@ function drawOnscreenQuads(quadHead, camera) {
                     stack.push(q.D);
                 }
             } else if ((q.r * 2 * scale) / TILE_WIDTH >= 0.5) {
-                while (!q.image && q.name !== "A") {
+                while (!q.loaded && q.name !== "A") {
                     q = q.parent;
                 }
                 quads.add(q);
+                if (!q.image) {
+                    while (!q.image && q.name !== "A") {
+                        q = q.parent;
+                    }
+                    quads.add(q);
+                }
             }
         }
     }
 
+    const q1 = performance.now()
+    timingEvents['Visible Quads Finding'] = q1 - q0;
+
     push();
     noFill();
     stroke('white');
-    for (const q of [...quads].sort((a, b) => a.name.length - b.name.length)) {
+    //const sortedQuads = [...quads].sort((a, b) => a.name.length - b.name.length);
+
+    const q2 = performance.now()
+    timingEvents['Sorting Visible'] = q2 - q1;
+    for (const q of quads) {
 
         /*
         let evicted = quadCache.insert(q, q.name);
@@ -502,34 +574,61 @@ function drawOnscreenQuads(quadHead, camera) {
             evicted.deleteSelf(nodeOccurences, nodeLookup);
         }
          */
-
+        noStroke();
         if (q.image) {
-            noStroke();
-            textSize(q.r / 10);
+
             image(q.image, q.x - q.r, -(q.y + q.r), q.r * 2, q.r * 2, 0, 0);
-            fill('white');
-            textAlign(CENTER, CENTER);
-            //text(q.name, q.x, -q.y);
-            textSize(q.r / 20);
+            /*
+            textSize(q.r / 10);
             fill('green')
             textAlign(LEFT, TOP);
-            //text('Actual Size: (' + q.image.width + ', ' + q.image.height + ')', q.x - q.r, -(q.y + q.r));
-            //text('Displayed Size: (' + q.r * 2 * camera.getZoomFactor().x + ', ' + q.r * 2 * camera.getZoomFactor().y + ')', q.x - q.r, -(q.y + q.r * 0.95));
-            //text('Number of Nodes Inside: ' + q.renderableNodes.size, q.x - q.r, -(q.y + q.r * 0.90));
+            text('Actual Size: (' + q.image.width + ', ' + q.image.height + ')', q.x - q.r, -(q.y + q.r));
+            text('Displayed Size: (' + q.r * 2 * camera.getZoomFactor().x + ', ' + q.r * 2 * camera.getZoomFactor().y + ')', q.x - q.r, -(q.y + q.r * 0.95));
+            text('Number of Nodes Inside: ' + q.renderableNodes.size, q.x - q.r, -(q.y + q.r * 0.90));
+             */
+
+        } else {
+            push();
             noFill();
-            stroke('white');
-            strokeWeight(quad.r / 100);
-            //rect(q.x, -q.y, q.r, q.r);
+            for (const n of q.renderableNodes) {
+                stroke(n.color);
+                strokeWeight(n.size / 5);
+                circle(n.x, -n.y, n.size);
+            }
+            pop();
         }
+        /*
+        fill('white');
+        textAlign(CENTER, CENTER);
+        text(q.name, q.x, -q.y);
+        textSize(q.r / 20);
+        noFill();
+        stroke('white');
+        strokeWeight(quad.r / 100);
+        rect(q.x, -q.y, q.r, q.r);
+         */
+
+
     }
+    timingEvents['Visible Quads Drawing'] = performance.now() - q2;
     pop();
 }
 
+let infoBoxArtist = null;
 function drawInfoBox(hoveredArtist) {
     if (!hoveredArtist) {
         infoBox.style.visibility = "hidden";
+        if (infoBoxArtist) {
+            infoBox.style.visibility = "hidden";
+            infoBoxArtist = null;
+        }
         return;
     }
+
+    if (hoveredArtist === infoBoxArtist) {
+        return;
+    }
+
     push();
     const point = camera.virtual2screen({x: hoveredArtist.x, y: hoveredArtist.y});
     infoBox.style.visibility = "visible";
@@ -543,14 +642,7 @@ function drawInfoBox(hoveredArtist) {
         infoBoxArtistGenre.innerText = "";
     }
 
-    const w = Math.max(infoBoxArtistName.clientWidth, infoBoxArtistGenre.clientWidth);
-    const h = infoBoxArtistName.clientHeight + infoBoxArtistGenre.clientHeight;
-
-    infoBox.style.width = w + "px";
-    infoBox.style.height = h + "px";
-
     if (point.x >= width / 2) {
-        infoBox.style.left = (point.x - w - 6) + "px";
         infoBox.style.borderRadius =  "50px 0 100px 0";
         infoBox.style.textAlign = "left";
         infoBoxArtistName.style.float = "left";
@@ -558,7 +650,6 @@ function drawInfoBox(hoveredArtist) {
         infoBoxArtistName.style.padding = "10px 50px 0 20px";
         infoBoxArtistGenre.style.padding = "0 75px 10px 20px";
     } else {
-        infoBox.style.left = (point.x) + "px";
         infoBox.style.borderRadius =  "0 50px 0 100px";
         infoBox.style.textAlign = "right";
         infoBoxArtistName.style.float = "right";
@@ -567,9 +658,22 @@ function drawInfoBox(hoveredArtist) {
         infoBoxArtistGenre.style.padding = "0 20px 10px 75px";
     }
 
+    const w = Math.max(infoBoxArtistName.clientWidth, infoBoxArtistGenre.clientWidth);
+    const h = infoBoxArtistName.clientHeight + infoBoxArtistGenre.clientHeight;
+
+    infoBox.style.width = w + "px";
+    infoBox.style.height = h + "px";
+
     infoBox.style.top = (point.y) + "px";
 
+    if (point.x >= width / 2) {
+        infoBox.style.left = (point.x - w - 6) + "px";
+    } else {
+        infoBox.style.left = (point.x) + "px";
+    }
 
+
+    infoBoxArtist = hoveredArtist;
     pop();
 }
 

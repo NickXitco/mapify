@@ -1,4 +1,5 @@
 class Debug {
+
     static drawCrosshairs() {
         push();
         strokeWeight(3);
@@ -73,10 +74,47 @@ class Debug {
         pop();
     }
 
-    static debugAll(camera) {
+    static loadingStats() {
+        push();
+        fill("white");
+        noStroke();
+        text("Unloaded Quads " + unloadedQuads.size, 10, 250);
+        text("Loading Quads " + loadingQuads.size, 10, 275);
+        text("Unprocessed Requests " + unprocessedResponses.length, 10, 300);
+        pop();
+    }
+
+    static averageTimingEvents = {};
+    static timingGraph(timingEvents) {
+        push();
+        rectMode(CORNER);
+        const total = timingEvents['Total'];
+        let currentHeight = height - 40
+        for (const timingName of Object.keys(timingEvents)) {
+            if (timingName === 'Total') {continue;}
+            const percentage = timingEvents[timingName] / total;
+
+            if (this.averageTimingEvents[timingName]) {
+                this.averageTimingEvents[timingName] = (percentage + 9 * this.averageTimingEvents[timingName]) / 10;
+            } else {
+                this.averageTimingEvents[timingName] = percentage;
+            }
+
+            stroke('white');
+            noFill();
+            rect(10, currentHeight, this.averageTimingEvents[timingName] * 50, 10);
+            noStroke();
+            fill('white');
+            text(timingName + " - " + timingEvents[timingName].toFixed(2), 100, currentHeight + 8);
+            currentHeight -= 20;
+        }
+        pop();
+    }
+
+    static debugAll(camera, timingEvents) {
         push();
         camera.setView();
-        Debug.drawCrosshairs();
+        //Debug.drawCrosshairs();
         pop();
         Debug.debugCamera();
         //Debug.drawScreenCrosshairs();
@@ -84,5 +122,7 @@ class Debug {
         Debug.canvasSize();
         Debug.printFPS();
         Debug.printMouseCoordinates();
+        Debug.loadingStats();
+        Debug.timingGraph(timingEvents)
     }
 }
