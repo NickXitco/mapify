@@ -88,10 +88,16 @@ class Debug {
     static timingGraph(timingEvents) {
         push();
         rectMode(CORNER);
-        const total = timingEvents['Total'];
+        fill('white');
+        noStroke();
+        let total = 0;
+
+        for (const timingName of Object.keys(timingEvents)) {
+            total += timingEvents[timingName];
+        }
+
         let currentHeight = height - 40
         for (const timingName of Object.keys(timingEvents)) {
-            if (timingName === 'Total') {continue;}
             const percentage = timingEvents[timingName] / total;
 
             if (this.averageTimingEvents[timingName]) {
@@ -100,11 +106,7 @@ class Debug {
                 this.averageTimingEvents[timingName] = percentage;
             }
 
-            stroke('white');
-            noFill();
             rect(10, currentHeight, this.averageTimingEvents[timingName] * 50, 10);
-            noStroke();
-            fill('white');
             text(timingName + " - " + timingEvents[timingName].toFixed(2), 100, currentHeight + 8);
             currentHeight -= 20;
         }

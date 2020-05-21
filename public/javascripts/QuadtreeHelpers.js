@@ -1,57 +1,131 @@
-class QuadtreeHelpers {
-    static radius(vertices) {
-        let r = 0;
-        for (const v of vertices) {
-            r = max(abs(v.x), abs(v.y), r);
+function processOne() {
+    if (unprocessedResponses.length > 0) {
+        const r = unprocessedResponses.pop();
+        const q = r.quad;
+
+        /* TODO
+            Implement some sort of system that loads quads that we can see first
+        if (!camera.contains(q)) {
+            unprocessedResponses.push(r);
+            return;
         }
-        return r;
-    }
+         */
 
-    static drawQuadtree(quadRoot) {
-        push();
-        rectMode(RADIUS);
-        let quads = [];
-        quads.push(quadRoot);
-
-        while (quads.length > 0) {
-            const q = quads.pop();
-            if (q.A !== undefined) quads.push(q.A);
-            if (q.B !== undefined) quads.push(q.B);
-            if (q.C !== undefined) quads.push(q.C);
-            if (q.D !== undefined) quads.push(q.D);
-
-            if (q.n !== null && q.n.visible) stroke("white");
-            else continue;
-
-            rect(q.x, -q.y, q.r, q.r);
-            push();
-            noStroke();
-            fill(255);
-            textAlign(CENTER, CENTER);
-            textSize(q.r);
-            text(q.name, q.x, -q.y);
-            pop();
+        if (q.leaf && !r.data.leaf) {
+            q.split();
         }
-        pop();
+
+        for (const node of r.data.nodes) {
+            createNewNode(node);
+        }
+
+        if (r.data.image !== "") {
+            loadImage('data:image/png;base64, ' + r.data.image, (img) => {
+                q.image = img;
+                q.loaded = true;
+                loadingQuads.delete(q);
+            });
+        } else {
+            q.loaded = true;
+            loadingQuads.delete(q);
+        }
+
+        /*
+        let evicted = quadCache.insert(q, q.name);
+        if (evicted) {
+            evicted.deleteSelf(nodeOccurences, nodeLookup);
+        }
+         */
     }
 }
 
 
-/**
- * 0.5 is "correct", anything greater will render more outside the viewport,
- * anything less will render only a percentage of the viewport.
- * There are many, many optimizations to be made just in the way that we handle
- * this parameter. However, the total view amount should always be at least 0.5,
- * because we need to be able to render nodes who's own circle rendering falls
- * outside their quad.
- *
- * For example:
- *
- *   We could have the view amount always stay at 0.5, but also declare a
- *   VIEW_OFFSET sort of variable that adds a constant amount of view to the
- *   outside of the frame. We could make that constant equal to the largest
- *   node in the dataset, which would always ensure that every node is in view.
- *
- * @type {number}
- */
-const VIEW_AMOUNT = 0.55
+const TILE_WIDTH = 1024;
+function bubbleAddQuad(q, quads) {
+    while (!q.loaded && q.name !== "A") {
+        q = q.parent;
+    }
+    quads.add(q);
+    if (!q.image) {
+        while (!q.image && q.name !== "A") {
+            q = q.parent;
+        }
+        quads.add(q);
+    }
+}
+
+function drawOnscreenQuads(quadHead, camera) {
+    let quads = new Set();
+    let stack = [];
+    stack.push(quadHead);
+    const scale = camera.getZoomFactor().x;
+    while (stack.length > 0) {
+        let q = stack.pop();
+        if (camera.contains(q)) {
+            if (!q.loaded) {
+                if (!loadingQuads.has(q) && !unloadedQuads.has(q)) {
+                    unloadedQuads.add(q);
+                    unloadedQuadsPriorityQueue.push(q);
+                }
+            }
+            if ((q.r * 2 * scale) / TILE_WIDTH > 1) {
+                if (q.leaf) {
+                    bubbleAddQuad(q, quads);
+                } else {
+                    stack.push(q.A);
+                    stack.push(q.B);
+                    stack.push(q.C);
+                    stack.push(q.D);
+                }
+            } else if ((q.r * 2 * scale) / TILE_WIDTH >= 0.5) {
+                bubbleAddQuad(q, quads);
+            }
+        }
+    }
+
+    createTimingEvent("Visible Quads Finding");
+
+    //const sortedQuads = [...quads].sort((a, b) => a.name.length - b.name.length);
+    for (const q of quads) {
+
+        /*
+        let evicted = quadCache.insert(q, q.name);
+        if (evicted) {
+            evicted.deleteSelf(nodeOccurences, nodeLookup);
+        }
+         */
+        if (q.image) {
+
+            image(q.image, q.x - q.r, -(q.y + q.r), q.r * 2, q.r * 2, 0, 0);
+            /*
+            textSize(q.r / 10);
+            fill('green')
+            textAlign(LEFT, TOP);
+            text('Actual Size: (' + q.image.width + ', ' + q.image.height + ')', q.x - q.r, -(q.y + q.r));
+            text('Displayed Size: (' + q.r * 2 * camera.getZoomFactor().x + ', ' + q.r * 2 * camera.getZoomFactor().y + ')', q.x - q.r, -(q.y + q.r * 0.95));
+            text('Number of Nodes Inside: ' + q.renderableNodes.size, q.x - q.r, -(q.y + q.r * 0.90));
+             */
+
+        } else {
+            push();
+            noFill();
+            for (const n of q.renderableNodes) {
+                stroke(n.color);
+                strokeWeight(n.size / 5);
+                circle(n.x, -n.y, n.size);
+            }
+            pop();
+        }
+        /*
+        fill('white');
+        textAlign(CENTER, CENTER);
+        text(q.name, q.x, -q.y);
+        textSize(q.r / 20);
+        noFill();
+        stroke('white');
+        strokeWeight(quad.r / 100);
+        rect(q.x, -q.y, q.r, q.r);
+         */
+    }
+    createTimingEvent("Visible Quads Drawing");
+}
