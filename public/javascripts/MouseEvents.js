@@ -39,7 +39,7 @@ function zoom() {
 
 // noinspection JSUnusedGlobalSymbols
 function mousePressed() {
-    if (!searchHover && !sidebarHover) {
+    if (!SearchBox.hoverFlag && !Sidebar.hoverFlag) {
         dragging = true;
         drag = {x: mouseX, y: mouseY};
         start = {x: mouseX, y: mouseY};
@@ -70,13 +70,13 @@ function mouseReleased() {
                 if (hoveredArtist !== clickedArtist) {
                     newEdges = true;
                     clickedArtist = hoveredArtist;
-                    resetSidebar(false);
+                    Sidebar.resetSidebar(false);
                 }
                 edgeDrawing = true;
             } else {
                 edgeDrawing = false;
                 clickedArtist = null;
-                resetSidebar(true);
+                Sidebar.resetSidebar(true);
             }
         }
 

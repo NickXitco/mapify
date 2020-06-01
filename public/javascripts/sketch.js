@@ -29,16 +29,16 @@ let nodeOccurences = {};
 let timingEvents = {};
 
 async function getClickedSuggestion(index) {
-    if (recentSuggestedArtists.length >= index) {
-        loadArtistFromSearch(recentSuggestedArtists[index - 1].id, true).then(_ => {
-            resetSidebar(false);}
+    if (SearchBox.recentSuggestedArtists.length >= index) {
+        loadArtistFromSearch(SearchBox.recentSuggestedArtists[index - 1].id, true).then(_ => {
+                Sidebar.resetSidebar(false);}
             );
     }
 }
 
 async function getClickedRelated(id) {
     loadArtistFromSearch(id, true).then(_ => {
-        resetSidebar(false);}
+        Sidebar.resetSidebar(false);}
     );
 }
 
@@ -84,16 +84,16 @@ function draw() {
     drift(camera);
     zoom();
 
-    if (searchPoint) {
-        camera.x = searchPoint.x;
-        camera.y = searchPoint.y;
-        camera.zoomFromWidth(searchPoint.size * 50);
-        camera.zoomCamera({x: searchPoint.x, y: searchPoint.y});
+    if (SearchBox.point) {
+        camera.x = SearchBox.point.x;
+        camera.y = SearchBox.point.y;
+        camera.zoomFromWidth(SearchBox.point.size * 50);
+        camera.zoomCamera({x: SearchBox.point.x, y: SearchBox.point.y});
 
-        clickedArtist = searchPoint;
+        clickedArtist = SearchBox.point;
         edgeDrawing = true;
         newEdges = true;
-        searchPoint = null;
+        SearchBox.point = null;
     }
 
     push();
@@ -134,12 +134,12 @@ function draw() {
         createTimingEvent("Draw Related Nodes");
     }
 
-    if (clickedArtist && clickedArtist.loaded && sidebarArtist !== clickedArtist) {
-        setSidebar(clickedArtist);
+    if (clickedArtist && clickedArtist.loaded && Sidebar.artist !== clickedArtist) {
+        Sidebar.setSidebar(clickedArtist);
     }
 
-    if (clickedArtist && sidebarOpenAmount < 1) {
-        openSidebar();
+    if (clickedArtist && Sidebar.openAmount < 1) {
+        Sidebar.openSidebar();
     }
 
     createTimingEvent("Sidebar");

@@ -1,5 +1,5 @@
 function getHoveredArtist() {
-    if (searchHover || sidebarHover) {
+    if (SearchBox.hoverFlag || Sidebar.hoverFlag) {
         hoveredArtist = null;
         return;
     }
@@ -115,7 +115,7 @@ async function loadArtistFromSearch(query, isQueryID) {
     }
     node.loaded = true;
 
-    searchPoint = node;
+    SearchBox.point = node;
     clickedArtist = node;
     edgeDrawing = true;
 }

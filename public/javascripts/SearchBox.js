@@ -1,57 +1,63 @@
-let searchPoint = null;
-let searchInput = document.getElementById("searchInput");
-let suggestionTexts = [document.getElementById("suggestionText1"), document.getElementById("suggestionText2"), document.getElementById("suggestionText3"), document.getElementById("suggestionText4"), document.getElementById("suggestionText5")];
-let suggestionBoxes = [document.getElementById("suggestion1"), document.getElementById("suggestion2"), document.getElementById("suggestion3"), document.getElementById("suggestion4"), document.getElementById("suggestion5")];
-let searchDiv = document.getElementById("searchBox");
-let recentSuggestedArtists = [];
-let searchHover = false;
+const SearchBox = {
+    point: null,
+    input: document.getElementById("searchInput"),
+    suggestionTexts: [document.getElementById("suggestionText1"), document.getElementById("suggestionText2"), document.getElementById("suggestionText3"), document.getElementById("suggestionText4"), document.getElementById("suggestionText5")],
+    suggestionBoxes: [document.getElementById("suggestion1"), document.getElementById("suggestion2"), document.getElementById("suggestion3"), document.getElementById("suggestion4"), document.getElementById("suggestion5")],
+    div: document.getElementById("searchBox"),
+    recentSuggestedArtists: [],
+    hoverFlag: false,
 
-searchInput.onkeyup = async function (e) {
-    if (e.key === 'Enter' && searchInput.value.length > 0) {
-        loadArtistFromSearch(searchInput.value, false).then(_ => {
-            resetSidebar(false);
-        });
-    }
+    //TODO refactor SearchBox to be an unordered list of suggestions instead of this nonsense
 
-    let suggestionsHeight = 34;
+    processInput: async function (e) {
+        if (e.key === 'Enter' && SearchBox.input.value.length > 0) {
+            loadArtistFromSearch(SearchBox.input.value, false).then(_ => {
+                Sidebar.resetSidebar(false);
+            });
+        }
 
-    if (searchInput.value.length > 2) {
-        const url = "artistSearch/" + searchInput.value;
-        const response = await fetch(url);
-        const data = await response.json();
+        let suggestionsHeight = 34;
 
-        if (data.length === 0) {
-            suggestionTexts[0].innerText = "No Results Found.";
-            suggestionTexts[0].fontWeight = "600";
-            suggestionBoxes[i].style.display = "block";
-            suggestionsHeight += 20;
+        if (SearchBox.input.value.length > 2) {
+            const url = "artistSearch/" + SearchBox.input.value;
+            const response = await fetch(url);
+            const data = await response.json();
 
-            for (let i = 1; i < suggestionTexts.length; i++) {
-                suggestionBoxes[i].style.display = "none";
-                suggestionTexts[i].style.height = "0";
+            if (data.length === 0) {
+                SearchBox.suggestionTexts[0].innerText = "No Results Found.";
+                SearchBox.suggestionTexts[0].fontWeight = "600";
+                SearchBox.suggestionBoxes[i].style.display = "block";
+                suggestionsHeight += 20;
+
+                for (let i = 1; i < SearchBox.suggestionTexts.length; i++) {
+                    SearchBox.suggestionBoxes[i].style.display = "none";
+                    SearchBox.suggestionTexts[i].style.height = "0";
+                }
+            } else {
+                SearchBox.suggestionTexts[0].fontWeight = "300";
+            }
+
+            SearchBox.recentSuggestedArtists = data;
+
+            for (let i = 0; i < SearchBox.suggestionTexts.length; i++) {
+                if (data.length >= i + 1) {
+                    SearchBox.suggestionTexts[i].innerText = data[i].name;
+                    SearchBox.suggestionBoxes[i].style.display = "block";
+                    suggestionsHeight += 20;
+                } else {
+                    SearchBox.suggestionTexts[i].innerText = "";
+                    SearchBox.suggestionBoxes[i].style.display = "none";
+                }
             }
         } else {
-            suggestionTexts[0].fontWeight = "300";
-        }
-
-        recentSuggestedArtists = data;
-
-        for (let i = 0; i < suggestionTexts.length; i++) {
-            if (data.length >= i + 1) {
-                suggestionTexts[i].innerText = data[i].name;
-                suggestionBoxes[i].style.display = "block";
-                suggestionsHeight += 20;
-            } else {
-                suggestionTexts[i].innerText = "";
-                suggestionBoxes[i].style.display = "none";
+            for (let i = 0; i < SearchBox.suggestionTexts.length; i++) {
+                SearchBox.suggestionTexts[i].innerText = "";
+                SearchBox.suggestionBoxes[i].style.display = "none";
             }
         }
-    } else {
-        for (let i = 0; i < suggestionTexts.length; i++) {
-            suggestionTexts[i].innerText = "";
-            suggestionBoxes[i].style.display = "none";
-        }
-    }
 
-    searchDiv.style.height = suggestionsHeight + "px";
+        SearchBox.div.style.height = suggestionsHeight + "px";
+    }
 }
+
+SearchBox.input.onkeyup = SearchBox.processInput;

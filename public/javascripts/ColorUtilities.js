@@ -1,13 +1,13 @@
-class ColorUtilities {
-    static hueLerp(start, end, x, dir) {
+const ColorUtilities = {
+    hueLerp: function(start, end, x, dir) {
         if (dir === 1) {
             return (start + (x * ((end - start).mod(360) * dir))).mod(360);
         } else {
             return (start + (x * ((start - end).mod(360) * dir))).mod(360);
         }
-    }
+    },
 
-    static rgb2hsv(r, g, b) {
+    rgb2hsv: function(r, g, b) {
         let rabs, gabs, babs, rr, gg, bb, h, s, v, diff, diffc, percentRoundFn;
         rabs = r / 255;
         gabs = g / 255;

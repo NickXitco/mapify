@@ -1,113 +1,126 @@
-let sidebar = document.getElementById("sidebar");
-let sidebarStroke = document.getElementById("sidebarStroke");
-let sidebarArtistName = document.getElementById("sidebarArtistName");
-let sidebarFollowersCount = document.getElementById("followerCount");
-let sidebarFollowersWord = document.getElementById("followers");
-let sidebarFollowersRanking = document.getElementById("followerRanking");
-let genresList = document.getElementById("genresList");
-let relatedArtistsList = document.getElementById("relatedArtistsList");
-let sidebarPicture = document.getElementById("sidebarPicture");
-let sidebarOpenAmount = 0;
-let sidebarArtist = null;
-let sidebarHover = false;
+const Sidebar = {
 
-const SIDEBAR_GENRE_LIMIT = 10;
+    dom: document.getElementById("sidebar"),
+    stroke: document.getElementById("sidebarStroke"),
+    artistName: document.getElementById("sidebarArtistName"),
+    followersCount: document.getElementById("followerCount"),
+    followersWord: document.getElementById("followers"),
+    followersRanking: document.getElementById("followerRanking"),
+    genresList: document.getElementById("genresList"),
+    relatedArtistsList: document.getElementById("relatedArtistsList"),
+    picture: document.getElementById("sidebarPicture"),
+    openAmount: 0,
+    artist: null,
+    hoverFlag: false,
 
-function setSidebar(artist) {
-    sidebarArtist = clickedArtist;
-    sidebar.style.display = "block";
-    let fontSize = 60;
-    sidebarArtistName.style.fontSize = fontSize + "px";
-    sidebarArtistName.innerText = artist.name;
-    while (sidebarArtistName.clientHeight > 150 || sidebarArtistName.clientWidth > 400) {
-        fontSize -= 2;
-        sidebarArtistName.style.fontSize = fontSize + "px"
-    }
+    SIDEBAR_GENRE_LIMIT: 10,
 
-    if (artist.followers >= 1000000) {
-        sidebarFollowersCount.innerText = (artist.followers * 1.0 / 1000000).toFixed(1).toString() + " Million";
-    } else if (artist.followers >= 1000) {
-        sidebarFollowersCount.innerText = (artist.followers * 1.0 / 1000).toFixed(1).toString() + " Thousand";
-    } else {
-        sidebarFollowersCount.innerText = artist.followers;
-    }
+    openSidebar: function() {
+        const twentyFive = width / 4;
+        Sidebar.dom.style.left = Utils.map(Eases.easeOutQuart(Sidebar.openAmount), 0, 1, twentyFive, 0) + "px";
+        Sidebar.openAmount = Math.min(1, Sidebar.openAmount + 0.05);
+    },
 
-    if (artist.followers === 1) {
-        sidebarFollowersWord.innerText = "Follower";
-    } else {
-        sidebarFollowersWord.innerText = "Followers";
-    }
+    resetSidebar: function(removeFromFlow) {
+        Sidebar.artist = null;
+        Sidebar.artistName.innerText = "";
+        Sidebar.followersRanking.innerText = "";
+        Sidebar.followersWord.innerText = "";
+        Sidebar.followersCount.innerText = "";
+        while (Sidebar.genresList.firstChild) {
+            Sidebar.genresList.removeChild(Sidebar.genresList.lastChild);
+        }
 
-    if (artist.rank) {
-        sidebarFollowersRanking.innerText = "(#" + artist.rank + ")";
-    } else {
-        sidebarFollowersRanking.innerText = "";
-    }
+        while (Sidebar.relatedArtistsList.firstChild) {
+            Sidebar.relatedArtistsList.removeChild(Sidebar.relatedArtistsList.lastChild);
+        }
 
-    if (artist.genres) {
-        let genreCount = 0;
-        for (const genre of artist.genres) {
-            const newGenre = document.createElement("li");
-            newGenre.className = "sidebarListItem";
-            newGenre.innerText = genre;
-            genresList.appendChild(newGenre);
-            genreCount++;
-            if (genreCount === SIDEBAR_GENRE_LIMIT) {
-                break;
+        SearchBox.input.style.borderColor = "white";
+        SearchBox.input.style.boxShadow = "0 0 6px 0.5px white";
+
+        if (removeFromFlow) {
+            Sidebar.dom.style.display = "none";
+            Sidebar.openAmount = 0;
+            Sidebar.dom.style.left =  width / 4 + "px";
+        }
+    },
+
+    setSidebar: function(artist) {
+        Sidebar.artist = clickedArtist;
+        Sidebar.dom.style.display = "block";
+        let fontSize = 60;
+        Sidebar.artistName.style.fontSize = fontSize + "px";
+        Sidebar.artistName.innerText = artist.name;
+
+        while (Sidebar.artistName.clientHeight > 150 || Sidebar.artistName.clientWidth > 400) {
+            fontSize -= 2; //TODO compute this exactly rather than iteratively?
+            Sidebar.artistName.style.fontSize = fontSize + "px"
+        }
+
+        if (artist.followers >= 1000000) {
+            Sidebar.followersCount.innerText = (artist.followers * 1.0 / 1000000).toFixed(1).toString() + " Million";
+        } else if (artist.followers >= 1000) {
+            Sidebar.followersCount.innerText = (artist.followers * 1.0 / 1000).toFixed(1).toString() + " Thousand";
+        } else {
+            Sidebar.followersCount.innerText = artist.followers;
+        }
+
+        Sidebar.followersWord.innerText = artist.followers === 1 ? "Follower" : "Followers";
+        Sidebar.followersRanking.innerText = artist.rank ? "(#" + artist.rank + ")" : "";
+
+        if (artist.genres) {
+            let genreCount = 0;
+            for (const genre of artist.genres) {
+                const newGenre = document.createElement("li");
+                newGenre.className = "sidebarListItem";
+                newGenre.innerText = genre;
+                Sidebar.genresList.appendChild(newGenre);
+                genreCount++;
+                if (genreCount === Sidebar.SIDEBAR_GENRE_LIMIT) {
+                    break;
+                }
             }
+        } else {
+            //TODO don't show genre text at all;
         }
-    } else {
-        //TODO don't show genre text at all;
-    }
 
-    if (artist.relatedVertices) {
-        for (const r of artist.relatedVertices) {
-            const newRelated = document.createElement("li");
-            const id = r.id.valueOf();
-            newRelated.className = "sidebarListItem";
-            newRelated.innerText = r.name;
-            newRelated.onclick = () => {
-                getClickedRelated(id).then();
-            };
-            relatedArtistsList.appendChild(newRelated);
+        if (artist.relatedVertices) {
+            for (const r of artist.relatedVertices) {
+                const newRelated = document.createElement("li");
+                const id = r.id.valueOf();
+                newRelated.className = "sidebarListItem";
+                newRelated.innerText = r.name;
+                newRelated.onclick = () => {
+                    getClickedRelated(id).then();
+                };
+                Sidebar.relatedArtistsList.appendChild(newRelated);
+            }
+        } else {
+            //TODO don't show related text at all;
         }
-    } else {
-        //TODO don't show related text at all;
+
+        Sidebar.picture.style.boxShadow = "0 0 13px 1px " + artist.color.toString();
+        Sidebar.stroke.style.boxShadow = "0 0 13px 1px " + artist.color.toString();
+        Sidebar.stroke.style.background = artist.color.toString();
+        SearchBox.input.style.borderColor = artist.color.toString();
+        SearchBox.input.style.boxShadow = "0 0 6px 0.5px " + artist.color.toString();
     }
 
-    sidebarPicture.style.boxShadow = "0 0 13px 1px " + artist.color.toString();
-    sidebarStroke.style.boxShadow = "0 0 13px 1px " + artist.color.toString();
-    sidebarStroke.style.background = artist.color.toString();
-    searchInput.style.borderColor = artist.color.toString();
-    searchInput.style.boxShadow = "0 0 6px 0.5px " + artist.color.toString();
 }
 
-function resetSidebar(removeFromFlow) {
-    sidebarArtist = null;
-    sidebarArtistName.innerText = "";
-    sidebarFollowersRanking.innerText = "";
-    sidebarFollowersWord.innerText = "";
-    sidebarFollowersCount.innerText = "";
-    while (genresList.firstChild) {
-        genresList.removeChild(genresList.lastChild);
-    }
+/*
+    let sidebar = document.getElementById("sidebar");
+    let sidebarStroke = document.getElementById("sidebarStroke");
+    let sidebarArtistName = document.getElementById("sidebarArtistName");
+    let sidebarFollowersCount = document.getElementById("followerCount");
+    let sidebarFollowersWord = document.getElementById("followers");
+    let sidebarFollowersRanking = document.getElementById("followerRanking");
+    let genresList = document.getElementById("genresList");
+    let relatedArtistsList = document.getElementById("relatedArtistsList");
+    let sidebarPicture = document.getElementById("sidebarPicture");
+    let sidebarOpenAmount = 0;
+    let sidebarArtist = null;
+    let sidebarHover = false;
 
-    while (relatedArtistsList.firstChild) {
-        relatedArtistsList.removeChild(relatedArtistsList.lastChild);
-    }
-
-    searchInput.style.borderColor = "white";
-    searchInput.style.boxShadow = "0 0 6px 0.5px white";
-
-    if (removeFromFlow) {
-        sidebar.style.display = "none";
-        sidebarOpenAmount = 0;
-        sidebar.style.left =  width / 4 + "px";
-    }
-}
-
-function openSidebar() {
-    const twentyFive = width / 4;
-    sidebar.style.left = Utils.map(Eases.easeOutQuart(sidebarOpenAmount), 0, 1, twentyFive, 0) + "px";
-    sidebarOpenAmount = Math.min(1, sidebarOpenAmount + 0.05);
-}
+    const SIDEBAR_GENRE_LIMIT = 10;
+ */

@@ -36,5 +36,4 @@ class Artist {
         this.quad = null;
         this.loaded = false;
     }
-
 }
