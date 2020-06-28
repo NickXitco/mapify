@@ -151,7 +151,7 @@ function draw() {
     createTimingEvent("Quad Processing");
 
     pop();
-    drawInfoBox(hoveredArtist);
+    InfoBox.drawInfoBox(hoveredArtist);
 
     createTimingEvent("Info Box");
     Debug.debugAll(camera, timingEvents);
