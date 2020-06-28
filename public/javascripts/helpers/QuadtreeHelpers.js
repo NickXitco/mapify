@@ -11,10 +11,16 @@ function processOne() {
         }
          */
 
+        if (Object.keys(r.data).length === 0) {
+            q.loaded = true;
+            loadingQuads.delete(q);
+            return;
+        }
+
         if (q.leaf && !r.data.leaf) {
             q.split();
         }
-
+        
         for (const node of r.data.nodes) {
             createNewNode(node);
         }

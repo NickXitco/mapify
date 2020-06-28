@@ -110,11 +110,15 @@ class Quad {
         }
     }
 
+    /**
+     * Fetches the database for a particular quad and adds it to the queue of unprocessedResponses. If the quad
+     * doesn't exist, the response equals {}, which is handled in processing.
+     * @returns {Promise<void>}
+     */
     async fetchQuad() {
-        const response = await fetch('quad/' + this.name); //TODO validation on this response
+        const response = await fetch('quad/' + this.name);
         const data = await response.json();
         unprocessedResponses.push({quad: this, data: data});
-        return true;
     }
 
     deleteSelf(nodeOccurences, nodeLookup) {
