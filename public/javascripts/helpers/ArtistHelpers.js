@@ -5,7 +5,7 @@ function getHoveredArtist() {
     }
 
     let stack = [];
-    const mP = getVirtualMouseCoordinates();
+    const mP = MouseEvents.getVirtualMouseCoordinates();
     stack.push(quadHead);
     let foundQuad;
     while (stack.length > 0) {

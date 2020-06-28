@@ -76,13 +76,13 @@ function draw() {
         return;
     }
 
-    //background(3); //TODO only do this if it's strictly necessary given the current camera. Otherwise it's a waste of an operation
+    background(3);
 
     resetTiming();
     createTimingEvent("Drawing Setup");
 
-    drift(camera);
-    zoom();
+    MouseEvents.drift(camera);
+    MouseEvents.zoom();
 
     if (SearchBox.point) {
         camera.x = SearchBox.point.x;

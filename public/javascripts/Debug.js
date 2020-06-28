@@ -10,7 +10,7 @@ class Debug {
     }
 
     static printMouseCoordinates() {
-        let mP = getVirtualMouseCoordinates();
+        let mP = MouseEvents.getVirtualMouseCoordinates();
         push();
         translate(0, 0);
         scale(1);
