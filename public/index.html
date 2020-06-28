@@ -11,7 +11,7 @@
         <p class="infoBoxText" id="infoBoxArtistGenre">Pop</p>
     </div>
 
-    <div id="sidebar" onmouseenter="sidebarHover = true" onmouseleave="sidebarHover = false">
+    <div id="sidebar" onmouseenter="Sidebar.hoverFlag = true" onmouseleave="Sidebar.hoverFlag = false">
         <div id="sidebarStroke"></div>
         <div id="nameAndPicture">
             <div id="sidebarPicture"></div>
@@ -37,7 +37,7 @@
         </div>
     </div>
 
-    <div id="searchBox" onmouseenter="searchHover = true" onmouseleave="searchHover = false">
+    <div id="searchBox" onmouseenter="SearchBox.hoverFlag = true" onmouseleave="SearchBox.hoverFlag = false">
         <div id="searchBar">
             <input id="searchInput" type="text" placeholder="search for an artist...">
         </div>
@@ -71,21 +71,27 @@
     </div>
 </body>
 
+<script src="javascripts/classes/Cache.js"></script>
+<script src="javascripts/classes/PriorityQueue.js"></script>
+<script src="javascripts/classes/Quad.js"></script>
+<script src="javascripts/classes/Artist.js"></script>
+<script src="javascripts/classes/Camera.js"></script>
 
+<script src="javascripts/models/InfoBox.js"></script>
+<script src="javascripts/models/SearchBox.js"></script>
+<script src="javascripts/models/Sidebar.js"></script>
 
-<script src="javascripts/Cache.js"></script>
-<script src="javascripts/PriorityQueue.js"></script>
+<script src="javascripts/helpers/ColorUtilities.js"></script>
+<script src="javascripts/helpers/EdgeDrawer.js"></script>
+<script src="javascripts/helpers/ArtistHelpers.js"></script>
+<script src="javascripts/helpers/Eases.js"></script>
+<script src="javascripts/helpers/Utils.js"></script>
+<script src="javascripts/helpers/QuadtreeHelpers.js"></script>
 
-<script src="javascripts/Camera.js"></script>
 <script src="javascripts/Debug.js"></script>
-<script src="javascripts/Utils.js"></script>
 <script src="javascripts/MouseEvents.js"></script>
-<script src="javascripts/QuadtreeHelpers.js"></script>
-<script src="javascripts/DrawingHelpers.js"></script>
-
-<script src="javascripts/Quad.js"></script>
-<script src="javascripts/Artist.js"></script>
+<script src="javascripts/sketch.js"></script>
 
 <script lang="javascript" type="text/javascript" src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.min.js"></script>
-<script src="javascripts/sketch.js"></script>
+
 </html>
