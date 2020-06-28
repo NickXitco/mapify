@@ -23,10 +23,6 @@ switch (myArgs[0]) {
         console.log('Populating Quads...')
         populateQuads().then(r => {if (r) console.log('Quad Population Complete!')});
         break;
-    case 'quadNodes':
-        console.log('Populating Quad Nodes...')
-        setQuadNodeLists().then(r => {if (r) console.log('Quad Nodes Population Complete!')});
-        break;
     case 'artists':
         console.log('Populating Artists...')
         populateArtists().then(r => {if (r) console.log('Artist Population Complete!')});
@@ -89,7 +85,7 @@ async function populateArtists() {
     const Artist = mongoose.model('Artist');
 
     const readInterface = readLine.createInterface({
-        input: fs.createReadStream('./resources/artists/nodes.tsv'),
+        input: fs.createReadStream('../resources/artists/nodes.tsv'),
         output: process.stdout,
         console: false
     });
