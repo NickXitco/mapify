@@ -97,14 +97,15 @@ function drawOnscreenQuads(quadHead, camera) {
         if (q.image) {
 
             image(q.image, q.x - q.r, -(q.y + q.r), q.r * 2, q.r * 2, 0, 0);
-            /*
-            textSize(q.r / 10);
-            fill('green')
+
+            textSize(q.r / 20);
+            fill('green');
+            noStroke();
             textAlign(LEFT, TOP);
             text('Actual Size: (' + q.image.width + ', ' + q.image.height + ')', q.x - q.r, -(q.y + q.r));
             text('Displayed Size: (' + q.r * 2 * camera.getZoomFactor().x + ', ' + q.r * 2 * camera.getZoomFactor().y + ')', q.x - q.r, -(q.y + q.r * 0.95));
             text('Number of Nodes Inside: ' + q.renderableNodes.size, q.x - q.r, -(q.y + q.r * 0.90));
-             */
+
 
         } else {
             push();
@@ -116,16 +117,17 @@ function drawOnscreenQuads(quadHead, camera) {
             }
             pop();
         }
-        /*
+
         fill('white');
+        noStroke();
         textAlign(CENTER, CENTER);
         text(q.name, q.x, -q.y);
         textSize(q.r / 20);
         noFill();
         stroke('white');
-        strokeWeight(quad.r / 100);
+        strokeWeight(quad.r / 50);
         rect(q.x, -q.y, q.r, q.r);
-         */
+
     }
     createTimingEvent("Visible Quads Drawing");
 }
