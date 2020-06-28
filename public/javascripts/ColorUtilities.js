@@ -12,8 +12,8 @@ const ColorUtilities = {
         rabs = r / 255;
         gabs = g / 255;
         babs = b / 255;
-        v = Math.max(rabs, gabs, babs),
-            diff = v - Math.min(rabs, gabs, babs);
+        v = Math.max(rabs, gabs, babs);
+        diff = v - Math.min(rabs, gabs, babs);
         diffc = c => (v - c) / 6 / diff + 1 / 2;
         percentRoundFn = num => Math.round(num * 100) / 100;
         if (diff === 0) {
