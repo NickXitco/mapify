@@ -100,18 +100,12 @@ function drawOnscreenQuads(quadHead, camera) {
             evicted.deleteSelf(nodeOccurences, nodeLookup);
         }
          */
+
+
+
         if (q.image) {
 
             image(q.image, q.x - q.r, -(q.y + q.r), q.r * 2, q.r * 2, 0, 0);
-
-            textSize(q.r / 20);
-            fill('green');
-            noStroke();
-            textAlign(LEFT, TOP);
-            text('Actual Size: (' + q.image.width + ', ' + q.image.height + ')', q.x - q.r, -(q.y + q.r));
-            text('Displayed Size: (' + q.r * 2 * camera.getZoomFactor().x + ', ' + q.r * 2 * camera.getZoomFactor().y + ')', q.x - q.r, -(q.y + q.r * 0.95));
-            text('Number of Nodes Inside: ' + q.renderableNodes.size, q.x - q.r, -(q.y + q.r * 0.90));
-
 
         } else {
             push();
@@ -123,6 +117,20 @@ function drawOnscreenQuads(quadHead, camera) {
             }
             pop();
         }
+        debugText(q);
+    }
+
+    function debugText(q) {
+        textSize(q.r / 20);
+        fill('green');
+        noStroke();
+        textAlign(LEFT, TOP);
+        text('Displayed Size: (' + q.r * 2 * camera.getZoomFactor().x + ', ' + q.r * 2 * camera.getZoomFactor().y + ')', q.x - q.r, -(q.y + q.r * 0.95));
+        text('Number of Nodes Inside: ' + q.renderableNodes.size, q.x - q.r, -(q.y + q.r * 0.90));
+        if (q.image) {
+            text('Actual Size: (' + q.image.width + ', ' + q.image.height + ')', q.x - q.r, -(q.y + q.r));
+        }
+
 
         fill('white');
         noStroke();
@@ -133,7 +141,7 @@ function drawOnscreenQuads(quadHead, camera) {
         stroke('white');
         strokeWeight(q.r / 100);
         rect(q.x, -q.y, q.r, q.r);
-
     }
+
     createTimingEvent("Visible Quads Drawing");
 }
