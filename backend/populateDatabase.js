@@ -55,7 +55,7 @@ async function populateQuads() {
         const image = ImageEncoder.encodeImage(name).toString('base64');
         const nodes = [];
         for (let i = 5; i < split.length; i++) {
-            nodes.push(await Artist.findOne({id: split[i]}).exec());
+            nodes.push(await Artist.findOne({id: split[i]}, '_id').exec());
         }
         longestLine = Math.max(longestLine, split.length);
 

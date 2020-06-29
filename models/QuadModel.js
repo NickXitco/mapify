@@ -10,7 +10,7 @@ const QuadSchema = new Schema({
     r: Number,
     image: String,
     leaf: Boolean,
-    nodes: [ArtistSchema]
+    nodes: [{type: Schema.Types.ObjectId, ref: 'Artist'}]
 })
 
 const Quad = mongoose.model('Quad', QuadSchema);
