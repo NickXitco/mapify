@@ -47,6 +47,9 @@ class Quad {
         this.B = new Quad(this.x + half, this.y + half, half, this, null, this.name + "B", null);
         this.C = new Quad(this.x - half, this.y - half, half, this, null, this.name + "C", null);
         this.D = new Quad(this.x + half, this.y - half, half, this, null, this.name + "D", null);
+        for (const n of this.renderableNodes) {
+            this.insert(n);
+        }
     }
 
     insert(n) {
@@ -54,8 +57,8 @@ class Quad {
         stack.push(this);
         while (stack.length > 0) {
             const q = stack.pop();
-            if (q.containsRect({x: n.x - n.size / 2, y: n.y + n.size / 2}, {x: n.x + n.size / 2, y: n.y - n.size / 2})) {
-                if (n.size / q.r > 0.011) {
+            if (q.containsRect({x: n.x - n.size * 0.55, y: n.y + n.size * 0.55}, {x: n.x + n.size * 0.55, y: n.y - n.size * 0.55})) {
+                if (n.size / q.r > 0.011 || (q.image === "" && !q.loaded)) {
                     q.renderableNodes.add(n);
                 }
 
@@ -72,9 +75,6 @@ class Quad {
                         temp.quad = null;
                         q.split();
                         q.insert(temp);
-                        for (const n of q.renderableNodes) {
-                            q.insert(n);
-                        }
                     }
                 }
 

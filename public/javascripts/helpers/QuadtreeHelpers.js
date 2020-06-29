@@ -91,8 +91,8 @@ function drawOnscreenQuads(quadHead, camera) {
 
     createTimingEvent("Visible Quads Finding");
 
-    //const sortedQuads = [...quads].sort((a, b) => a.name.length - b.name.length);
-    for (const q of quads) {
+    const sortedQuads = [...quads].sort((a, b) => a.name.length - b.name.length);
+    for (const q of sortedQuads) {
 
         /*
         let evicted = quadCache.insert(q, q.name);
@@ -131,7 +131,7 @@ function drawOnscreenQuads(quadHead, camera) {
         textSize(q.r / 20);
         noFill();
         stroke('white');
-        strokeWeight(quad.r / 50);
+        strokeWeight(q.r / 100);
         rect(q.x, -q.y, q.r, q.r);
 
     }
