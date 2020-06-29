@@ -117,7 +117,7 @@ function drawOnscreenQuads(quadHead, camera) {
             }
             pop();
         }
-        debugText(q);
+        //debugText(q);
     }
 
     function debugText(q) {
