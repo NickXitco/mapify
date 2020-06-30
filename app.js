@@ -43,8 +43,8 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
 });
 
-app.listen(3000, () => {
-  console.log('App listening on port 3000!');
+app.listen(8080, () => {
+  console.log('App listening on port 8080!');
 })
 
 module.exports = app;
