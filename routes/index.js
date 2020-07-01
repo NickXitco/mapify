@@ -8,7 +8,7 @@ const client = new SecretManagerServiceClient();
 
 async function accessSecretVersion() {
     const [version] = await client.accessSecretVersion({
-        name: 'mongopass'
+        name: 'projects/785245481415/secrets/mongopass/versions/latest'
     })
 
     return version.payload.data.toString();
