@@ -1,3 +1,5 @@
+let suggestionCounter = 0;
+
 const SearchBox = {
     point: null,
     input: document.getElementById("searchInput"),
@@ -20,8 +22,15 @@ const SearchBox = {
 
         if (SearchBox.input.value.length > 2) {
             const url = "artistSearch/" + SearchBox.input.value;
+
+            const currentCount = suggestionCounter.valueOf();
+            const currentTime = performance.now();
+            console.log(`Sending suggestion request ${currentCount}`);
+            suggestionCounter++;
             const response = await fetch(url);
             const data = await response.json();
+            console.log(`Received suggestion response ${currentCount} in ${performance.now() - currentTime}ms`);
+
 
             if (data.length === 0) {
                 SearchBox.suggestionTexts[0].innerText = "No Results Found.";
