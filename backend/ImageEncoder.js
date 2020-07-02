@@ -11,9 +11,4 @@ function encodeImage(imgName) {
 
 }
 
-function decodeImage(blob) {
-    //TODO implement
-}
-
-
-module.exports = {encodeImage, decodeImage};
+module.exports = {encodeImage};
