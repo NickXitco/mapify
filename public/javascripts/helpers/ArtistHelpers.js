@@ -102,7 +102,10 @@ function drawEdges(clickedArtist) {
 async function loadArtistFromSearch(query, isQueryID) {
     const response = await fetch('artist/' + query + "/" + isQueryID);
     const data = await response.json();
-    if (!data) {
+
+    console.log(data);
+
+    if (Object.keys(data).length === 0) {
         return;
     }
 

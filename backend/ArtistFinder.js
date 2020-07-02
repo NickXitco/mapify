@@ -6,7 +6,36 @@ async function findArtist(query, isQueryID) {
     if (isQueryID) {
         artist = await Artist.findOne({id: query}).exec();
     } else {
-        artist = await Artist.findOne({name: query}).exec();
+        artist = await Artist.aggregate([
+            {
+                '$match': {
+                    '$text': {
+                        '$search': query
+                    }
+                }
+            }, {
+                '$addFields': {
+                    'score': {
+                        '$meta': 'textScore'
+                    }
+                }
+            }, {
+                '$sort': {
+                    'score': -1
+                }
+            }, {
+                '$unset': [
+                    'score'
+                ]
+            }, {
+                '$limit': 1
+            }
+        ]).exec();
+        if (artist.length === 1) {
+            artist = artist[0];
+        } else {
+            artist = null;
+        }
     }
 
     if (!artist) {

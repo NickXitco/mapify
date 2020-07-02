@@ -1,5 +1,3 @@
-let suggestionCounter = 0;
-
 const SearchBox = {
     point: null,
     input: document.getElementById("searchInput"),
@@ -7,33 +5,69 @@ const SearchBox = {
     div: document.getElementById("searchBox"),
     recentSuggestedArtists: [],
     hoverFlag: false,
-    requests: new Cache(20),
+    requestCounter: 0,
+    highestReceivedResponse: 0,
 
     processInput: async function (e) {
         const currentInput = this.input.value.valueOf();
-        this.deleteSuggestions();
-
-        if (e.key === 'Enter' && currentInput.length > 0) {
-            loadArtistFromSearch(currentInput, false).then(_ => {
-                Sidebar.resetSidebar(false);
-            });
-            return;
-        }
-
-        console.log(e.key);
 
         const url = "artistSearch/" + encodeURIComponent(currentInput);
 
-        const currentCount = suggestionCounter.valueOf();
+        const currentCount = this.requestCounter.valueOf();
+
         const currentTime = performance.now();
+
         console.log(`Sending suggestion request ${currentCount}: \"${url}\"`);
-        suggestionCounter++;
+
+        this.requestCounter++;
+
         const response = await fetch(url);
         const data = await response.json();
+
         console.log(`Received suggestion response ${currentCount} in ${performance.now() - currentTime}ms`);
 
-        for (const suggestion of data) {
-            this.addSuggestion(suggestion);
+        //Only accept a response if it's the latest request we've gotten back
+        if (currentCount > this.highestReceivedResponse) {
+            this.highestReceivedResponse = currentCount;
+            this.processSuggestions(data);
+        }
+
+
+    },
+
+    processSubmit: async function (e) {
+        if (e.key !== "Enter") {
+            return;
+        }
+
+        const currentInput = this.input.value.valueOf();
+
+        if (currentInput.length > 0) {
+            loadArtistFromSearch(currentInput, false).then(_ => {
+                Sidebar.resetSidebar(false);
+            });
+            this.deleteSuggestions();
+            this.input.value = "";
+        }
+    },
+
+    processClick: async function(suggestion) {
+        loadArtistFromSearch(suggestion['name'], false).then(_ => {
+            Sidebar.resetSidebar(false);
+        });
+        this.deleteSuggestions();
+        this.input.value = "";
+    },
+
+    processSuggestions: function(data) {
+        this.deleteSuggestions();
+        console.log(data);
+        if (data.length === 0) {
+            this.noResults();
+        } else {
+            for (const suggestion of data) {
+                this.addSuggestion(suggestion);
+            }
         }
     },
 
@@ -53,6 +87,20 @@ const SearchBox = {
         let p = document.createElement('p');
         let suggestionText = document.createTextNode(suggestion['name']);
         p.appendChild(suggestionText);
+        p.onclick = () => this.processClick(suggestion.valueOf());
+        artistDiv.appendChild(p);
+        suggestionDiv.appendChild(artistDiv);
+        this.suggestionsList.appendChild(suggestionDiv);
+    },
+
+    noResults: function () {
+        let suggestionDiv = document.createElement('li');
+        suggestionDiv.className = "suggestion";
+        let artistDiv = document.createElement('div');
+        artistDiv.className = "suggestedArtist";
+        let p = document.createElement('p');
+        let suggestionText = document.createTextNode("No Results Found.");
+        p.appendChild(suggestionText);
         artistDiv.appendChild(p);
         suggestionDiv.appendChild(artistDiv);
         this.suggestionsList.appendChild(suggestionDiv);
@@ -60,3 +108,4 @@ const SearchBox = {
 }
 
 SearchBox.input.oninput = SearchBox.processInput.bind(SearchBox);
+SearchBox.input.onkeydown = SearchBox.processSubmit.bind(SearchBox);
