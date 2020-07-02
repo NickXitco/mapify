@@ -85,7 +85,7 @@ function draw() {
     MouseEvents.zoom();
 
     if (SearchBox.point) {
-        camera.setCameraMove(SearchBox.point.x, SearchBox.point.y, camera.getZoomFromWidth(SearchBox.point.size * 50), 10);
+        camera.setCameraMove(SearchBox.point.x, SearchBox.point.y, camera.getZoomFromWidth(SearchBox.point.size * 50), 30);
 
         clickedArtist = SearchBox.point;
         edgeDrawing = true;

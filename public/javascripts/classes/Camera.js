@@ -42,9 +42,11 @@ class Camera {
             return;
         }
 
-        this.x = Utils.map(this.frameCount, 0, this.frameDone, this.startX, this.destX);
-        this.y = Utils.map(this.frameCount, 0, this.frameDone, this.startY, this.destY);
-        this.zoom = Utils.map(this.frameCount, 0, this.frameDone, this.startZoom, this.destZoom);
+        const easeFrame = Eases.easeInSine(this.frameCount / this.frameDone);
+
+        this.x = Utils.map(easeFrame, 0, 1, this.startX, this.destX);
+        this.y = Utils.map(easeFrame, 0, 1, this.startY, this.destY);
+        this.zoom = Utils.map(easeFrame, 0, 1, this.startZoom, this.destZoom);
 
         this.zoomCamera({x: this.x, y: this.y});
 
