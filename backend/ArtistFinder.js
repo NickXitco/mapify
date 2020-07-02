@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 async function findArtist(query, isQueryID) {
     const Artist = mongoose.model('Artist');
@@ -6,7 +6,36 @@ async function findArtist(query, isQueryID) {
     if (isQueryID) {
         artist = await Artist.findOne({id: query}).exec();
     } else {
-        artist = await Artist.findOne({name: query}).exec();
+        artist = await Artist.aggregate([
+            {
+                '$match': {
+                    '$text': {
+                        '$search': query
+                    }
+                }
+            }, {
+                '$addFields': {
+                    'score': {
+                        '$meta': 'textScore'
+                    }
+                }
+            }, {
+                '$sort': {
+                    'score': -1
+                }
+            }, {
+                '$unset': [
+                    'score'
+                ]
+            }, {
+                '$limit': 1
+            }
+        ]).exec();
+        if (artist.length === 1) {
+            artist = artist[0];
+        } else {
+            artist = null;
+        }
     }
 
     if (!artist) {
@@ -29,10 +58,42 @@ async function findArtist(query, isQueryID) {
     };
 }
 
-async function findArtistSearch(searchterm) {
+async function findArtistSearch(searchTerm) {
     const Artist = mongoose.model('Artist');
-    const searchRegex = new RegExp(searchterm, 'i');
-    return Artist.find({name: searchRegex}).sort({followers: -1, name: 1}).limit(5).exec();
+    const SUGGESTIONS_LIMIT = 5;
+    return Artist.aggregate([
+        {
+            '$match': {
+                '$text': {
+                    '$search': searchTerm
+                }
+            }
+        }, {
+            '$addFields': {
+                'score': {
+                    '$meta': 'textScore'
+                }
+            }
+        }, {
+            '$addFields': {
+                'sortScore': {
+                    '$multiply': [
+                        '$score', '$followers'
+                    ]
+                }
+            }
+        }, {
+            '$sort': {
+                'sortScore': -1
+            }
+        }, {
+            '$unset': [
+                'score', 'sortScore'
+            ]
+        }, {
+            '$limit': SUGGESTIONS_LIMIT
+        }
+    ]).exec();
 }
 
 module.exports = {findArtist, findArtistSearch};
