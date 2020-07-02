@@ -85,16 +85,15 @@ function draw() {
     MouseEvents.zoom();
 
     if (SearchBox.point) {
-        camera.x = SearchBox.point.x;
-        camera.y = SearchBox.point.y;
-        camera.zoomFromWidth(SearchBox.point.size * 50);
-        camera.zoomCamera({x: SearchBox.point.x, y: SearchBox.point.y});
+        camera.setCameraMove(SearchBox.point.x, SearchBox.point.y, camera.getZoomFromWidth(SearchBox.point.size * 50), 10);
 
         clickedArtist = SearchBox.point;
         edgeDrawing = true;
         newEdges = true;
         SearchBox.point = null;
     }
+
+    camera.doCameraMove();
 
     push();
     camera.setView();
