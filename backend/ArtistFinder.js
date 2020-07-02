@@ -30,7 +30,7 @@ async function findArtist(query, isQueryID) {
             }, {
                 '$match': {
                     'name': {
-                        '$regex': new RegExp(query, 'i')
+                        '$regex': new RegExp(`^${query}$`, 'i')
                     }
                 }
             }, {
