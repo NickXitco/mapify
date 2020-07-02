@@ -25,8 +25,6 @@ const SearchBox = {
             this.highestReceivedResponse = currentCount;
             this.processSuggestions(data);
         }
-
-
     },
 
     processSubmit: async function (e) {

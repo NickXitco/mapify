@@ -28,6 +28,12 @@ async function findArtist(query, isQueryID) {
                     'score'
                 ]
             }, {
+                '$match': {
+                    'name': {
+                        '$regex': new RegExp(query, 'i')
+                    }
+                }
+            }, {
                 '$limit': 1
             }
         ]).exec();
