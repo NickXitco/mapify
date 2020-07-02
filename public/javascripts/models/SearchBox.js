@@ -15,16 +15,10 @@ const SearchBox = {
 
         const currentCount = this.requestCounter.valueOf();
 
-        const currentTime = performance.now();
-
-        console.log(`Sending suggestion request ${currentCount}: \"${url}\"`);
-
         this.requestCounter++;
 
         const response = await fetch(url);
         const data = await response.json();
-
-        console.log(`Received suggestion response ${currentCount} in ${performance.now() - currentTime}ms`);
 
         //Only accept a response if it's the latest request we've gotten back
         if (currentCount > this.highestReceivedResponse) {
@@ -61,7 +55,7 @@ const SearchBox = {
 
     processSuggestions: function(data) {
         this.deleteSuggestions();
-        console.log(data);
+
         if (data.length === 0) {
             this.noResults();
         } else {

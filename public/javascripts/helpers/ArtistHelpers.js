@@ -103,8 +103,6 @@ async function loadArtistFromSearch(query, isQueryID) {
     const response = await fetch('artist/' + query + "/" + isQueryID);
     const data = await response.json();
 
-    console.log(data);
-
     if (Object.keys(data).length === 0) {
         return;
     }
