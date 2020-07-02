@@ -3,70 +3,60 @@ let suggestionCounter = 0;
 const SearchBox = {
     point: null,
     input: document.getElementById("searchInput"),
-    suggestionTexts: [document.getElementById("suggestionText1"), document.getElementById("suggestionText2"), document.getElementById("suggestionText3"), document.getElementById("suggestionText4"), document.getElementById("suggestionText5")],
-    suggestionBoxes: [document.getElementById("suggestion1"), document.getElementById("suggestion2"), document.getElementById("suggestion3"), document.getElementById("suggestion4"), document.getElementById("suggestion5")],
+    suggestionsList: document.getElementById("suggestions"),
     div: document.getElementById("searchBox"),
     recentSuggestedArtists: [],
     hoverFlag: false,
-
-    //TODO refactor SearchBox to be an unordered list of suggestions instead of this nonsense
+    requests: new Cache(20),
 
     processInput: async function (e) {
-        if (e.key === 'Enter' && SearchBox.input.value.length > 0) {
-            loadArtistFromSearch(SearchBox.input.value, false).then(_ => {
+        const currentInput = this.input.value.valueOf();
+        this.deleteSuggestions();
+
+        if (e.key === 'Enter' && currentInput.length > 0) {
+            loadArtistFromSearch(currentInput, false).then(_ => {
                 Sidebar.resetSidebar(false);
             });
+            return;
         }
 
-        let suggestionsHeight = 34;
+        console.log(e.key);
 
-        if (SearchBox.input.value.length > 2) {
-            const url = "artistSearch/" + SearchBox.input.value;
+        const url = "artistSearch/" + encodeURIComponent(currentInput);
 
-            const currentCount = suggestionCounter.valueOf();
-            const currentTime = performance.now();
-            console.log(`Sending suggestion request ${currentCount}`);
-            suggestionCounter++;
-            const response = await fetch(url);
-            const data = await response.json();
-            console.log(`Received suggestion response ${currentCount} in ${performance.now() - currentTime}ms`);
+        const currentCount = suggestionCounter.valueOf();
+        const currentTime = performance.now();
+        console.log(`Sending suggestion request ${currentCount}: \"${url}\"`);
+        suggestionCounter++;
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log(`Received suggestion response ${currentCount} in ${performance.now() - currentTime}ms`);
 
-
-            if (data.length === 0) {
-                SearchBox.suggestionTexts[0].innerText = "No Results Found.";
-                SearchBox.suggestionTexts[0].fontWeight = "600";
-                SearchBox.suggestionBoxes[i].style.display = "block";
-                suggestionsHeight += 20;
-
-                for (let i = 1; i < SearchBox.suggestionTexts.length; i++) {
-                    SearchBox.suggestionBoxes[i].style.display = "none";
-                    SearchBox.suggestionTexts[i].style.height = "0";
-                }
-            } else {
-                SearchBox.suggestionTexts[0].fontWeight = "300";
-            }
-
-            SearchBox.recentSuggestedArtists = data;
-
-            for (let i = 0; i < SearchBox.suggestionTexts.length; i++) {
-                if (data.length >= i + 1) {
-                    SearchBox.suggestionTexts[i].innerText = data[i].name;
-                    SearchBox.suggestionBoxes[i].style.display = "block";
-                    suggestionsHeight += 20;
-                } else {
-                    SearchBox.suggestionTexts[i].innerText = "";
-                    SearchBox.suggestionBoxes[i].style.display = "none";
-                }
-            }
-        } else {
-            for (let i = 0; i < SearchBox.suggestionTexts.length; i++) {
-                SearchBox.suggestionTexts[i].innerText = "";
-                SearchBox.suggestionBoxes[i].style.display = "none";
-            }
+        for (const suggestion of data) {
+            this.addSuggestion(suggestion);
         }
+    },
 
-        SearchBox.div.style.height = suggestionsHeight + "px";
+    deleteSuggestions: function () {
+        let child = this.suggestionsList.lastChild;
+        while(child) {
+            this.suggestionsList.removeChild(child);
+            child = this.suggestionsList.lastChild;
+        }
+    },
+
+    addSuggestion: function (suggestion) {
+        let suggestionDiv = document.createElement('li');
+        suggestionDiv.className = "suggestion";
+        let artistDiv = document.createElement('div');
+        artistDiv.className = "suggestedArtist";
+        let p = document.createElement('p');
+        let suggestionText = document.createTextNode(suggestion['name']);
+        p.appendChild(suggestionText);
+        artistDiv.appendChild(p);
+        suggestionDiv.appendChild(artistDiv);
+        this.suggestionsList.appendChild(suggestionDiv);
     }
 }
 
-SearchBox.input.onkeyup = SearchBox.processInput;
+SearchBox.input.oninput = SearchBox.processInput.bind(SearchBox);
