@@ -5,12 +5,59 @@ class Camera {
     width;
     zoom;
 
+    startX;
+    startY;
+    startZoom;
+    destX;
+    destY;
+    destZoom;
+    frameCount;
+    frameDone;
+    moving;
+
     constructor(x, y, height, width, zoom) {
         this.x = x;
         this.y = y;
         this.height = height;
         this.width = width;
         this.zoom = zoom;
+
+        this.moving = false;
+    }
+
+    setCameraMove(x, y, zoom, frames) {
+        this.startX = this.x;
+        this.startY = this.y;
+        this.startZoom = this.zoom;
+        this.destX = x;
+        this.destY = y;
+        this.destZoom = zoom;
+        this.frameDone = frames;
+        this.frameCount = 0;
+        this.moving = true;
+    }
+
+    doCameraMove() {
+        if (!this.moving) {
+            return;
+        }
+
+        this.x = Utils.map(this.frameCount, 0, this.frameDone, this.startX, this.destX);
+        this.y = Utils.map(this.frameCount, 0, this.frameDone, this.startY, this.destY);
+        this.zoom = Utils.map(this.frameCount, 0, this.frameDone, this.startZoom, this.destZoom);
+
+        this.zoomCamera({x: this.x, y: this.y});
+
+        this.frameCount++;
+        if (this.frameCount > this.frameDone) {
+            this.endMove();
+        }
+    }
+
+    endMove() {
+        this.moving = false;
+        this.frameDone = 0;
+        this.frameCount = 0;
     }
 
     zoomCamera(toward) {
@@ -34,8 +81,12 @@ class Camera {
      * Approximate inverse of the zoom camera function
      * @param w
      */
-    zoomFromWidth(w) {
-        this.zoom = 2.88539 * Math.log(0.0001220703125 * w);
+    getZoomFromWidth(w) {
+        return 2.88539 * Math.log(0.0001220703125 * w);
+    }
+
+    setZoomFromWidth(w) {
+        this.zoom = this.getZoomFromWidth(w);
     }
 
     calculateZoomPos(toward, oldWidth, oldHeight) {
