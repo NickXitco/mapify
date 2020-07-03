@@ -96,6 +96,14 @@ const SearchBox = {
         artistDiv.appendChild(p);
         suggestionDiv.appendChild(artistDiv);
         this.suggestionsList.appendChild(suggestionDiv);
+    },
+
+    focus: function () {
+        this.hoverFlag = true;
+    },
+
+    unfocus: function () {
+        this.hoverFlag = false;
     }
 }
 
