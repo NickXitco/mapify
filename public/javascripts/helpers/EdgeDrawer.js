@@ -1,6 +1,6 @@
 const STROKE_DIVIDER = 5;
-const EASE_SPEED = 10;
-const MAX_EDGE_SEGMENTS = 128;
+const EASE_SPEED = 25;
+const MAX_EDGE_SEGMENTS = 64;
 const ANGLE_THRESHOLD = 178;
 const HUE_THRESHOLD = 4;
 const SAT_THRESHOLD = 2;
@@ -33,18 +33,10 @@ class EdgeDrawer {
         let uSat = uHSV.s;
         let vSat = vHSV.s;
 
-        let numSegments = this.runEdgeDrawer(e, u, v, uVec, vVec, uHue, vHue, uSat, vSat);
-
-        fill('white');
-        noStroke();
-        textSize(50);
-        text(numSegments, v.x, -v.y);
-        text(numSegments, u.x, -u.y);
+        this.runEdgeDrawer(e, u, v, uVec, vVec, uHue, vHue, uSat, vSat);
         pop();
 
         e.tMax = Math.min(1, e.tMax + (EASE_SPEED / dist(u.x, u.y, v.x, v.y)));
-
-
     }
 
     static runEdgeDrawer(e, u, v, uVec, vVec, uHue, vHue, uSat, vSat) {
@@ -73,22 +65,11 @@ class EdgeDrawer {
             stroke(color(points[i].hue, points[i].sat, 100));
             strokeWeight(points[i].weight);
         }
-
-        for (const point of points) {
-            stroke(color(point.hue, point.sat, 100));
-            strokeWeight(point.weight);
-            noFill();
-            circle(point.x, point.y, point.weight * STROKE_DIVIDER);
-            noStroke();
-            fill('white');
-            text(Math.round(point.angle ? point.angle : 0), point.x, point.y);
-        }
     }
 
     static reduceEdgePoints(edgePoints) {
         edgePoints = this.flatten(edgePoints);
         edgePoints = this.removeOutOfView(edgePoints);
-
         return edgePoints;
     }
 
