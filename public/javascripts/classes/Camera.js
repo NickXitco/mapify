@@ -131,4 +131,9 @@ class Camera {
 
         return !((l1.x >= r2.x || l2.x >= r1.x) || (l1.y <= r2.y || l2.y <= r1.y));
     }
+
+    containsPoint(x, y) {
+        return  x <= this.x + this.width / 2 && x >= this.x - this.width / 2 &&
+                y >= this.y - this.height / 2 && y <= this.y + this.height / 2;
+    }
 }
