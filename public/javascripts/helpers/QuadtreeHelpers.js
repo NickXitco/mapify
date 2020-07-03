@@ -1,47 +1,49 @@
 function processOne() {
-    if (unprocessedResponses.length > 0) {
-        const r = unprocessedResponses.pop();
-        const q = r.quad;
+    if (unprocessedResponses.length === 0) {
+        return;
+    }
 
-        /* TODO
-            Implement some sort of system that loads quads that we can see first
-        if (!camera.contains(q)) {
-            unprocessedResponses.push(r);
+    let i = 0;
+    for (const response of unprocessedResponses) {
+        const q = response.quad;
+
+        if (camera.contains(q)) {
+            process(response, q);
+            unprocessedResponses.splice(i, 1);
             return;
         }
-         */
+        i++;
+    }
 
-        if (Object.keys(r.data).length === 0) {
+    const r = unprocessedResponses.pop();
+    const q = r.quad;
+    process(r, q);
+}
+
+function process(r, q) {
+    if (Object.keys(r.data).length === 0) {
+        q.loaded = true;
+        loadingQuads.delete(q);
+        return;
+    }
+
+    if (q.leaf && !r.data.leaf) {
+        q.split();
+    }
+
+    for (const node of r.data.nodes) {
+        createNewNode(node);
+    }
+
+    if (r.data.image !== "") {
+        loadImage('data:image/png;base64, ' + r.data.image, (img) => {
+            q.image = img;
             q.loaded = true;
             loadingQuads.delete(q);
-            return;
-        }
-
-        if (q.leaf && !r.data.leaf) {
-            q.split();
-        }
-        
-        for (const node of r.data.nodes) {
-            createNewNode(node);
-        }
-
-        if (r.data.image !== "") {
-            loadImage('data:image/png;base64, ' + r.data.image, (img) => {
-                q.image = img;
-                q.loaded = true;
-                loadingQuads.delete(q);
-            });
-        } else {
-            q.loaded = true;
-            loadingQuads.delete(q);
-        }
-
-        /*
-        let evicted = quadCache.insert(q, q.name);
-        if (evicted) {
-            evicted.deleteSelf(nodeOccurences, nodeLookup);
-        }
-         */
+        });
+    } else {
+        q.loaded = true;
+        loadingQuads.delete(q);
     }
 }
 
