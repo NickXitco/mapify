@@ -35,6 +35,7 @@ class EdgeDrawer {
         noStroke();
         textSize(50);
         text(numSegments, v.x, -v.y);
+        text(numSegments, u.x, -u.y);
         pop();
 
         e.tMax = Math.min(1, e.tMax + (EASE_SPEED / dist(u.x, u.y, v.x, v.y)));
@@ -52,11 +53,6 @@ class EdgeDrawer {
     static drawEdgePoints(points) {
         textSize(15);
 
-        const u = points[0];
-        const v = points[points.length - 1];
-
-
-
         for (let i = 0; i < points.length; i++) {
             if (i === 0) {
                 beginShape();
@@ -70,8 +66,8 @@ class EdgeDrawer {
                 beginShape();
                 vertex(points[i].x, points[i].y);
             }
-            stroke(color(ColorUtilities.hueLerp(u.hue, v.hue, i / points.length), lerp(u.sat, v.sat, i / points.length), 100));
-            strokeWeight(lerp(u.weight, v.weight,  i / points.length));
+            stroke(color(points[i].hue, points[i].sat, 100));
+            strokeWeight(points[i].weight);
         }
 
         for (const point of points) {
@@ -117,7 +113,38 @@ class EdgeDrawer {
         if (edgePoints.length > 2) {
             finalEdgePoints.push(edgePoints[edgePoints.length - 1]);
         }
-        return finalEdgePoints;
+
+        a = 0;
+        b = 1;
+        c = 2;
+
+        let pointsInView = [];
+        pointsInView.push(finalEdgePoints[a]);
+        if (finalEdgePoints.length === 2) {
+            pointsInView.push(finalEdgePoints[b]);
+        }
+
+        while (c < finalEdgePoints.length) {
+            const aInView = camera.containsPoint(finalEdgePoints[a].x, -finalEdgePoints[a].y);
+            const cInView = camera.containsPoint(finalEdgePoints[c].x, -finalEdgePoints[c].y);
+
+            if (aInView || cInView) {
+                pointsInView.push(finalEdgePoints[b]);
+                a = b;
+                b = c;
+                c++;
+            } else {
+                a = b;
+                b = c;
+                c++;
+            }
+        }
+
+        if (finalEdgePoints.length > 2) {
+            pointsInView.push(finalEdgePoints[finalEdgePoints.length - 1]);
+        }
+
+        return pointsInView;
     }
 
     static getEdgePoints(u, uHue, uSat, tMax, v, uVec, vVec, vHue, vSat) {
