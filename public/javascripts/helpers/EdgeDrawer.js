@@ -63,29 +63,44 @@ class EdgeDrawer {
     }
 
     static runEdgeDrawer(e, u, v, uVec, vVec, uHue, vHue, dir, uSat, vSat) {
-        let segmentNumber = 0;
-        let tMax = e.tMax.valueOf();
-        let t = 0;
+        let edgePoints = this.getEdgePoints(u, uHue, uSat, e.tMax, v, uVec, vVec, vHue, dir, vSat);
+        let finalEdgePoints = this.reduceEdgePoints(edgePoints);
+        this.drawEdgePoints(finalEdgePoints);
+        return finalEdgePoints.length;
+    }
 
-
-        let pointA, pointB;
-
-        pointA = {x: u.x, y: -u.y, hue: uHue, sat: uSat, weight: u.size / STROKE_DIVIDER};
-
-        stroke(color(pointA.hue, pointA.sat, 100));
-        strokeWeight(pointA.weight);
-
+    static drawEdgePoints(points) {
         textSize(15);
 
-        let edgePoints = [];
-        edgePoints.push(pointA);
-
-        while (t < tMax) {
-            t = Math.min(tMax, t + (1 / MAX_EDGE_SEGMENTS));
-            pointB = this.getPoint(t, u, v, uVec, vVec, uHue, vHue, dir, uSat, vSat);
-            edgePoints.push(pointB);
+        for (let i = 0; i < points.length; i++) {
+            if (i === 0) {
+                beginShape();
+                vertex(points[i].x, points[i].y);
+            } else if (i === points.length - 1) {
+                vertex(points[i].x, points[i].y);
+                endShape();
+            } else {
+                vertex(points[i].x, points[i].y);
+                endShape();
+                beginShape();
+                vertex(points[i].x, points[i].y);
+            }
+            stroke(color(points[i].hue, points[i].sat, 100));
+            strokeWeight(points[i].weight);
         }
 
+        for (const point of points) {
+            stroke(color(point.hue, point.sat, 100));
+            strokeWeight(point.weight);
+            noFill();
+            circle(point.x, point.y, point.weight * STROKE_DIVIDER);
+            noStroke();
+            fill('white');
+            text(Math.round(point.angle ? point.angle : 0), point.x, point.y);
+        }
+    }
+
+    static reduceEdgePoints(edgePoints) {
         let finalEdgePoints = [];
 
         let a = 0;
@@ -117,19 +132,19 @@ class EdgeDrawer {
         if (edgePoints.length > 2) {
             finalEdgePoints.push(edgePoints[edgePoints.length - 1]);
         }
+        return finalEdgePoints;
+    }
 
-        for (const point of finalEdgePoints) {
-            stroke(color(point.hue, point.sat, 100));
-            strokeWeight(point.weight);
-            noFill();
-            circle(point.x, point.y, point.weight * STROKE_DIVIDER);
-            noStroke();
-            fill('white');
-            text(Math.round(point.angle ? point.angle : 0), point.x, point.y);
-            segmentNumber++;
+    static getEdgePoints(u, uHue, uSat, tMax, v, uVec, vVec, vHue, dir, vSat) {
+        let edgePoints = [];
+        edgePoints.push({x: u.x, y: -u.y, hue: uHue, sat: uSat, weight: u.size / STROKE_DIVIDER});
+
+        let t = 0;
+        while (t < tMax) {
+            t = Math.min(tMax, t + (1 / MAX_EDGE_SEGMENTS));
+            edgePoints.push(this.getPoint(t, u, v, uVec, vVec, uHue, vHue, dir, uSat, vSat));
         }
-
-        return segmentNumber;
+        return edgePoints;
     }
 
     static getMiddleAngle(edgePoints, a, b, c) {
