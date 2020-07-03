@@ -1,5 +1,27 @@
 const ColorUtilities = {
-    hueLerp: function(start, end, x, dir) {
+    hueLerp: function(start, end, x) {
+        let dir;
+        colorMode(HSB);
+        if (end > start) {
+            if (start >= 145) {
+                dir = 1;
+            } else if (end - start > (360 + start) - end) {
+                dir = -1;
+            } else {
+                dir = 1;
+            }
+        } else {
+            if (end >= 145) {
+                dir = -1;
+            } else if (start - end > (360 + end) - start) {
+                dir = 1;
+            } else {
+                dir = -1;
+            }
+        }
+
+
+
         if (dir === 1) {
             return (start + (x * ((end - start).mod(360) * dir))).mod(360);
         } else {

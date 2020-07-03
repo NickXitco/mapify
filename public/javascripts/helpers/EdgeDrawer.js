@@ -29,27 +29,7 @@ class EdgeDrawer {
         let uSat = uHSV.s;
         let vSat = vHSV.s;
 
-        let dir;
-        colorMode(HSB);
-        if (vHue > uHue) {
-            if (uHue >= 145) {
-                dir = 1;
-            } else if (vHue - uHue > (360 + uHue) - vHue) {
-                dir = -1;
-            } else {
-                dir = 1;
-            }
-        } else {
-            if (vHue >= 145) {
-                dir = -1;
-            } else if (uHue - vHue > (360 + vHue) - uHue) {
-                dir = 1;
-            } else {
-                dir = -1;
-            }
-        }
-
-        let numSegments = this.runEdgeDrawer(e, u, v, uVec, vVec, uHue, vHue, dir, uSat, vSat);
+        let numSegments = this.runEdgeDrawer(e, u, v, uVec, vVec, uHue, vHue, uSat, vSat);
 
         fill('white');
         noStroke();
@@ -62,8 +42,8 @@ class EdgeDrawer {
 
     }
 
-    static runEdgeDrawer(e, u, v, uVec, vVec, uHue, vHue, dir, uSat, vSat) {
-        let edgePoints = this.getEdgePoints(u, uHue, uSat, e.tMax, v, uVec, vVec, vHue, dir, vSat);
+    static runEdgeDrawer(e, u, v, uVec, vVec, uHue, vHue, uSat, vSat) {
+        let edgePoints = this.getEdgePoints(u, uHue, uSat, e.tMax, v, uVec, vVec, vHue, vSat);
         let finalEdgePoints = this.reduceEdgePoints(edgePoints);
         this.drawEdgePoints(finalEdgePoints);
         return finalEdgePoints.length;
@@ -71,6 +51,11 @@ class EdgeDrawer {
 
     static drawEdgePoints(points) {
         textSize(15);
+
+        const u = points[0];
+        const v = points[points.length - 1];
+
+
 
         for (let i = 0; i < points.length; i++) {
             if (i === 0) {
@@ -85,8 +70,8 @@ class EdgeDrawer {
                 beginShape();
                 vertex(points[i].x, points[i].y);
             }
-            stroke(color(points[i].hue, points[i].sat, 100));
-            strokeWeight(points[i].weight);
+            stroke(color(ColorUtilities.hueLerp(u.hue, v.hue, i / points.length), lerp(u.sat, v.sat, i / points.length), 100));
+            strokeWeight(lerp(u.weight, v.weight,  i / points.length));
         }
 
         for (const point of points) {
@@ -135,25 +120,23 @@ class EdgeDrawer {
         return finalEdgePoints;
     }
 
-    static getEdgePoints(u, uHue, uSat, tMax, v, uVec, vVec, vHue, dir, vSat) {
+    static getEdgePoints(u, uHue, uSat, tMax, v, uVec, vVec, vHue, vSat) {
         let edgePoints = [];
         edgePoints.push({x: u.x, y: -u.y, hue: uHue, sat: uSat, weight: u.size / STROKE_DIVIDER});
 
         let t = 0;
         while (t < tMax) {
             t = Math.min(tMax, t + (1 / MAX_EDGE_SEGMENTS));
-            edgePoints.push(this.getPoint(t, u, v, uVec, vVec, uHue, vHue, dir, uSat, vSat));
+            edgePoints.push(this.getPoint(t, u, v, uVec, vVec, uHue, vHue, uSat, vSat));
         }
         return edgePoints;
     }
 
     static getMiddleAngle(edgePoints, a, b, c) {
-        let angle = 0;
         let dAB = dist(edgePoints[a].x, edgePoints[a].y, edgePoints[b].x, edgePoints[b].y);
         let dBC = dist(edgePoints[b].x, edgePoints[b].y, edgePoints[c].x, edgePoints[c].y);
         let dAC = dist(edgePoints[a].x, edgePoints[a].y, edgePoints[c].x, edgePoints[c].y);
-        angle = degrees(Math.acos((dAB * dAB + dBC * dBC - dAC * dAC) / (2 * dAB * dBC)));
-        return angle;
+        return degrees(Math.acos((dAB * dAB + dBC * dBC - dAC * dAC) / (2 * dAB * dBC)));
     }
 
     /* TODO
@@ -163,7 +146,7 @@ class EdgeDrawer {
     */
 
 
-    static getPoint(t, u, v, uVec, vVec, uHue, vHue, dir, uSat, vSat) {
+    static getPoint(t, u, v, uVec, vVec, uHue, vHue, uSat, vSat) {
         const tEased = Eases.easeOutQuad(t);
 
         let tV = {
@@ -171,7 +154,7 @@ class EdgeDrawer {
             y: Math.pow(1 - tEased, 3) * -u.y + 3 * Math.pow(1 - tEased, 2) * tEased * -uVec.y + 3 * (1 - tEased) * Math.pow(tEased, 2) * -vVec.y + Math.pow(tEased, 3) * -v.y
         };
 
-        let newHue = ColorUtilities.hueLerp(uHue, vHue, tEased, dir);
+        let newHue = ColorUtilities.hueLerp(uHue, vHue, tEased);
         let newSat = lerp(uSat, vSat, tEased);
         let newWeight = lerp(u.size / STROKE_DIVIDER, v.size / STROKE_DIVIDER, tEased);
 
