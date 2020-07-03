@@ -1,6 +1,6 @@
 const STROKE_DIVIDER = 5;
 const EASE_SPEED = 10;
-const EDGE_SEGMENTS = 64;
+const MAX_EDGE_SEGMENTS = 128;
 const ANGLE_THRESHOLD = 178;
 
 class EdgeDrawer {
@@ -81,7 +81,7 @@ class EdgeDrawer {
         edgePoints.push(pointA);
 
         while (t < tMax) {
-            t = Math.min(tMax, t + (1 / EDGE_SEGMENTS));
+            t = Math.min(tMax, t + (1 / MAX_EDGE_SEGMENTS));
             pointB = this.getPoint(t, u, v, uVec, vVec, uHue, vHue, dir, uSat, vSat);
             edgePoints.push(pointB);
         }
