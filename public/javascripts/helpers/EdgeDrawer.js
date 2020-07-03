@@ -1,6 +1,6 @@
 const STROKE_DIVIDER = 5;
 const EASE_SPEED = 25;
-const EDGE_SEGMENTS = 100;
+const EDGE_SEGMENTS = 50;
 
 class EdgeDrawer {
     static drawEdge(e) {
@@ -61,22 +61,26 @@ class EdgeDrawer {
             t += 1 / EDGE_SEGMENTS;
             const tEased = Eases.easeOutQuad(t);
 
-            let tV = {x: Math.pow(1 - tEased, 3) * u.x + 3 * Math.pow(1 - tEased, 2) * tEased * uVec.x + 3 * (1 - tEased) * Math.pow(tEased, 2) * vVec.x + Math.pow(tEased, 3) * v.x,
-                y: Math.pow(1 - tEased, 3) * -u.y + 3 * Math.pow(1 - tEased, 2) * tEased * -uVec.y + 3 * (1 - tEased) * Math.pow(tEased, 2) * -vVec.y + Math.pow(tEased, 3) * -v.y};
+            let tV = {x: Math.pow(1 - tEased, 3) *  u.x + 3 * Math.pow(1 - tEased, 2) * tEased *  uVec.x + 3 * (1 - tEased) * Math.pow(tEased, 2) *  vVec.x + Math.pow(tEased, 3) *  v.x,
+                      y: Math.pow(1 - tEased, 3) * -u.y + 3 * Math.pow(1 - tEased, 2) * tEased * -uVec.y + 3 * (1 - tEased) * Math.pow(tEased, 2) * -vVec.y + Math.pow(tEased, 3) * -v.y};
 
             let newHue = ColorUtilities.hueLerp(uHue, vHue, tEased, dir);
             stroke(color(newHue, lerp(uSat, vSat, tEased), 100));
             strokeWeight(lerp(u.size / STROKE_DIVIDER, v.size / STROKE_DIVIDER, tEased));
-            vertex(tV.x, tV.y);
-            endShape();
 
             if (!camera.containsPoint(tV.x, -tV.y)) {
                 brokeEarly = true;
+                vertex(tV.x, tV.y);
+                endShape();
                 break;
             }
 
-            beginShape();
-            vertex(tV.x, tV.y);
+            if (needsSegmentBreak(tV)) {
+                vertex(tV.x, tV.y);
+                endShape();
+                beginShape();
+                vertex(tV.x, tV.y);
+            }
         }
 
         if (e.tMax === 1 && !brokeEarly) {
@@ -87,4 +91,8 @@ class EdgeDrawer {
 
         e.tMax = Math.min(1, e.tMax + (EASE_SPEED / dist(u.x, u.y, v.x, v.y)));
     }
+}
+
+function needsSegmentBreak(tV) {
+    return true;
 }
