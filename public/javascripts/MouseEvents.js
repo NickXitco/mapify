@@ -62,6 +62,11 @@ function mousePressed() {
         MouseEvents.drag = {x: mouseX, y: mouseY};
         MouseEvents.start = {x: mouseX, y: mouseY};
     }
+
+    if (!SearchBox.hoverFlag) {
+        SearchBox.deleteSuggestions();
+        SearchBox.input.value = "";
+    }
 }
 
 // noinspection JSUnusedGlobalSymbols
