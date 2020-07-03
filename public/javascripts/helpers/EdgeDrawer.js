@@ -1,7 +1,7 @@
 const STROKE_DIVIDER = 5;
-const EASE_SPEED = 25;
-const EDGE_SEGMENTS = 50;
-const ANGLE_THRESHOLD = 2;
+const EASE_SPEED = 10;
+const EDGE_SEGMENTS = 32;
+const ANGLE_THRESHOLD = 1;
 
 class EdgeDrawer {
     static drawEdge(e) {
@@ -63,53 +63,46 @@ class EdgeDrawer {
     }
 
     static runEdgeDrawer(e, u, v, uVec, vVec, uHue, vHue, dir, uSat, vSat) {
+        let segmentNumber = 0;
+        let tMax = e.tMax.valueOf();
         let t = 0;
-        let brokeEarly = false;
-        let numSegments = 0;
 
-        let pointA, pointB, pointC;
+        let pointA, pointB;
+
         pointA = {x: u.x, y: -u.y, hue: uHue, sat: uSat, weight: u.size / STROKE_DIVIDER};
-        t += 1 / EDGE_SEGMENTS;
-        pointB = this.getPoint(t, u, v, uVec, vVec, uHue, vHue, dir, uSat, vSat);
 
         stroke(color(pointA.hue, pointA.sat, 100));
         strokeWeight(pointA.weight);
-        beginShape();
-        vertex(u.x, -u.y);
 
-        while (t < e.tMax) {
-            t += 1 / EDGE_SEGMENTS;
+        textSize(15);
 
-            pointC = this.getPoint(t, u, v, uVec, vVec, uHue, vHue, dir, uSat, vSat);
 
-            if (!camera.containsPoint(pointC.x, -pointC.y)) {
-                brokeEarly = true;
-                vertex(pointB.x, pointB.y);
-                endShape();
-                beginShape();
-                vertex(pointB.x, pointB.y);
-                vertex(pointC.x, pointC.y);
-                endShape();
-                break;
-            }
-
-            if (this.needsSegmentBreak(pointA, pointB, pointC)) {
-                vertex(pointB.x, pointB.y);
-                endShape();
-                beginShape();
-                vertex(pointB.x, pointB.y);
-                numSegments++;
-            } 
-
-            pointB = pointC;
+        while (t < tMax) {
+            t = Math.min(tMax, t + (1 / EDGE_SEGMENTS));
+            pointB = this.getPoint(t, u, v, uVec, vVec, uHue, vHue, dir, uSat, vSat);
+            stroke(color(pointB.hue, pointB.sat, 100));
+            strokeWeight(pointB.weight);
+            noFill();
+            circle(pointB.x, pointB.y, pointB.weight * STROKE_DIVIDER);
+            noStroke();
+            fill('white');
+            text(t, pointB.x, pointB.y);
+            segmentNumber++;
         }
 
-        if (e.tMax === 1 && !brokeEarly) {
-            vertex(v.x, -v.y);
-        }
-        endShape();
-        return numSegments;
+
+
+        return segmentNumber;
     }
+
+    /* TODO
+
+    1. Each segment needs to be the same length.
+    2. If u is offscreen, or rather, the first point is offscreen, the line will not be drawn.
+    3. The line draws continuously, not segment by segment.
+
+     */
+
 
     static getPoint(t, u, v, uVec, vVec, uHue, vHue, dir, uSat, vSat) {
         const tEased = Eases.easeOutQuad(t);
@@ -127,6 +120,7 @@ class EdgeDrawer {
     }
 
     static needsSegmentBreak(a, b, c) {
+        return true;
         let dAB = dist(a.x, a.y, b.x, b.y);
         let dBC = dist(b.x, b.y, c.x, c.y);
         let dAC = dist(a.x, a.y, c.x, c.y);
