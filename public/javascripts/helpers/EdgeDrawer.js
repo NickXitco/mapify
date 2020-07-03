@@ -1,7 +1,7 @@
 const STROKE_DIVIDER = 5;
 const EASE_SPEED = 10;
-const EDGE_SEGMENTS = 32;
-const ANGLE_THRESHOLD = 1;
+const EDGE_SEGMENTS = 64;
+const ANGLE_THRESHOLD = 178;
 
 class EdgeDrawer {
     static drawEdge(e) {
@@ -67,6 +67,7 @@ class EdgeDrawer {
         let tMax = e.tMax.valueOf();
         let t = 0;
 
+
         let pointA, pointB;
 
         pointA = {x: u.x, y: -u.y, hue: uHue, sat: uSat, weight: u.size / STROKE_DIVIDER};
@@ -76,32 +77,75 @@ class EdgeDrawer {
 
         textSize(15);
 
+        let edgePoints = [];
+        edgePoints.push(pointA);
 
         while (t < tMax) {
             t = Math.min(tMax, t + (1 / EDGE_SEGMENTS));
             pointB = this.getPoint(t, u, v, uVec, vVec, uHue, vHue, dir, uSat, vSat);
-            stroke(color(pointB.hue, pointB.sat, 100));
-            strokeWeight(pointB.weight);
-            noFill();
-            circle(pointB.x, pointB.y, pointB.weight * STROKE_DIVIDER);
-            noStroke();
-            fill('white');
-            text(t, pointB.x, pointB.y);
-            segmentNumber++;
+            edgePoints.push(pointB);
         }
 
+        let finalEdgePoints = [];
 
+        let a = 0;
+        let b = 1;
+        let c = 2;
+
+        finalEdgePoints.push(edgePoints[a]);
+        if (edgePoints.length === 2) {
+            finalEdgePoints.push(edgePoints[b]);
+        }
+
+        while (c < edgePoints.length) {
+            let angle = this.getMiddleAngle(edgePoints, a, b, c);
+            edgePoints[c].angle = angle;
+
+            if (angle >= ANGLE_THRESHOLD) {
+                //Don't push point B, move B and C along the line
+                b = c;
+                c++;
+            } else {
+                //Push point B, move A, B, and C along the line.
+                finalEdgePoints.push(edgePoints[b]);
+                a = b;
+                b = c;
+                c++;
+            }
+        }
+
+        if (edgePoints.length > 2) {
+            finalEdgePoints.push(edgePoints[edgePoints.length - 1]);
+        }
+
+        for (const point of finalEdgePoints) {
+            stroke(color(point.hue, point.sat, 100));
+            strokeWeight(point.weight);
+            noFill();
+            circle(point.x, point.y, point.weight * STROKE_DIVIDER);
+            noStroke();
+            fill('white');
+            text(Math.round(point.angle ? point.angle : 0), point.x, point.y);
+            segmentNumber++;
+        }
 
         return segmentNumber;
     }
 
+    static getMiddleAngle(edgePoints, a, b, c) {
+        let angle = 0;
+        let dAB = dist(edgePoints[a].x, edgePoints[a].y, edgePoints[b].x, edgePoints[b].y);
+        let dBC = dist(edgePoints[b].x, edgePoints[b].y, edgePoints[c].x, edgePoints[c].y);
+        let dAC = dist(edgePoints[a].x, edgePoints[a].y, edgePoints[c].x, edgePoints[c].y);
+        angle = degrees(Math.acos((dAB * dAB + dBC * dBC - dAC * dAC) / (2 * dAB * dBC)));
+        return angle;
+    }
+
     /* TODO
-
-    1. Each segment needs to be the same length.
-    2. If u is offscreen, or rather, the first point is offscreen, the line will not be drawn.
-    3. The line draws continuously, not segment by segment.
-
-     */
+        1. Each segment needs to be the same length. UNNECESSARY
+        2. If u is offscreen, or rather, the first point is offscreen, the line will not be drawn.
+        3. The line draws continuously, not segment by segment. DONE
+    */
 
 
     static getPoint(t, u, v, uVec, vVec, uHue, vHue, dir, uSat, vSat) {
@@ -116,17 +160,7 @@ class EdgeDrawer {
         let newSat = lerp(uSat, vSat, tEased);
         let newWeight = lerp(u.size / STROKE_DIVIDER, v.size / STROKE_DIVIDER, tEased);
 
-        return {x: tV.x, y: tV.y, hue: newHue, sat: newSat, weight: newWeight};
-    }
-
-    static needsSegmentBreak(a, b, c) {
-        return true;
-        let dAB = dist(a.x, a.y, b.x, b.y);
-        let dBC = dist(b.x, b.y, c.x, c.y);
-        let dAC = dist(a.x, a.y, c.x, c.y);
-        let angleB = degrees(Math.acos((dAB * dAB + dBC * dBC - dAC * dAC) / (2 * dAB * dBC)));
-
-        return Math.abs(180 - angleB % 180) >= ANGLE_THRESHOLD;
+        return {x: tV.x, y: tV.y, hue: newHue, sat: newSat, weight: newWeight, t: t};
     }
 }
 
