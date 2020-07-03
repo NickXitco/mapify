@@ -81,9 +81,12 @@ function drawEdges(clickedArtist) {
     if (newEdges) {
         edges = [];
         for (const related of clickedArtist.relatedVertices) {
+            const u = clickedArtist;
+            const v = related;
+            Math.seedrandom(u.id + v.id);
             edges.push({
-                u: clickedArtist,
-                v: related,
+                u: u,
+                v: v,
                 cUrad: Math.random() / 2,
                 cUang: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
                 cVrad: Math.random() / 2,
