@@ -57,6 +57,9 @@ class EdgeDrawer {
 
         let t = 0;
         let brokeEarly = false;
+        let numSegments = 0;
+
+
         while (t < e.tMax) {
             t += 1 / EDGE_SEGMENTS;
             const tEased = Eases.easeOutQuad(t);
@@ -80,6 +83,7 @@ class EdgeDrawer {
                 endShape();
                 beginShape();
                 vertex(tV.x, tV.y);
+                numSegments++;
             }
         }
 
@@ -87,9 +91,15 @@ class EdgeDrawer {
             vertex(v.x, -v.y);
         }
         endShape();
+        fill('white');
+        noStroke();
+        textSize(50);
+        text(numSegments, v.x, -v.y);
         pop();
 
         e.tMax = Math.min(1, e.tMax + (EASE_SPEED / dist(u.x, u.y, v.x, v.y)));
+
+
     }
 }
 
