@@ -2,6 +2,10 @@ const STROKE_DIVIDER = 5;
 const EASE_SPEED = 10;
 const MAX_EDGE_SEGMENTS = 128;
 const ANGLE_THRESHOLD = 178;
+const HUE_THRESHOLD = 4;
+const SAT_THRESHOLD = 2;
+const WEIGHT_THRESHOLD = 1.1;
+
 
 class EdgeDrawer {
     static drawEdge(e) {
@@ -82,69 +86,86 @@ class EdgeDrawer {
     }
 
     static reduceEdgePoints(edgePoints) {
-        let finalEdgePoints = [];
+        edgePoints = this.flatten(edgePoints);
+        edgePoints = this.removeOutOfView(edgePoints);
+
+        return edgePoints;
+    }
+
+    static removeOutOfView(edgePoints) {
+        let a = 0;
+        let b = 1;
+
+        let pointsInView = [];
+        if (edgePoints.length === 2) {
+            pointsInView.push(edgePoints[a]);
+            pointsInView.push(edgePoints[b]);
+            return pointsInView;
+        }
+
+        let addFlag = false;
+        while (b < edgePoints.length) {
+            const aInView = camera.containsPoint(edgePoints[a].x, -edgePoints[a].y);
+            const bInView = camera.containsPoint(edgePoints[b].x, -edgePoints[b].y);
+
+
+            if (bInView || addFlag) {
+                pointsInView.push(edgePoints[a]);
+                addFlag = false;
+            } else if (aInView) {
+                pointsInView.push(edgePoints[a]);
+                addFlag = true;
+            }
+            a++;
+            b++;
+        }
+
+        pointsInView.push(edgePoints[edgePoints.length - 1]);
+
+        return pointsInView;
+    }
+
+    static flatten(edgePoints) {
+        let flattened = [];
 
         let a = 0;
         let b = 1;
         let c = 2;
 
-        finalEdgePoints.push(edgePoints[a]);
+        flattened.push(edgePoints[a]);
         if (edgePoints.length === 2) {
-            finalEdgePoints.push(edgePoints[b]);
+            flattened.push(edgePoints[b]);
         }
 
         while (c < edgePoints.length) {
             let angle = this.getMiddleAngle(edgePoints, a, b, c);
+            let hueDif = this.getHueDif(edgePoints[a].hue, edgePoints[c].hue);
+            let satDif = Math.abs(edgePoints[a].sat - edgePoints[c].sat);
+            let weightRatio =  Math.max(edgePoints[a].weight, edgePoints[c].weight) / Math.min(edgePoints[a].weight, edgePoints[c].weight);
+
             edgePoints[c].angle = angle;
 
-            if (angle >= ANGLE_THRESHOLD) {
-                //Don't push point B, move B and C along the line
+            if (angle < ANGLE_THRESHOLD || hueDif > HUE_THRESHOLD || satDif > SAT_THRESHOLD || weightRatio > WEIGHT_THRESHOLD) {
+                //Push point B, move A, B, and C along the line.
+                flattened.push(edgePoints[b]);
+                a = b;
                 b = c;
                 c++;
             } else {
-                //Push point B, move A, B, and C along the line.
-                finalEdgePoints.push(edgePoints[b]);
-                a = b;
+                //Don't push point B, move B and C along the line
                 b = c;
                 c++;
             }
         }
 
         if (edgePoints.length > 2) {
-            finalEdgePoints.push(edgePoints[edgePoints.length - 1]);
+            flattened.push(edgePoints[edgePoints.length - 1]);
         }
+        return flattened;
+    }
 
-        a = 0;
-        b = 1;
-        c = 2;
-
-        let pointsInView = [];
-        pointsInView.push(finalEdgePoints[a]);
-        if (finalEdgePoints.length === 2) {
-            pointsInView.push(finalEdgePoints[b]);
-        }
-
-        while (c < finalEdgePoints.length) {
-            const aInView = camera.containsPoint(finalEdgePoints[a].x, -finalEdgePoints[a].y);
-            const cInView = camera.containsPoint(finalEdgePoints[c].x, -finalEdgePoints[c].y);
-
-            if (aInView || cInView) {
-                pointsInView.push(finalEdgePoints[b]);
-                a = b;
-                b = c;
-                c++;
-            } else {
-                a = b;
-                b = c;
-                c++;
-            }
-        }
-
-        if (finalEdgePoints.length > 2) {
-            pointsInView.push(finalEdgePoints[finalEdgePoints.length - 1]);
-        }
-
-        return pointsInView;
+    static getHueDif(a, b) {
+        return Math.min((a - b).mod(360), (b - a).mod(360));
     }
 
     static getEdgePoints(u, uHue, uSat, tMax, v, uVec, vVec, vHue, vSat) {
