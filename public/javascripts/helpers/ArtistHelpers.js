@@ -100,6 +100,15 @@ function drawEdges(clickedArtist) {
 }
 
 async function loadArtistFromSearch(query, isQueryID) {
+    let alreadyGot = false;
+    if (isQueryID) {
+        const cachedNode = nodeLookup[query];
+        if (cachedNode) {
+            SearchBox.point = cachedNode;
+            alreadyGot = true;
+        }
+    }
+
     const response = await fetch('artist/' + query + "/" + isQueryID);
     const data = await response.json();
 
@@ -116,7 +125,10 @@ async function loadArtistFromSearch(query, isQueryID) {
     }
     node.loaded = true;
 
-    SearchBox.point = node;
+    if (!alreadyGot) {
+        SearchBox.point = node;
+    }
+
     clickedArtist = node;
     edgeDrawing = true;
 }
