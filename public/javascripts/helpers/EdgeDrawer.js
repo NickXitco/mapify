@@ -74,34 +74,24 @@ class EdgeDrawer {
     }
 
     static removeOutOfView(edgePoints) {
-        let a = 0;
-        let b = 1;
-
-        let pointsInView = [];
-        if (edgePoints.length === 2) {
-            pointsInView.push(edgePoints[a]);
-            pointsInView.push(edgePoints[b]);
-            return pointsInView;
-        }
-
-        let addFlag = false;
-        while (b < edgePoints.length) {
-            const aInView = camera.containsPoint(edgePoints[a].x, -edgePoints[a].y);
-            const bInView = camera.containsPoint(edgePoints[b].x, -edgePoints[b].y);
-
-
-            if (bInView || addFlag) {
-                pointsInView.push(edgePoints[a]);
-                addFlag = false;
-            } else if (aInView) {
-                pointsInView.push(edgePoints[a]);
-                addFlag = true;
+        const pointsInView = []
+        let lastIn = camera.containsPoint(edgePoints[0].x, -edgePoints[0].y);
+        for (let i = 0; i < edgePoints.length; i++) {
+            const inView = camera.containsPoint(edgePoints[i].x, -edgePoints[i].y);
+            if (inView) {
+                if (!lastIn) {
+                    pointsInView.push(edgePoints[i - 1]);
+                }
+                pointsInView.push(edgePoints[i]);
+                lastIn = true;
+                continue;
             }
-            a++;
-            b++;
-        }
 
-        pointsInView.push(edgePoints[edgePoints.length - 1]);
+            if (lastIn) {
+                pointsInView.push(edgePoints[i]);
+                lastIn = false;
+            }
+        }
 
         return pointsInView;
     }
