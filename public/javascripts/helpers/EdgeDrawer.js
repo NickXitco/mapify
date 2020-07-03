@@ -1,6 +1,7 @@
 const STROKE_DIVIDER = 5;
 const EASE_SPEED = 25;
 const EDGE_SEGMENTS = 50;
+const ANGLE_THRESHOLD = 2;
 
 class EdgeDrawer {
     static drawEdge(e) {
@@ -19,13 +20,6 @@ class EdgeDrawer {
         vVec.rotate(e.cVang);
         uVec.add(u.x, u.y);
         vVec.add(v.x, v.y);
-
-        stroke(u.color);
-
-        stroke('white');
-        beginShape();
-        vertex(u.x, -u.y);
-
 
         let uHSV = ColorUtilities.rgb2hsv(red(u.color), green(u.color), blue(u.color));
         let vHSV = ColorUtilities.rgb2hsv(red(v.color), green(v.color), blue(v.color));
@@ -55,42 +49,8 @@ class EdgeDrawer {
             }
         }
 
-        let t = 0;
-        let brokeEarly = false;
-        let numSegments = 0;
+        let numSegments = this.runEdgeDrawer(e, u, v, uVec, vVec, uHue, vHue, dir, uSat, vSat);
 
-
-        while (t < e.tMax) {
-            t += 1 / EDGE_SEGMENTS;
-            const tEased = Eases.easeOutQuad(t);
-
-            let tV = {x: Math.pow(1 - tEased, 3) *  u.x + 3 * Math.pow(1 - tEased, 2) * tEased *  uVec.x + 3 * (1 - tEased) * Math.pow(tEased, 2) *  vVec.x + Math.pow(tEased, 3) *  v.x,
-                      y: Math.pow(1 - tEased, 3) * -u.y + 3 * Math.pow(1 - tEased, 2) * tEased * -uVec.y + 3 * (1 - tEased) * Math.pow(tEased, 2) * -vVec.y + Math.pow(tEased, 3) * -v.y};
-
-            let newHue = ColorUtilities.hueLerp(uHue, vHue, tEased, dir);
-            stroke(color(newHue, lerp(uSat, vSat, tEased), 100));
-            strokeWeight(lerp(u.size / STROKE_DIVIDER, v.size / STROKE_DIVIDER, tEased));
-
-            if (!camera.containsPoint(tV.x, -tV.y)) {
-                brokeEarly = true;
-                vertex(tV.x, tV.y);
-                endShape();
-                break;
-            }
-
-            if (needsSegmentBreak(tV)) {
-                vertex(tV.x, tV.y);
-                endShape();
-                beginShape();
-                vertex(tV.x, tV.y);
-                numSegments++;
-            }
-        }
-
-        if (e.tMax === 1 && !brokeEarly) {
-            vertex(v.x, -v.y);
-        }
-        endShape();
         fill('white');
         noStroke();
         textSize(50);
@@ -101,8 +61,78 @@ class EdgeDrawer {
 
 
     }
+
+    static runEdgeDrawer(e, u, v, uVec, vVec, uHue, vHue, dir, uSat, vSat) {
+        let t = 0;
+        let brokeEarly = false;
+        let numSegments = 0;
+
+        let pointA, pointB, pointC;
+        pointA = {x: u.x, y: -u.y, hue: uHue, sat: uSat, weight: u.size / STROKE_DIVIDER};
+        t += 1 / EDGE_SEGMENTS;
+        pointB = this.getPoint(t, u, v, uVec, vVec, uHue, vHue, dir, uSat, vSat);
+
+        stroke(color(pointA.hue, pointA.sat, 100));
+        strokeWeight(pointA.weight);
+        beginShape();
+        vertex(u.x, -u.y);
+
+        while (t < e.tMax) {
+            t += 1 / EDGE_SEGMENTS;
+
+            pointC = this.getPoint(t, u, v, uVec, vVec, uHue, vHue, dir, uSat, vSat);
+
+            if (!camera.containsPoint(pointC.x, -pointC.y)) {
+                brokeEarly = true;
+                vertex(pointB.x, pointB.y);
+                endShape();
+                beginShape();
+                vertex(pointB.x, pointB.y);
+                vertex(pointC.x, pointC.y);
+                endShape();
+                break;
+            }
+
+            if (this.needsSegmentBreak(pointA, pointB, pointC)) {
+                vertex(pointB.x, pointB.y);
+                endShape();
+                beginShape();
+                vertex(pointB.x, pointB.y);
+                numSegments++;
+            } 
+
+            pointB = pointC;
+        }
+
+        if (e.tMax === 1 && !brokeEarly) {
+            vertex(v.x, -v.y);
+        }
+        endShape();
+        return numSegments;
+    }
+
+    static getPoint(t, u, v, uVec, vVec, uHue, vHue, dir, uSat, vSat) {
+        const tEased = Eases.easeOutQuad(t);
+
+        let tV = {
+            x: Math.pow(1 - tEased, 3) * u.x + 3 * Math.pow(1 - tEased, 2) * tEased * uVec.x + 3 * (1 - tEased) * Math.pow(tEased, 2) * vVec.x + Math.pow(tEased, 3) * v.x,
+            y: Math.pow(1 - tEased, 3) * -u.y + 3 * Math.pow(1 - tEased, 2) * tEased * -uVec.y + 3 * (1 - tEased) * Math.pow(tEased, 2) * -vVec.y + Math.pow(tEased, 3) * -v.y
+        };
+
+        let newHue = ColorUtilities.hueLerp(uHue, vHue, tEased, dir);
+        let newSat = lerp(uSat, vSat, tEased);
+        let newWeight = lerp(u.size / STROKE_DIVIDER, v.size / STROKE_DIVIDER, tEased);
+
+        return {x: tV.x, y: tV.y, hue: newHue, sat: newSat, weight: newWeight};
+    }
+
+    static needsSegmentBreak(a, b, c) {
+        let dAB = dist(a.x, a.y, b.x, b.y);
+        let dBC = dist(b.x, b.y, c.x, c.y);
+        let dAC = dist(a.x, a.y, c.x, c.y);
+        let angleB = degrees(Math.acos((dAB * dAB + dBC * dBC - dAC * dAC) / (2 * dAB * dBC)));
+
+        return Math.abs(180 - angleB % 180) >= ANGLE_THRESHOLD;
+    }
 }
 
-function needsSegmentBreak(tV) {
-    return true;
-}
