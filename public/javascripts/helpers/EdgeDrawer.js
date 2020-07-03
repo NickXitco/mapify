@@ -3,8 +3,6 @@ const EASE_SPEED = 25;
 const EDGE_SEGMENTS = 100;
 
 class EdgeDrawer {
-
-
     static drawEdge(e) {
         const u = e.u;
         const v = e.v;
@@ -58,6 +56,7 @@ class EdgeDrawer {
         }
 
         let t = 0;
+        let brokeEarly = false;
         while (t < e.tMax) {
             t += 1 / EDGE_SEGMENTS;
             const tEased = Eases.easeOutQuad(t);
@@ -70,11 +69,17 @@ class EdgeDrawer {
             strokeWeight(lerp(u.size / STROKE_DIVIDER, v.size / STROKE_DIVIDER, tEased));
             vertex(tV.x, tV.y);
             endShape();
+
+            if (!camera.containsPoint(tV.x, -tV.y)) {
+                brokeEarly = true;
+                break;
+            }
+
             beginShape();
             vertex(tV.x, tV.y);
         }
 
-        if (e.tMax === 1) {
+        if (e.tMax === 1 && !brokeEarly) {
             vertex(v.x, -v.y);
         }
         endShape();
