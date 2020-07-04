@@ -95,20 +95,8 @@ function drawOnscreenQuads(quadHead, camera) {
 
     const sortedQuads = [...quads].sort((a, b) => a.name.length - b.name.length);
     for (const q of sortedQuads) {
-
-        /*
-        let evicted = quadCache.insert(q, q.name);
-        if (evicted) {
-            evicted.deleteSelf(nodeOccurences, nodeLookup);
-        }
-         */
-
-
-
         if (q.image) {
-
             image(q.image, q.x - q.r, -(q.y + q.r), q.r * 2, q.r * 2, 0, 0);
-
         } else {
             push();
             noFill();
@@ -121,6 +109,17 @@ function drawOnscreenQuads(quadHead, camera) {
         }
         //debugText(q);
     }
+
+    if (hoveredArtist) {
+        push();
+        noStroke();
+        hoveredArtist.color.setAlpha(127);
+        fill(hoveredArtist.color);
+        hoveredArtist.color.setAlpha(255);
+        circle(hoveredArtist.x, -hoveredArtist.y, hoveredArtist.size);
+        pop();
+    }
+
 
     function debugText(q) {
         textSize(q.r / 20);
