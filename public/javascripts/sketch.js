@@ -102,7 +102,6 @@ function draw() {
 
     drawOnscreenQuads(quadHead, camera);
 
-
     loadUnloaded();
     getHoveredArtist();
 
