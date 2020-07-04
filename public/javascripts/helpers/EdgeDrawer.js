@@ -1,6 +1,6 @@
 const STROKE_DIVIDER = 5;
 const EASE_SPEED = 25;
-const MAX_EDGE_SEGMENTS = 64;
+const MAX_EDGE_SEGMENTS = 128;
 const ANGLE_THRESHOLD = 178;
 const HUE_THRESHOLD = 4;
 const SAT_THRESHOLD = 2;
@@ -157,13 +157,6 @@ class EdgeDrawer {
         let dAC = dist(edgePoints[a].x, edgePoints[a].y, edgePoints[c].x, edgePoints[c].y);
         return degrees(Math.acos((dAB * dAB + dBC * dBC - dAC * dAC) / (2 * dAB * dBC)));
     }
-
-    /* TODO
-        1. Each segment needs to be the same length. UNNECESSARY
-        2. If u is offscreen, or rather, the first point is offscreen, the line will not be drawn.
-        3. The line draws continuously, not segment by segment. DONE
-    */
-
 
     static getPoint(t, u, v, uVec, vVec, uHue, vHue, uSat, vSat) {
         const tEased = Eases.easeOutQuad(t);
