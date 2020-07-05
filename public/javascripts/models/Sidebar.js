@@ -47,7 +47,7 @@ const Sidebar = {
 
     setSidebar: function(artist) {
         Sidebar.artist = clickedArtist;
-        Sidebar.dom.style.display = "block";
+        Sidebar.dom.style.display = "flex";
         let fontSize = 60;
         Sidebar.artistName.style.fontSize = fontSize + "px";
         Sidebar.artistName.innerText = artist.name;
