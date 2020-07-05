@@ -49,11 +49,29 @@ const MouseEvents = {
 
 // noinspection JSUnusedGlobalSymbols
 function mouseWheel(e) {
-    MouseEvents.zooming = true;
-    MouseEvents.scrollDelta = e.delta / 300;
-    MouseEvents.scrollStep = 0;
-    MouseEvents.zoomCoordinates = MouseEvents.getVirtualMouseCoordinates();
-    console.log(e);
+    e.preventDefault();
+    const isTouchPad = e.wheelDeltaY ? e.wheelDeltaY === -3 * e.deltaY : e.deltaMode === 0
+
+    if (isTouchPad) {
+        if (e.ctrlKey) {
+            MouseEvents.zooming = true;
+            MouseEvents.scrollDelta = e.deltaY / 300;
+            MouseEvents.scrollStep = 0;
+            MouseEvents.zoomCoordinates = MouseEvents.getVirtualMouseCoordinates();
+        } else {
+            camera.x += e.deltaX;
+            camera.y += e.deltaY;
+        }
+    } else {
+        MouseEvents.zooming = true;
+        MouseEvents.scrollStep = 0;
+        MouseEvents.zoomCoordinates = MouseEvents.getVirtualMouseCoordinates();
+        if (e.ctrlKey) {
+            MouseEvents.scrollDelta = e.delta / 150;
+        } else {
+            MouseEvents.scrollDelta = e.delta / 300;
+        }
+    }
 }
 
 
