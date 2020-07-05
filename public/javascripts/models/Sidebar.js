@@ -89,7 +89,7 @@ const Sidebar = {
         }
 
         if (artist.relatedVertices.size > 0) {
-            Sidebar.relatedArtistSection.style.display = "block";
+            Sidebar.relatedArtistSection.style.display = "flex";
             for (const r of artist.relatedVertices) {
                 const newRelated = document.createElement("li");
                 const id = r.id.valueOf();

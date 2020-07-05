@@ -272,8 +272,9 @@ h2 {
   width: 90%;
   position: static;
   padding: 15px 30px;
-  display: block;
+  display: flex;
   overflow-y: auto;
+  flex-direction: column;
 }
 
 .sidebarListItem {
