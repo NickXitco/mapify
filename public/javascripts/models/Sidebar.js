@@ -6,6 +6,7 @@ const Sidebar = {
     followersCount: document.getElementById("followerCount"),
     followersWord: document.getElementById("followers"),
     followersRanking: document.getElementById("followerRanking"),
+    genresSection: document.getElementById("genresSection"),
     genresList: document.getElementById("genresList"),
     relatedArtistsList: document.getElementById("relatedArtistsList"),
     picture: document.getElementById("sidebarPicture"),
@@ -69,7 +70,8 @@ const Sidebar = {
         Sidebar.followersWord.innerText = artist.followers === 1 ? "Follower" : "Followers";
         Sidebar.followersRanking.innerText = artist.rank ? "(#" + artist.rank + ")" : "";
 
-        if (artist.genres) {
+        if (artist.genres.length > 0) {
+            Sidebar.genresSection.style.display = "block";
             let genreCount = 0;
             for (const genre of artist.genres) {
                 const newGenre = document.createElement("li");
@@ -82,7 +84,7 @@ const Sidebar = {
                 }
             }
         } else {
-            //TODO don't show genre text at all;
+            Sidebar.genresSection.style.display = "none";
         }
 
         if (artist.relatedVertices) {
