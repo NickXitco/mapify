@@ -8,6 +8,7 @@ const Sidebar = {
     followersRanking: document.getElementById("followerRanking"),
     genresSection: document.getElementById("genresSection"),
     genresList: document.getElementById("genresList"),
+    relatedArtistSection: document.getElementById("relatedArtistsSection"),
     relatedArtistsList: document.getElementById("relatedArtistsList"),
     picture: document.getElementById("sidebarPicture"),
     scrollbar_style: document.getElementById("scrollbar_style"),
@@ -87,7 +88,8 @@ const Sidebar = {
             Sidebar.genresSection.style.display = "none";
         }
 
-        if (artist.relatedVertices) {
+        if (artist.relatedVertices.size > 0) {
+            Sidebar.relatedArtistSection.style.display = "block";
             for (const r of artist.relatedVertices) {
                 const newRelated = document.createElement("li");
                 const id = r.id.valueOf();
@@ -99,7 +101,7 @@ const Sidebar = {
                 Sidebar.relatedArtistsList.appendChild(newRelated);
             }
         } else {
-            //TODO don't show related text at all;
+            Sidebar.relatedArtistSection.style.display = "none";
         }
 
         Sidebar.picture.style.boxShadow = "0 0 13px 1px " + artist.color.toString();
