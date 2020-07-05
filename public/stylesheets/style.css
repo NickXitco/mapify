@@ -266,7 +266,7 @@ h2 {
   position: static;
   margin-left: 1em;
   margin-top: 1em;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 #relatedArtistsSection {
