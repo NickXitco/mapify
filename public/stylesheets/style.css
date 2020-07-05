@@ -216,7 +216,7 @@ h2 {
 #followersSection {
   position: static;
   width: 100%;
-  padding: 30px;
+  padding: 15px 30px;
 }
 
 #followerCount {
@@ -250,7 +250,7 @@ h2 {
 /*<editor-fold desc="GENRES">*/
 #genresSection {
   position: relative;
-  padding: 30px;
+  padding: 15px 30px;
 }
 
 #genresList {
@@ -265,14 +265,13 @@ h2 {
   width: 100%;
   position: static;
   margin-left: 1em;
-  margin-top: 1em;
   overflow-y: auto;
 }
 
 #relatedArtistsSection {
   width: 90%;
   position: static;
-  padding: 30px;
+  padding: 15px 30px;
   display: flex;
   overflow-y: auto;
   flex-direction: column;
