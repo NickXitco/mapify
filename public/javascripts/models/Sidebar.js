@@ -6,9 +6,12 @@ const Sidebar = {
     followersCount: document.getElementById("followerCount"),
     followersWord: document.getElementById("followers"),
     followersRanking: document.getElementById("followerRanking"),
+    genresSection: document.getElementById("genresSection"),
     genresList: document.getElementById("genresList"),
+    relatedArtistSection: document.getElementById("relatedArtistsSection"),
     relatedArtistsList: document.getElementById("relatedArtistsList"),
     picture: document.getElementById("sidebarPicture"),
+    scrollbar_style: document.getElementById("scrollbar_style"),
     openAmount: 0,
     artist: null,
     hoverFlag: false,
@@ -47,12 +50,12 @@ const Sidebar = {
 
     setSidebar: function(artist) {
         Sidebar.artist = clickedArtist;
-        Sidebar.dom.style.display = "block";
+        Sidebar.dom.style.display = "flex";
         let fontSize = 60;
         Sidebar.artistName.style.fontSize = fontSize + "px";
         Sidebar.artistName.innerText = artist.name;
 
-        while (Sidebar.artistName.clientHeight > 150 || Sidebar.artistName.clientWidth > 400) {
+        while (Sidebar.artistName.clientHeight > 150 || Sidebar.artistName.clientWidth > 375) {
             fontSize -= 2; //TODO compute this exactly rather than iteratively?
             Sidebar.artistName.style.fontSize = fontSize + "px"
         }
@@ -68,7 +71,8 @@ const Sidebar = {
         Sidebar.followersWord.innerText = artist.followers === 1 ? "Follower" : "Followers";
         Sidebar.followersRanking.innerText = artist.rank ? "(#" + artist.rank + ")" : "";
 
-        if (artist.genres) {
+        if (artist.genres.length > 0) {
+            Sidebar.genresSection.style.display = "block";
             let genreCount = 0;
             for (const genre of artist.genres) {
                 const newGenre = document.createElement("li");
@@ -81,10 +85,11 @@ const Sidebar = {
                 }
             }
         } else {
-            //TODO don't show genre text at all;
+            Sidebar.genresSection.style.display = "none";
         }
 
-        if (artist.relatedVertices) {
+        if (artist.relatedVertices.size > 0) {
+            Sidebar.relatedArtistSection.style.display = "flex";
             for (const r of artist.relatedVertices) {
                 const newRelated = document.createElement("li");
                 const id = r.id.valueOf();
@@ -96,14 +101,19 @@ const Sidebar = {
                 Sidebar.relatedArtistsList.appendChild(newRelated);
             }
         } else {
-            //TODO don't show related text at all;
+            Sidebar.relatedArtistSection.style.display = "none";
         }
 
         Sidebar.picture.style.boxShadow = "0 0 13px 1px " + artist.color.toString();
         Sidebar.stroke.style.boxShadow = "0 0 13px 1px " + artist.color.toString();
         Sidebar.stroke.style.background = artist.color.toString();
+        Sidebar.scrollbar_style.innerHTML = `::-webkit-scrollbar-track {box-shadow: 0 0 5px ${artist.color.toString()};}  \n` +
+                                            `::-webkit-scrollbar-thumb {background: ${artist.color.toString()};}`
+
+
         SearchBox.input.style.borderColor = artist.color.toString();
         SearchBox.input.style.boxShadow = "0 0 6px 0.5px " + artist.color.toString();
+
     }
 
 }
