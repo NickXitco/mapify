@@ -9,6 +9,7 @@ const Sidebar = {
     genresList: document.getElementById("genresList"),
     relatedArtistsList: document.getElementById("relatedArtistsList"),
     picture: document.getElementById("sidebarPicture"),
+    scrollbar_style: document.getElementById("scrollbar_style"),
     openAmount: 0,
     artist: null,
     hoverFlag: false,
@@ -52,7 +53,7 @@ const Sidebar = {
         Sidebar.artistName.style.fontSize = fontSize + "px";
         Sidebar.artistName.innerText = artist.name;
 
-        while (Sidebar.artistName.clientHeight > 150 || Sidebar.artistName.clientWidth > 400) {
+        while (Sidebar.artistName.clientHeight > 150 || Sidebar.artistName.clientWidth > 375) {
             fontSize -= 2; //TODO compute this exactly rather than iteratively?
             Sidebar.artistName.style.fontSize = fontSize + "px"
         }
@@ -102,8 +103,13 @@ const Sidebar = {
         Sidebar.picture.style.boxShadow = "0 0 13px 1px " + artist.color.toString();
         Sidebar.stroke.style.boxShadow = "0 0 13px 1px " + artist.color.toString();
         Sidebar.stroke.style.background = artist.color.toString();
+        Sidebar.scrollbar_style.innerHTML = `::-webkit-scrollbar-track {box-shadow: 0 0 5px ${artist.color.toString()};}  \n` +
+                                            `::-webkit-scrollbar-thumb {background: ${artist.color.toString()};}`
+
+
         SearchBox.input.style.borderColor = artist.color.toString();
         SearchBox.input.style.boxShadow = "0 0 6px 0.5px " + artist.color.toString();
+
     }
 
 }
