@@ -53,7 +53,10 @@ function mouseWheel(e) {
     MouseEvents.scrollDelta = e.delta / 300;
     MouseEvents.scrollStep = 0;
     MouseEvents.zoomCoordinates = MouseEvents.getVirtualMouseCoordinates();
+    console.log(e);
 }
+
+
 
 // noinspection JSUnusedGlobalSymbols
 function mousePressed() {
