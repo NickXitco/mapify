@@ -21,6 +21,41 @@ body {
   height: 100%;
 }
 
+a {
+  color: #00B7FF;
+}
+
+p {
+  font-family: montserrat, sans-serif;
+  display: inline-block;
+  position: static;
+}
+
+
+
+h1 {
+  font-family: montserrat, sans-serif;
+  font-weight: 600;
+  font-style: normal;
+  color: white;
+  text-transform: uppercase;
+  font-size: 61px;
+  position: static;
+  margin-right: 30px;
+}
+
+h2 {
+  font-family: montserrat, sans-serif;
+  font-weight: 600;
+  font-style: normal;
+  color: white;
+  text-transform: uppercase;
+  font-size: 36px;
+  position: static;
+  width: 100%;
+}
+
+/*<editor-fold desc="INFO BOX STYLINGS">*/
 #infoBox {
   user-select: none;
 
@@ -60,182 +95,9 @@ body {
   text-transform: lowercase;
   vertical-align: text-top;
 }
+/*</editor-fold>*/
 
-a {
-  color: #00B7FF;
-}
-
-#sidebar {
-  visibility: visible;
-  background: rgba(0, 0, 0, 0.90);
-  width: 600px;
-  height: 100%;
-  float: right;
-  position: relative;
-  z-index: 2000;
-  display: none;
-  flex-direction: column;
-}
-
-#sidebarStroke {
-  opacity: 1;
-  width: 2px;
-  height: 100%;
-  display: block;
-  float: left;
-}
-
-#nameAndPicture {
-  position: static;
-  width: 100%;
-  height: 210px;
-  display: grid;
-  grid-template-columns: 210px auto;
-  outline: red solid 1px;
-}
-
-#sidebarPicture {
-  width: 150px;
-  height: 150px;
-  display: block;
-  margin: 30px;
-  border-radius: 50%;
-  position: static;
-}
-
-#name {
-  display: flex;
-  align-items: center;
-  height: 210px;
-  width: 100%;
-  position: static;
-}
-
-#followersSection {
-  position: static;
-  width: 100%;
-  padding: 30px;
-  outline: red solid 1px;
-}
-
-#genresSection {
-  position: relative;
-  /* width: 100%; */
-  padding: 30px;
-  outline: red solid 1px;
-}
-
-#genresList {
-  position: relative;
-  width: 100%;
-  columns: 2;
-  margin-left: 1em;
-}
-
-#relatedArtistsList {
-  width: 100%;
-  columns: 1;
-  position: static;
-  margin-left: 1em;
-  /* overflow: auto; */
-  /* overflow-x: hidden; */
-  flex: 1 1 auto;
-  overflow-y: auto;
-  min-height: 0px;
-}
-
-#relatedArtistsSection {
-  width: 90%;
-  position: relative;
-  padding: 30px;
-  outline: red solid 1px;
-  display: flex;
-  /* overflow-y: auto; */
-  /* overflow-x: hidden; */
-  flex-direction: column;
-  /* flex-wrap: nowrap; */
-  height: 100%;
-}
-
-#followerCount {
-  font-family: montserrat, sans-serif;
-  font-weight: 600;
-  font-style: normal;
-  color: white;
-  text-transform: uppercase;
-  font-size: 29px;
-  margin-right: 0.15em;
-}
-
-#followers {
-  font-family: montserrat, sans-serif;
-  font-weight: 300;
-  font-style: normal;
-  color: white;
-  text-transform: uppercase;
-  font-size: 29px;
-}
-
-#followerRanking {
-  font-family: montserrat, sans-serif;
-  font-weight: 100;
-  font-style: italic;
-  color: white;
-  text-transform: uppercase;
-  font-size: 29px;
-}
-
-p {
-  font-family: montserrat, sans-serif;
-  display: inline-block;
-  position: static;
-}
-
-.sidebarListItem {
-  font-family: montserrat, sans-serif;
-  font-size: 22px;
-  text-transform: uppercase;
-  font-weight: 200;
-  position: static;
-  list-style: none;
-  margin: 8px;
-  display: flex;
-  justify-content: left;
-}
-
-.sidebarListItem:hover {
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-#relatedArtistsSection p {
-  font-size: 26px;
-  text-transform: uppercase;
-  font-weight: 200;
-}
-
-h1 {
-  font-family: montserrat, sans-serif;
-  font-weight: 600;
-  font-style: normal;
-  color: white;
-  text-transform: uppercase;
-  font-size: 61px;
-  position: static;
-  margin-right: 30px;
-}
-
-h2 {
-  font-family: montserrat, sans-serif;
-  font-weight: 600;
-  font-style: normal;
-  color: white;
-  text-transform: uppercase;
-  font-size: 36px;
-  position: static;
-  width: 100%;
-}
-
+/*<editor-fold desc="SEARCH BOX STYLINGS">*/
 #searchBox {
   width: 200px;
   height: 34px;
@@ -301,4 +163,143 @@ h2 {
   padding: 10px;
   z-index: 3000;
 }
+/*</editor-fold>*/
 
+/*<editor-fold desc="SIDEBAR STYLINGS">*/
+#sidebar {
+  visibility: visible;
+  background: rgba(0, 0, 0, 0.90);
+  width: 600px;
+  height: 100%;
+  float: right;
+  position: relative;
+  z-index: 2000;
+  display: none;
+  flex-direction: column;
+}
+
+#sidebarStroke {
+  opacity: 1;
+  width: 2px;
+  height: 100%;
+  display: block;
+  float: left;
+}
+
+/*<editor-fold desc="NAME AND PICTURE">*/
+#nameAndPicture {
+  position: static;
+  width: 100%;
+  height: 210px;
+  display: grid;
+  grid-template-columns: 210px auto;
+}
+
+#sidebarPicture {
+  width: 150px;
+  height: 150px;
+  display: block;
+  margin: 30px;
+  border-radius: 50%;
+  position: static;
+}
+
+#name {
+  display: flex;
+  align-items: center;
+  height: 210px;
+  width: 100%;
+  position: static;
+}
+/*</editor-fold>*/
+/*<editor-fold desc="FOLLOWERS">*/
+#followersSection {
+  position: static;
+  width: 100%;
+  padding: 30px;
+}
+
+#followerCount {
+  font-family: montserrat, sans-serif;
+  font-weight: 600;
+  font-style: normal;
+  color: white;
+  text-transform: uppercase;
+  font-size: 29px;
+  margin-right: 0.15em;
+}
+
+#followers {
+  font-family: montserrat, sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  color: white;
+  text-transform: uppercase;
+  font-size: 29px;
+}
+
+#followerRanking {
+  font-family: montserrat, sans-serif;
+  font-weight: 100;
+  font-style: italic;
+  color: white;
+  text-transform: uppercase;
+  font-size: 29px;
+}
+/*</editor-fold>*/
+/*<editor-fold desc="GENRES">*/
+#genresSection {
+  position: relative;
+  padding: 30px;
+}
+
+#genresList {
+  position: relative;
+  width: 100%;
+  columns: 2;
+  margin-left: 1em;
+}
+/*</editor-fold>*/
+/*<editor-fold desc="RELATED">*/
+#relatedArtistsList {
+  width: 100%;
+  position: static;
+  margin-left: 1em;
+  margin-top: 1em;
+  overflow-y: scroll;
+}
+
+#relatedArtistsSection {
+  width: 90%;
+  position: static;
+  padding: 30px;
+  display: flex;
+  overflow-y: auto;
+  flex-direction: column;
+}
+
+.sidebarListItem {
+font-family: montserrat, sans-serif;
+font-size: 22px;
+text-transform: uppercase;
+font-weight: 200;
+position: static;
+list-style: none;
+margin: 8px;
+display: flex;
+justify-content: left;
+}
+
+.sidebarListItem:hover {
+text-decoration: underline;
+cursor: pointer;
+}
+
+#relatedArtistsSection p {
+font-size: 26px;
+text-transform: uppercase;
+font-weight: 200;
+}
+/*</editor-fold>*/
+
+/*</editor-fold>*/
