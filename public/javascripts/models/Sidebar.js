@@ -76,8 +76,12 @@ const Sidebar = {
             let genreCount = 0;
             for (const genre of artist.genres) {
                 const newGenre = document.createElement("li");
+                const genreName = genre.valueOf().toString();
                 newGenre.className = "sidebarListItem";
-                newGenre.innerText = genre;
+                newGenre.innerText = genreName;
+                newGenre.onclick = () => {
+                    getGenre(genreName).then();
+                };
                 Sidebar.genresList.appendChild(newGenre);
                 genreCount++;
                 if (genreCount === Sidebar.SIDEBAR_GENRE_LIMIT) {

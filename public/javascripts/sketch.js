@@ -42,6 +42,12 @@ async function getClickedRelated(id) {
     );
 }
 
+async function getGenre(genreName) {
+    const response = await fetch('genre/' + genreName);
+    const data = await response.json();
+    console.log(data);
+}
+
 let blur;
 // noinspection JSUnusedGlobalSymbols
 function preload() {
