@@ -45,6 +45,29 @@ async function getClickedRelated(id) {
 async function getGenre(genreName) {
     const response = await fetch('genre/' + genreName);
     const data = await response.json();
+
+    if (data.length === 0) {
+        return;
+    }
+
+    let northernmost, southernmost, easternmost, westernmost;
+    northernmost = southernmost = easternmost = westernmost = data[0];
+    let pointSum = {x: 0, y: 0};
+
+    for (const node of data) {
+        pointSum.x += node.x;
+        pointSum.y += node.y;
+
+        easternmost =  node.x > easternmost.x  ? easternmost  : node;
+        westernmost =  node.x < westernmost.x  ? westernmost  : node;
+        northernmost = node.y > northernmost.y ? northernmost : node;
+        southernmost = node.y < southernmost.y ? southernmost : node;
+    }
+
+    const averagePoint = {x: pointSum.x / data.length, y: pointSum.y / data.length};
+    const cameraWidth = Math.max(Math.abs(easternmost.x - westernmost.x), Math.abs(northernmost.y - southernmost.y));
+    camera.setCameraMove(averagePoint.x, averagePoint.y, camera.getZoomFromWidth(cameraWidth * 1.1), 30);
+
     console.log(data);
 }
 
