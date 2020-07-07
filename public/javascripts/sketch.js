@@ -30,6 +30,10 @@ let timingEvents = {};
 
 let genreNodes = [];
 
+let northernmost, southernmost, easternmost, westernmost;
+let genrePoint = {};
+northernmost = southernmost = easternmost = westernmost = null;
+
 async function getClickedRelated(id) {
     loadArtistFromSearch(id, true).then(_ => {
         Sidebar.resetSidebar(false);}
@@ -44,7 +48,7 @@ async function getGenre(genreName) {
         return;
     }
 
-    let northernmost, southernmost, easternmost, westernmost;
+    //let northernmost, southernmost, easternmost, westernmost;
     northernmost = southernmost = easternmost = westernmost = data[0];
     let pointSum = {x: 0, y: 0};
     let nodesList = []
@@ -53,17 +57,20 @@ async function getGenre(genreName) {
         pointSum.x += node.x;
         pointSum.y += node.y;
 
-        easternmost =  node.x > easternmost.x  ? easternmost  : node;
-        westernmost =  node.x < westernmost.x  ? westernmost  : node;
-        northernmost = node.y > northernmost.y ? northernmost : node;
-        southernmost = node.y < southernmost.y ? southernmost : node;
+        easternmost =  node.x < easternmost.x  ? easternmost  : node;
+        westernmost =  node.x > westernmost.x  ? westernmost  : node;
+        northernmost = node.y < northernmost.y ? northernmost : node;
+        southernmost = node.y > southernmost.y ? southernmost : node;
         createNewNode(node);
         nodesList.push(nodeLookup[node.id]);
     }
 
     const averagePoint = {x: pointSum.x / data.length, y: pointSum.y / data.length};
+    genrePoint = averagePoint;
     const cameraWidth = Math.max(Math.abs(easternmost.x - westernmost.x), Math.abs(northernmost.y - southernmost.y));
     camera.setCameraMove(averagePoint.x, averagePoint.y, camera.getZoomFromWidth(cameraWidth), 30);
+    Sidebar.resetSidebar(true)
+    clickedArtist = null;
     genreNodes = nodesList;
 }
 
@@ -152,6 +159,34 @@ function draw() {
     createTimingEvent("Darken Scene");
 
     if (genreNodes.length > 0) {
+
+        //DEBUG
+        push();
+        noStroke();
+        fill('white'); //TODO genre color
+        textSize(50);
+        text('NORTH', northernmost.x, -northernmost.y);
+        text('EAST', easternmost.x, -easternmost.y);
+        text('SOUTH', southernmost.x, -southernmost.y);
+        text('WEST', westernmost.x, -westernmost.y);
+
+        text('Genre Name Here', genrePoint.x, -genrePoint.y);
+
+        stroke('white'); //TODO genre color
+        noFill();
+        strokeWeight(1);
+        beginShape();
+
+        //TODO genre convex hull
+        vertex(northernmost.x, -northernmost.y);
+        vertex(easternmost.x, -easternmost.y);
+        vertex(southernmost.x, -southernmost.y);
+        vertex(westernmost.x, -westernmost.y);
+        vertex(northernmost.x, -northernmost.y);
+        endShape();
+
+        pop();
+
         drawNodes(genreNodes);
     }
 
