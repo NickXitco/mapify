@@ -53,7 +53,7 @@ const SearchBox = {
 
     processSuggestions: function(data) {
         this.deleteSuggestions();
-
+        this.suggestionsList.style.display = "block";
         if (data.length === 0) {
             this.noResults();
         } else {
@@ -69,6 +69,7 @@ const SearchBox = {
             this.suggestionsList.removeChild(child);
             child = this.suggestionsList.lastChild;
         }
+        this.suggestionsList.style.display = "none";
     },
 
     addSuggestion: function (suggestion) {

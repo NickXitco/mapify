@@ -51,6 +51,7 @@ function preload() {
 // noinspection JSUnusedGlobalSymbols
 function setup() {
     canvas = createCanvas(window.innerWidth, window.innerHeight);
+    canvas.mouseOver(() => {Sidebar.hoverFlag = false; SearchBox.hoverFlag = false;})
     camera.zoomCamera({x: 0, y:0 });
 
     loadInitialQuads().then();//TODO loadInitialQuads, probably the first 16? but load the first 128 (or more?) into memory
