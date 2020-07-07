@@ -28,6 +28,8 @@ let nodeOccurences = {};
 
 let timingEvents = {};
 
+let genreNodes = [];
+
 async function getClickedRelated(id) {
     loadArtistFromSearch(id, true).then(_ => {
         Sidebar.resetSidebar(false);}
@@ -45,6 +47,7 @@ async function getGenre(genreName) {
     let northernmost, southernmost, easternmost, westernmost;
     northernmost = southernmost = easternmost = westernmost = data[0];
     let pointSum = {x: 0, y: 0};
+    let nodesList = []
 
     for (const node of data) {
         pointSum.x += node.x;
@@ -54,13 +57,14 @@ async function getGenre(genreName) {
         westernmost =  node.x < westernmost.x  ? westernmost  : node;
         northernmost = node.y > northernmost.y ? northernmost : node;
         southernmost = node.y < southernmost.y ? southernmost : node;
+        createNewNode(node);
+        nodesList.push(nodeLookup[node.id]);
     }
 
     const averagePoint = {x: pointSum.x / data.length, y: pointSum.y / data.length};
     const cameraWidth = Math.max(Math.abs(easternmost.x - westernmost.x), Math.abs(northernmost.y - southernmost.y));
-    camera.setCameraMove(averagePoint.x, averagePoint.y, camera.getZoomFromWidth(cameraWidth * 1.1), 30);
-
-    console.log(data);
+    camera.setCameraMove(averagePoint.x, averagePoint.y, camera.getZoomFromWidth(cameraWidth), 30);
+    genreNodes = nodesList;
 }
 
 let blur;
@@ -133,7 +137,7 @@ function draw() {
 
     createTimingEvent("Get Hovered Artist");
 
-    if (edgeDrawing) {
+    if (edgeDrawing || genreNodes.length > 0) {
         push();
         noStroke();
         fill(color(0, Eases.easeOutQuart(darkenOpacity) * 180));
@@ -146,6 +150,10 @@ function draw() {
     }
 
     createTimingEvent("Darken Scene");
+
+    if (genreNodes.length > 0) {
+        drawNodes(genreNodes);
+    }
 
     if (edgeDrawing && clickedArtist && clickedArtist.loaded) {
         drawEdges(clickedArtist);
