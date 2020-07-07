@@ -49,7 +49,11 @@ const MouseEvents = {
 
 // noinspection JSUnusedGlobalSymbols
 function mouseWheel(e) {
+    if (Sidebar.hoverFlag) {
+        return;
+    }
     e.preventDefault();
+
     const isTouchPad = e.wheelDeltaY ? e.wheelDeltaY === -3 * e.deltaY : e.deltaMode === 0
 
     if (isTouchPad && !e.ctrlKey) {
