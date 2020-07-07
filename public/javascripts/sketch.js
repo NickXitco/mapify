@@ -28,14 +28,6 @@ let nodeOccurences = {};
 
 let timingEvents = {};
 
-async function getClickedSuggestion(index) {
-    if (SearchBox.recentSuggestedArtists.length >= index) {
-        loadArtistFromSearch(SearchBox.recentSuggestedArtists[index - 1].id, true).then(_ => {
-                Sidebar.resetSidebar(false);}
-            );
-    }
-}
-
 async function getClickedRelated(id) {
     loadArtistFromSearch(id, true).then(_ => {
         Sidebar.resetSidebar(false);}
