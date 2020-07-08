@@ -3,14 +3,14 @@ const QuickHull = {
         const hull = [];
 
         const extrema = this.getHorizontalExtrema(points);
-        const A = this.rightOn(points, extrema);
-        const B = this.rightOn(points, extrema);
-        const qA = this.quickHalfHull(A, extrema);
-        const qB = this.quickHalfHull(B, extrema);
+        const A = this.rightOn(points, extrema.left, extrema.right);
+        const B = this.rightOn(points, extrema.right, extrema.left);
+        const qA = this.quickHalfHull(A, extrema.left, extrema.right);
+        const qB = this.quickHalfHull(B, extrema.right, extrema.left);
 
-        hull.push(extrema.first);
+        hull.push(extrema.left);
         hull.push(qA);
-        hull.push(extrema.second);
+        hull.push(extrema.right);
         hull.push(qB);
 
         return hull;
