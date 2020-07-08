@@ -54,6 +54,13 @@ async function getGenre(genreName) {
     let nodesList = []
 
     for (const node of data) {
+        createNewNode(node);
+        nodesList.push(nodeLookup[node.id]);
+    }
+
+    let genreHull = QuickHull.getHull(nodesList);
+
+    for (const node of data) {
         pointSum.x += node.x;
         pointSum.y += node.y;
 
@@ -61,9 +68,8 @@ async function getGenre(genreName) {
         westernmost =  node.x > westernmost.x  ? westernmost  : node;
         northernmost = node.y < northernmost.y ? northernmost : node;
         southernmost = node.y > southernmost.y ? southernmost : node;
-        createNewNode(node);
-        nodesList.push(nodeLookup[node.id]);
     }
+
 
     const averagePoint = {x: pointSum.x / data.length, y: pointSum.y / data.length};
     genrePoint = averagePoint;
