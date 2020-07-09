@@ -30,10 +30,7 @@ let timingEvents = {};
 
 let genreNodes = [];
 let genreHull = [];
-
-let northernmost, southernmost, easternmost, westernmost;
 let genrePoint = {};
-northernmost = southernmost = easternmost = westernmost = null;
 
 async function getClickedRelated(id) {
     loadArtistFromSearch(id, true).then(_ => {
@@ -49,11 +46,8 @@ async function getGenre(genreName) {
         return;
     }
 
-    //let northernmost, southernmost, easternmost, westernmost;
-    northernmost = southernmost = easternmost = westernmost = data[0];
-    let pointSum = {x: 0, y: 0};
-    let nodesList = []
 
+    let nodesList = []
     for (const node of data) {
         createNewNode(node);
         nodesList.push(nodeLookup[node.id]);
@@ -61,22 +55,25 @@ async function getGenre(genreName) {
 
     genreHull = QuickHull.getHull(nodesList);
 
-    for (const node of data) {
-        pointSum.x += node.x;
-        pointSum.y += node.y;
+    let pointSum = {x: 0, y: 0};
+    let easternmost = genreHull[0];
+    let westernmost = genreHull[0];
 
-        easternmost =  node.x < easternmost.x  ? easternmost  : node;
-        westernmost =  node.x > westernmost.x  ? westernmost  : node;
-        northernmost = node.y < northernmost.y ? northernmost : node;
-        southernmost = node.y > southernmost.y ? southernmost : node;
+    for (const point of genreHull) {
+        pointSum.x += point.x;
+        pointSum.y += point.y;
+
+        easternmost = point.x > easternmost.x ? point : easternmost;
+        //We don't have to update westernmost because genreHull[0] will always be the leftmost extrema
     }
 
-
-    const averagePoint = {x: pointSum.x / data.length, y: pointSum.y / data.length};
+    const averagePoint = {x: pointSum.x / genreHull.length, y: pointSum.y / genreHull.length};
     genrePoint = averagePoint;
-    const cameraWidth = Math.max(Math.abs(easternmost.x - westernmost.x), Math.abs(northernmost.y - southernmost.y));
+
+    const cameraWidth = Math.abs(easternmost.x - westernmost.x);
     camera.setCameraMove(averagePoint.x, averagePoint.y, camera.getZoomFromWidth(cameraWidth), 30);
-    Sidebar.resetSidebar(true)
+
+    Sidebar.resetSidebar(true);
     clickedArtist = null;
     genreNodes = nodesList;
 }
@@ -167,16 +164,10 @@ function draw() {
 
     if (genreNodes.length > 0) {
 
-        //DEBUG
         push();
         noStroke();
         fill('white'); //TODO genre color
         textSize(50);
-        text('NORTH', northernmost.x, -northernmost.y);
-        text('EAST', easternmost.x, -easternmost.y);
-        text('SOUTH', southernmost.x, -southernmost.y);
-        text('WEST', westernmost.x, -westernmost.y);
-
         text('Genre Name Here', genrePoint.x, -genrePoint.y);
 
         stroke('white'); //TODO genre color
@@ -184,7 +175,6 @@ function draw() {
         strokeWeight(1);
         beginShape();
 
-        //TODO genre convex hull
         for (const point of genreHull) {
             vertex(point.x, -point.y);
         }
