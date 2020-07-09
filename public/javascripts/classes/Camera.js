@@ -136,4 +136,13 @@ class Camera {
         return  x <= this.x + this.width / 2 && x >= this.x - this.width / 2 &&
                 y >= this.y - this.height / 2 && y <= this.y + this.height / 2;
     }
+
+    containsRegion(x, y, r) {
+        const l1 = {x: this.x - this.width / 2, y: this.y + this.height / 2};
+        const r1 = {x: this.x + this.width / 2, y: this.y - this.height / 2};
+        const l2 = {x: x - r, y: y + r};
+        const r2 = {x: x + r, y: y - r};
+
+        return !((l1.x >= r2.x || l2.x >= r1.x) || (l1.y <= r2.y || l2.y <= r1.y));
+    }
 }
