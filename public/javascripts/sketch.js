@@ -178,7 +178,7 @@ function draw() {
 
         stroke('white'); //TODO genre color
         noFill();
-        strokeWeight(1);
+        strokeWeight(5);
         beginShape();
 
         for (const point of genreHull) {
