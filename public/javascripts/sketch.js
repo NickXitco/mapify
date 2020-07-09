@@ -210,7 +210,7 @@ function draw() {
     }
 
     if (clickedArtist && clickedArtist.loaded && Sidebar.artist !== clickedArtist) {
-        Sidebar.setSidebar(clickedArtist);
+        Sidebar.setArtistSidebar(clickedArtist);
     }
 
     if (clickedArtist && Sidebar.openAmount < 1) {

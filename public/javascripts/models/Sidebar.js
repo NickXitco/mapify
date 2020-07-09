@@ -48,7 +48,7 @@ const Sidebar = {
         }
     },
 
-    setSidebar: function (artist) {
+    setArtistSidebar: function (artist) {
         Sidebar.artist = clickedArtist;
         Sidebar.dom.style.display = "flex";
         let fontSize = 60;
@@ -118,6 +118,10 @@ const Sidebar = {
 
         SearchBox.input.style.borderColor = artist.color.toString();
         SearchBox.input.style.boxShadow = "0 0 6px 0.5px " + artist.color.toString();
+    },
+
+    setGenreSidebar: function (genre) {
+        this.setArtistSidebar(artist);
 
     }
 
