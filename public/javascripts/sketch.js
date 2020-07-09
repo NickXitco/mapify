@@ -28,56 +28,12 @@ let nodeOccurences = {};
 
 let timingEvents = {};
 
-let genreNodes = [];
-let genreHull = [];
-let genrePoint = {};
-
 let versionNumber = {major: 0, minor: 5, patch: 1, stage: ""};
 
 async function getClickedRelated(id) {
     loadArtistFromSearch(id, true).then(_ => {
         Sidebar.resetSidebar(false);}
     );
-}
-
-async function getGenre(genreName) {
-    const response = await fetch('genre/' + genreName);
-    const data = await response.json();
-
-    if (data.length === 0) {
-        return;
-    }
-
-
-    let nodesList = []
-    for (const node of data) {
-        createNewNode(node);
-        nodesList.push(nodeLookup[node.id]);
-    }
-
-    genreHull = QuickHull.getHull(nodesList);
-
-    let pointSum = {x: 0, y: 0};
-    let easternmost = genreHull[0];
-    let westernmost = genreHull[0];
-
-    for (const point of genreHull) {
-        pointSum.x += point.x;
-        pointSum.y += point.y;
-
-        easternmost = point.x > easternmost.x ? point : easternmost;
-        //We don't have to update westernmost because genreHull[0] will always be the leftmost extrema
-    }
-
-    const averagePoint = {x: pointSum.x / genreHull.length, y: pointSum.y / genreHull.length};
-    genrePoint = averagePoint;
-
-    const cameraWidth = Math.abs(easternmost.x - westernmost.x);
-    camera.setCameraMove(averagePoint.x, averagePoint.y, camera.getZoomFromWidth(cameraWidth), 30);
-
-    Sidebar.resetSidebar(true);
-    clickedArtist = null;
-    genreNodes = nodesList;
 }
 
 let blur;
@@ -160,38 +116,38 @@ function draw() {
 
     createTimingEvent("Get Hovered Artist");
 
-    if (!edgeDrawing && genreNodes.length === 0) {
+    if (!edgeDrawing && GenreHelpers.genreNodes.length === 0) {
         darkenOpacity = 0;
     }
 
-    if (genreNodes.length > 0) {
+    if (GenreHelpers.genreNodes.length > 0) {
         darkenScene();
     }
 
     createTimingEvent("Darken Scene for Genre Nodes");
 
-    if (genreNodes.length > 0) {
+    if (GenreHelpers.genreNodes.length > 0) {
 
         push();
         noStroke();
         fill('white'); //TODO genre color
         textSize(50);
-        text('Genre Name Here', genrePoint.x, -genrePoint.y); //TODO genre name
+        text('Genre Name Here', GenreHelpers.genrePoint.x, -GenreHelpers.genrePoint.y); //TODO genre name
 
         stroke('white'); //TODO genre color
         noFill();
         strokeWeight(5);
         beginShape();
 
-        for (const point of genreHull) {
+        for (const point of GenreHelpers.genreHull) {
             vertex(point.x, -point.y);
         }
-        vertex(genreHull[0].x, -genreHull[0].y);
+        vertex(GenreHelpers.genreHull[0].x, -GenreHelpers.genreHull[0].y);
         endShape();
 
         pop();
 
-        drawNodes(genreNodes);
+        drawNodes(GenreHelpers.genreNodes);
     }
 
     createTimingEvent("Draw Genre Nodes");
