@@ -62,12 +62,14 @@ function getHoveredArtist() {
 
 function drawNodes(nodeList) {
     for (const node of nodeList) {
-        push();
-        fill(color(red(node.color), green(node.color), blue(node.color), 127));
-        stroke(node.color);
-        strokeWeight(node.size / 5);
-        circle(node.x, -node.y, node.size);
-        pop();
+        if (camera.containsRegion(node.x, node.y, node.size)) {
+            push();
+            fill(color(red(node.color), green(node.color), blue(node.color), 127));
+            stroke(node.color);
+            strokeWeight(node.size / 5);
+            circle(node.x, -node.y, node.size);
+            pop();
+        }
     }
 }
 
