@@ -81,7 +81,7 @@ const Sidebar = {
                 newGenre.innerText = genreName;
                 newGenre.onclick = () => {
                     edgeDrawing = false;
-                    getGenre(genreName).then();
+                    GenreHelpers.getGenre(genreName).then();
                 };
                 Sidebar.genresList.appendChild(newGenre);
                 genreCount++;

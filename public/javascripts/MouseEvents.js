@@ -98,6 +98,32 @@ function mouseDragged() {
     }
 }
 
+function handlePointClick() {
+    if (hoveredArtist) {
+        if (hoveredArtist !== clickedArtist) {
+            newEdges = true;
+            clickedArtist = hoveredArtist;
+            Sidebar.resetSidebar(false);
+        }
+        edgeDrawing = true;
+        return;
+    }
+
+    if (edgeDrawing && GenreHelpers.genreNodes.length > 0) {
+        edgeDrawing = false;
+        clickedArtist = null;
+        //TODO Sidebar.setGenreSidebar()
+    } else if (edgeDrawing) {
+        edgeDrawing = false;
+        clickedArtist = null;
+        Sidebar.resetSidebar(true);
+    } else if (GenreHelpers.genreNodes.length > 0) {
+        GenreHelpers.resetGenreView();
+    }
+
+    Sidebar.resetSidebar(true);
+}
+
 // noinspection JSUnusedGlobalSymbols
 function mouseReleased() {
     if (MouseEvents.dragging) {
@@ -107,18 +133,7 @@ function mouseReleased() {
         camera.y += (oldDrag.y - newDrag.y);
 
         if (dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y) < 5) {
-            if (hoveredArtist) {
-                if (hoveredArtist !== clickedArtist) {
-                    newEdges = true;
-                    clickedArtist = hoveredArtist;
-                    Sidebar.resetSidebar(false);
-                }
-                edgeDrawing = true;
-            } else {
-                edgeDrawing = false;
-                clickedArtist = null;
-                Sidebar.resetSidebar(true);
-            }
+            handlePointClick();
         }
 
         MouseEvents.driftVec = createVector(winMouseX - pwinMouseX, winMouseY - pwinMouseY);
