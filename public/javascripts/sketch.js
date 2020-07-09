@@ -106,6 +106,16 @@ async function loadInitialQuads() {
     loading = false;
 }
 
+function darkenScene() {
+    push();
+    noStroke();
+    fill(color(0, Eases.easeOutQuart(darkenOpacity) * 180));
+    darkenOpacity = min(darkenOpacity + 0.05, 1);
+    rectMode(RADIUS);
+    rect(camera.x, -camera.y, camera.width / 2, camera.height / 2);
+    pop();
+}
+
 // noinspection JSUnusedGlobalSymbols
 function draw() {
     if (loading) {
@@ -148,19 +158,15 @@ function draw() {
 
     createTimingEvent("Get Hovered Artist");
 
-    if (edgeDrawing || genreNodes.length > 0) {
-        push();
-        noStroke();
-        fill(color(0, Eases.easeOutQuart(darkenOpacity) * 180));
-        darkenOpacity = min(darkenOpacity + 0.05, 1);
-        rectMode(RADIUS);
-        rect(camera.x, -camera.y, camera.width / 2, camera.height / 2);
-        pop();
-    } else {
+    if (!edgeDrawing && genreNodes.length === 0) {
         darkenOpacity = 0;
     }
 
-    createTimingEvent("Darken Scene");
+    if (genreNodes.length > 0) {
+        darkenScene();
+    }
+
+    createTimingEvent("Darken Scene for Genre Nodes");
 
     if (genreNodes.length > 0) {
 
@@ -168,7 +174,7 @@ function draw() {
         noStroke();
         fill('white'); //TODO genre color
         textSize(50);
-        text('Genre Name Here', genrePoint.x, -genrePoint.y);
+        text('Genre Name Here', genrePoint.x, -genrePoint.y); //TODO genre name
 
         stroke('white'); //TODO genre color
         noFill();
@@ -185,6 +191,14 @@ function draw() {
 
         drawNodes(genreNodes);
     }
+
+    createTimingEvent("Draw Genre Nodes");
+
+    if (edgeDrawing) {
+        darkenScene();
+    }
+
+    createTimingEvent("Darken Scene for Related Nodes");
 
     if (edgeDrawing && clickedArtist && clickedArtist.loaded) {
         drawEdges(clickedArtist);
