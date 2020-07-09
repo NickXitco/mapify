@@ -28,6 +28,10 @@ let nodeOccurences = {};
 
 let timingEvents = {};
 
+let genreNodes = [];
+let genreHull = [];
+let genrePoint = {};
+
 async function getClickedRelated(id) {
     loadArtistFromSearch(id, true).then(_ => {
         Sidebar.resetSidebar(false);}
@@ -42,25 +46,36 @@ async function getGenre(genreName) {
         return;
     }
 
-    let northernmost, southernmost, easternmost, westernmost;
-    northernmost = southernmost = easternmost = westernmost = data[0];
-    let pointSum = {x: 0, y: 0};
 
+    let nodesList = []
     for (const node of data) {
-        pointSum.x += node.x;
-        pointSum.y += node.y;
-
-        easternmost =  node.x > easternmost.x  ? easternmost  : node;
-        westernmost =  node.x < westernmost.x  ? westernmost  : node;
-        northernmost = node.y > northernmost.y ? northernmost : node;
-        southernmost = node.y < southernmost.y ? southernmost : node;
+        createNewNode(node);
+        nodesList.push(nodeLookup[node.id]);
     }
 
-    const averagePoint = {x: pointSum.x / data.length, y: pointSum.y / data.length};
-    const cameraWidth = Math.max(Math.abs(easternmost.x - westernmost.x), Math.abs(northernmost.y - southernmost.y));
-    camera.setCameraMove(averagePoint.x, averagePoint.y, camera.getZoomFromWidth(cameraWidth * 1.1), 30);
+    genreHull = QuickHull.getHull(nodesList);
 
-    console.log(data);
+    let pointSum = {x: 0, y: 0};
+    let easternmost = genreHull[0];
+    let westernmost = genreHull[0];
+
+    for (const point of genreHull) {
+        pointSum.x += point.x;
+        pointSum.y += point.y;
+
+        easternmost = point.x > easternmost.x ? point : easternmost;
+        //We don't have to update westernmost because genreHull[0] will always be the leftmost extrema
+    }
+
+    const averagePoint = {x: pointSum.x / genreHull.length, y: pointSum.y / genreHull.length};
+    genrePoint = averagePoint;
+
+    const cameraWidth = Math.abs(easternmost.x - westernmost.x);
+    camera.setCameraMove(averagePoint.x, averagePoint.y, camera.getZoomFromWidth(cameraWidth), 30);
+
+    Sidebar.resetSidebar(true);
+    clickedArtist = null;
+    genreNodes = nodesList;
 }
 
 let blur;
@@ -89,6 +104,16 @@ async function loadInitialQuads() {
     await quadHead.fetchQuad();
     quadHead.splitDown(4);
     loading = false;
+}
+
+function darkenScene() {
+    push();
+    noStroke();
+    fill(color(0, Eases.easeOutQuart(darkenOpacity) * 180));
+    darkenOpacity = min(darkenOpacity + 0.05, 1);
+    rectMode(RADIUS);
+    rect(camera.x, -camera.y, camera.width / 2, camera.height / 2);
+    pop();
 }
 
 // noinspection JSUnusedGlobalSymbols
@@ -133,19 +158,47 @@ function draw() {
 
     createTimingEvent("Get Hovered Artist");
 
-    if (edgeDrawing) {
-        push();
-        noStroke();
-        fill(color(0, Eases.easeOutQuart(darkenOpacity) * 180));
-        darkenOpacity = min(darkenOpacity + 0.05, 1);
-        rectMode(RADIUS);
-        rect(camera.x, -camera.y, camera.width / 2, camera.height / 2);
-        pop();
-    } else {
+    if (!edgeDrawing && genreNodes.length === 0) {
         darkenOpacity = 0;
     }
 
-    createTimingEvent("Darken Scene");
+    if (genreNodes.length > 0) {
+        darkenScene();
+    }
+
+    createTimingEvent("Darken Scene for Genre Nodes");
+
+    if (genreNodes.length > 0) {
+
+        push();
+        noStroke();
+        fill('white'); //TODO genre color
+        textSize(50);
+        text('Genre Name Here', genrePoint.x, -genrePoint.y); //TODO genre name
+
+        stroke('white'); //TODO genre color
+        noFill();
+        strokeWeight(5);
+        beginShape();
+
+        for (const point of genreHull) {
+            vertex(point.x, -point.y);
+        }
+        vertex(genreHull[0].x, -genreHull[0].y);
+        endShape();
+
+        pop();
+
+        drawNodes(genreNodes);
+    }
+
+    createTimingEvent("Draw Genre Nodes");
+
+    if (edgeDrawing) {
+        darkenScene();
+    }
+
+    createTimingEvent("Darken Scene for Related Nodes");
 
     if (edgeDrawing && clickedArtist && clickedArtist.loaded) {
         drawEdges(clickedArtist);

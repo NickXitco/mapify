@@ -60,15 +60,21 @@ function getHoveredArtist() {
     hoveredArtist = closest;
 }
 
-function drawRelatedNodes(clickedArtist) {
-    for (const related of clickedArtist.relatedVertices) {
-        push();
-        fill(color(red(related.color), green(related.color), blue(related.color), 127));
-        stroke(related.color);
-        strokeWeight(related.size / 5);
-        circle(related.x, -related.y, related.size);
-        pop();
+function drawNodes(nodeList) {
+    for (const node of nodeList) {
+        if (camera.containsRegion(node.x, node.y, node.size)) {
+            push();
+            fill(color(red(node.color), green(node.color), blue(node.color), 127));
+            stroke(node.color);
+            strokeWeight(node.size / 5);
+            circle(node.x, -node.y, node.size);
+            pop();
+        }
     }
+}
+
+function drawRelatedNodes(clickedArtist) {
+    drawNodes(clickedArtist.relatedVertices);
     push();
     fill(0, 255);
     stroke(clickedArtist.color);

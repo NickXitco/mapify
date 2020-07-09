@@ -80,6 +80,7 @@ const Sidebar = {
                 newGenre.className = "sidebarListItem";
                 newGenre.innerText = genreName;
                 newGenre.onclick = () => {
+                    edgeDrawing = false;
                     getGenre(genreName).then();
                 };
                 Sidebar.genresList.appendChild(newGenre);
