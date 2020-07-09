@@ -9,9 +9,9 @@ const QuickHull = {
         const qB = this.quickHalfHull(B, extrema.right, extrema.left);
 
         hull.push(extrema.left);
-        hull.push(qA);
+        hull.push(...qA);
         hull.push(extrema.right);
-        hull.push(qB);
+        hull.push(...qB);
 
         return hull;
     },
@@ -54,9 +54,9 @@ const QuickHull = {
         const qA = this.quickHalfHull(A, u, p);
         const qB = this.quickHalfHull(B, p, v);
         
-        halfHull.push(qA);
+        halfHull.push(...qA);
         halfHull.push(p);
-        halfHull.push(qB);
+        halfHull.push(...qB);
         return halfHull;
     },
 

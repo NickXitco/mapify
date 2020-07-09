@@ -29,6 +29,7 @@ let nodeOccurences = {};
 let timingEvents = {};
 
 let genreNodes = [];
+let genreHull = [];
 
 let northernmost, southernmost, easternmost, westernmost;
 let genrePoint = {};
@@ -58,7 +59,7 @@ async function getGenre(genreName) {
         nodesList.push(nodeLookup[node.id]);
     }
 
-    let genreHull = QuickHull.getHull(nodesList);
+    genreHull = QuickHull.getHull(nodesList);
 
     for (const node of data) {
         pointSum.x += node.x;
@@ -184,11 +185,10 @@ function draw() {
         beginShape();
 
         //TODO genre convex hull
-        vertex(northernmost.x, -northernmost.y);
-        vertex(easternmost.x, -easternmost.y);
-        vertex(southernmost.x, -southernmost.y);
-        vertex(westernmost.x, -westernmost.y);
-        vertex(northernmost.x, -northernmost.y);
+        for (const point of genreHull) {
+            vertex(point.x, -point.y);
+        }
+        vertex(genreHull[0].x, -genreHull[0].y);
         endShape();
 
         pop();
