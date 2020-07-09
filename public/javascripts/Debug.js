@@ -112,6 +112,15 @@ const Debug = {
         pop();
     },
 
+    versionNumber: function() {
+        push();
+        fill("white");
+        noStroke();
+        textAlign(RIGHT);
+        text(`Version ${versionNumber.major}.${versionNumber.minor}.${versionNumber.patch}-${versionNumber.stage}`, width - 10, height - 10);
+        pop();
+    },
+
     debugAll: function (camera, timingEvents) {
         push();
         camera.setView();
@@ -125,5 +134,6 @@ const Debug = {
         this.printMouseCoordinates();
         this.loadingStats();
         this.timingGraph(timingEvents)
+        this.versionNumber();
     }
 }
