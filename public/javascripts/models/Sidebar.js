@@ -18,13 +18,13 @@ const Sidebar = {
 
     SIDEBAR_GENRE_LIMIT: 10,
 
-    openSidebar: function() {
+    openSidebar: function () {
         const twentyFive = width / 4;
         Sidebar.dom.style.left = Utils.map(Eases.easeOutQuart(Sidebar.openAmount), 0, 1, twentyFive, 0) + "px";
         Sidebar.openAmount = Math.min(1, Sidebar.openAmount + 0.05);
     },
 
-    resetSidebar: function(removeFromFlow) {
+    resetSidebar: function (removeFromFlow) {
         Sidebar.artist = null;
         Sidebar.artistName.innerText = "";
         Sidebar.followersRanking.innerText = "";
@@ -44,11 +44,11 @@ const Sidebar = {
         if (removeFromFlow) {
             Sidebar.dom.style.display = "none";
             Sidebar.openAmount = 0;
-            Sidebar.dom.style.left =  width / 4 + "px";
+            Sidebar.dom.style.left = width / 4 + "px";
         }
     },
 
-    setSidebar: function(artist) {
+    setSidebar: function (artist) {
         Sidebar.artist = clickedArtist;
         Sidebar.dom.style.display = "flex";
         let fontSize = 60;
@@ -113,7 +113,7 @@ const Sidebar = {
         Sidebar.stroke.style.boxShadow = "0 0 13px 1px " + artist.color.toString();
         Sidebar.stroke.style.background = artist.color.toString();
         Sidebar.scrollbar_style.innerHTML = `::-webkit-scrollbar-track {box-shadow: 0 0 5px ${artist.color.toString()};}  \n` +
-                                            `::-webkit-scrollbar-thumb {background: ${artist.color.toString()};}`
+            `::-webkit-scrollbar-thumb {background: ${artist.color.toString()};}`
 
 
         SearchBox.input.style.borderColor = artist.color.toString();
@@ -122,20 +122,3 @@ const Sidebar = {
     }
 
 }
-
-/*
-    let sidebar = document.getElementById("sidebar");
-    let sidebarStroke = document.getElementById("sidebarStroke");
-    let sidebarArtistName = document.getElementById("sidebarArtistName");
-    let sidebarFollowersCount = document.getElementById("followerCount");
-    let sidebarFollowersWord = document.getElementById("followers");
-    let sidebarFollowersRanking = document.getElementById("followerRanking");
-    let genresList = document.getElementById("genresList");
-    let relatedArtistsList = document.getElementById("relatedArtistsList");
-    let sidebarPicture = document.getElementById("sidebarPicture");
-    let sidebarOpenAmount = 0;
-    let sidebarArtist = null;
-    let sidebarHover = false;
-
-    const SIDEBAR_GENRE_LIMIT = 10;
- */

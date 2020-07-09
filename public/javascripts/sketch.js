@@ -32,6 +32,8 @@ let genreNodes = [];
 let genreHull = [];
 let genrePoint = {};
 
+let versionNumber = {major: 0, minor: 5, patch: 1, stage: ""};
+
 async function getClickedRelated(id) {
     loadArtistFromSearch(id, true).then(_ => {
         Sidebar.resetSidebar(false);}
