@@ -20,14 +20,10 @@ const GenreHelpers = {
 
         this.genreHull = QuickHull.getHull(nodesList);
 
-        let pointSum = {x: 0, y: 0};
         let easternmost = this.genreHull[0];
         let westernmost = this.genreHull[0];
 
         for (const point of this.genreHull) {
-            pointSum.x += point.x;
-            pointSum.y += point.y;
-
             easternmost = point.x > easternmost.x ? point : easternmost;
             //We don't have to update westernmost because genreHull[0] will always be the leftmost extrema
         }
@@ -63,7 +59,7 @@ const GenreHelpers = {
         return (u.x * v.y - v.x * u.y);
     },
 
-    getCentroid: function (points) {
+    getCentroid: function(points) {
         const area = 1 / (6 * this.shoelaceArea(points));
         let x = 0;
         let y = 0;
@@ -74,5 +70,16 @@ const GenreHelpers = {
             y += (u.y + v.y) * this.exteriorProduct(u, v);
         }
         return {x: area * x, y: area * y};
+    },
+
+    offsetHull: function(hull, centroid, offsetAmount) {
+        let shiftedHull = [];
+        for (const point of hull) {
+            const shiftX = point.x - centroid.x;
+            const shiftY = point.y - centroid.y;
+            const scale = 1 + (offsetAmount / Math.sqrt(shiftX * shiftX + shiftY * shiftY));
+            shiftedHull.push({x: point.x * scale, y: point.y * scale});
+        }
+        return shiftedHull;
     }
 }
