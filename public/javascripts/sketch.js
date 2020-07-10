@@ -28,8 +28,6 @@ let nodeOccurences = {};
 
 let timingEvents = {};
 
-let versionNumber = "0.5.1";
-
 async function getClickedRelated(id) {
     loadArtistFromSearch(id, true).then(_ => {
         Sidebar.resetSidebar(false);}
@@ -53,7 +51,7 @@ function setup() {
     angleMode(DEGREES);
     rectMode(RADIUS);
 
-    if (VersionHelper.checkVersion(versionNumber)) {
+    if (VersionHelper.checkVersion()) {
         VersionHelper.drawChangelog();
     }
 }
