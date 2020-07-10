@@ -117,7 +117,7 @@ const Debug = {
         fill("white");
         noStroke();
         textAlign(RIGHT);
-        text(`Version ${versionNumber.major}.${versionNumber.minor}.${versionNumber.patch}-${versionNumber.stage}`, width - 10, height - 10);
+        text(`Version ${VersionHelper.versionNumber}`, width - 10, height - 10);
         pop();
     },
 

@@ -28,8 +28,6 @@ let nodeOccurences = {};
 
 let timingEvents = {};
 
-let versionNumber = {major: 0, minor: 5, patch: 1, stage: ""};
-
 async function getClickedRelated(id) {
     loadArtistFromSearch(id, true).then(_ => {
         Sidebar.resetSidebar(false);}
@@ -46,12 +44,16 @@ function preload() {
 function setup() {
     canvas = createCanvas(window.innerWidth, window.innerHeight);
     canvas.mouseOver(() => {Sidebar.hoverFlag = false; SearchBox.hoverFlag = false;})
-    camera.zoomCamera({x: 0, y:0 });
+    camera.zoomCamera({x: 0, y: 0});
 
     loadInitialQuads().then();//TODO loadInitialQuads, probably the first 16? but load the first 128 (or more?) into memory
 
     angleMode(DEGREES);
     rectMode(RADIUS);
+
+    if (!VersionHelper.checkVersion()) {
+        VersionHelper.drawChangelog();
+    }
 }
 
 async function loadInitialQuads() {
@@ -80,6 +82,7 @@ function draw() {
         drawLoading();
         return;
     }
+    
 
     background(3);
 

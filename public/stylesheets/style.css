@@ -19,6 +19,7 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   width: 100%;
   height: 100%;
+  position: relative;
 }
 
 a {
@@ -29,9 +30,8 @@ p {
   font-family: montserrat, sans-serif;
   display: inline-block;
   position: static;
+  vertical-align: top;
 }
-
-
 
 h1 {
   font-family: montserrat, sans-serif;
@@ -42,6 +42,7 @@ h1 {
   font-size: 61px;
   position: static;
   margin-right: 30px;
+  display: block;
 }
 
 h2 {
@@ -54,6 +55,36 @@ h2 {
   position: static;
   width: 100%;
 }
+
+/*<editor-fold desc="CHANGELOG STYLINGS">*/
+.changelog {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.changelog-inner {
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.8);
+  overflow: auto;
+  outline: #ffffff solid;
+  box-shadow: 0 0 10px 3px #ffffff;
+  display: block;
+}
+
+.changelog-list {
+  margin: 20px;
+  display: block;
+  position: static;
+}
+
+.changelog-list-item {
+  position: static;
+  margin: 0 0 20px 0;
+}
+/*</editor-fold>*/
 
 /*<editor-fold desc="INFO BOX STYLINGS">*/
 #infoBox {
