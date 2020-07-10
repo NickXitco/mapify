@@ -140,13 +140,14 @@ function draw() {
 
         stroke('white'); //TODO genre color
         noFill();
-        strokeWeight(5);
+        strokeWeight(2);
         beginShape();
 
-        for (const point of GenreHelpers.genreHull) {
+        const shiftedHull = GenreHelpers.offsetHull(GenreHelpers.genreHull, GenreHelpers.genrePoint, 20);
+        for (const point of shiftedHull) {
             vertex(point.x, -point.y);
         }
-        vertex(GenreHelpers.genreHull[0].x, -GenreHelpers.genreHull[0].y);
+        vertex(shiftedHull[0].x, -shiftedHull[0].y);
         endShape();
 
         pop();
