@@ -72,9 +72,16 @@ function drawNodes(nodeList) {
     for (const node of nodeList) {
         if (camera.containsRegion(node.x, node.y, node.size)) {
             push();
-            fill(color(red(node.color), green(node.color), blue(node.color), 127));
-            stroke(node.color);
             strokeWeight(node.size / 5);
+
+            if (hoveredArtist !== null && hoveredArtist !== clickedArtist && hoveredArtist !== node) {
+                fill(color(red(node.color), green(node.color), blue(node.color), 0));
+                stroke(color(red(node.color), green(node.color), blue(node.color), 127));
+            } else {
+                fill(color(red(node.color), green(node.color), blue(node.color), 127));
+                stroke(node.color);
+            }
+
             circle(node.x, -node.y, node.size);
             pop();
         }
