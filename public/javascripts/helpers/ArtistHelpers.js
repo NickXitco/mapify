@@ -57,6 +57,15 @@ function getHoveredArtist() {
         }
     }
 
+    if (GenreHelpers.genreNodes.size > 0) {
+        if (GenreHelpers.genreNodes.has(closest)) {
+            hoveredArtist = closest;
+        } else {
+            hoveredArtist = null;
+            return;
+        }
+    }
+
     hoveredArtist = closest;
 }
 
