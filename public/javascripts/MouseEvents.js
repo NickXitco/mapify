@@ -99,6 +99,10 @@ function mouseDragged() {
 }
 
 function handlePointClick() {
+    if (VersionHelper.showingChangelog) {
+        VersionHelper.removeChangelog();
+    }
+
     if (hoveredArtist) {
         if (hoveredArtist !== clickedArtist) {
             newEdges = true;
