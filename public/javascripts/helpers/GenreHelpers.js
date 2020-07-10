@@ -1,5 +1,5 @@
 const GenreHelpers = {
-    genreNodes: [],
+    genreNodes: new Set(),
     genreHull: [],
     genrePoint: {},
 
@@ -39,14 +39,14 @@ const GenreHelpers = {
         camera.setCameraMove(averagePoint.x, averagePoint.y, camera.getZoomFromWidth(cameraWidth), 30);
 
         clickedArtist = null;
-        this.genreNodes = nodesList;
+        this.genreNodes = new Set(nodesList);
 
         Sidebar.resetSidebar(false);
         Sidebar.setGenreSidebar();
     },
 
     resetGenreView: function() {
-        this.genreNodes = [];
+        this.genreNodes.clear();
         this.genreHull = [];
         this.genrePoint = {};
     },

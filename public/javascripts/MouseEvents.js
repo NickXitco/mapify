@@ -115,7 +115,7 @@ function handlePointClick() {
         return;
     }
 
-    if (edgeDrawing && GenreHelpers.genreNodes.length > 0) {
+    if (edgeDrawing && GenreHelpers.genreNodes.size > 0) {
         edgeDrawing = false;
         clickedArtist = null;
         Sidebar.resetSidebar(false);
@@ -124,7 +124,7 @@ function handlePointClick() {
         edgeDrawing = false;
         clickedArtist = null;
         Sidebar.resetSidebar(true);
-    } else if (GenreHelpers.genreNodes.length > 0) {
+    } else if (GenreHelpers.genreNodes.size > 0) {
         GenreHelpers.resetGenreView();
         Sidebar.resetSidebar(true);
     }
