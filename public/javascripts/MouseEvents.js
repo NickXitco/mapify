@@ -101,6 +101,8 @@ function mouseDragged() {
 function handlePointClick() {
     if (VersionHelper.showingChangelog) {
         VersionHelper.removeChangelog();
+    } else if (dist(width - 10, height - 10, mouseX, mouseY) < 75) {
+        VersionHelper.drawChangelog();
     }
 
     if (hoveredArtist) {
