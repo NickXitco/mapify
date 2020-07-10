@@ -51,7 +51,7 @@ function setup() {
     angleMode(DEGREES);
     rectMode(RADIUS);
 
-    if (VersionHelper.checkVersion()) {
+    if (!VersionHelper.checkVersion()) {
         VersionHelper.drawChangelog();
     }
 }

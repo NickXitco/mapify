@@ -2,7 +2,8 @@ const VersionHelper = {
     showingChangelog: false,
     versionNumber: "0.5.1",
     changes: [
-        "Added rudimentary changelogs and versioning! Hello! You can simply click out of this to remove it!",
+        "Added super rudimentary changelogs and versioning! Hello! You can simply click out of this to remove it!",
+        "If you want to view it again, click the bottom right.",
         "You can now use your scrollwheel on the sidebar!",
         "Fixed a bug where you couldn't click out of the artist view sometimes.",
         "Added some basic genre features:",
