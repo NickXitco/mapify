@@ -65,7 +65,7 @@ const Sidebar = {
         } else if (artist.followers >= 1000) {
             Sidebar.followersCount.innerText = (artist.followers * 1.0 / 1000).toFixed(1).toString() + " Thousand";
         } else {
-            Sidebar.followersCount.innerText = artist.followers;
+            Sidebar.followersCount.innerText = artist.followers.toString();
         }
 
         Sidebar.followersWord.innerText = artist.followers === 1 ? "Follower" : "Followers";
@@ -120,8 +120,58 @@ const Sidebar = {
         SearchBox.input.style.boxShadow = "0 0 6px 0.5px " + artist.color.toString();
     },
 
-    setGenreSidebar: function (genre) {
-        this.setArtistSidebar(artist);
+    //TODO I KNOW THIS IS AN ABOMINATION GIMME A SEC
+    setGenreSidebar: function () {
+        Sidebar.dom.style.display = "flex";
+        let fontSize = 60;
+        Sidebar.artistName.style.fontSize = fontSize + "px";
+        Sidebar.artistName.innerText = "Genre";
+
+        while (Sidebar.artistName.clientHeight > 150 || Sidebar.artistName.clientWidth > 375) {
+            fontSize -= 2;
+            Sidebar.artistName.style.fontSize = fontSize + "px"
+        }
+
+        if (GenreHelpers.genreNodes.length >= 1000000) {
+            Sidebar.followersCount.innerText = (GenreHelpers.genreNodes.length / 1000000).toFixed(1).toString() + " Million";
+        } else if (GenreHelpers.genreNodes.followers >= 1000) {
+            Sidebar.followersCount.innerText = (GenreHelpers.genreNodes.length / 1000).toFixed(1).toString() + " Thousand";
+        } else {
+            Sidebar.followersCount.innerText = GenreHelpers.genreNodes.length.toString();
+        }
+
+        Sidebar.followersWord.innerText = GenreHelpers.genreNodes.length === 1 ? "Genre Member" : "Genre Members";
+
+        Sidebar.genresSection.style.display = "none";
+
+        if (GenreHelpers.genreNodes.length > 0) {
+            Sidebar.relatedArtistSection.style.display = "flex";
+            for (const r of GenreHelpers.genreNodes) {
+                const newRelated = document.createElement("li");
+                const id = r.id.valueOf();
+                newRelated.className = "sidebarListItem";
+                newRelated.innerText = r.name;
+                newRelated.onclick = () => {
+                    getClickedRelated(id).then();
+                };
+                Sidebar.relatedArtistsList.appendChild(newRelated);
+            }
+        } else {
+            Sidebar.relatedArtistSection.style.display = "none";
+        }
+
+        Sidebar.picture.style.boxShadow = "0 0 13px 1px " + GenreHelpers.genreNodes[0].color.toString();
+        Sidebar.stroke.style.boxShadow = "0 0 13px 1px " + GenreHelpers.genreNodes[0].color.toString();
+        Sidebar.stroke.style.background = GenreHelpers.genreNodes[0].color.toString();
+        Sidebar.scrollbar_style.innerHTML = `::-webkit-scrollbar-track {box-shadow: 0 0 5px ${GenreHelpers.genreNodes[0].color.toString()};}  \n` +
+            `::-webkit-scrollbar-thumb {background: ${GenreHelpers.genreNodes[0].color.toString()};}`
+
+
+        SearchBox.input.style.borderColor = GenreHelpers.genreNodes[0].color.toString();
+        SearchBox.input.style.boxShadow = "0 0 6px 0.5px " + GenreHelpers.genreNodes[0].color.toString();
+    },
+
+    setVersionSidebar: function () {
 
     }
 

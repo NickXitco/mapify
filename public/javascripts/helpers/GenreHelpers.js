@@ -38,9 +38,11 @@ const GenreHelpers = {
         const cameraWidth = Math.abs(easternmost.x - westernmost.x);
         camera.setCameraMove(averagePoint.x, averagePoint.y, camera.getZoomFromWidth(cameraWidth), 30);
 
-        Sidebar.resetSidebar(true);
         clickedArtist = null;
         this.genreNodes = nodesList;
+
+        Sidebar.resetSidebar(false);
+        Sidebar.setGenreSidebar();
     },
 
     resetGenreView: function() {

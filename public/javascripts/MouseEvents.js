@@ -112,16 +112,16 @@ function handlePointClick() {
     if (edgeDrawing && GenreHelpers.genreNodes.length > 0) {
         edgeDrawing = false;
         clickedArtist = null;
-        //TODO Sidebar.setGenreSidebar()
+        Sidebar.resetSidebar(false);
+        Sidebar.setGenreSidebar();
     } else if (edgeDrawing) {
         edgeDrawing = false;
         clickedArtist = null;
         Sidebar.resetSidebar(true);
     } else if (GenreHelpers.genreNodes.length > 0) {
         GenreHelpers.resetGenreView();
+        Sidebar.resetSidebar(true);
     }
-
-    Sidebar.resetSidebar(true);
 }
 
 // noinspection JSUnusedGlobalSymbols
