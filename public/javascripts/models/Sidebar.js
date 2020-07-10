@@ -103,6 +103,12 @@ const Sidebar = {
                 newRelated.onclick = () => {
                     getClickedRelated(id).then();
                 };
+                newRelated.onmouseenter = () => {
+                    hoveredArtist = r.valueOf();
+                };
+                newRelated.onmouseleave = () => {
+                    hoveredArtist = null;
+                }
                 Sidebar.relatedArtistsList.appendChild(newRelated);
             }
         } else {

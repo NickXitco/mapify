@@ -1,6 +1,5 @@
 function getHoveredArtist() {
     if (SearchBox.hoverFlag || Sidebar.hoverFlag) {
-        hoveredArtist = null;
         return;
     }
 
