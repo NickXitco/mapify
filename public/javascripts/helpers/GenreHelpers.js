@@ -32,7 +32,7 @@ const GenreHelpers = {
             //We don't have to update westernmost because genreHull[0] will always be the leftmost extrema
         }
 
-        const averagePoint = {x: pointSum.x / this.genreHull.length, y: pointSum.y / this.genreHull.length};
+        const averagePoint = this.getCentroid(this.genreHull);
         this.genrePoint = averagePoint;
 
         const cameraWidth = Math.abs(easternmost.x - westernmost.x);
@@ -49,5 +49,30 @@ const GenreHelpers = {
         this.genreNodes = [];
         this.genreHull = [];
         this.genrePoint = {};
+    },
+
+    shoelaceArea: function(points) {
+        let area = 0;
+        for (let i = 0; i < points.length; i++) {
+            area += this.exteriorProduct(points[i], points[(i + 1) % points.length])
+        }
+        return area * 0.5;
+    },
+
+    exteriorProduct: function(u, v) {
+        return (u.x * v.y - v.x * u.y);
+    },
+
+    getCentroid: function (points) {
+        const area = 1 / (6 * this.shoelaceArea(points));
+        let x = 0;
+        let y = 0;
+        for (let i = 0; i < points.length; i++) {
+            const u = points[i];
+            const v = points[(i + 1) % points.length];
+            x += (u.x + v.x) * this.exteriorProduct(u, v);
+            y += (u.y + v.y) * this.exteriorProduct(u, v);
+        }
+        return {x: area * x, y: area * y};
     }
 }

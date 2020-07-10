@@ -135,6 +135,7 @@ function draw() {
         noStroke();
         fill('white'); //TODO genre color
         textSize(50);
+        textAlign(CENTER);
         text('Genre Name Here', GenreHelpers.genrePoint.x, -GenreHelpers.genrePoint.y); //TODO genre name
 
         stroke('white'); //TODO genre color
