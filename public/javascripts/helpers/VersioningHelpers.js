@@ -1,15 +1,8 @@
 const VersionHelper = {
     showingChangelog: false,
-    versionNumber: "0.5.1",
+    versionNumber: "0.5.2",
     changes: [
-        "Added super rudimentary changelogs and versioning! Hello! You can simply click out of this to remove it!",
-        "If you want to view it again, click the bottom right.",
-        "You can now use your scrollwheel on the sidebar!",
-        "Fixed a bug where you couldn't click out of the artist view sometimes.",
-        "Added some basic genre features:",
-        "You can now click on a genre in the sidebar to see every artist in that genre!",
-        "It's a bit sloppy right now, but it will also display a fence around that genre's area.",
-        "There's a bunch of neat things with it but some of it may be buggy!"
+        "Genre name text now is situated at centroid of fence",
     ],
 
     checkVersion: function() {
