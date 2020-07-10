@@ -119,17 +119,17 @@ function draw() {
 
     createTimingEvent("Get Hovered Artist");
 
-    if (!edgeDrawing && GenreHelpers.genreNodes.length === 0) {
+    if (!edgeDrawing && GenreHelpers.genreNodes.size === 0) {
         darkenOpacity = 0;
     }
 
-    if (GenreHelpers.genreNodes.length > 0) {
+    if (GenreHelpers.genreNodes.size > 0) {
         darkenScene();
     }
 
     createTimingEvent("Darken Scene for Genre Nodes");
 
-    if (GenreHelpers.genreNodes.length > 0) {
+    if (GenreHelpers.genreNodes.size > 0) {
 
         push();
         noStroke();

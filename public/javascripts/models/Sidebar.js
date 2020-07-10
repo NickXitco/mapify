@@ -132,19 +132,19 @@ const Sidebar = {
             Sidebar.artistName.style.fontSize = fontSize + "px"
         }
 
-        if (GenreHelpers.genreNodes.length >= 1000000) {
-            Sidebar.followersCount.innerText = (GenreHelpers.genreNodes.length / 1000000).toFixed(1).toString() + " Million";
-        } else if (GenreHelpers.genreNodes.followers >= 1000) {
-            Sidebar.followersCount.innerText = (GenreHelpers.genreNodes.length / 1000).toFixed(1).toString() + " Thousand";
+        if (GenreHelpers.genreNodes.size >= 1000000) {
+            Sidebar.followersCount.innerText = (GenreHelpers.genreNodes.size / 1000000).toFixed(1).toString() + " Million";
+        } else if (GenreHelpers.genreNodes.size >= 1000) {
+            Sidebar.followersCount.innerText = (GenreHelpers.genreNodes.size / 1000).toFixed(1).toString() + " Thousand";
         } else {
-            Sidebar.followersCount.innerText = GenreHelpers.genreNodes.length.toString();
+            Sidebar.followersCount.innerText = GenreHelpers.genreNodes.size.toString();
         }
 
-        Sidebar.followersWord.innerText = GenreHelpers.genreNodes.length === 1 ? "Genre Member" : "Genre Members";
+        Sidebar.followersWord.innerText = GenreHelpers.genreNodes.size === 1 ? "Genre Member" : "Genre Members";
 
         Sidebar.genresSection.style.display = "none";
 
-        if (GenreHelpers.genreNodes.length > 0) {
+        if (GenreHelpers.genreNodes.size > 0) {
             Sidebar.relatedArtistSection.style.display = "flex";
             for (const r of GenreHelpers.genreNodes) {
                 const newRelated = document.createElement("li");
@@ -160,15 +160,15 @@ const Sidebar = {
             Sidebar.relatedArtistSection.style.display = "none";
         }
 
-        Sidebar.picture.style.boxShadow = "0 0 13px 1px " + GenreHelpers.genreNodes[0].color.toString();
-        Sidebar.stroke.style.boxShadow = "0 0 13px 1px " + GenreHelpers.genreNodes[0].color.toString();
-        Sidebar.stroke.style.background = GenreHelpers.genreNodes[0].color.toString();
-        Sidebar.scrollbar_style.innerHTML = `::-webkit-scrollbar-track {box-shadow: 0 0 5px ${GenreHelpers.genreNodes[0].color.toString()};}  \n` +
-            `::-webkit-scrollbar-thumb {background: ${GenreHelpers.genreNodes[0].color.toString()};}`
+        Sidebar.picture.style.boxShadow = "0 0 13px 1px white";
+        Sidebar.stroke.style.boxShadow = "0 0 13px 1px white";
+        Sidebar.stroke.style.background = "white";
+        Sidebar.scrollbar_style.innerHTML = `::-webkit-scrollbar-track {box-shadow: 0 0 5px white;}  \n` +
+            `::-webkit-scrollbar-thumb {background: white;}`
 
 
-        SearchBox.input.style.borderColor = GenreHelpers.genreNodes[0].color.toString();
-        SearchBox.input.style.boxShadow = "0 0 6px 0.5px " + GenreHelpers.genreNodes[0].color.toString();
+        SearchBox.input.style.borderColor = "white";
+        SearchBox.input.style.boxShadow = "0 0 6px 0.5px white";
     },
 
     setVersionSidebar: function () {
