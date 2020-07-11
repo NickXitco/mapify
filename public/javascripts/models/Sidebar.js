@@ -103,6 +103,12 @@ const Sidebar = {
                 newRelated.onclick = () => {
                     getClickedRelated(id).then();
                 };
+                newRelated.onmouseenter = () => {
+                    hoveredArtist = r.valueOf();
+                };
+                newRelated.onmouseleave = () => {
+                    hoveredArtist = null;
+                }
                 Sidebar.relatedArtistsList.appendChild(newRelated);
             }
         } else {
@@ -153,6 +159,9 @@ const Sidebar = {
                 newRelated.innerText = r.name;
                 newRelated.onclick = () => {
                     getClickedRelated(id).then();
+                };
+                newRelated.onmouseenter = () => {
+                    hoveredArtist = r.valueOf();
                 };
                 Sidebar.relatedArtistsList.appendChild(newRelated);
             }

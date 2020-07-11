@@ -1,6 +1,5 @@
 function getHoveredArtist() {
     if (SearchBox.hoverFlag || Sidebar.hoverFlag) {
-        hoveredArtist = null;
         return;
     }
 
@@ -73,9 +72,9 @@ function drawNodes(nodeList) {
     for (const node of nodeList) {
         if (camera.containsRegion(node.x, node.y, node.size)) {
             push();
+            strokeWeight(node.size / 5);
             fill(color(red(node.color), green(node.color), blue(node.color), 127));
             stroke(node.color);
-            strokeWeight(node.size / 5);
             circle(node.x, -node.y, node.size);
             pop();
         }
@@ -113,7 +112,9 @@ function drawEdges(clickedArtist) {
     }
 
     for (const e of edges) {
-        EdgeDrawer.drawEdge(e);
+        if (!(hoveredArtist !== null && hoveredArtist !== clickedArtist && hoveredArtist !== e.v)) {
+            EdgeDrawer.drawEdge(e);
+        }
     }
 }
 
