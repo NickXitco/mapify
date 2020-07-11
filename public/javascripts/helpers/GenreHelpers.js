@@ -3,7 +3,7 @@ const GenreHelpers = {
     genreHull: [],
     genrePoint: {},
     genreName: "",
-    genreColor: color(255, 255, 255),
+    genreColor: null,
 
     getGenre: async function(genreName) {
         const response = await fetch('genre/' + genreName);
