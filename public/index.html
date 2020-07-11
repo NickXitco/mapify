@@ -50,6 +50,7 @@
         <ul id="suggestions">
         </ul>
     </div>
+    <div id="reactSidebar"></div>
 </body>
 
 <script src="javascripts/classes/Cache.js"></script>
@@ -79,5 +80,13 @@
 <script src="javascripts/helpers/VersioningHelpers.js"></script>
 
 <script lang="javascript" type="text/javascript" src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.min.js"></script>
+
+<!-- Load React. -->
+<!-- Note: when deploying, replace "development.js" with "production.min.js". -->
+<script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script>
+
+<script src="javascripts/components/ReactSidebar.js"></script>
+
 
 </html>
