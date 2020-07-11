@@ -131,7 +131,7 @@ const Sidebar = {
         Sidebar.dom.style.display = "flex";
         let fontSize = 60;
         Sidebar.artistName.style.fontSize = fontSize + "px";
-        Sidebar.artistName.innerText = "Genre";
+        Sidebar.artistName.innerText = GenreHelpers.genreName;
 
         while (Sidebar.artistName.clientHeight > 150 || Sidebar.artistName.clientWidth > 375) {
             fontSize -= 2;
