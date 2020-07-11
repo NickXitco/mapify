@@ -76,7 +76,7 @@ function drawNodes(nodeList) {
 
             if (hoveredArtist !== null && hoveredArtist !== clickedArtist && hoveredArtist !== node) {
                 fill(color(red(node.color), green(node.color), blue(node.color), 0));
-                stroke(color(red(node.color), green(node.color), blue(node.color), 127));
+                stroke(color(red(node.color), green(node.color), blue(node.color), 190));
             } else {
                 fill(color(red(node.color), green(node.color), blue(node.color), 127));
                 stroke(node.color);
@@ -119,7 +119,9 @@ function drawEdges(clickedArtist) {
     }
 
     for (const e of edges) {
-        EdgeDrawer.drawEdge(e);
+        if (!(hoveredArtist !== null && hoveredArtist !== clickedArtist && hoveredArtist !== e.v)) {
+            EdgeDrawer.drawEdge(e);
+        }
     }
 }
 
