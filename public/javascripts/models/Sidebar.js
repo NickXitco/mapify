@@ -169,15 +169,15 @@ const Sidebar = {
             Sidebar.relatedArtistSection.style.display = "none";
         }
 
-        Sidebar.picture.style.boxShadow = "0 0 13px 1px white";
-        Sidebar.stroke.style.boxShadow = "0 0 13px 1px white";
-        Sidebar.stroke.style.background = "white";
-        Sidebar.scrollbar_style.innerHTML = `::-webkit-scrollbar-track {box-shadow: 0 0 5px white;}  \n` +
-            `::-webkit-scrollbar-thumb {background: white;}`
+        Sidebar.picture.style.boxShadow = "0 0 13px 1px " + GenreHelpers.genreColor.toString();
+        Sidebar.stroke.style.boxShadow = "0 0 13px 1px " + GenreHelpers.genreColor.toString();
+        Sidebar.stroke.style.background = GenreHelpers.genreColor.toString();
+        Sidebar.scrollbar_style.innerHTML = `::-webkit-scrollbar-track {box-shadow: 0 0 5px ${GenreHelpers.genreColor.toString()};}  \n` +
+            `::-webkit-scrollbar-thumb {background: ${GenreHelpers.genreColor.toString()};}`
 
 
-        SearchBox.input.style.borderColor = "white";
-        SearchBox.input.style.boxShadow = "0 0 6px 0.5px white";
+        SearchBox.input.style.borderColor = GenreHelpers.genreColor.toString();
+        SearchBox.input.style.boxShadow = "0 0 6px 0.5px " + GenreHelpers.genreColor.toString();
     },
 
     setVersionSidebar: function () {
