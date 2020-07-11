@@ -2,18 +2,22 @@ const GenreHelpers = {
     genreNodes: new Set(),
     genreHull: [],
     genrePoint: {},
+    genreName: "",
+    genreColor: [255, 255, 255],
 
     getGenre: async function(genreName) {
         const response = await fetch('genre/' + genreName);
         const data = await response.json();
 
-        if (data.length === 0) {
+        if (data.artists.length === 0) {
             return;
         }
 
+        this.genreName = data.name;
+        this.genreColor = [data.r, data.g, data.b];
 
         let nodesList = []
-        for (const node of data) {
+        for (const node of data.artists) {
             createNewNode(node);
             nodesList.push(nodeLookup[node.id]);
         }
@@ -39,6 +43,7 @@ const GenreHelpers = {
 
         Sidebar.resetSidebar(false);
         Sidebar.setGenreSidebar();
+        console.log(this);
     },
 
     resetGenreView: function() {
