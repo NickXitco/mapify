@@ -160,6 +160,9 @@ const Sidebar = {
                 newRelated.onclick = () => {
                     getClickedRelated(id).then();
                 };
+                newRelated.onmouseenter = () => {
+                    hoveredArtist = r.valueOf();
+                };
                 Sidebar.relatedArtistsList.appendChild(newRelated);
             }
         } else {
