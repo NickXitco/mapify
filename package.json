@@ -6,15 +6,22 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "@google-cloud/secret-manager": "^3.1.0",
+    "babel-cli": "^6.26.0",
+    "babel-preset-react-app": "^3.1.2",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
-    "jade": "~1.11.0",
     "mongoose": "^5.9.11",
     "morgan": "~1.9.1",
     "p5": "^1.0.0",
-    "socket.io": "^2.3.0",
-    "@google-cloud/secret-manager": "^3.1.0"
-  }
+    "socket.io": "^2.3.0"
+  },
+  "description": "spotifymaponline",
+  "main": "app.js",
+  "devDependencies": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
