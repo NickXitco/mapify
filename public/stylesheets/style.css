@@ -56,6 +56,15 @@ h2 {
   width: 100%;
 }
 
+canvas {
+  z-index: -1;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
 /*<editor-fold desc="CHANGELOG STYLINGS">*/
 .changelog {
   width: 100%;
@@ -210,7 +219,27 @@ h2 {
   flex-direction: column;
 }
 
+.sidebar {
+  visibility: visible;
+  background: rgba(0, 0, 0, 0.90);
+  width: 600px;
+  height: 100%;
+  float: right;
+  position: relative;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+}
+
 #sidebarStroke {
+  opacity: 1;
+  width: 2px;
+  height: 100%;
+  display: block;
+  float: left;
+}
+
+.sidebarStroke {
   opacity: 1;
   width: 2px;
   height: 100%;
@@ -237,6 +266,31 @@ h2 {
 }
 
 #name {
+  display: flex;
+  align-items: center;
+  height: 210px;
+  width: 100%;
+  position: static;
+}
+
+.nameAndPicture {
+  position: static;
+  width: 100%;
+  height: 210px;
+  display: grid;
+  grid-template-columns: 210px auto;
+}
+
+.sidebarPicture {
+  width: 150px;
+  height: 150px;
+  display: block;
+  margin: 30px;
+  border-radius: 50%;
+  position: static;
+}
+
+.name {
   display: flex;
   align-items: center;
   height: 210px;
@@ -278,6 +332,40 @@ h2 {
   text-transform: uppercase;
   font-size: 29px;
 }
+
+.followersSection {
+  position: static;
+  width: 100%;
+  padding: 15px 30px;
+}
+
+.followerCount {
+  font-family: montserrat, sans-serif;
+  font-weight: 600;
+  font-style: normal;
+  color: white;
+  text-transform: uppercase;
+  font-size: 29px;
+  margin-right: 0.15em;
+}
+
+.followers {
+  font-family: montserrat, sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  color: white;
+  text-transform: uppercase;
+  font-size: 29px;
+}
+
+.followerRanking {
+  font-family: montserrat, sans-serif;
+  font-weight: 100;
+  font-style: italic;
+  color: white;
+  text-transform: uppercase;
+  font-size: 29px;
+}
 /*</editor-fold>*/
 /*<editor-fold desc="GENRES">*/
 #genresSection {
@@ -286,6 +374,18 @@ h2 {
 }
 
 #genresList {
+  position: relative;
+  width: 100%;
+  columns: 2;
+  margin-left: 1em;
+}
+
+.genresSection {
+  position: relative;
+  padding: 15px 30px;
+}
+
+.genresList {
   position: relative;
   width: 100%;
   columns: 2;
@@ -301,6 +401,22 @@ h2 {
 }
 
 #relatedArtistsSection {
+  width: 90%;
+  position: static;
+  padding: 15px 30px;
+  display: flex;
+  overflow-y: auto;
+  flex-direction: column;
+}
+
+.relatedArtistsList {
+  width: 100%;
+  position: static;
+  margin-left: 1em;
+  overflow-y: auto;
+}
+
+.relatedArtistsSection {
   width: 90%;
   position: static;
   padding: 15px 30px;
@@ -327,6 +443,12 @@ h2 {
 }
 
 #relatedArtistsSection p {
+  font-size: 26px;
+  text-transform: uppercase;
+  font-weight: 200;
+}
+
+.relatedArtistsSection p {
   font-size: 26px;
   text-transform: uppercase;
   font-weight: 200;
