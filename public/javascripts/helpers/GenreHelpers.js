@@ -3,7 +3,7 @@ const GenreHelpers = {
     genreHull: [],
     genrePoint: {},
     genreName: "",
-    genreColor: [255, 255, 255],
+    genreColor: color(255, 255, 255),
 
     getGenre: async function(genreName) {
         const response = await fetch('genre/' + genreName);
@@ -14,7 +14,7 @@ const GenreHelpers = {
         }
 
         this.genreName = data.name;
-        this.genreColor = [data.r, data.g, data.b];
+        this.genreColor = color(data.r, data.g, data.b);
 
         let nodesList = []
         for (const node of data.artists) {
