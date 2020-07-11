@@ -133,12 +133,12 @@ function draw() {
 
         push();
         noStroke();
-        fill('white'); //TODO genre color
+        fill(GenreHelpers.genreColor);
         textSize(50);
         textAlign(CENTER);
-        text('Genre Name Here', GenreHelpers.genrePoint.x, -GenreHelpers.genrePoint.y); //TODO genre name
+        text(GenreHelpers.genreName, GenreHelpers.genrePoint.x, -GenreHelpers.genrePoint.y);
 
-        stroke('white'); //TODO genre color
+        stroke(GenreHelpers.genreColor);
         noFill();
         strokeWeight(2);
         beginShape();

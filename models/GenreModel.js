@@ -4,8 +4,9 @@ const Schema = mongoose.Schema;
 
 const GenreSchema = new Schema({
     name: String,
-    color: {type: Schema.Types.ObjectID, ref: 'Color'},
-    artists: [{type: Schema.Types.ObjectID, ref: 'Artist'}]
+    r: Number,
+    g: Number,
+    b: Number
 })
 
 const Genre = mongoose.model('Genre', GenreSchema);
