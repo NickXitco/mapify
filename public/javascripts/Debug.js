@@ -51,7 +51,7 @@ const Debug = {
         p.pop();
     },
 
-    debugHovered: function (p) {
+    debugHovered: function (p, hoveredArtist) {
         p.push();
         p.translate(0, 0);
         p.scale(1);
@@ -121,14 +121,14 @@ const Debug = {
         p.pop();
     },
 
-    debugAll: function (p, camera, timingEvents) {
+    debugAll: function (p, camera, hoveredArtist, timingEvents) {
         p.push();
         camera.setView();
         //this.drawCrosshairs(p);
         p.pop();
         this.debugCamera(p, camera);
         //this.drawScreenCrosshairs(p);
-        this.debugHovered(p);
+        this.debugHovered(p, hoveredArtist);
         this.canvasSize(p);
         this.printFPS(p);
         this.printMouseCoordinates(p, camera);

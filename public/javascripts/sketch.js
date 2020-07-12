@@ -3,9 +3,9 @@ let nodeLookup = {};
 let quadHead;
 let p;
 let camera;
+let hoveredArtist = null;
 
 /* STILL AT GLOBAL LEVEL */
-let hoveredArtist = null;
 let clickedLoading = false;
 let clickedArtist = null;
 

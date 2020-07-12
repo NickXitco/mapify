@@ -2,10 +2,6 @@ const MAX_CURVE_ANGLE = 180;
 
 //TODO return hoveredArtist
 function getHoveredArtist(p, camera, quadHead) {
-    if (SearchBox.hoverFlag || Sidebar.hoverFlag) {
-        return;
-    }
-
     let stack = [];
     const mP = MouseEvents.getVirtualMouseCoordinates(p, camera);
     stack.push(quadHead);
@@ -27,8 +23,7 @@ function getHoveredArtist(p, camera, quadHead) {
     }
 
     if (!foundQuad) {
-        hoveredArtist = null;
-        return;
+        return null;
     }
 
     /*
@@ -52,23 +47,21 @@ function getHoveredArtist(p, camera, quadHead) {
 
     if (clickedArtist) {
         if (clickedArtist.relatedVertices.has(closest) || closest === clickedArtist) {
-            hoveredArtist = closest;
+            return closest;
         } else {
-            hoveredArtist = null;
-            return;
+            return null;
         }
     }
 
     if (GenreHelpers.genreNodes.size > 0) {
         if (GenreHelpers.genreNodes.has(closest)) {
-            hoveredArtist = closest;
+            return closest;
         } else {
-            hoveredArtist = null;
-            return;
+            return null;
         }
     }
 
-    hoveredArtist = closest;
+    return closest;
 }
 
 function drawNodes(p, camera, nodeList) {
@@ -94,7 +87,7 @@ function drawRelatedNodes(p, camera, clickedArtist) {
     p.pop();
 }
 
-function drawEdges(p, camera, clickedArtist) {
+function drawEdges(p, camera, clickedArtist, hoveredArtist) {
     if (newEdges) {
         edges = [];
         for (const related of clickedArtist.relatedVertices) {

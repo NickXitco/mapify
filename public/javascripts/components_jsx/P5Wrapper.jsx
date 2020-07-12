@@ -59,10 +59,13 @@ class P5Wrapper extends React.Component {
 
             createTimingEvent("Camera Moves");
 
-            drawOnscreenQuads(p, quadHead, camera);
+            drawOnscreenQuads(p, quadHead, camera, hoveredArtist);
 
             loadUnloaded(unloadedQuadsPriorityQueue, loadingQuads, unloadedQuads);
-            getHoveredArtist(p, camera, quadHead);
+
+            if (!Sidebar.hoverFlag && !SearchBox.hoverFlag) {
+                hoveredArtist = getHoveredArtist(p, camera, quadHead);
+            }
 
             if (clickedArtist && !clickedArtist.loaded && !clickedLoading) {
                 loadArtist(p, clickedArtist, quadHead, nodeLookup).then();
@@ -115,7 +118,7 @@ class P5Wrapper extends React.Component {
             createTimingEvent("Darken Scene for Related Nodes");
 
             if (edgeDrawing && clickedArtist && clickedArtist.loaded) {
-                drawEdges(p, camera, clickedArtist);
+                drawEdges(p, camera, clickedArtist, hoveredArtist);
                 createTimingEvent("Draw Related Edges");
                 drawRelatedNodes(p, camera, clickedArtist);
                 createTimingEvent("Draw Related Nodes");
@@ -141,7 +144,7 @@ class P5Wrapper extends React.Component {
             InfoBox.drawInfoBox(camera, hoveredArtist);
 
             createTimingEvent("Info Box");
-            Debug.debugAll(p, camera, timingEvents);
+            Debug.debugAll(p, camera, hoveredArtist, timingEvents);
         };
 
         p.mouseWheel = (e) => {
@@ -198,7 +201,7 @@ class P5Wrapper extends React.Component {
                 camera.y += (oldDrag.y - newDrag.y);
 
                 if (Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y) < 5) {
-                    handlePointClick(quadHead, nodeLookup, p);
+                    handlePointClick(quadHead, hoveredArtist, nodeLookup, p);
                 }
 
                 MouseEvents.driftVec = p.createVector(p.winMouseX - p.pwinMouseX, p.winMouseY - p.pwinMouseY);
