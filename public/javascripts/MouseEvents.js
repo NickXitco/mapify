@@ -47,7 +47,7 @@ const MouseEvents = {
     }
 }
 
-function handlePointClick(quadHead, hoveredArtist, nodeLookup, p) {
+function handlePointClick(quadHead, hoveredArtist, clickedArtist, nodeLookup, p) {
     if (VersionHelper.showingChangelog) {
         VersionHelper.removeChangelog();
     } else if (Utils.dist(p.width - 10, p.height - 10, p.mouseX, p.mouseY) < 75) {
@@ -55,26 +55,28 @@ function handlePointClick(quadHead, hoveredArtist, nodeLookup, p) {
     }
 
     if (hoveredArtist) {
+        edgeDrawing = true;
+
         if (hoveredArtist !== clickedArtist) {
             newEdges = true;
-            clickedArtist = hoveredArtist;
             Sidebar.resetSidebar(false);
+            return hoveredArtist;
         }
-        edgeDrawing = true;
-        return;
+
+        return clickedArtist;
     }
 
     if (edgeDrawing && GenreHelpers.genreNodes.size > 0) {
         edgeDrawing = false;
-        clickedArtist = null;
         Sidebar.resetSidebar(false);
         Sidebar.setGenreSidebar(p, quadHead, nodeLookup);
     } else if (edgeDrawing) {
         edgeDrawing = false;
-        clickedArtist = null;
         Sidebar.resetSidebar(true);
     } else if (GenreHelpers.genreNodes.size > 0) {
         GenreHelpers.resetGenreView();
         Sidebar.resetSidebar(true);
     }
+
+    return null;
 }

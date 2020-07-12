@@ -5,13 +5,12 @@ let p;
 let camera;
 let hoveredArtist = null;
 let clickedLoading = false;
-
-/* STILL AT GLOBAL LEVEL */
 let clickedArtist = null;
 
-let darkenOpacity = 0;
+/* STILL AT GLOBAL LEVEL */
 
-//let quadCache = new Cache(100);
+
+let darkenOpacity = 0;
 
 
 let unprocessedResponses = [];
@@ -28,12 +27,6 @@ let edges = [];
 let nodeOccurences = {};
 
 let timingEvents = {};
-
-async function getClickedRelated(p, id, quadHead, nodeLookup) {
-    loadArtistFromSearch(p, id, true, quadHead, nodeLookup).then(_ => {
-        Sidebar.resetSidebar(false);}
-    );
-}
 
 async function loadInitialQuads(loadingQuads) {
     const response = await fetch('quad/A'); //TODO validation on this response

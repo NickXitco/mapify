@@ -10,7 +10,7 @@ const GenreHelpers = {
         const data = await response.json();
 
         if (data.artists.length === 0) {
-            return;
+            return false;
         }
 
         this.genreName = data.name;
@@ -38,12 +38,11 @@ const GenreHelpers = {
         const cameraWidth = Math.abs(easternmost.x - westernmost.x);
         camera.setCameraMove(averagePoint.x, averagePoint.y, camera.getZoomFromWidth(cameraWidth), 30);
 
-        clickedArtist = null;
         this.genreNodes = new Set(nodesList);
 
         Sidebar.resetSidebar(false);
         Sidebar.setGenreSidebar(p, quadHead, nodeLookup);
-        console.log(this);
+        return true;
     },
 
     resetGenreView: function() {

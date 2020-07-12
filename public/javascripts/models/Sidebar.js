@@ -49,7 +49,7 @@ const Sidebar = {
     },
 
     setArtistSidebar: function (p, camera, artist, quadHead, nodeLookup) {
-        Sidebar.artist = clickedArtist;
+        Sidebar.artist = artist;
         Sidebar.dom.style.display = "flex";
         let fontSize = 60;
         Sidebar.artistName.style.fontSize = fontSize + "px";
@@ -80,8 +80,12 @@ const Sidebar = {
                 newGenre.className = "sidebarListItem";
                 newGenre.innerText = genreName;
                 newGenre.onclick = () => {
-                    edgeDrawing = false;
-                    GenreHelpers.getGenre(p, camera, genreName, quadHead, nodeLookup).then();
+                    GenreHelpers.getGenre(p, camera, genreName, quadHead, nodeLookup).then(success => {
+                        if (success) {
+                            clickedArtist = null;
+                            edgeDrawing = false;
+                        }
+                    });
                 };
                 Sidebar.genresList.appendChild(newGenre);
                 genreCount++;
@@ -101,7 +105,7 @@ const Sidebar = {
                 newRelated.className = "sidebarListItem";
                 newRelated.innerText = r.name;
                 newRelated.onclick = () => {
-                    getClickedRelated(p, id, quadHead, nodeLookup).then();
+                    this.getClickedRelated(p, id, quadHead, nodeLookup).then();
                 };
                 newRelated.onmouseenter = () => {
                     hoveredArtist = r.valueOf();
@@ -158,7 +162,7 @@ const Sidebar = {
                 newRelated.className = "sidebarListItem";
                 newRelated.innerText = r.name;
                 newRelated.onclick = () => {
-                    getClickedRelated(p, id, quadHead, nodeLookup).then();
+                    this.getClickedRelated(p, id, quadHead, nodeLookup).then();
                 };
                 newRelated.onmouseenter = () => {
                     hoveredArtist = r.valueOf();
@@ -178,6 +182,16 @@ const Sidebar = {
 
         SearchBox.input.style.borderColor = GenreHelpers.genreColor.toString();
         SearchBox.input.style.boxShadow = "0 0 6px 0.5px " + GenreHelpers.genreColor.toString();
+    },
+
+    getClickedRelated: async function(p, id, quadHead, nodeLookup) {
+        loadArtistFromSearch(p, id, true, quadHead, nodeLookup).then(node => {
+            if (node) {
+                clickedArtist = node;
+                edgeDrawing = true;
+                Sidebar.resetSidebar(false);
+            }
+        });
     },
 
     setVersionSidebar: function () {

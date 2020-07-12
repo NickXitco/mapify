@@ -35,8 +35,12 @@ const SearchBox = {
         const currentInput = this.input.value.valueOf();
 
         if (currentInput.length > 0) {
-            loadArtistFromSearch(p, currentInput, false, quadHead, nodeLookup).then(_ => {
-                Sidebar.resetSidebar(false);
+            loadArtistFromSearch(p, currentInput, false, quadHead, nodeLookup).then(node => {
+                if (node) {
+                    clickedArtist = node;
+                    edgeDrawing = true;
+                    Sidebar.resetSidebar(false);
+                }
             });
             this.deleteSuggestions();
             this.input.value = "";
@@ -44,8 +48,12 @@ const SearchBox = {
     },
 
     processClick: async function(suggestion) {
-        loadArtistFromSearch(p, suggestion['name'], false, quadHead, nodeLookup).then(_ => {
-            Sidebar.resetSidebar(false);
+        loadArtistFromSearch(p, suggestion['name'], false, quadHead, nodeLookup).then(node => {
+            if (node) {
+                clickedArtist = node;
+                edgeDrawing = true;
+                Sidebar.resetSidebar(false);
+            }
         });
         this.deleteSuggestions();
         this.input.value = "";

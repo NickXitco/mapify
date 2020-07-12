@@ -1,7 +1,7 @@
 const MAX_CURVE_ANGLE = 180;
 
 //TODO return hoveredArtist
-function getHoveredArtist(p, camera, quadHead) {
+function getHoveredArtist(p, camera, clickedArtist, quadHead) {
     let stack = [];
     const mP = MouseEvents.getVirtualMouseCoordinates(p, camera);
     stack.push(quadHead);
@@ -128,7 +128,7 @@ async function loadArtistFromSearch(p, query, isQueryID, quadHead, nodeLookup) {
     const data = await response.json();
 
     if (Object.keys(data).length === 0) {
-        return;
+        return null;
     }
 
     createNewNode(p, data, quadHead, nodeLookup);
@@ -144,8 +144,7 @@ async function loadArtistFromSearch(p, query, isQueryID, quadHead, nodeLookup) {
         SearchBox.point = node;
     }
 
-    clickedArtist = node;
-    edgeDrawing = true;
+    return node
 }
 
 function createNewNode(p, data, quadHead, nodeLookup) {

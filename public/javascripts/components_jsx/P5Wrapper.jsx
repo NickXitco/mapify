@@ -64,7 +64,7 @@ class P5Wrapper extends React.Component {
             loadUnloaded(unloadedQuadsPriorityQueue, loadingQuads, unloadedQuads);
 
             if (!Sidebar.hoverFlag && !SearchBox.hoverFlag) {
-                hoveredArtist = getHoveredArtist(p, camera, quadHead);
+                hoveredArtist = getHoveredArtist(p, camera, clickedArtist, quadHead);
             }
 
             if (clickedArtist && !clickedArtist.loaded && !clickedLoading) {
@@ -202,7 +202,7 @@ class P5Wrapper extends React.Component {
                 camera.y += (oldDrag.y - newDrag.y);
 
                 if (Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y) < 5) {
-                    handlePointClick(quadHead, hoveredArtist, nodeLookup, p);
+                    clickedArtist = handlePointClick(quadHead, hoveredArtist, clickedArtist, nodeLookup, p);
                 }
 
                 MouseEvents.driftVec = p.createVector(p.winMouseX - p.pwinMouseX, p.winMouseY - p.pwinMouseY);
