@@ -56,9 +56,9 @@ class P5Wrapper extends React.Component {
 
             Debug.createTimingEvent("Camera Moves");
 
-            drawOnscreenQuads(p, quadHead, camera, hoveredArtist, this.loadingQuads, this.unloadedQuads, unloadedPQ);
+            drawOnscreenQuads(p, quadHead, camera, hoveredArtist, this.loadingQuads, this.unloadedQuads, this.unloadedPQ);
 
-            loadUnloaded(this.unprocessedResponses, unloadedPQ, this.loadingQuads, this.unloadedQuads);
+            loadUnloaded(this.unprocessedResponses, this.unloadedPQ, this.loadingQuads, this.unloadedQuads);
 
             if (!Sidebar.hoverFlag && !SearchBox.hoverFlag) {
                 hoveredArtist = getHoveredArtist(p, camera, clickedArtist, quadHead);
