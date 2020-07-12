@@ -6,77 +6,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Clock = function (_React$Component) {
-    _inherits(Clock, _React$Component);
-
-    function Clock(props) {
-        _classCallCheck(this, Clock);
-
-        var _this = _possibleConstructorReturn(this, (Clock.__proto__ || Object.getPrototypeOf(Clock)).call(this, props));
-
-        _this.state = { date: new Date() };
-        return _this;
-    }
-
-    //Allocate and set up resources when the clock is rendered
-
-
-    _createClass(Clock, [{
-        key: "componentDidMount",
-        value: function componentDidMount() {
-            var _this2 = this;
-
-            this.timerID = setInterval(function () {
-                return _this2.tick();
-            }, 1000);
-        }
-
-        //Remove anc clear resources when the clock is removed
-
-    }, {
-        key: "componentWillUnmount",
-        value: function componentWillUnmount() {
-            clearInterval(this.timerID);
-        }
-    }, {
-        key: "tick",
-        value: function tick() {
-            this.setState({
-                date: new Date()
-            });
-        }
-    }, {
-        key: "render",
-        value: function render() {
-            return React.createElement(
-                "div",
-                null,
-                React.createElement(
-                    "h1",
-                    null,
-                    "Hello, world!"
-                ),
-                React.createElement(
-                    "h2",
-                    null,
-                    "It is ",
-                    this.state.date.toLocaleTimeString(),
-                    "."
-                )
-            );
-        }
-
-        /*
-            https://reactjs.org/docs/state-and-lifecycle.html
-         */
-
-    }]);
-
-    return Clock;
-}(React.Component);
-
-var ReactSidebar = function (_React$Component2) {
-    _inherits(ReactSidebar, _React$Component2);
+var ReactSidebar = function (_React$Component) {
+    _inherits(ReactSidebar, _React$Component);
 
     function ReactSidebar(props) {
         _classCallCheck(this, ReactSidebar);
@@ -93,48 +24,52 @@ var ReactSidebar = function (_React$Component2) {
     }, {
         key: "render",
         value: function render() {
-            return React.createElement(
-                "div",
-                { className: "sidebar" },
-                React.createElement("div", { className: "sidebarStroke" }),
-                React.createElement(
+            if (this.props.type === "artist") {
+                return React.createElement(
                     "div",
-                    { className: "nameAndPicture" },
-                    React.createElement("div", { className: "sidebarPicture" }),
+                    { className: "sidebar" },
+                    React.createElement("div", { className: "sidebarStroke" }),
                     React.createElement(
                         "div",
-                        { className: "name" },
-                        React.createElement("h1", { className: "sidebarArtistName" })
+                        { className: "nameAndPicture" },
+                        React.createElement("div", { className: "sidebarPicture" }),
+                        React.createElement(
+                            "div",
+                            { className: "name" },
+                            React.createElement("h1", { className: "sidebarArtistName" })
+                        )
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "followersSection" },
+                        React.createElement("p", { className: "followerCount" }),
+                        React.createElement("p", { className: "followers" }),
+                        React.createElement("p", { className: "followerRanking" })
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "genresSection" },
+                        React.createElement(
+                            "h2",
+                            null,
+                            "Genres"
+                        ),
+                        React.createElement("ul", { className: "genresList" })
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "relatedArtistsSection" },
+                        React.createElement(
+                            "h2",
+                            null,
+                            "Related Artists"
+                        ),
+                        React.createElement("ul", { className: "relatedArtistsList" })
                     )
-                ),
-                React.createElement(
-                    "div",
-                    { className: "followersSection" },
-                    React.createElement("p", { className: "followerCount" }),
-                    React.createElement("p", { className: "followers" }),
-                    React.createElement("p", { className: "followerRanking" })
-                ),
-                React.createElement(
-                    "div",
-                    { className: "genresSection" },
-                    React.createElement(
-                        "h2",
-                        null,
-                        "Genres"
-                    ),
-                    React.createElement("ul", { className: "genresList" })
-                ),
-                React.createElement(
-                    "div",
-                    { className: "relatedArtistsSection" },
-                    React.createElement(
-                        "h2",
-                        null,
-                        "Related Artists"
-                    ),
-                    React.createElement("ul", { className: "relatedArtistsList" })
-                )
-            );
+                );
+            } else {
+                return null;
+            }
         }
     }]);
 

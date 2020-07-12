@@ -69,6 +69,7 @@ var App = function (_React$Component) {
             return React.createElement(
                 "div",
                 { className: "fullScreen" },
+                React.createElement(ReactSidebar, { type: "artist" }),
                 React.createElement(P5Wrapper, { canvasUpdate: this.canvasUpdate })
             );
         }

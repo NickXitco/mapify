@@ -55,6 +55,7 @@ class App extends React.Component {
     render() {
         return (
             <div className={"fullScreen"}>
+                <ReactSidebar type={"artist"}/>
                 <P5Wrapper canvasUpdate={this.canvasUpdate}/>
             </div>
         );
