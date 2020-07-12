@@ -41,6 +41,7 @@ const SearchBox = {
                     Sidebar.resetSidebar(false);
                 }
             });
+            this.unfocus();
             this.deleteSuggestions();
             this.input.value = "";
         }
@@ -53,6 +54,7 @@ const SearchBox = {
                 Sidebar.resetSidebar(false);
             }
         });
+        this.unfocus();
         this.deleteSuggestions();
         this.input.value = "";
     },
