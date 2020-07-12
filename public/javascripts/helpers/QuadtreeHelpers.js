@@ -101,7 +101,7 @@ function drawOnscreenQuads(p, quadHead, camera, hoveredArtist, loadingQuads, unl
             p.push();
             p.noFill();
             for (const n of q.renderableNodes) {
-                p.stroke(n.color);
+                p.stroke(p.color(n.r, n.g, n.b));
                 p.strokeWeight(n.size / 5);
                 p.circle(n.x, -n.y, n.size);
             }
@@ -113,9 +113,7 @@ function drawOnscreenQuads(p, quadHead, camera, hoveredArtist, loadingQuads, unl
     if (hoveredArtist) {
         p.push();
         p.noStroke();
-        hoveredArtist.color.setAlpha(127);
-        p.fill(hoveredArtist.color);
-        hoveredArtist.color.setAlpha(255);
+        p.fill(hoveredArtist.r, hoveredArtist.g, hoveredArtist.b, 127);
         p.circle(hoveredArtist.x, -hoveredArtist.y, hoveredArtist.size);
         p.pop();
     }

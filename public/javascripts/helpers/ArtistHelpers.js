@@ -69,8 +69,8 @@ function drawNodes(p, camera, nodeList) {
         if (camera.containsRegion(node.x, node.y, node.size)) {
             p.push();
             p.strokeWeight(node.size / 5);
-            p.fill(p.color(p.red(node.color), p.green(node.color), p.blue(node.color), 127));
-            p.stroke(node.color);
+            p.fill(p.color(node.r, node.g, node.b, 127));
+            p.stroke(p.color(node.r, node.g, node.b));
             p.circle(node.x, -node.y, node.size);
             p.pop();
         }
@@ -81,7 +81,7 @@ function drawRelatedNodes(p, camera, clickedArtist) {
     drawNodes(p, camera, clickedArtist.relatedVertices);
     p.push();
     p.fill(0, 255);
-    p.stroke(clickedArtist.color);
+    p.stroke(clickedArtist.r, clickedArtist.g, clickedArtist.b);
     p.strokeWeight(clickedArtist.size / 5);
     p.circle(clickedArtist.x, -clickedArtist.y, clickedArtist.size);
     p.pop();

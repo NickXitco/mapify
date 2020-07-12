@@ -118,15 +118,15 @@ const Sidebar = {
             Sidebar.relatedArtistSection.style.display = "none";
         }
 
-        Sidebar.picture.style.boxShadow = "0 0 13px 1px " + artist.color.toString();
-        Sidebar.stroke.style.boxShadow = "0 0 13px 1px " + artist.color.toString();
-        Sidebar.stroke.style.background = artist.color.toString();
-        Sidebar.scrollbar_style.innerHTML = `::-webkit-scrollbar-track {box-shadow: 0 0 5px ${artist.color.toString()};}  \n` +
-            `::-webkit-scrollbar-thumb {background: ${artist.color.toString()};}`
+        Sidebar.picture.style.boxShadow = "0 0 13px 1px " + artist.colorToString();
+        Sidebar.stroke.style.boxShadow = "0 0 13px 1px " + artist.colorToString();
+        Sidebar.stroke.style.background = artist.colorToString();
+        Sidebar.scrollbar_style.innerHTML = `::-webkit-scrollbar-track {box-shadow: 0 0 5px ${artist.colorToString()};}  \n` +
+            `::-webkit-scrollbar-thumb {background: ${artist.colorToString()};}`
 
 
-        SearchBox.input.style.borderColor = artist.color.toString();
-        SearchBox.input.style.boxShadow = "0 0 6px 0.5px " + artist.color.toString();
+        SearchBox.input.style.borderColor = artist.colorToString();
+        SearchBox.input.style.boxShadow = "0 0 6px 0.5px " + artist.colorToString();
     },
 
     //TODO I KNOW THIS IS AN ABOMINATION GIMME A SEC

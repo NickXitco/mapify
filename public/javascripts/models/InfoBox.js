@@ -11,8 +11,8 @@ const InfoBox  ={
 
         const point = camera.virtual2screen({x: hoveredArtist.x, y: hoveredArtist.y});
         this.div.style.visibility = "visible";
-        this.div.style.borderColor = hoveredArtist.color.toString();
-        this.div.style.boxShadow = "0 0 3px 1px " + hoveredArtist.color.toString();
+        this.div.style.borderColor = hoveredArtist.colorToString();
+        this.div.style.boxShadow = "0 0 3px 1px " + hoveredArtist.colorToString();
 
         this.artistName.innerText = hoveredArtist.name;
         if (hoveredArtist.genres.length > 0) {

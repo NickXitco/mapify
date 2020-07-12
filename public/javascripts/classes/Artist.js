@@ -9,7 +9,9 @@ class Artist {
     y;
     size;
 
-    color;
+    r;
+    g;
+    b;
 
     genres;
 
@@ -20,20 +22,35 @@ class Artist {
 
     loaded;
 
-    constructor(p, doc) {
+    constructor(doc) {
         this.name = doc.name;
         this.id = doc.id;
+
         this.followers = doc.followers;
         this.popularity = doc.popularity;
+
         this.x = doc.x;
         this.y = doc.y;
+
         this.size = doc.size;
-        this.color = p.color(doc.r, doc.g, doc.b);
+
+        this.r = doc.r;
+        this.g = doc.g;
+        this.b = doc.b;
+
         this.genres = doc.genres;
         this.relatedIDs = doc.relatedIDs;
 
         this.relatedVertices = new Set();
         this.quad = null;
         this.loaded = false;
+    }
+
+    colorToString() {
+        return `rgb(${this.r}, ${this.g}, ${this.b})`
+    }
+
+    colorOpacityToString(opacity) {
+        return `rgba(${this.r}, ${this.g}, ${this.b}, ${opacity})`
     }
 }

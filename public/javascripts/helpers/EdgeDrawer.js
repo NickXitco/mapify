@@ -25,8 +25,8 @@ class EdgeDrawer {
         uVec.add(u.x, u.y);
         vVec.add(v.x, v.y);
 
-        let uHSV = ColorUtilities.rgb2hsv(p.red(u.color), p.green(u.color), p.blue(u.color));
-        let vHSV = ColorUtilities.rgb2hsv(p.red(v.color), p.green(v.color), p.blue(v.color));
+        let uHSV = ColorUtilities.rgb2hsv(u.r, u.g, u.b);
+        let vHSV = ColorUtilities.rgb2hsv(v.r, v.g, v.b);
 
         let uHue = uHSV.h;
         let vHue = vHSV.h;
