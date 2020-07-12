@@ -1,4 +1,4 @@
-function processOne(quadHead) {
+function processOne(quadHead, nodeLookup) {
     if (unprocessedResponses.length === 0) {
         return;
     }
@@ -8,7 +8,7 @@ function processOne(quadHead) {
         const q = response.quad;
 
         if (camera.contains(q)) {
-            process(response, q, quadHead);
+            process(response, q, quadHead, nodeLookup);
             unprocessedResponses.splice(i, 1);
             return;
         }
@@ -17,10 +17,10 @@ function processOne(quadHead) {
 
     const r = unprocessedResponses.pop();
     const q = r.quad;
-    process(r, q, quadHead);
+    process(r, q, quadHead, nodeLookup);
 }
 
-function process(r, q, quadHead) {
+function process(r, q, quadHead, nodeLookup) {
     if (Object.keys(r.data).length === 0) {
         q.loaded = true;
         loadingQuads.delete(q);
@@ -32,7 +32,7 @@ function process(r, q, quadHead) {
     }
 
     for (const node of r.data.nodes) {
-        createNewNode(node, quadHead);
+        createNewNode(node, quadHead, nodeLookup);
     }
 
     if (r.data.image !== "") {

@@ -5,7 +5,7 @@ const GenreHelpers = {
     genreName: "",
     genreColor: null,
 
-    getGenre: async function(genreName, quadHead) {
+    getGenre: async function(genreName, quadHead, nodeLookup) {
         const response = await fetch('genre/' + genreName);
         const data = await response.json();
 
@@ -18,7 +18,7 @@ const GenreHelpers = {
 
         let nodesList = []
         for (const node of data.artists) {
-            createNewNode(node, quadHead);
+            createNewNode(node, quadHead, nodeLookup);
             nodesList.push(nodeLookup[node.id]);
         }
 
@@ -42,7 +42,7 @@ const GenreHelpers = {
         this.genreNodes = new Set(nodesList);
 
         Sidebar.resetSidebar(false);
-        Sidebar.setGenreSidebar(quadHead);
+        Sidebar.setGenreSidebar(quadHead, nodeLookup);
         console.log(this);
     },
 

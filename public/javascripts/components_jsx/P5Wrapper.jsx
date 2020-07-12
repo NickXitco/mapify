@@ -65,7 +65,7 @@ class P5Wrapper extends React.Component {
             getHoveredArtist(quadHead);
 
             if (clickedArtist && !clickedArtist.loaded && !clickedLoading) {
-                loadArtist(clickedArtist, quadHead).then();
+                loadArtist(clickedArtist, quadHead, nodeLookup).then();
             }
 
             createTimingEvent("Get Hovered Artist");
@@ -122,7 +122,7 @@ class P5Wrapper extends React.Component {
             }
 
             if (clickedArtist && clickedArtist.loaded && Sidebar.artist !== clickedArtist) {
-                Sidebar.setArtistSidebar(clickedArtist, quadHead);
+                Sidebar.setArtistSidebar(clickedArtist, quadHead, nodeLookup);
             }
 
             if (clickedArtist && Sidebar.openAmount < 1) {
@@ -132,7 +132,7 @@ class P5Wrapper extends React.Component {
             createTimingEvent("Sidebar");
 
             if (p.frameCount % 5 === 0) { //TODO adjust this until it feels right, or adjust it dynamically?
-                processOne(quadHead);
+                processOne(quadHead, nodeLookup);
             }
 
             createTimingEvent("Quad Processing");
@@ -198,7 +198,7 @@ class P5Wrapper extends React.Component {
                 camera.y += (oldDrag.y - newDrag.y);
 
                 if (Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y) < 5) {
-                    handlePointClick(quadHead);
+                    handlePointClick(quadHead, nodeLookup);
                 }
 
                 MouseEvents.driftVec = p.createVector(p.winMouseX - p.pwinMouseX, p.winMouseY - p.pwinMouseY);

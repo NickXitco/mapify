@@ -47,7 +47,7 @@ const MouseEvents = {
     }
 }
 
-function handlePointClick(quadHead) {
+function handlePointClick(quadHead, nodeLookup) {
     if (VersionHelper.showingChangelog) {
         VersionHelper.removeChangelog();
     } else if (Utils.dist(p.width - 10, p.height - 10, p.mouseX, p.mouseY) < 75) {
@@ -68,7 +68,7 @@ function handlePointClick(quadHead) {
         edgeDrawing = false;
         clickedArtist = null;
         Sidebar.resetSidebar(false);
-        Sidebar.setGenreSidebar(quadHead);
+        Sidebar.setGenreSidebar(quadHead, nodeLookup);
     } else if (edgeDrawing) {
         edgeDrawing = false;
         clickedArtist = null;

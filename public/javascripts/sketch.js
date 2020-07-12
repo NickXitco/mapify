@@ -1,5 +1,13 @@
 let p;
 let camera;
+
+/* AT COMPONENT LEVEL */
+let nodeLookup = {};
+let quadHead;
+
+
+/* STILL AT GLOBAL LEVEL */
+
 const MAX_CURVE_ANGLE = 180;
 
 let hoveredArtist = null;
@@ -10,7 +18,7 @@ let darkenOpacity = 0;
 
 //let quadCache = new Cache(100);
 
-let quadHead;
+
 let unprocessedResponses = [];
 
 let unloadedQuads = new Set();
@@ -21,13 +29,13 @@ let edgeDrawing = false;
 let newEdges = true;
 let edges = [];
 
-let nodeLookup = {};
+
 let nodeOccurences = {};
 
 let timingEvents = {};
 
-async function getClickedRelated(id, quadHead) {
-    loadArtistFromSearch(id, true, quadHead).then(_ => {
+async function getClickedRelated(id, quadHead, nodeLookup) {
+    loadArtistFromSearch(id, true, quadHead, nodeLookup).then(_ => {
         Sidebar.resetSidebar(false);}
     );
 }
