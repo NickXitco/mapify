@@ -14,7 +14,7 @@ const GenreHelpers = {
         }
 
         this.genreName = data.name;
-        this.genreColor = color(data.r, data.g, data.b);
+        this.genreColor = p.color(data.r, data.g, data.b);
 
         let nodesList = []
         for (const node of data.artists) {

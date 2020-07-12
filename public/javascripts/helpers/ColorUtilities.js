@@ -1,7 +1,7 @@
 const ColorUtilities = {
     hueLerp: function(start, end, x) {
         let dir;
-        colorMode(HSB);
+        p.colorMode(p.HSB);
         if (end > start) {
             if (start >= 145) {
                 dir = 1;

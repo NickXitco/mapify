@@ -19,7 +19,7 @@ const Sidebar = {
     SIDEBAR_GENRE_LIMIT: 10,
 
     openSidebar: function () {
-        const twentyFive = width / 4;
+        const twentyFive = p.width / 4;
         Sidebar.dom.style.left = Utils.map(Eases.easeOutQuart(Sidebar.openAmount), 0, 1, twentyFive, 0) + "px";
         Sidebar.openAmount = Math.min(1, Sidebar.openAmount + 0.05);
     },
@@ -44,7 +44,7 @@ const Sidebar = {
         if (removeFromFlow) {
             Sidebar.dom.style.display = "none";
             Sidebar.openAmount = 0;
-            Sidebar.dom.style.left = width / 4 + "px";
+            Sidebar.dom.style.left = p.width / 4 + "px";
         }
     },
 

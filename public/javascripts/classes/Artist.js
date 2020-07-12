@@ -28,7 +28,7 @@ class Artist {
         this.x = doc.x;
         this.y = doc.y;
         this.size = doc.size;
-        this.color = color(doc.r, doc.g, doc.b);
+        this.color = p.color(doc.r, doc.g, doc.b);
         this.genres = doc.genres;
         this.relatedIDs = doc.relatedIDs;
 

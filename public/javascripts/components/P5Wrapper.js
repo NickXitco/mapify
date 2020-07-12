@@ -15,17 +15,222 @@ var P5Wrapper = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (P5Wrapper.__proto__ || Object.getPrototypeOf(P5Wrapper)).call(this, props));
 
         _this.Sketch = function (p) {
-            var x = 100;
-            var y = 100;
-
             p.setup = function () {
-                p.createCanvas(200, 200);
+                canvas = p.createCanvas(window.innerWidth, window.innerHeight);
+                canvas.mouseOver(function () {
+                    Sidebar.hoverFlag = false;SearchBox.hoverFlag = false;
+                });
+                camera.zoomCamera({ x: 0, y: 0 });
+
+                loadInitialQuads().then(); //TODO loadInitialQuads, probably the first 16? but load the first 128 (or more?) into memory
+
+                p.angleMode(p.DEGREES);
+                p.rectMode(p.RADIUS);
+
+                if (!VersionHelper.checkVersion()) {
+                    VersionHelper.drawChangelog();
+                }
             };
 
             p.draw = function () {
-                p.background(0);
-                p.fill(255);
-                p.rect(x, y, 50, 50);
+                if (loading) {
+                    drawLoading();
+                    return;
+                }
+
+                p.background(3);
+
+                resetTiming();
+                createTimingEvent("Drawing Setup");
+
+                MouseEvents.drift(camera);
+                MouseEvents.zoom();
+
+                if (SearchBox.point) {
+                    camera.setCameraMove(SearchBox.point.x, SearchBox.point.y, camera.getZoomFromWidth(SearchBox.point.size * 50), 30);
+
+                    clickedArtist = SearchBox.point;
+                    edgeDrawing = true;
+                    newEdges = true;
+                    SearchBox.point = null;
+                }
+
+                camera.doCameraMove();
+
+                p.push();
+                camera.setView();
+
+                createTimingEvent("Camera Moves");
+
+                drawOnscreenQuads(quadHead, camera);
+
+                loadUnloaded();
+                getHoveredArtist();
+
+                if (clickedArtist && !clickedArtist.loaded && !clickedLoading) {
+                    loadArtist(clickedArtist).then();
+                }
+
+                createTimingEvent("Get Hovered Artist");
+
+                if (!edgeDrawing && GenreHelpers.genreNodes.size === 0) {
+                    darkenOpacity = 0;
+                }
+
+                if (GenreHelpers.genreNodes.size > 0) {
+                    darkenScene();
+                }
+
+                createTimingEvent("Darken Scene for Genre Nodes");
+
+                if (GenreHelpers.genreNodes.size > 0) {
+
+                    p.push();
+                    p.noStroke();
+                    p.fill(GenreHelpers.genreColor);
+                    p.textSize(50);
+                    p.textAlign(CENTER);
+                    p.text(GenreHelpers.genreName, GenreHelpers.genrePoint.x, -GenreHelpers.genrePoint.y);
+
+                    p.stroke(GenreHelpers.genreColor);
+                    p.noFill();
+                    p.strokeWeight(2);
+                    p.beginShape();
+
+                    var shiftedHull = GenreHelpers.offsetHull(GenreHelpers.genreHull, GenreHelpers.genrePoint, 20);
+                    var _iteratorNormalCompletion = true;
+                    var _didIteratorError = false;
+                    var _iteratorError = undefined;
+
+                    try {
+                        for (var _iterator = shiftedHull[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                            var point = _step.value;
+
+                            p.vertex(point.x, -point.y);
+                        }
+                    } catch (err) {
+                        _didIteratorError = true;
+                        _iteratorError = err;
+                    } finally {
+                        try {
+                            if (!_iteratorNormalCompletion && _iterator.return) {
+                                _iterator.return();
+                            }
+                        } finally {
+                            if (_didIteratorError) {
+                                throw _iteratorError;
+                            }
+                        }
+                    }
+
+                    p.vertex(shiftedHull[0].x, -shiftedHull[0].y);
+                    p.endShape();
+
+                    p.pop();
+
+                    drawNodes(GenreHelpers.genreNodes);
+                }
+
+                createTimingEvent("Draw Genre Nodes");
+
+                if (edgeDrawing) {
+                    darkenScene();
+                }
+
+                createTimingEvent("Darken Scene for Related Nodes");
+
+                if (edgeDrawing && clickedArtist && clickedArtist.loaded) {
+                    drawEdges(clickedArtist);
+                    createTimingEvent("Draw Related Edges");
+                    drawRelatedNodes(clickedArtist);
+                    createTimingEvent("Draw Related Nodes");
+                }
+
+                if (clickedArtist && clickedArtist.loaded && Sidebar.artist !== clickedArtist) {
+                    Sidebar.setArtistSidebar(clickedArtist);
+                }
+
+                if (clickedArtist && Sidebar.openAmount < 1) {
+                    Sidebar.openSidebar();
+                }
+
+                createTimingEvent("Sidebar");
+
+                if (p.frameCount % 5 === 0) {
+                    //TODO adjust this until it feels right, or adjust it dynamically?
+                    processOne();
+                }
+
+                createTimingEvent("Quad Processing");
+
+                p.pop();
+                InfoBox.drawInfoBox(hoveredArtist);
+
+                createTimingEvent("Info Box");
+                Debug.debugAll(camera, timingEvents);
+            };
+
+            p.mouseWheel = function (e) {
+                if (Sidebar.hoverFlag) {
+                    return;
+                }
+                e.preventDefault();
+
+                var isTouchPad = e.wheelDeltaY ? e.wheelDeltaY === -3 * e.deltaY : e.deltaMode === 0;
+
+                if (isTouchPad && !e.ctrlKey) {
+                    camera.x -= e.deltaX * (1 / camera.getZoomFactor().x);
+                    camera.y += e.deltaY * (1 / camera.getZoomFactor().y);
+                } else {
+                    MouseEvents.zooming = true;
+                    MouseEvents.scrollStep = 0;
+                    MouseEvents.zoomCoordinates = MouseEvents.getVirtualMouseCoordinates();
+                    if (e.ctrlKey && Math.abs(e.deltaY) < 10) {
+                        MouseEvents.scrollDelta = e.deltaY / 10;
+                    } else {
+                        MouseEvents.scrollDelta = e.deltaY / 300;
+                    }
+                }
+            };
+
+            p.mousePressed = function () {
+                if (!SearchBox.hoverFlag && !Sidebar.hoverFlag) {
+                    MouseEvents.dragging = true;
+                    MouseEvents.drag = { x: p.mouseX, y: p.mouseY };
+                    MouseEvents.start = { x: p.mouseX, y: p.mouseY };
+                }
+
+                if (!SearchBox.hoverFlag) {
+                    SearchBox.deleteSuggestions();
+                    SearchBox.input.value = "";
+                }
+            };
+
+            p.mouseDragged = function () {
+                if (MouseEvents.dragging) {
+                    var newDrag = MouseEvents.getVirtualMouseCoordinates();
+                    var oldDrag = camera.screen2virtual(MouseEvents.drag);
+                    camera.x += oldDrag.x - newDrag.x;
+                    camera.y += oldDrag.y - newDrag.y;
+                    MouseEvents.drag = { x: p.mouseX, y: p.mouseY };
+                }
+            };
+
+            p.mouseReleased = function () {
+                if (MouseEvents.dragging) {
+                    var newDrag = MouseEvents.getVirtualMouseCoordinates();
+                    var oldDrag = camera.screen2virtual(MouseEvents.drag);
+                    camera.x += oldDrag.x - newDrag.x;
+                    camera.y += oldDrag.y - newDrag.y;
+
+                    if (Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y) < 5) {
+                        handlePointClick();
+                    }
+
+                    MouseEvents.driftVec = p.createVector(p.winMouseX - p.pwinMouseX, p.winMouseY - p.pwinMouseY);
+                    MouseEvents.drifting = true;
+                    MouseEvents.dragging = false;
+                }
             };
         };
 
@@ -36,7 +241,8 @@ var P5Wrapper = function (_React$Component) {
     _createClass(P5Wrapper, [{
         key: "componentDidMount",
         value: function componentDidMount() {
-            this.myP5 = new p5(this.Sketch, this.myRef.current);
+            p = new p5(this.Sketch, this.myRef.current);
+            camera = new Camera(0, 0, window.innerHeight, window.innerWidth, 1, p);
         }
     }, {
         key: "render",

@@ -171,8 +171,7 @@ var App = function (_React$Component3) {
             return React.createElement(
                 "div",
                 { className: "fullScreen" },
-                React.createElement(P5Wrapper, null),
-                React.createElement(ReactSidebar, null)
+                React.createElement(P5Wrapper, null)
             );
         }
     }]);

@@ -109,7 +109,6 @@ class App extends React.Component{
         return (
             <div className={"fullScreen"}>
                 <P5Wrapper/>
-                <ReactSidebar/>
             </div>
         );
     }

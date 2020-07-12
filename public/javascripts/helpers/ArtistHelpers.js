@@ -38,7 +38,7 @@ function getHoveredArtist() {
     let closest = null;
     let closestDistance = Infinity;
     for (const node of foundQuad.renderableNodes) {
-        let d = dist(mP.x, mP.y, node.x, node.y);
+        let d = Utils.dist(mP.x, mP.y, node.x, node.y);
         if (d < node.size / 2) {
             if (d < closestDistance) {
                 closest = node;
@@ -71,24 +71,24 @@ function getHoveredArtist() {
 function drawNodes(nodeList) {
     for (const node of nodeList) {
         if (camera.containsRegion(node.x, node.y, node.size)) {
-            push();
-            strokeWeight(node.size / 5);
-            fill(color(red(node.color), green(node.color), blue(node.color), 127));
-            stroke(node.color);
-            circle(node.x, -node.y, node.size);
-            pop();
+            p.push();
+            p.strokeWeight(node.size / 5);
+            p.fill(p.color(p.red(node.color), p.green(node.color), p.blue(node.color), 127));
+            p.stroke(node.color);
+            p.circle(node.x, -node.y, node.size);
+            p.pop();
         }
     }
 }
 
 function drawRelatedNodes(clickedArtist) {
     drawNodes(clickedArtist.relatedVertices);
-    push();
-    fill(0, 255);
-    stroke(clickedArtist.color);
-    strokeWeight(clickedArtist.size / 5);
-    circle(clickedArtist.x, -clickedArtist.y, clickedArtist.size);
-    pop();
+    p.push();
+    p.fill(0, 255);
+    p.stroke(clickedArtist.color);
+    p.strokeWeight(clickedArtist.size / 5);
+    p.circle(clickedArtist.x, -clickedArtist.y, clickedArtist.size);
+    p.pop();
 }
 
 function drawEdges(clickedArtist) {

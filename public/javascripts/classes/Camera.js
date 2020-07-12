@@ -15,12 +15,16 @@ class Camera {
     frameDone;
     moving;
 
-    constructor(x, y, height, width, zoom) {
+    canvas;
+
+    constructor(x, y, height, width, zoom, canvas) {
         this.x = x;
         this.y = y;
         this.height = height;
         this.width = width;
         this.zoom = zoom;
+
+        this.canvas = canvas;
 
         this.moving = false;
     }
@@ -67,11 +71,11 @@ class Camera {
         const oldWidth = this.width;
 
         if (this.zoom < 6.42) {
-            this.height = height * (1 / Math.pow(2, -0.5 * (this.zoom + 5)));
-            this.width = width * (1 / Math.pow(2, -0.5 * (this.zoom + 5)));
+            this.height = this.canvas.height * (1 / Math.pow(2, -0.5 * (this.zoom + 5)));
+            this.width = this.canvas.width * (1 / Math.pow(2, -0.5 * (this.zoom + 5)));
         } else {
-            this.height = height * (65 / (1 + Math.exp(-1 * (this.zoom - 5))));
-            this.width = width * (65 / (1 + Math.exp(-1 * (this.zoom - 5))));
+            this.height = this.canvas.height * (65 / (1 + Math.exp(-1 * (this.zoom - 5))));
+            this.width = this.canvas.width * (65 / (1 + Math.exp(-1 * (this.zoom - 5))));
         }
 
         const pos = this.calculateZoomPos(toward, oldWidth, oldHeight);
@@ -100,27 +104,27 @@ class Camera {
     screen2virtual(point) {
         let x = point.x;
         let y = point.y;
-        x = Utils.map(x, 0, width, this.x - (this.width / 2), this.x + (this.width / 2));
-        y = Utils.map(y, 0, height, this.y + (this.height / 2), this.y - (this.height / 2));
+        x = Utils.map(x, 0, this.canvas.width, this.x - (this.width / 2), this.x + (this.width / 2));
+        y = Utils.map(y, 0, this.canvas.height, this.y + (this.height / 2), this.y - (this.height / 2));
         return {x: x, y: y};
     }
 
     virtual2screen(point) {
         let x = point.x;
         let y = point.y;
-        x = Utils.map(x, this.x - (this.width / 2), this.x + (this.width / 2), 0, width);
-        y = Utils.map(y, this.y + (this.height / 2), this.y - (this.height / 2), 0, height);
+        x = Utils.map(x, this.x - (this.width / 2), this.x + (this.width / 2), 0, this.canvas.width);
+        y = Utils.map(y, this.y + (this.height / 2), this.y - (this.height / 2), 0, this.canvas.height);
         return {x: x, y: y};
     }
 
     getZoomFactor() {
-        return {x: width /  this.width, y: height / this.height};
+        return {x: this.canvas.width /  this.width, y: this.canvas.height / this.height};
     }
 
     setView() {
         const zoomFactor = this.getZoomFactor();
-        translate(width / 2 - (this.x * zoomFactor.x), height / 2 + (this.y * zoomFactor.y));
-        scale(zoomFactor.x, zoomFactor.y);
+        this.canvas.translate(this.canvas.width / 2 - (this.x * zoomFactor.x), this.canvas.height / 2 + (this.y * zoomFactor.y));
+        this.canvas.scale(zoomFactor.x, zoomFactor.y);
     }
 
     contains(q) {

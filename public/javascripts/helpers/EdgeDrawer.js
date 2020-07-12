@@ -12,10 +12,10 @@ class EdgeDrawer {
         const u = e.u;
         const v = e.v;
 
-        const uVec = createVector(u.x, u.y);
-        const vVec = createVector(v.x, v.y);
+        const uVec = p.createVector(u.x, u.y);
+        const vVec = p.createVector(v.x, v.y);
 
-        push();
+        p.push();
         uVec.lerp(vVec, e.cUrad);
         vVec.lerp(uVec, e.cVrad);
         uVec.sub(u.x, u.y);
@@ -25,8 +25,8 @@ class EdgeDrawer {
         uVec.add(u.x, u.y);
         vVec.add(v.x, v.y);
 
-        let uHSV = ColorUtilities.rgb2hsv(red(u.color), green(u.color), blue(u.color));
-        let vHSV = ColorUtilities.rgb2hsv(red(v.color), green(v.color), blue(v.color));
+        let uHSV = ColorUtilities.rgb2hsv(p.red(u.color), p.green(u.color), p.blue(u.color));
+        let vHSV = ColorUtilities.rgb2hsv(p.red(v.color), p.green(v.color), p.blue(v.color));
 
         let uHue = uHSV.h;
         let vHue = vHSV.h;
@@ -34,9 +34,9 @@ class EdgeDrawer {
         let vSat = vHSV.s;
 
         this.runEdgeDrawer(e, u, v, uVec, vVec, uHue, vHue, uSat, vSat);
-        pop();
+        p.pop();
 
-        e.tMax = Math.min(1, e.tMax + (EASE_SPEED / dist(u.x, u.y, v.x, v.y)));
+        e.tMax = Math.min(1, e.tMax + (EASE_SPEED / Utils.dist(u.x, u.y, v.x, v.y)));
     }
 
     static runEdgeDrawer(e, u, v, uVec, vVec, uHue, vHue, uSat, vSat) {
@@ -47,23 +47,23 @@ class EdgeDrawer {
     }
 
     static drawEdgePoints(points) {
-        textSize(15);
+        p.textSize(15);
 
         for (let i = 0; i < points.length; i++) {
             if (i === 0) {
-                beginShape();
-                vertex(points[i].x, points[i].y);
+                p.beginShape();
+                p.vertex(points[i].x, points[i].y);
             } else if (i === points.length - 1) {
-                vertex(points[i].x, points[i].y);
-                endShape();
+                p.vertex(points[i].x, points[i].y);
+                p.endShape();
             } else {
-                vertex(points[i].x, points[i].y);
-                endShape();
-                beginShape();
-                vertex(points[i].x, points[i].y);
+                p.vertex(points[i].x, points[i].y);
+                p.endShape();
+                p.beginShape();
+                p.vertex(points[i].x, points[i].y);
             }
-            stroke(color(points[i].hue, points[i].sat, 100));
-            strokeWeight(points[i].weight);
+            p.stroke(p.color(points[i].hue, points[i].sat, 100));
+            p.strokeWeight(points[i].weight);
         }
     }
 
@@ -152,10 +152,10 @@ class EdgeDrawer {
     }
 
     static getMiddleAngle(edgePoints, a, b, c) {
-        let dAB = dist(edgePoints[a].x, edgePoints[a].y, edgePoints[b].x, edgePoints[b].y);
-        let dBC = dist(edgePoints[b].x, edgePoints[b].y, edgePoints[c].x, edgePoints[c].y);
-        let dAC = dist(edgePoints[a].x, edgePoints[a].y, edgePoints[c].x, edgePoints[c].y);
-        return degrees(Math.acos((dAB * dAB + dBC * dBC - dAC * dAC) / (2 * dAB * dBC)));
+        let dAB = Utils.dist(edgePoints[a].x, edgePoints[a].y, edgePoints[b].x, edgePoints[b].y);
+        let dBC = Utils.dist(edgePoints[b].x, edgePoints[b].y, edgePoints[c].x, edgePoints[c].y);
+        let dAC = Utils.dist(edgePoints[a].x, edgePoints[a].y, edgePoints[c].x, edgePoints[c].y);
+        return p.degrees(Math.acos((dAB * dAB + dBC * dBC - dAC * dAC) / (2 * dAB * dBC)));
     }
 
     static getPoint(t, u, v, uVec, vVec, uHue, vHue, uSat, vSat) {
@@ -167,8 +167,8 @@ class EdgeDrawer {
         };
 
         let newHue = ColorUtilities.hueLerp(uHue, vHue, tEased);
-        let newSat = lerp(uSat, vSat, tEased);
-        let newWeight = lerp(u.size / STROKE_DIVIDER, v.size / STROKE_DIVIDER, tEased);
+        let newSat = p.lerp(uSat, vSat, tEased);
+        let newWeight = p.lerp(u.size / STROKE_DIVIDER, v.size / STROKE_DIVIDER, tEased);
 
         return {x: tV.x, y: tV.y, hue: newHue, sat: newSat, weight: newWeight, t: t};
     }
