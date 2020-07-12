@@ -83,38 +83,3 @@ class ReactSidebar extends React.Component {
         );
     }
 }
-
-/*
-
-So here's the plan as I see it.
-
-We have an App component that holds:
-    -Info Box
-    -Search Box
-    -Sidebar
-    -Future UI
-    -THE CANVAS :O
-        * For the record, I have only a semblance of an idea how I'm gonna pull this
-          off. I don't yet have the grasp on React to execute this correctly first
-          time so it will probably be a trial by fire.
- */
-
-
-class App extends React.Component{
-    constructor(props) {
-        super(props);
-    }
-
-    render() {
-        return (
-            <div className={"fullScreen"}>
-                <P5Wrapper/>
-            </div>
-        );
-    }
-}
-
-ReactDOM.render(
-    <App />,
-    document.getElementById('root')
-);
