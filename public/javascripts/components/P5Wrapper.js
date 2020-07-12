@@ -68,9 +68,9 @@ var P5Wrapper = function (_React$Component) {
 
                 createTimingEvent("Camera Moves");
 
-                drawOnscreenQuads(p, quadHead, camera, hoveredArtist, loadingQuads, unloadedQuads, unloadedQuadsPriorityQueue);
+                drawOnscreenQuads(p, quadHead, camera, hoveredArtist, loadingQuads, unloadedQuads, unloadedPQ);
 
-                loadUnloaded(unprocessedResponses, unloadedQuadsPriorityQueue, loadingQuads, unloadedQuads);
+                loadUnloaded(unprocessedResponses, unloadedPQ, loadingQuads, unloadedQuads);
 
                 if (!Sidebar.hoverFlag && !SearchBox.hoverFlag) {
                     hoveredArtist = getHoveredArtist(p, camera, clickedArtist, quadHead);
