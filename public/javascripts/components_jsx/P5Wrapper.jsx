@@ -136,7 +136,7 @@ class P5Wrapper extends React.Component {
             createTimingEvent("Sidebar");
 
             if (p.frameCount % 5 === 0) { //TODO adjust this until it feels right, or adjust it dynamically?
-                processOne(p, camera, quadHead, nodeLookup, unprocessedResponses);
+                processOne(p, camera, quadHead, nodeLookup, loadingQuads, unprocessedResponses);
             }
 
             createTimingEvent("Quad Processing");
