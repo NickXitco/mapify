@@ -20,7 +20,7 @@ class Artist {
 
     loaded;
 
-    constructor(doc) {
+    constructor(p, doc) {
         this.name = doc.name;
         this.id = doc.id;
         this.followers = doc.followers;

@@ -1,5 +1,5 @@
 const Debug = {
-    drawCrosshairs: function () {
+    drawCrosshairs: function (p) {
         p.push();
         strokeWeight(3);
         p.stroke("white");
@@ -8,8 +8,8 @@ const Debug = {
         p.pop();
     },
 
-    printMouseCoordinates: function () {
-        let mP = MouseEvents.getVirtualMouseCoordinates();
+    printMouseCoordinates: function (p) {
+        let mP = MouseEvents.getVirtualMouseCoordinates(p);
         p.push();
         p.translate(0, 0);
         p.scale(1);
@@ -20,7 +20,7 @@ const Debug = {
         p.pop();
     },
 
-    drawScreenCrosshairs: function () {
+    drawScreenCrosshairs: function (p) {
         p.push();
         strokeWeight(1);
         p.stroke("aqua");
@@ -29,16 +29,16 @@ const Debug = {
         p.pop();
     },
 
-    printFPS: function () {
+    printFPS: function (p) {
         p.push();
-        let fps = p.frameRate();
+        let fps = p.frameRate(p);
         p.fill(255);
         p.stroke(0);
         p.text("FPS: " + fps.toFixed(2), 10, p.height - 10);
         p.pop();
     },
 
-    debugCamera: function () {
+    debugCamera: function (p) {
         p.push();
         p.translate(0, 0);
         p.scale(1);
@@ -51,7 +51,7 @@ const Debug = {
         p.pop();
     },
 
-    debugHovered: function () {
+    debugHovered: function (p) {
         p.push();
         p.translate(0, 0);
         p.scale(1);
@@ -62,7 +62,7 @@ const Debug = {
         p.pop();
     },
 
-    canvasSize: function () {
+    canvasSize: function (p) {
         p.push();
         p.translate(0, 0);
         p.scale(1);
@@ -73,7 +73,7 @@ const Debug = {
         p.pop();
     },
 
-    loadingStats: function () {
+    loadingStats: function (p) {
         p.push();
         p.fill("white");
         p.noStroke();
@@ -84,7 +84,7 @@ const Debug = {
     },
 
     averageTimingEvents: {},
-    timingGraph: function (timingEvents) {
+    timingGraph: function (p, timingEvents) {
         p.push();
         p.rectMode(p.CORNER);
         p.fill('white');
@@ -112,7 +112,7 @@ const Debug = {
         p.pop();
     },
 
-    versionNumber: function() {
+    versionNumber: function(p) {
         p.push();
         p.fill("white");
         p.noStroke();
@@ -121,19 +121,19 @@ const Debug = {
         p.pop();
     },
 
-    debugAll: function (camera, timingEvents) {
+    debugAll: function (p, camera, timingEvents) {
         p.push();
         camera.setView();
-        //Debug.drawCrosshairs();
+        //this.drawCrosshairs(p);
         p.pop();
-        this.debugCamera();
-        //Debug.drawScreenCrosshairs();
-        this.debugHovered();
-        this.canvasSize();
-        this.printFPS();
-        this.printMouseCoordinates();
-        this.loadingStats();
-        this.timingGraph(timingEvents)
-        this.versionNumber();
+        this.debugCamera(p);
+        //this.drawScreenCrosshairs(p);
+        this.debugHovered(p);
+        this.canvasSize(p);
+        this.printFPS(p);
+        this.printMouseCoordinates(p);
+        this.loadingStats(p);
+        this.timingGraph(p, timingEvents)
+        this.versionNumber(p);
     }
 }

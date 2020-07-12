@@ -9,7 +9,6 @@ const InfoBox  ={
             return;
         }
 
-        p.push();
         const point = camera.virtual2screen({x: hoveredArtist.x, y: hoveredArtist.y});
         this.div.style.visibility = "visible";
         this.div.style.borderColor = hoveredArtist.color.toString();
@@ -22,7 +21,7 @@ const InfoBox  ={
             this.artistGenre.innerText = "";
         }
 
-        if (point.x >= p.width / 2) {
+        if (point.x >= window.innerWidth / 2) {
             this.div.style.borderRadius =  "50px 0 100px 0";
             this.div.style.textAlign = "left";
             this.artistName.style.float = "left";
@@ -46,12 +45,10 @@ const InfoBox  ={
 
         this.div.style.top = (point.y) + "px";
 
-        if (point.x >= p.width / 2) {
+        if (point.x >= window.innerWidth / 2) {
             this.div.style.left = (point.x - w - 6) + "px";
         } else {
             this.div.style.left = (point.x) + "px";
         }
-
-        p.pop();
     }
 }

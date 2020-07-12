@@ -19,7 +19,7 @@ const Sidebar = {
     SIDEBAR_GENRE_LIMIT: 10,
 
     openSidebar: function () {
-        const twentyFive = p.width / 4;
+        const twentyFive = window.innerWidth.width / 4;
         Sidebar.dom.style.left = Utils.map(Eases.easeOutQuart(Sidebar.openAmount), 0, 1, twentyFive, 0) + "px";
         Sidebar.openAmount = Math.min(1, Sidebar.openAmount + 0.05);
     },
@@ -44,11 +44,11 @@ const Sidebar = {
         if (removeFromFlow) {
             Sidebar.dom.style.display = "none";
             Sidebar.openAmount = 0;
-            Sidebar.dom.style.left = p.width / 4 + "px";
+            Sidebar.dom.style.left = window.innerWidth.width / 4 + "px";
         }
     },
 
-    setArtistSidebar: function (artist, quadHead, nodeLookup) {
+    setArtistSidebar: function (p, artist, quadHead, nodeLookup) {
         Sidebar.artist = clickedArtist;
         Sidebar.dom.style.display = "flex";
         let fontSize = 60;
@@ -81,7 +81,7 @@ const Sidebar = {
                 newGenre.innerText = genreName;
                 newGenre.onclick = () => {
                     edgeDrawing = false;
-                    GenreHelpers.getGenre(genreName, quadHead, nodeLookup).then();
+                    GenreHelpers.getGenre(p, genreName, quadHead, nodeLookup).then();
                 };
                 Sidebar.genresList.appendChild(newGenre);
                 genreCount++;
@@ -101,7 +101,7 @@ const Sidebar = {
                 newRelated.className = "sidebarListItem";
                 newRelated.innerText = r.name;
                 newRelated.onclick = () => {
-                    getClickedRelated(id, quadHead, nodeLookup).then();
+                    getClickedRelated(p, id, quadHead, nodeLookup).then();
                 };
                 newRelated.onmouseenter = () => {
                     hoveredArtist = r.valueOf();
@@ -127,7 +127,7 @@ const Sidebar = {
     },
 
     //TODO I KNOW THIS IS AN ABOMINATION GIMME A SEC
-    setGenreSidebar: function (quadHead, nodeLookup) {
+    setGenreSidebar: function (p, quadHead, nodeLookup) {
         Sidebar.dom.style.display = "flex";
         let fontSize = 60;
         Sidebar.artistName.style.fontSize = fontSize + "px";
@@ -158,7 +158,7 @@ const Sidebar = {
                 newRelated.className = "sidebarListItem";
                 newRelated.innerText = r.name;
                 newRelated.onclick = () => {
-                    getClickedRelated(id, quadHead, nodeLookup).then();
+                    getClickedRelated(p, id, quadHead, nodeLookup).then();
                 };
                 newRelated.onmouseenter = () => {
                     hoveredArtist = r.valueOf();

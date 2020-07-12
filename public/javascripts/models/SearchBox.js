@@ -35,7 +35,7 @@ const SearchBox = {
         const currentInput = this.input.value.valueOf();
 
         if (currentInput.length > 0) {
-            loadArtistFromSearch(currentInput, false, quadHead, nodeLookup).then(_ => {
+            loadArtistFromSearch(p, currentInput, false, quadHead, nodeLookup).then(_ => {
                 Sidebar.resetSidebar(false);
             });
             this.deleteSuggestions();
@@ -44,7 +44,7 @@ const SearchBox = {
     },
 
     processClick: async function(suggestion) {
-        loadArtistFromSearch(suggestion['name'], false, quadHead, nodeLookup).then(_ => {
+        loadArtistFromSearch(p, suggestion['name'], false, quadHead, nodeLookup).then(_ => {
             Sidebar.resetSidebar(false);
         });
         this.deleteSuggestions();

@@ -30,7 +30,7 @@ const MouseEvents = {
         }
     },
 
-    drift: function (camera) {
+    drift: function (camera, p) {
         if (this.drifting) {
             if (this.driftVec.mag() < DRIFT_THRESHOLD) {
                 this.drifting = false;
@@ -42,12 +42,12 @@ const MouseEvents = {
         }
     },
 
-    getVirtualMouseCoordinates: function() {
+    getVirtualMouseCoordinates: function(p) {
         return camera.screen2virtual({x: p.mouseX, y: p.mouseY});
     }
 }
 
-function handlePointClick(quadHead, nodeLookup) {
+function handlePointClick(quadHead, nodeLookup, p) {
     if (VersionHelper.showingChangelog) {
         VersionHelper.removeChangelog();
     } else if (Utils.dist(p.width - 10, p.height - 10, p.mouseX, p.mouseY) < 75) {
@@ -68,7 +68,7 @@ function handlePointClick(quadHead, nodeLookup) {
         edgeDrawing = false;
         clickedArtist = null;
         Sidebar.resetSidebar(false);
-        Sidebar.setGenreSidebar(quadHead, nodeLookup);
+        Sidebar.setGenreSidebar(p, quadHead, nodeLookup);
     } else if (edgeDrawing) {
         edgeDrawing = false;
         clickedArtist = null;

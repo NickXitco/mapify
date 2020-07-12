@@ -1,15 +1,11 @@
-let p;
-let camera;
-
 /* AT COMPONENT LEVEL */
 let nodeLookup = {};
 let quadHead;
+let p;
 
 
 /* STILL AT GLOBAL LEVEL */
-
-const MAX_CURVE_ANGLE = 180;
-
+let camera;
 let hoveredArtist = null;
 let clickedLoading = false;
 let clickedArtist = null;
@@ -34,8 +30,8 @@ let nodeOccurences = {};
 
 let timingEvents = {};
 
-async function getClickedRelated(id, quadHead, nodeLookup) {
-    loadArtistFromSearch(id, true, quadHead, nodeLookup).then(_ => {
+async function getClickedRelated(p, id, quadHead, nodeLookup) {
+    loadArtistFromSearch(p, id, true, quadHead, nodeLookup).then(_ => {
         Sidebar.resetSidebar(false);}
     );
 }

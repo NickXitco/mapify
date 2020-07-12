@@ -1,4 +1,4 @@
-function processOne(quadHead, nodeLookup) {
+function processOne(p, quadHead, nodeLookup) {
     if (unprocessedResponses.length === 0) {
         return;
     }
@@ -8,7 +8,7 @@ function processOne(quadHead, nodeLookup) {
         const q = response.quad;
 
         if (camera.contains(q)) {
-            process(response, q, quadHead, nodeLookup);
+            process(p, response, q, quadHead, nodeLookup);
             unprocessedResponses.splice(i, 1);
             return;
         }
@@ -17,10 +17,10 @@ function processOne(quadHead, nodeLookup) {
 
     const r = unprocessedResponses.pop();
     const q = r.quad;
-    process(r, q, quadHead, nodeLookup);
+    process(p, r, q, quadHead, nodeLookup);
 }
 
-function process(r, q, quadHead, nodeLookup) {
+function process(p, r, q, quadHead, nodeLookup) {
     if (Object.keys(r.data).length === 0) {
         q.loaded = true;
         loadingQuads.delete(q);
@@ -32,7 +32,7 @@ function process(r, q, quadHead, nodeLookup) {
     }
 
     for (const node of r.data.nodes) {
-        createNewNode(node, quadHead, nodeLookup);
+        createNewNode(p, node, quadHead, nodeLookup);
     }
 
     if (r.data.image !== "") {
@@ -62,7 +62,7 @@ function bubbleAddQuad(q, quads) {
     }
 }
 
-function drawOnscreenQuads(quadHead, camera) {
+function drawOnscreenQuads(p, quadHead, camera) {
     let quads = new Set();
     let stack = [];
     stack.push(quadHead);
