@@ -25,7 +25,7 @@ var P5Wrapper = function (_React$Component) {
 
                 camera.zoomCamera({ x: 0, y: 0 });
 
-                loadInitialQuads(loadingQuads).then(function (qH) {
+                loadInitialQuads(loadingQuads, unprocessedResponses).then(function (qH) {
                     quadHead = qH;
                     _this.loading = false;
                 });
@@ -70,7 +70,7 @@ var P5Wrapper = function (_React$Component) {
 
                 drawOnscreenQuads(p, quadHead, camera, hoveredArtist);
 
-                loadUnloaded(unloadedQuadsPriorityQueue, loadingQuads, unloadedQuads);
+                loadUnloaded(unprocessedResponses, unloadedQuadsPriorityQueue, loadingQuads, unloadedQuads);
 
                 if (!Sidebar.hoverFlag && !SearchBox.hoverFlag) {
                     hoveredArtist = getHoveredArtist(p, camera, clickedArtist, quadHead);
@@ -170,7 +170,7 @@ var P5Wrapper = function (_React$Component) {
 
                 if (p.frameCount % 5 === 0) {
                     //TODO adjust this until it feels right, or adjust it dynamically?
-                    processOne(p, camera, quadHead, nodeLookup);
+                    processOne(p, camera, quadHead, nodeLookup, unprocessedResponses);
                 }
 
                 createTimingEvent("Quad Processing");
@@ -179,7 +179,7 @@ var P5Wrapper = function (_React$Component) {
                 InfoBox.drawInfoBox(camera, hoveredArtist);
 
                 createTimingEvent("Info Box");
-                Debug.debugAll(p, camera, hoveredArtist, timingEvents);
+                Debug.debugAll(p, camera, hoveredArtist, unloadedQuads, loadingQuads, unprocessedResponses, timingEvents);
             };
 
             p.mouseWheel = function (e) {

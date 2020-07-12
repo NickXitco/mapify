@@ -73,7 +73,7 @@ const Debug = {
         p.pop();
     },
 
-    loadingStats: function (p) {
+    loadingStats: function (p, unloadedQuads, loadingQuads, unprocessedResponses) {
         p.push();
         p.fill("white");
         p.noStroke();
@@ -121,7 +121,7 @@ const Debug = {
         p.pop();
     },
 
-    debugAll: function (p, camera, hoveredArtist, timingEvents) {
+    debugAll: function (p, camera, hoveredArtist, unloadedQuads, loadingQuads, unprocessedResponses, timingEvents) {
         p.push();
         camera.setView();
         //this.drawCrosshairs(p);
@@ -132,7 +132,7 @@ const Debug = {
         this.canvasSize(p);
         this.printFPS(p);
         this.printMouseCoordinates(p, camera);
-        this.loadingStats(p);
+        this.loadingStats(p, unloadedQuads, loadingQuads, unprocessedResponses);
         this.timingGraph(p, timingEvents)
         this.versionNumber(p);
     }

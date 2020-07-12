@@ -115,7 +115,7 @@ class Quad {
      * doesn't exist, the response equals {}, which is handled in processing.
      * @returns {Promise<void>}
      */
-    async fetchQuad() {
+    async fetchQuad(unprocessedResponses) {
         const response = await fetch('quad/' + this.name);
         const data = await response.json();
         unprocessedResponses.push({quad: this, data: data});

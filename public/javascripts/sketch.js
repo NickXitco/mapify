@@ -7,10 +7,10 @@ let hoveredArtist = null;
 let clickedLoading = false;
 let clickedArtist = null;
 let darkenOpacity = 0;
-
+let unprocessedResponses = [];
 
 /* STILL AT GLOBAL LEVEL */
-let unprocessedResponses = [];
+
 
 let unloadedQuads = new Set();
 let loadingQuads = new Set();
@@ -20,17 +20,16 @@ let edgeDrawing = false;
 let newEdges = true;
 let edges = [];
 
-
 let nodeOccurences = {};
 
 let timingEvents = {};
 
-async function loadInitialQuads(loadingQuads) {
+async function loadInitialQuads(loadingQuads, unprocessedResponses) {
     const response = await fetch('quad/A'); //TODO validation on this response
     const data = await response.json();
     let quadHead = new Quad(data.x, data.y, data.r, null, null, "A", null);
     loadingQuads.add(quadHead);
-    await quadHead.fetchQuad();
+    await quadHead.fetchQuad(unprocessedResponses);
     quadHead.splitDown(4);
     return quadHead;
 }
@@ -44,7 +43,6 @@ function darkenScene(p, darkenOpacity, camera) {
     p.pop();
     return Math.min(darkenOpacity + 0.05, 1);
 }
-
 
 //TODO make these two a function of Debug
 let lastTime = 0;
@@ -63,12 +61,12 @@ function resetTiming() {
 
 
 
-function loadUnloaded(unloadedQuadsPriorityQueue, loadingQuads, unloadedQuads) {
+function loadUnloaded(unprocessedResponses, unloadedQuadsPriorityQueue, loadingQuads, unloadedQuads) {
     while (!unloadedQuadsPriorityQueue.isEmpty()) {
         const quad = unloadedQuadsPriorityQueue.pop();
         loadingQuads.add(quad);
         unloadedQuads.delete(quad);
-        quad.fetchQuad().then();
+        quad.fetchQuad(unprocessedResponses).then();
     }
 }
 
