@@ -1,5 +1,4 @@
 /* P5 Wrapper Globals - Things that belong to the canvas, no one else needs them*/
-let newEdges = true;
 let edges = [];
 
 /* App Globals - Things needed across the entire UI for right now*/

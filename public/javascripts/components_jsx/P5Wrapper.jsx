@@ -45,7 +45,7 @@ class P5Wrapper extends React.Component {
                 camera.setCameraMove(SearchBox.point.x, SearchBox.point.y, camera.getZoomFromWidth(SearchBox.point.size * 50), 30);
 
                 clickedArtist = SearchBox.point;
-                newEdges = true;
+                this.newEdges = true;
                 SearchBox.point = null;
             }
 
@@ -116,9 +116,9 @@ class P5Wrapper extends React.Component {
             Debug.createTimingEvent("Darken Scene for Related Nodes");
 
             if (clickedArtist && clickedArtist.loaded) {
-                if (newEdges) {
+                if (this.newEdges) {
                     edges = makeEdges(clickedArtist)
-                    newEdges = false;
+                    this.newEdges = false;
                 } else{
                     drawEdges(p, camera, edges, clickedArtist, hoveredArtist);
                 }
@@ -206,7 +206,7 @@ class P5Wrapper extends React.Component {
 
                 if (Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y) < 5) {
                     clickedArtist = handlePointClick(quadHead, hoveredArtist, clickedArtist, nodeLookup, p);
-                    newEdges = Boolean(clickedArtist);
+                    this.newEdges = Boolean(clickedArtist);
                 }
 
                 MouseEvents.driftVec = p.createVector(p.winMouseX - p.pwinMouseX, p.winMouseY - p.pwinMouseY);

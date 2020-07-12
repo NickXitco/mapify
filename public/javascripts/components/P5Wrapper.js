@@ -56,7 +56,7 @@ var P5Wrapper = function (_React$Component) {
                     camera.setCameraMove(SearchBox.point.x, SearchBox.point.y, camera.getZoomFromWidth(SearchBox.point.size * 50), 30);
 
                     clickedArtist = SearchBox.point;
-                    newEdges = true;
+                    _this.newEdges = true;
                     SearchBox.point = null;
                 }
 
@@ -151,9 +151,9 @@ var P5Wrapper = function (_React$Component) {
                 Debug.createTimingEvent("Darken Scene for Related Nodes");
 
                 if (clickedArtist && clickedArtist.loaded) {
-                    if (newEdges) {
+                    if (_this.newEdges) {
                         edges = makeEdges(clickedArtist);
-                        newEdges = false;
+                        _this.newEdges = false;
                     } else {
                         drawEdges(p, camera, edges, clickedArtist, hoveredArtist);
                     }
@@ -242,7 +242,7 @@ var P5Wrapper = function (_React$Component) {
 
                     if (Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y) < 5) {
                         clickedArtist = handlePointClick(quadHead, hoveredArtist, clickedArtist, nodeLookup, p);
-                        newEdges = Boolean(clickedArtist);
+                        _this.newEdges = Boolean(clickedArtist);
                     }
 
                     MouseEvents.driftVec = p.createVector(p.winMouseX - p.pwinMouseX, p.winMouseY - p.pwinMouseY);
