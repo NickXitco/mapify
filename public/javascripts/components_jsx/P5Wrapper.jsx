@@ -37,8 +37,8 @@ class P5Wrapper extends React.Component {
 
             p.background(3);
 
-            resetTiming();
-            createTimingEvent("Drawing Setup");
+            Debug.resetTiming();
+            Debug.createTimingEvent("Drawing Setup");
 
             MouseEvents.drift(camera, p);
             MouseEvents.zoom(camera);
@@ -56,7 +56,7 @@ class P5Wrapper extends React.Component {
             p.push();
             camera.setView();
 
-            createTimingEvent("Camera Moves");
+            Debug.createTimingEvent("Camera Moves");
 
             drawOnscreenQuads(p, quadHead, camera, hoveredArtist, loadingQuads, unloadedQuads, unloadedPQ);
 
@@ -71,7 +71,7 @@ class P5Wrapper extends React.Component {
                 loadArtist(p, clickedArtist, quadHead, nodeLookup).then(() => {clickedLoading = false});
             }
 
-            createTimingEvent("Get Hovered Artist");
+            Debug.createTimingEvent("Get Hovered Artist");
 
             if (!clickedArtist && GenreHelpers.genreNodes.size === 0) {
                 darkenOpacity = 0;
@@ -81,7 +81,7 @@ class P5Wrapper extends React.Component {
                 darkenOpacity = darkenScene(p, darkenOpacity, camera);
             }
 
-            createTimingEvent("Darken Scene for Genre Nodes");
+            Debug.createTimingEvent("Darken Scene for Genre Nodes");
 
             if (GenreHelpers.genreNodes.size > 0) {
 
@@ -109,13 +109,13 @@ class P5Wrapper extends React.Component {
                 drawNodes(p, camera, GenreHelpers.genreNodes);
             }
 
-            createTimingEvent("Draw Genre Nodes");
+            Debug.createTimingEvent("Draw Genre Nodes");
 
             if (clickedArtist) {
                 darkenOpacity = darkenScene(p, darkenOpacity, camera);
             }
 
-            createTimingEvent("Darken Scene for Related Nodes");
+            Debug.createTimingEvent("Darken Scene for Related Nodes");
 
             if (clickedArtist && clickedArtist.loaded) {
                 if (newEdges) {
@@ -125,9 +125,9 @@ class P5Wrapper extends React.Component {
                     drawEdges(p, camera, edges, clickedArtist, hoveredArtist);
                 }
 
-                createTimingEvent("Draw Related Edges");
+                Debug.createTimingEvent("Draw Related Edges");
                 drawRelatedNodes(p, camera, clickedArtist);
-                createTimingEvent("Draw Related Nodes");
+                Debug.createTimingEvent("Draw Related Nodes");
             }
 
             if (clickedArtist && clickedArtist.loaded && Sidebar.artist !== clickedArtist) {
@@ -138,19 +138,19 @@ class P5Wrapper extends React.Component {
                 Sidebar.openSidebar();
             }
 
-            createTimingEvent("Sidebar");
+            Debug.createTimingEvent("Sidebar");
 
             if (p.frameCount % 5 === 0) { //TODO adjust this until it feels right, or adjust it dynamically?
                 processOne(p, camera, quadHead, nodeLookup, loadingQuads, unprocessedResponses);
             }
 
-            createTimingEvent("Quad Processing");
+            Debug.createTimingEvent("Quad Processing");
 
             p.pop();
             InfoBox.drawInfoBox(camera, hoveredArtist);
 
-            createTimingEvent("Info Box");
-            Debug.debugAll(p, camera, hoveredArtist, unloadedQuads, loadingQuads, unprocessedResponses, timingEvents);
+            Debug.createTimingEvent("Info Box");
+            Debug.debugAll(p, camera, hoveredArtist, unloadedQuads, loadingQuads, unprocessedResponses);
         };
 
         p.mouseWheel = (e) => {

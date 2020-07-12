@@ -1,4 +1,3 @@
-/* AT COMPONENT LEVEL */
 let nodeLookup = {};
 let quadHead;
 let p;
@@ -13,9 +12,6 @@ let loadingQuads = new Set();
 let unloadedPQ = new PriorityQueue((a, b) => Utils.dist(camera.x, camera.y, a.x, a.y) - Utils.dist(camera.x, camera.y, b.x, b.y));
 let newEdges = true;
 let edges = [];
-
-/* STILL AT GLOBAL LEVEL */
-let timingEvents = {};
 
 async function loadInitialQuads(loadingQuads, unprocessedResponses) {
     const response = await fetch('quad/A'); //TODO validation on this response
@@ -36,23 +32,6 @@ function darkenScene(p, darkenOpacity, camera) {
     p.pop();
     return Math.min(darkenOpacity + 0.05, 1);
 }
-
-//TODO make these two a function of Debug
-let lastTime = 0;
-function createTimingEvent(name) {
-    timingEvents[name] = performance.now() - lastTime;
-    lastTime = performance.now();
-}
-
-function resetTiming() {
-    lastTime = performance.now();
-    for (const timingName of Object.keys(timingEvents)) {
-        timingEvents[timingName] = 0;
-    }
-}
-
-
-
 
 function loadUnloaded(unprocessedResponses, unloadedQuadsPriorityQueue, loadingQuads, unloadedQuads) {
     while (!unloadedQuadsPriorityQueue.isEmpty()) {

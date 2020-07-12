@@ -91,7 +91,7 @@ function drawOnscreenQuads(p, quadHead, camera, hoveredArtist, loadingQuads, unl
         }
     }
 
-    createTimingEvent("Visible Quads Finding");
+    Debug.createTimingEvent("Visible Quads Finding");
 
     const sortedQuads = [...quads].sort((a, b) => a.name.length - b.name.length);
     for (const q of sortedQuads) {
@@ -144,5 +144,5 @@ function drawOnscreenQuads(p, quadHead, camera, hoveredArtist, loadingQuads, unl
         p.rect(q.x, -q.y, q.r, q.r);
     }
 
-    createTimingEvent("Visible Quads Drawing");
+    Debug.createTimingEvent("Visible Quads Drawing");
 }

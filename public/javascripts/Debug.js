@@ -1,4 +1,7 @@
 const Debug = {
+    timingEvents: {},
+    lastTime: 0,
+
     drawCrosshairs: function (p) {
         p.push();
         strokeWeight(3);
@@ -84,20 +87,20 @@ const Debug = {
     },
 
     averageTimingEvents: {},
-    timingGraph: function (p, timingEvents) {
+    timingGraph: function (p) {
         p.push();
         p.rectMode(p.CORNER);
         p.fill('white');
         p.noStroke();
         let total = 0;
 
-        for (const timingName of Object.keys(timingEvents)) {
-            total += timingEvents[timingName];
+        for (const timingName of Object.keys(this.timingEvents)) {
+            total += this.timingEvents[timingName];
         }
 
         let currentHeight = p.height - 40
-        for (const timingName of Object.keys(timingEvents)) {
-            const percentage = timingEvents[timingName] / total;
+        for (const timingName of Object.keys(this.timingEvents)) {
+            const percentage = this.timingEvents[timingName] / total;
 
             if (this.averageTimingEvents[timingName]) {
                 this.averageTimingEvents[timingName] = (percentage + 9 * this.averageTimingEvents[timingName]) / 10;
@@ -106,7 +109,7 @@ const Debug = {
             }
 
             p.rect(10, currentHeight, this.averageTimingEvents[timingName] * 50, 10);
-            p.text(timingName + " - " + timingEvents[timingName].toFixed(2), 100, currentHeight + 8);
+            p.text(timingName + " - " + this.timingEvents[timingName].toFixed(2), 100, currentHeight + 8);
             currentHeight -= 20;
         }
         p.pop();
@@ -121,7 +124,19 @@ const Debug = {
         p.pop();
     },
 
-    debugAll: function (p, camera, hoveredArtist, unloadedQuads, loadingQuads, unprocessedResponses, timingEvents) {
+    createTimingEvent: function(name) {
+        this.timingEvents[name] = performance.now() - this.lastTime;
+        this.lastTime = performance.now();
+    },
+
+    resetTiming: function() {
+        this.lastTime = performance.now();
+        for (const timingName of Object.keys(this.timingEvents)) {
+            this.timingEvents[timingName] = 0;
+        }
+    },
+
+    debugAll: function (p, camera, hoveredArtist, unloadedQuads, loadingQuads, unprocessedResponses) {
         p.push();
         camera.setView();
         //this.drawCrosshairs(p);
@@ -133,7 +148,7 @@ const Debug = {
         this.printFPS(p);
         this.printMouseCoordinates(p, camera);
         this.loadingStats(p, unloadedQuads, loadingQuads, unprocessedResponses);
-        this.timingGraph(p, timingEvents)
+        this.timingGraph(p)
         this.versionNumber(p);
     }
 }
