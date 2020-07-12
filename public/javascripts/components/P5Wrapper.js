@@ -75,10 +75,10 @@ var P5Wrapper = function (_React$Component) {
                     hoveredArtist = getHoveredArtist(p, camera, clickedArtist, quadHead);
                 }
 
-                if (clickedArtist && !clickedArtist.loaded && !clickedLoading) {
-                    clickedLoading = true;
+                if (clickedArtist && !clickedArtist.loaded && !_this.clickedLoading) {
+                    _this.clickedLoading = true;
                     loadArtist(p, clickedArtist, quadHead, nodeLookup).then(function () {
-                        clickedLoading = false;
+                        _this.clickedLoading = false;
                     });
                 }
 
@@ -262,6 +262,19 @@ var P5Wrapper = function (_React$Component) {
         value: function componentDidMount() {
             p = new p5(this.Sketch, this.myRef.current);
             camera = new Camera(0, 0, window.innerHeight, window.innerWidth, 1, p);
+
+            this.clickedLoading = false;
+            this.darkenOpacity = 0;
+
+            this.unprocessedResponses = [];
+            this.unloadedQuads = new Set();
+            this.loadingQuads = new Set();
+            this.unloadedPQ = new PriorityQueue(function (a, b) {
+                return Utils.dist(camera.x, camera.y, a.x, a.y) - Utils.dist(camera.x, camera.y, b.x, b.y);
+            });
+
+            this.newEdges = true;
+            this.edges = [];
         }
     }, {
         key: "render",

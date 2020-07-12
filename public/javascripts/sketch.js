@@ -1,5 +1,4 @@
 /* P5 Wrapper Globals - Things that belong to the canvas, no one else needs them*/
-let clickedLoading = false;
 let darkenOpacity = 0;
 
 let unprocessedResponses = [];

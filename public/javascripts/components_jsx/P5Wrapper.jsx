@@ -5,8 +5,6 @@ class P5Wrapper extends React.Component {
         this.loading = true;
     }
 
-
-
     Sketch = (p) => {
         p.setup = () => {
             const canvas = p.createCanvas(window.innerWidth, window.innerHeight);
@@ -66,9 +64,9 @@ class P5Wrapper extends React.Component {
                 hoveredArtist = getHoveredArtist(p, camera, clickedArtist, quadHead);
             }
 
-            if (clickedArtist && !clickedArtist.loaded && !clickedLoading) {
-                clickedLoading = true;
-                loadArtist(p, clickedArtist, quadHead, nodeLookup).then(() => {clickedLoading = false});
+            if (clickedArtist && !clickedArtist.loaded && !this.clickedLoading) {
+                this.clickedLoading = true;
+                loadArtist(p, clickedArtist, quadHead, nodeLookup).then(() => {this.clickedLoading = false});
             }
 
             Debug.createTimingEvent("Get Hovered Artist");
@@ -221,6 +219,17 @@ class P5Wrapper extends React.Component {
     componentDidMount() {
         p = new p5(this.Sketch, this.myRef.current);
         camera = new Camera(0, 0, window.innerHeight, window.innerWidth, 1, p);
+
+        this.clickedLoading = false;
+        this.darkenOpacity = 0;
+
+        this.unprocessedResponses = [];
+        this.unloadedQuads = new Set();
+        this.loadingQuads = new Set();
+        this.unloadedPQ = new PriorityQueue((a, b) => Utils.dist(camera.x, camera.y, a.x, a.y) - Utils.dist(camera.x, camera.y, b.x, b.y));
+
+        this.newEdges = true;
+        this.edges = [];
     }
 
     render() {
