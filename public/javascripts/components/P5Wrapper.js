@@ -16,12 +16,12 @@ var P5Wrapper = function (_React$Component) {
 
         _this.Sketch = function (p) {
             p.setup = function () {
-                canvas = p.createCanvas(window.innerWidth, window.innerHeight);
+                var canvas = p.createCanvas(window.innerWidth, window.innerHeight);
                 canvas.mouseOver(function () {
                     Sidebar.hoverFlag = false;SearchBox.hoverFlag = false;
                 });
 
-                _this.props.onCanvasUpdate();
+                _this.props.canvasUpdate(canvas);
 
                 camera.zoomCamera({ x: 0, y: 0 });
 
@@ -95,7 +95,7 @@ var P5Wrapper = function (_React$Component) {
                     p.noStroke();
                     p.fill(GenreHelpers.genreColor);
                     p.textSize(50);
-                    p.textAlign(CENTER);
+                    p.textAlign(p.CENTER);
                     p.text(GenreHelpers.genreName, GenreHelpers.genrePoint.x, -GenreHelpers.genrePoint.y);
 
                     p.stroke(GenreHelpers.genreColor);

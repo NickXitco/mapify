@@ -32,12 +32,12 @@ class App extends React.Component {
             lastTime: 0
         }
 
-        this.testStateLift = this.testStateLift.bind(this);
+        this.canvasUpdate = this.canvasUpdate.bind(this);
 
     }
 
-    testStateLift() {
-        console.trace(this);
+    canvasUpdate(canvas) {
+        this.setState({canvas: canvas});
     }
 
     componentDidMount() {
@@ -51,7 +51,7 @@ class App extends React.Component {
     render() {
         return (
             <div className={"fullScreen"}>
-                <P5Wrapper onCanvasUpdate={this.testStateLift}/>
+                <P5Wrapper canvasUpdate={this.canvasUpdate}/>
             </div>
         );
     }

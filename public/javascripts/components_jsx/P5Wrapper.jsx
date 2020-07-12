@@ -8,10 +8,10 @@ class P5Wrapper extends React.Component {
 
     Sketch = (p) => {
         p.setup = () => {
-            canvas = p.createCanvas(window.innerWidth, window.innerHeight);
+            const canvas = p.createCanvas(window.innerWidth, window.innerHeight);
             canvas.mouseOver(() => {Sidebar.hoverFlag = false; SearchBox.hoverFlag = false;})
 
-            this.props.onCanvasUpdate();
+            this.props.canvasUpdate(canvas);
 
             camera.zoomCamera({x: 0, y: 0});
 
@@ -85,7 +85,7 @@ class P5Wrapper extends React.Component {
                 p.noStroke();
                 p.fill(GenreHelpers.genreColor);
                 p.textSize(50);
-                p.textAlign(CENTER);
+                p.textAlign(p.CENTER);
                 p.text(GenreHelpers.genreName, GenreHelpers.genrePoint.x, -GenreHelpers.genrePoint.y);
 
                 p.stroke(GenreHelpers.genreColor);
