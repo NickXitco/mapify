@@ -17,26 +17,12 @@ var App = function (_React$Component) {
         _this.state = {
             canvas: null,
             p5: null,
-            loading: true,
             camera: null,
 
             hoveredArtist: null,
-            clickedLoading: false,
             clickedArist: null,
 
-            darkenOpacityT: 0,
-
             quadHead: null,
-            unproccessResponses: [],
-
-            unloadedQuads: new Set(),
-            loadingQuads: new Set(),
-            unloadedQuadsPriorityQueue: new PriorityQueue(function (a, b) {
-                return Utils.dist(_this.state.camera.x, _this.state.camera.y, a.x, a.y) - Utils.dist(_this.state.camera.x, _this.state.camera.y, b.x, b.y);
-            }),
-
-            newEdges: true,
-            edges: [],
 
             nodeLookup: {},
             nodeOccurences: {},
