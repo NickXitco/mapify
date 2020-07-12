@@ -35,7 +35,6 @@ var App = function (_React$Component) {
                 return Utils.dist(_this.state.camera.x, _this.state.camera.y, a.x, a.y) - Utils.dist(_this.state.camera.x, _this.state.camera.y, b.x, b.y);
             }),
 
-            edgeDrawing: false,
             newEdges: true,
             edges: [],
 

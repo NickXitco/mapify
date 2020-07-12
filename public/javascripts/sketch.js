@@ -14,7 +14,6 @@ let unloadedPQ = new PriorityQueue((a, b) => Utils.dist(camera.x, camera.y, a.x,
 
 
 /* STILL AT GLOBAL LEVEL */
-let edgeDrawing = false;
 let newEdges = true;
 let edges = [];
 

@@ -55,8 +55,6 @@ function handlePointClick(quadHead, hoveredArtist, clickedArtist, nodeLookup, p)
     }
 
     if (hoveredArtist) {
-        edgeDrawing = true;
-
         if (hoveredArtist !== clickedArtist) {
             newEdges = true;
             Sidebar.resetSidebar(false);
@@ -66,12 +64,10 @@ function handlePointClick(quadHead, hoveredArtist, clickedArtist, nodeLookup, p)
         return clickedArtist;
     }
 
-    if (edgeDrawing && GenreHelpers.genreNodes.size > 0) {
-        edgeDrawing = false;
+    if (clickedArtist && GenreHelpers.genreNodes.size > 0) {
         Sidebar.resetSidebar(false);
         Sidebar.setGenreSidebar(p, quadHead, nodeLookup);
-    } else if (edgeDrawing) {
-        edgeDrawing = false;
+    } else if (clickedArtist) {
         Sidebar.resetSidebar(true);
     } else if (GenreHelpers.genreNodes.size > 0) {
         GenreHelpers.resetGenreView();

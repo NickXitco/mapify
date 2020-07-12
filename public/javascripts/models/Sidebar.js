@@ -83,7 +83,6 @@ const Sidebar = {
                     GenreHelpers.getGenre(p, camera, genreName, quadHead, nodeLookup).then(success => {
                         if (success) {
                             clickedArtist = null;
-                            edgeDrawing = false;
                         }
                     });
                 };
@@ -188,7 +187,6 @@ const Sidebar = {
         loadArtistFromSearch(p, id, true, quadHead, nodeLookup).then(node => {
             if (node) {
                 clickedArtist = node;
-                edgeDrawing = true;
                 Sidebar.resetSidebar(false);
             }
         });

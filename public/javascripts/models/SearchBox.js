@@ -38,7 +38,6 @@ const SearchBox = {
             loadArtistFromSearch(p, currentInput, false, quadHead, nodeLookup).then(node => {
                 if (node) {
                     clickedArtist = node;
-                    edgeDrawing = true;
                     Sidebar.resetSidebar(false);
                 }
             });
@@ -51,7 +50,6 @@ const SearchBox = {
         loadArtistFromSearch(p, suggestion['name'], false, quadHead, nodeLookup).then(node => {
             if (node) {
                 clickedArtist = node;
-                edgeDrawing = true;
                 Sidebar.resetSidebar(false);
             }
         });

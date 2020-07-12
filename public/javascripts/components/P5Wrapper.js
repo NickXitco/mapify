@@ -56,7 +56,6 @@ var P5Wrapper = function (_React$Component) {
                     camera.setCameraMove(SearchBox.point.x, SearchBox.point.y, camera.getZoomFromWidth(SearchBox.point.size * 50), 30);
 
                     clickedArtist = SearchBox.point;
-                    edgeDrawing = true;
                     newEdges = true;
                     SearchBox.point = null;
                 }
@@ -85,7 +84,7 @@ var P5Wrapper = function (_React$Component) {
 
                 createTimingEvent("Get Hovered Artist");
 
-                if (!edgeDrawing && GenreHelpers.genreNodes.size === 0) {
+                if (!clickedArtist && GenreHelpers.genreNodes.size === 0) {
                     darkenOpacity = 0;
                 }
 
@@ -145,13 +144,13 @@ var P5Wrapper = function (_React$Component) {
 
                 createTimingEvent("Draw Genre Nodes");
 
-                if (edgeDrawing) {
+                if (clickedArtist) {
                     darkenOpacity = darkenScene(p, darkenOpacity, camera);
                 }
 
                 createTimingEvent("Darken Scene for Related Nodes");
 
-                if (edgeDrawing && clickedArtist && clickedArtist.loaded) {
+                if (clickedArtist && clickedArtist.loaded) {
                     drawEdges(p, camera, clickedArtist, hoveredArtist);
                     createTimingEvent("Draw Related Edges");
                     drawRelatedNodes(p, camera, clickedArtist);

@@ -21,7 +21,6 @@ class App extends React.Component {
             loadingQuads: new Set(),
             unloadedQuadsPriorityQueue: new PriorityQueue((a, b) => Utils.dist(this.state.camera.x, this.state.camera.y, a.x, a.y) - Utils.dist(this.state.camera.x, this.state.camera.y, b.x, b.y)),
 
-            edgeDrawing: false,
             newEdges: true,
             edges: [],
 
