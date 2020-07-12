@@ -34,13 +34,14 @@ async function getClickedRelated(id) {
     );
 }
 
-async function loadInitialQuads(quadHead, loadingQuads) {
+async function loadInitialQuads(loadingQuads) {
     const response = await fetch('quad/A'); //TODO validation on this response
     const data = await response.json();
-    quadHead = new Quad(data.x, data.y, data.r, null, null, "A", null);
+    let quadHead = new Quad(data.x, data.y, data.r, null, null, "A", null);
     loadingQuads.add(quadHead);
     await quadHead.fetchQuad();
     quadHead.splitDown(4);
+    return quadHead;
 }
 
 function darkenScene(p, darkenOpacity, camera) {

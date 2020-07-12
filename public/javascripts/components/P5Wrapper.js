@@ -22,9 +22,10 @@ var P5Wrapper = function (_React$Component) {
                 });
                 camera.zoomCamera({ x: 0, y: 0 });
 
-                loadInitialQuads(quadHead, loadingQuads).then(function () {
+                loadInitialQuads(loadingQuads).then(function (qH) {
+                    quadHead = qH;
                     loading = false;
-                }); //TODO loadInitialQuads, probably the first 16? but load the first 128 (or more?) into memory
+                });
 
                 p.angleMode(p.DEGREES);
                 p.rectMode(p.RADIUS);

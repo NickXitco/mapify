@@ -10,7 +10,10 @@ class P5Wrapper extends React.Component {
             canvas.mouseOver(() => {Sidebar.hoverFlag = false; SearchBox.hoverFlag = false;})
             camera.zoomCamera({x: 0, y: 0});
 
-            loadInitialQuads(quadHead, loadingQuads).then(() => {loading = false});//TODO loadInitialQuads, probably the first 16? but load the first 128 (or more?) into memory
+            loadInitialQuads(loadingQuads).then((qH) => {
+                quadHead = qH;
+                loading = false
+            });
 
             p.angleMode(p.DEGREES);
             p.rectMode(p.RADIUS);
