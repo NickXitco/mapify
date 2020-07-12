@@ -71,7 +71,7 @@ var P5Wrapper = function (_React$Component) {
                 drawOnscreenQuads(quadHead, camera);
 
                 loadUnloaded(unloadedQuadsPriorityQueue, loadingQuads, unloadedQuads);
-                getHoveredArtist();
+                getHoveredArtist(quadHead);
 
                 if (clickedArtist && !clickedArtist.loaded && !clickedLoading) {
                     loadArtist(clickedArtist).then();

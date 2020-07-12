@@ -18,7 +18,7 @@ const GenreHelpers = {
 
         let nodesList = []
         for (const node of data.artists) {
-            createNewNode(node);
+            createNewNode(node, quadHead);
             nodesList.push(nodeLookup[node.id]);
         }
 

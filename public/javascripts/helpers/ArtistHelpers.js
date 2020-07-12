@@ -1,4 +1,6 @@
-function getHoveredArtist() {
+
+//TODO return hoveredArtist
+function getHoveredArtist(quadHead) {
     if (SearchBox.hoverFlag || Sidebar.hoverFlag) {
         return;
     }
@@ -135,11 +137,11 @@ async function loadArtistFromSearch(query, isQueryID) {
         return;
     }
 
-    createNewNode(data);
+    createNewNode(data, quadHead);
     let node = nodeLookup[data.id];
 
     for (const r of data.related) {
-        createNewNode(r);
+        createNewNode(r, quadHead);
         node.relatedVertices.add(nodeLookup[r.id]);
     }
     node.loaded = true;
@@ -152,7 +154,7 @@ async function loadArtistFromSearch(query, isQueryID) {
     edgeDrawing = true;
 }
 
-function createNewNode(data) {
+function createNewNode(data, quadHead) {
     let exists = true;
     if (!nodeLookup.hasOwnProperty(data.id)) {
         nodeLookup[data.id] = new Artist(data);
@@ -180,11 +182,11 @@ async function loadArtist(artist) {
     const response = await fetch('artist/' + artist.id + "/true");
     const data = await response.json();
 
-    createNewNode(data);
+    createNewNode(data, quadHead);
     let node = nodeLookup[data.id];
 
     for (const r of data.related) {
-        createNewNode(r);
+        createNewNode(r, quadHead);
         node.relatedVertices.add(nodeLookup[r.id]);
     }
     node.loaded = true;
