@@ -172,7 +172,6 @@ function createNewNode(p, data, quadHead, nodeLookup) {
 }
 
 async function loadArtist(p, artist, quadHead, nodeLookup) {
-    clickedLoading = true;
     const response = await fetch('artist/' + artist.id + "/true");
     const data = await response.json();
 
@@ -184,5 +183,4 @@ async function loadArtist(p, artist, quadHead, nodeLookup) {
         node.relatedVertices.add(nodeLookup[r.id]);
     }
     node.loaded = true;
-    clickedLoading = false;
 }

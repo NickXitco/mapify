@@ -77,7 +77,10 @@ var P5Wrapper = function (_React$Component) {
                 }
 
                 if (clickedArtist && !clickedArtist.loaded && !clickedLoading) {
-                    loadArtist(p, clickedArtist, quadHead, nodeLookup).then();
+                    clickedLoading = true;
+                    loadArtist(p, clickedArtist, quadHead, nodeLookup).then(function () {
+                        clickedLoading = false;
+                    });
                 }
 
                 createTimingEvent("Get Hovered Artist");

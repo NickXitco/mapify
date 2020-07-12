@@ -68,7 +68,8 @@ class P5Wrapper extends React.Component {
             }
 
             if (clickedArtist && !clickedArtist.loaded && !clickedLoading) {
-                loadArtist(p, clickedArtist, quadHead, nodeLookup).then();
+                clickedLoading = true;
+                loadArtist(p, clickedArtist, quadHead, nodeLookup).then(() => {clickedLoading = false});
             }
 
             createTimingEvent("Get Hovered Artist");

@@ -4,9 +4,9 @@ let quadHead;
 let p;
 let camera;
 let hoveredArtist = null;
+let clickedLoading = false;
 
 /* STILL AT GLOBAL LEVEL */
-let clickedLoading = false;
 let clickedArtist = null;
 
 let darkenOpacity = 0;
