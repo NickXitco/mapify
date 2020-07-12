@@ -2,6 +2,7 @@ class P5Wrapper extends React.Component {
     constructor(props) {
         super(props);
         this.myRef = React.createRef()
+        this.loading = true;
     }
 
 
@@ -17,7 +18,7 @@ class P5Wrapper extends React.Component {
 
             loadInitialQuads(loadingQuads).then((qH) => {
                 quadHead = qH;
-                loading = false
+                this.loading = false
             });
 
             p.angleMode(p.DEGREES);
@@ -29,7 +30,7 @@ class P5Wrapper extends React.Component {
         };
 
         p.draw = () => {
-            if (loading) {
+            if (this.loading) {
                 drawLoading();
                 return;
             }

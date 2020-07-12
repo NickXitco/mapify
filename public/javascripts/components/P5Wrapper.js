@@ -27,7 +27,7 @@ var P5Wrapper = function (_React$Component) {
 
                 loadInitialQuads(loadingQuads).then(function (qH) {
                     quadHead = qH;
-                    loading = false;
+                    _this.loading = false;
                 });
 
                 p.angleMode(p.DEGREES);
@@ -39,7 +39,7 @@ var P5Wrapper = function (_React$Component) {
             };
 
             p.draw = function () {
-                if (loading) {
+                if (_this.loading) {
                     drawLoading();
                     return;
                 }
@@ -241,6 +241,7 @@ var P5Wrapper = function (_React$Component) {
         };
 
         _this.myRef = React.createRef();
+        _this.loading = true;
         return _this;
     }
 

@@ -1,6 +1,4 @@
-let canvas = null;
 let p;
-let loading = true;
 let camera;
 const MAX_CURVE_ANGLE = 180;
 
