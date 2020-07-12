@@ -156,27 +156,8 @@ We have an App component that holds:
           time so it will probably be a trial by fire.
  */
 
-var P5Wrapper = function (_React$Component3) {
-    _inherits(P5Wrapper, _React$Component3);
-
-    function P5Wrapper(props) {
-        _classCallCheck(this, P5Wrapper);
-
-        return _possibleConstructorReturn(this, (P5Wrapper.__proto__ || Object.getPrototypeOf(P5Wrapper)).call(this, props));
-    }
-
-    _createClass(P5Wrapper, [{
-        key: "render",
-        value: function render() {
-            return React.createElement(ReactSidebar, null);
-        }
-    }]);
-
-    return P5Wrapper;
-}(React.Component);
-
-var App = function (_React$Component4) {
-    _inherits(App, _React$Component4);
+var App = function (_React$Component3) {
+    _inherits(App, _React$Component3);
 
     function App(props) {
         _classCallCheck(this, App);
@@ -187,7 +168,12 @@ var App = function (_React$Component4) {
     _createClass(App, [{
         key: "render",
         value: function render() {
-            return React.createElement(ReactSidebar, null);
+            return React.createElement(
+                "div",
+                { className: "fullScreen" },
+                React.createElement(P5Wrapper, null),
+                React.createElement(ReactSidebar, null)
+            );
         }
     }]);
 

@@ -100,19 +100,6 @@ We have an App component that holds:
  */
 
 
-class P5Wrapper extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
-    render() {
-        return (
-            <ReactSidebar/>
-        );
-    }
-}
-
-
 class App extends React.Component{
     constructor(props) {
         super(props);
@@ -120,7 +107,10 @@ class App extends React.Component{
 
     render() {
         return (
-            <ReactSidebar/>
+            <div className={"fullScreen"}>
+                <P5Wrapper/>
+                <ReactSidebar/>
+            </div>
         );
     }
 }
