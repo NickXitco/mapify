@@ -59,7 +59,7 @@ class P5Wrapper extends React.Component {
 
             createTimingEvent("Camera Moves");
 
-            drawOnscreenQuads(p, quadHead, camera, hoveredArtist);
+            drawOnscreenQuads(p, quadHead, camera, hoveredArtist, loadingQuads, unloadedQuads, unloadedQuadsPriorityQueue);
 
             loadUnloaded(unprocessedResponses, unloadedQuadsPriorityQueue, loadingQuads, unloadedQuads);
 

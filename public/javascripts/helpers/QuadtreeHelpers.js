@@ -62,7 +62,7 @@ function bubbleAddQuad(q, quads) {
     }
 }
 
-function drawOnscreenQuads(p, quadHead, camera, hoveredArtist) {
+function drawOnscreenQuads(p, quadHead, camera, hoveredArtist, loadingQuads, unloadedQuads, unloadedQuadsPriorityQueue) {
     let quads = new Set();
     let stack = [];
     stack.push(quadHead);
