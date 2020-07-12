@@ -6,13 +6,10 @@ let camera;
 let hoveredArtist = null;
 let clickedLoading = false;
 let clickedArtist = null;
-
-/* STILL AT GLOBAL LEVEL */
-
-
 let darkenOpacity = 0;
 
 
+/* STILL AT GLOBAL LEVEL */
 let unprocessedResponses = [];
 
 let unloadedQuads = new Set();
