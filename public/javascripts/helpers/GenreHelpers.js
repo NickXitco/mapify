@@ -5,7 +5,7 @@ const GenreHelpers = {
     genreName: "",
     genreColor: null,
 
-    getGenre: async function(genreName) {
+    getGenre: async function(genreName, quadHead) {
         const response = await fetch('genre/' + genreName);
         const data = await response.json();
 
@@ -42,7 +42,7 @@ const GenreHelpers = {
         this.genreNodes = new Set(nodesList);
 
         Sidebar.resetSidebar(false);
-        Sidebar.setGenreSidebar();
+        Sidebar.setGenreSidebar(quadHead);
         console.log(this);
     },
 

@@ -48,7 +48,7 @@ const Sidebar = {
         }
     },
 
-    setArtistSidebar: function (artist) {
+    setArtistSidebar: function (artist, quadHead) {
         Sidebar.artist = clickedArtist;
         Sidebar.dom.style.display = "flex";
         let fontSize = 60;
@@ -81,7 +81,7 @@ const Sidebar = {
                 newGenre.innerText = genreName;
                 newGenre.onclick = () => {
                     edgeDrawing = false;
-                    GenreHelpers.getGenre(genreName).then();
+                    GenreHelpers.getGenre(genreName, quadHead).then();
                 };
                 Sidebar.genresList.appendChild(newGenre);
                 genreCount++;
@@ -101,7 +101,7 @@ const Sidebar = {
                 newRelated.className = "sidebarListItem";
                 newRelated.innerText = r.name;
                 newRelated.onclick = () => {
-                    getClickedRelated(id).then();
+                    getClickedRelated(id, quadHead).then();
                 };
                 newRelated.onmouseenter = () => {
                     hoveredArtist = r.valueOf();
@@ -127,7 +127,7 @@ const Sidebar = {
     },
 
     //TODO I KNOW THIS IS AN ABOMINATION GIMME A SEC
-    setGenreSidebar: function () {
+    setGenreSidebar: function (quadHead) {
         Sidebar.dom.style.display = "flex";
         let fontSize = 60;
         Sidebar.artistName.style.fontSize = fontSize + "px";
@@ -158,7 +158,7 @@ const Sidebar = {
                 newRelated.className = "sidebarListItem";
                 newRelated.innerText = r.name;
                 newRelated.onclick = () => {
-                    getClickedRelated(id).then();
+                    getClickedRelated(id, quadHead).then();
                 };
                 newRelated.onmouseenter = () => {
                     hoveredArtist = r.valueOf();

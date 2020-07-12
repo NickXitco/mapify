@@ -1,4 +1,4 @@
-function processOne() {
+function processOne(quadHead) {
     if (unprocessedResponses.length === 0) {
         return;
     }
@@ -8,7 +8,7 @@ function processOne() {
         const q = response.quad;
 
         if (camera.contains(q)) {
-            process(response, q);
+            process(response, q, quadHead);
             unprocessedResponses.splice(i, 1);
             return;
         }
@@ -17,10 +17,10 @@ function processOne() {
 
     const r = unprocessedResponses.pop();
     const q = r.quad;
-    process(r, q);
+    process(r, q, quadHead);
 }
 
-function process(r, q) {
+function process(r, q, quadHead) {
     if (Object.keys(r.data).length === 0) {
         q.loaded = true;
         loadingQuads.delete(q);

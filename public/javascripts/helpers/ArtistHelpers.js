@@ -120,7 +120,7 @@ function drawEdges(clickedArtist) {
     }
 }
 
-async function loadArtistFromSearch(query, isQueryID) {
+async function loadArtistFromSearch(query, isQueryID, quadHead) {
     let alreadyGot = false;
     if (isQueryID) {
         const cachedNode = nodeLookup[query];
@@ -177,7 +177,7 @@ function createNewNode(data, quadHead) {
     quadHead.insert(nodeLookup[data.id]);
 }
 
-async function loadArtist(artist) {
+async function loadArtist(artist, quadHead) {
     clickedLoading = true;
     const response = await fetch('artist/' + artist.id + "/true");
     const data = await response.json();

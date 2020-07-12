@@ -26,8 +26,8 @@ let nodeOccurences = {};
 
 let timingEvents = {};
 
-async function getClickedRelated(id) {
-    loadArtistFromSearch(id, true).then(_ => {
+async function getClickedRelated(id, quadHead) {
+    loadArtistFromSearch(id, true, quadHead).then(_ => {
         Sidebar.resetSidebar(false);}
     );
 }

@@ -74,7 +74,7 @@ var P5Wrapper = function (_React$Component) {
                 getHoveredArtist(quadHead);
 
                 if (clickedArtist && !clickedArtist.loaded && !clickedLoading) {
-                    loadArtist(clickedArtist).then();
+                    loadArtist(clickedArtist, quadHead).then();
                 }
 
                 createTimingEvent("Get Hovered Artist");
@@ -153,7 +153,7 @@ var P5Wrapper = function (_React$Component) {
                 }
 
                 if (clickedArtist && clickedArtist.loaded && Sidebar.artist !== clickedArtist) {
-                    Sidebar.setArtistSidebar(clickedArtist);
+                    Sidebar.setArtistSidebar(clickedArtist, quadHead);
                 }
 
                 if (clickedArtist && Sidebar.openAmount < 1) {
@@ -164,7 +164,7 @@ var P5Wrapper = function (_React$Component) {
 
                 if (p.frameCount % 5 === 0) {
                     //TODO adjust this until it feels right, or adjust it dynamically?
-                    processOne();
+                    processOne(quadHead);
                 }
 
                 createTimingEvent("Quad Processing");
@@ -230,7 +230,7 @@ var P5Wrapper = function (_React$Component) {
                     camera.y += oldDrag.y - newDrag.y;
 
                     if (Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y) < 5) {
-                        handlePointClick();
+                        handlePointClick(quadHead);
                     }
 
                     MouseEvents.driftVec = p.createVector(p.winMouseX - p.pwinMouseX, p.winMouseY - p.pwinMouseY);
