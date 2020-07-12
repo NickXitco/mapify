@@ -15,8 +15,6 @@ let newEdges = true;
 let edges = [];
 
 /* STILL AT GLOBAL LEVEL */
-let nodeOccurences = {};
-
 let timingEvents = {};
 
 async function loadInitialQuads(loadingQuads, unprocessedResponses) {

@@ -154,12 +154,6 @@ function createNewNode(p, data, quadHead, nodeLookup) {
         exists = false;
     }
 
-    if (!nodeOccurences.hasOwnProperty(data.id)) {
-        nodeOccurences[data.id] = 1;
-    } else {
-        nodeOccurences[data.id]++;
-    }
-
     if (exists) {
         const q = nodeLookup[data.id].quad;
         if (q) {
