@@ -135,7 +135,7 @@ function drawOnscreenQuads(quadHead, camera) {
 
         p.fill('white');
         p.noStroke();
-        p.textAlign(CENTER, CENTER);
+        p.textAlign(p.CENTER, p.CENTER);
         p.text(q.name, q.x, -q.y);
         p.textSize(q.r / 20);
         p.noFill();
