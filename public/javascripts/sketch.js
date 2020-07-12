@@ -1,8 +1,4 @@
 /* P5 Wrapper Globals - Things that belong to the canvas, no one else needs them*/
-let darkenOpacity = 0;
-
-let unprocessedResponses = [];
-let unloadedQuads = new Set();
 let loadingQuads = new Set();
 let unloadedPQ = new PriorityQueue((a, b) => Utils.dist(camera.x, camera.y, a.x, a.y) - Utils.dist(camera.x, camera.y, b.x, b.y));
 

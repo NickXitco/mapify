@@ -67,9 +67,9 @@ var P5Wrapper = function (_React$Component) {
 
                 Debug.createTimingEvent("Camera Moves");
 
-                drawOnscreenQuads(p, quadHead, camera, hoveredArtist, loadingQuads, unloadedQuads, unloadedPQ);
+                drawOnscreenQuads(p, quadHead, camera, hoveredArtist, loadingQuads, _this.unloadedQuads, unloadedPQ);
 
-                loadUnloaded(_this.unprocessedResponses, unloadedPQ, loadingQuads, unloadedQuads);
+                loadUnloaded(_this.unprocessedResponses, unloadedPQ, loadingQuads, _this.unloadedQuads);
 
                 if (!Sidebar.hoverFlag && !SearchBox.hoverFlag) {
                     hoveredArtist = getHoveredArtist(p, camera, clickedArtist, quadHead);
@@ -184,7 +184,7 @@ var P5Wrapper = function (_React$Component) {
                 InfoBox.drawInfoBox(camera, hoveredArtist);
 
                 Debug.createTimingEvent("Info Box");
-                Debug.debugAll(p, camera, hoveredArtist, unloadedQuads, loadingQuads, _this.unprocessedResponses);
+                Debug.debugAll(p, camera, hoveredArtist, _this.unloadedQuads, loadingQuads, _this.unprocessedResponses);
             };
 
             p.mouseWheel = function (e) {

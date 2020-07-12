@@ -56,9 +56,9 @@ class P5Wrapper extends React.Component {
 
             Debug.createTimingEvent("Camera Moves");
 
-            drawOnscreenQuads(p, quadHead, camera, hoveredArtist, loadingQuads, unloadedQuads, unloadedPQ);
+            drawOnscreenQuads(p, quadHead, camera, hoveredArtist, loadingQuads, this.unloadedQuads, unloadedPQ);
 
-            loadUnloaded(this.unprocessedResponses, unloadedPQ, loadingQuads, unloadedQuads);
+            loadUnloaded(this.unprocessedResponses, unloadedPQ, loadingQuads, this.unloadedQuads);
 
             if (!Sidebar.hoverFlag && !SearchBox.hoverFlag) {
                 hoveredArtist = getHoveredArtist(p, camera, clickedArtist, quadHead);
@@ -148,7 +148,7 @@ class P5Wrapper extends React.Component {
             InfoBox.drawInfoBox(camera, hoveredArtist);
 
             Debug.createTimingEvent("Info Box");
-            Debug.debugAll(p, camera, hoveredArtist, unloadedQuads, loadingQuads, this.unprocessedResponses);
+            Debug.debugAll(p, camera, hoveredArtist, this.unloadedQuads, loadingQuads, this.unprocessedResponses);
         };
 
         p.mouseWheel = (e) => {
