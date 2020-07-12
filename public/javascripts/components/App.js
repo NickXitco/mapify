@@ -54,6 +54,22 @@ var App = function (_React$Component) {
         key: "canvasUpdate",
         value: function canvasUpdate(canvas) {
             this.setState({ canvas: canvas });
+            this.ro = new ResizeObserver(function (entries) {
+                if (entries.length !== 1) {
+                    console.log("I don't know what this is");
+                } else {
+                    var cr = entries[0].contentRect;
+                    var w = cr.width;
+                    var h = cr.height;
+                    console.log(w);
+                    console.log(h);
+                    if (p) {
+                        p.resizeCanvas(w, h);
+                    }
+                    camera.zoomCamera({ x: camera.x, y: camera.y });
+                }
+            });
+            this.ro.observe(document.getElementById("root"));
         }
     }, {
         key: "componentDidMount",

@@ -37,7 +37,24 @@ class App extends React.Component {
 
     canvasUpdate(canvas) {
         this.setState({canvas: canvas});
+        this.ro = new ResizeObserver(entries => {
+            if (entries.length !== 1) {
+                console.log("I don't know what this is");
+            } else {
+                const cr = entries[0].contentRect;
+                const w = cr.width;
+                const h = cr.height;
+                console.log(w);
+                console.log(h);
+                if (p) {
+                    p.resizeCanvas(w,h);
+                }
+                camera.zoomCamera({x: camera.x, y: camera.y});
+            }
+        })
+        this.ro.observe(document.getElementById("root"));
     }
+
 
     componentDidMount() {
 

@@ -1,17 +1,26 @@
-let nodeLookup = {};
-let quadHead;
-let p;
-let camera;
-let hoveredArtist = null;
+/* P5 Wrapper Globals - Things that belong to the canvas, no one else needs them*/
 let clickedLoading = false;
-let clickedArtist = null;
 let darkenOpacity = 0;
+
 let unprocessedResponses = [];
 let unloadedQuads = new Set();
 let loadingQuads = new Set();
 let unloadedPQ = new PriorityQueue((a, b) => Utils.dist(camera.x, camera.y, a.x, a.y) - Utils.dist(camera.x, camera.y, b.x, b.y));
+
 let newEdges = true;
 let edges = [];
+
+/* App Globals - Things needed across the entire UI for right now*/
+let nodeLookup = {};
+
+let quadHead;
+
+let hoveredArtist = null;
+let clickedArtist = null;
+
+let p;
+let camera;
+
 
 async function loadInitialQuads(loadingQuads, unprocessedResponses) {
     const response = await fetch('quad/A'); //TODO validation on this response
@@ -45,14 +54,3 @@ function loadUnloaded(unprocessedResponses, unloadedQuadsPriorityQueue, loadingQ
 function drawLoading() {
     //TODO loading screen?
 }
-
-window.onresize = function() {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    console.log(w);
-    console.log(h);
-    if (p) {
-        p.resizeCanvas(w,h);
-    }
-    camera.zoomCamera({x: camera.x, y: camera.y});
-};
