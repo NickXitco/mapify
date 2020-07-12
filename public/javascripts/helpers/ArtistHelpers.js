@@ -106,7 +106,7 @@ function makeEdges(artist) {
     return edges;
 }
 
-function drawEdges(p, camera, clickedArtist, hoveredArtist) {
+function drawEdges(p, camera, edges, clickedArtist, hoveredArtist) {
     for (const e of edges) {
         if (!(hoveredArtist !== null && hoveredArtist !== clickedArtist && hoveredArtist !== e.v)) {
             EdgeDrawer.drawEdge(p, camera, e);
