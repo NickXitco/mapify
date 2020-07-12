@@ -8,8 +8,8 @@ const Debug = {
         p.pop();
     },
 
-    printMouseCoordinates: function (p) {
-        let mP = MouseEvents.getVirtualMouseCoordinates(p);
+    printMouseCoordinates: function (p, camera) {
+        let mP = MouseEvents.getVirtualMouseCoordinates(p, camera);
         p.push();
         p.translate(0, 0);
         p.scale(1);
@@ -38,7 +38,7 @@ const Debug = {
         p.pop();
     },
 
-    debugCamera: function (p) {
+    debugCamera: function (p, camera) {
         p.push();
         p.translate(0, 0);
         p.scale(1);
@@ -126,12 +126,12 @@ const Debug = {
         camera.setView();
         //this.drawCrosshairs(p);
         p.pop();
-        this.debugCamera(p);
+        this.debugCamera(p, camera);
         //this.drawScreenCrosshairs(p);
         this.debugHovered(p);
         this.canvasSize(p);
         this.printFPS(p);
-        this.printMouseCoordinates(p);
+        this.printMouseCoordinates(p, camera);
         this.loadingStats(p);
         this.timingGraph(p, timingEvents)
         this.versionNumber(p);

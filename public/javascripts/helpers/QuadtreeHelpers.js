@@ -1,4 +1,4 @@
-function processOne(p, quadHead, nodeLookup) {
+function processOne(p, camera, quadHead, nodeLookup) {
     if (unprocessedResponses.length === 0) {
         return;
     }

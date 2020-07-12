@@ -8,7 +8,7 @@ const WEIGHT_THRESHOLD = 1.1;
 
 
 class EdgeDrawer {
-    static drawEdge(p, e) {
+    static drawEdge(p, camera, e) {
         const u = e.u;
         const v = e.v;
 
@@ -33,15 +33,15 @@ class EdgeDrawer {
         let uSat = uHSV.s;
         let vSat = vHSV.s;
 
-        this.runEdgeDrawer(p, e, u, v, uVec, vVec, uHue, vHue, uSat, vSat);
+        this.runEdgeDrawer(p, camera, e, u, v, uVec, vVec, uHue, vHue, uSat, vSat);
         p.pop();
 
         e.tMax = Math.min(1, e.tMax + (EASE_SPEED / Utils.dist(u.x, u.y, v.x, v.y)));
     }
 
-    static runEdgeDrawer(p, e, u, v, uVec, vVec, uHue, vHue, uSat, vSat) {
+    static runEdgeDrawer(p, camera, e, u, v, uVec, vVec, uHue, vHue, uSat, vSat) {
         let edgePoints = this.getEdgePoints(p, u, uHue, uSat, e.tMax, v, uVec, vVec, vHue, vSat);
-        let finalEdgePoints = this.reduceEdgePoints(p, edgePoints);
+        let finalEdgePoints = this.reduceEdgePoints(p, camera, edgePoints);
         this.drawEdgePoints(p, finalEdgePoints);
         return finalEdgePoints.length;
     }
@@ -67,13 +67,13 @@ class EdgeDrawer {
         }
     }
 
-    static reduceEdgePoints(p, edgePoints) {
+    static reduceEdgePoints(p, camera, edgePoints) {
         edgePoints = this.flatten(p, edgePoints);
-        edgePoints = this.removeOutOfView(edgePoints);
+        edgePoints = this.removeOutOfView(camera, edgePoints);
         return edgePoints;
     }
 
-    static removeOutOfView(edgePoints) {
+    static removeOutOfView(camera, edgePoints) {
         const pointsInView = []
         let lastIn = camera.containsPoint(edgePoints[0].x, -edgePoints[0].y);
         for (let i = 0; i < edgePoints.length; i++) {

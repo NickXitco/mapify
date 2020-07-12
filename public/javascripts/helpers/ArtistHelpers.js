@@ -1,13 +1,13 @@
 const MAX_CURVE_ANGLE = 180;
 
 //TODO return hoveredArtist
-function getHoveredArtist(p, quadHead) {
+function getHoveredArtist(p, camera, quadHead) {
     if (SearchBox.hoverFlag || Sidebar.hoverFlag) {
         return;
     }
 
     let stack = [];
-    const mP = MouseEvents.getVirtualMouseCoordinates(p);
+    const mP = MouseEvents.getVirtualMouseCoordinates(p, camera);
     stack.push(quadHead);
     let foundQuad;
     while (stack.length > 0) {
@@ -71,7 +71,7 @@ function getHoveredArtist(p, quadHead) {
     hoveredArtist = closest;
 }
 
-function drawNodes(p, nodeList) {
+function drawNodes(p, camera, nodeList) {
     for (const node of nodeList) {
         if (camera.containsRegion(node.x, node.y, node.size)) {
             p.push();
@@ -84,8 +84,8 @@ function drawNodes(p, nodeList) {
     }
 }
 
-function drawRelatedNodes(p, clickedArtist) {
-    drawNodes(p, clickedArtist.relatedVertices);
+function drawRelatedNodes(p, camera, clickedArtist) {
+    drawNodes(p, camera, clickedArtist.relatedVertices);
     p.push();
     p.fill(0, 255);
     p.stroke(clickedArtist.color);
@@ -94,7 +94,7 @@ function drawRelatedNodes(p, clickedArtist) {
     p.pop();
 }
 
-function drawEdges(p, clickedArtist) {
+function drawEdges(p, camera, clickedArtist) {
     if (newEdges) {
         edges = [];
         for (const related of clickedArtist.relatedVertices) {
@@ -116,7 +116,7 @@ function drawEdges(p, clickedArtist) {
 
     for (const e of edges) {
         if (!(hoveredArtist !== null && hoveredArtist !== clickedArtist && hoveredArtist !== e.v)) {
-            EdgeDrawer.drawEdge(p, e);
+            EdgeDrawer.drawEdge(p, camera, e);
         }
     }
 }

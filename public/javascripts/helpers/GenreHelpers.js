@@ -5,7 +5,7 @@ const GenreHelpers = {
     genreName: "",
     genreColor: null,
 
-    getGenre: async function(p, genreName, quadHead, nodeLookup) {
+    getGenre: async function(p, camera, genreName, quadHead, nodeLookup) {
         const response = await fetch('genre/' + genreName);
         const data = await response.json();
 

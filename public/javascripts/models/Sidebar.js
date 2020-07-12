@@ -48,7 +48,7 @@ const Sidebar = {
         }
     },
 
-    setArtistSidebar: function (p, artist, quadHead, nodeLookup) {
+    setArtistSidebar: function (p, camera, artist, quadHead, nodeLookup) {
         Sidebar.artist = clickedArtist;
         Sidebar.dom.style.display = "flex";
         let fontSize = 60;
@@ -81,7 +81,7 @@ const Sidebar = {
                 newGenre.innerText = genreName;
                 newGenre.onclick = () => {
                     edgeDrawing = false;
-                    GenreHelpers.getGenre(p, genreName, quadHead, nodeLookup).then();
+                    GenreHelpers.getGenre(p, camera, genreName, quadHead, nodeLookup).then();
                 };
                 Sidebar.genresList.appendChild(newGenre);
                 genreCount++;

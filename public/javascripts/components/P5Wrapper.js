@@ -50,7 +50,7 @@ var P5Wrapper = function (_React$Component) {
                 createTimingEvent("Drawing Setup");
 
                 MouseEvents.drift(camera, p);
-                MouseEvents.zoom();
+                MouseEvents.zoom(camera);
 
                 if (SearchBox.point) {
                     camera.setCameraMove(SearchBox.point.x, SearchBox.point.y, camera.getZoomFromWidth(SearchBox.point.size * 50), 30);
@@ -71,7 +71,7 @@ var P5Wrapper = function (_React$Component) {
                 drawOnscreenQuads(p, quadHead, camera);
 
                 loadUnloaded(unloadedQuadsPriorityQueue, loadingQuads, unloadedQuads);
-                getHoveredArtist(p, quadHead);
+                getHoveredArtist(p, camera, quadHead);
 
                 if (clickedArtist && !clickedArtist.loaded && !clickedLoading) {
                     loadArtist(p, clickedArtist, quadHead, nodeLookup).then();
@@ -134,7 +134,7 @@ var P5Wrapper = function (_React$Component) {
 
                     p.pop();
 
-                    drawNodes(p, GenreHelpers.genreNodes);
+                    drawNodes(p, camera, GenreHelpers.genreNodes);
                 }
 
                 createTimingEvent("Draw Genre Nodes");
@@ -146,14 +146,14 @@ var P5Wrapper = function (_React$Component) {
                 createTimingEvent("Darken Scene for Related Nodes");
 
                 if (edgeDrawing && clickedArtist && clickedArtist.loaded) {
-                    drawEdges(p, clickedArtist);
+                    drawEdges(p, camera, clickedArtist);
                     createTimingEvent("Draw Related Edges");
-                    drawRelatedNodes(p, clickedArtist);
+                    drawRelatedNodes(p, camera, clickedArtist);
                     createTimingEvent("Draw Related Nodes");
                 }
 
                 if (clickedArtist && clickedArtist.loaded && Sidebar.artist !== clickedArtist) {
-                    Sidebar.setArtistSidebar(p, clickedArtist, quadHead, nodeLookup);
+                    Sidebar.setArtistSidebar(p, camera, clickedArtist, quadHead, nodeLookup);
                 }
 
                 if (clickedArtist && Sidebar.openAmount < 1) {
@@ -164,13 +164,13 @@ var P5Wrapper = function (_React$Component) {
 
                 if (p.frameCount % 5 === 0) {
                     //TODO adjust this until it feels right, or adjust it dynamically?
-                    processOne(p, quadHead, nodeLookup);
+                    processOne(p, camera, quadHead, nodeLookup);
                 }
 
                 createTimingEvent("Quad Processing");
 
                 p.pop();
-                InfoBox.drawInfoBox(hoveredArtist);
+                InfoBox.drawInfoBox(camera, hoveredArtist);
 
                 createTimingEvent("Info Box");
                 Debug.debugAll(p, camera, timingEvents);
@@ -190,7 +190,7 @@ var P5Wrapper = function (_React$Component) {
                 } else {
                     MouseEvents.zooming = true;
                     MouseEvents.scrollStep = 0;
-                    MouseEvents.zoomCoordinates = MouseEvents.getVirtualMouseCoordinates(p);
+                    MouseEvents.zoomCoordinates = MouseEvents.getVirtualMouseCoordinates(p, camera);
                     if (e.ctrlKey && Math.abs(e.deltaY) < 10) {
                         MouseEvents.scrollDelta = e.deltaY / 10;
                     } else {
@@ -214,7 +214,7 @@ var P5Wrapper = function (_React$Component) {
 
             p.mouseDragged = function () {
                 if (MouseEvents.dragging) {
-                    var newDrag = MouseEvents.getVirtualMouseCoordinates(p);
+                    var newDrag = MouseEvents.getVirtualMouseCoordinates(p, camera);
                     var oldDrag = camera.screen2virtual(MouseEvents.drag);
                     camera.x += oldDrag.x - newDrag.x;
                     camera.y += oldDrag.y - newDrag.y;
@@ -224,7 +224,7 @@ var P5Wrapper = function (_React$Component) {
 
             p.mouseReleased = function () {
                 if (MouseEvents.dragging) {
-                    var newDrag = MouseEvents.getVirtualMouseCoordinates(p);
+                    var newDrag = MouseEvents.getVirtualMouseCoordinates(p, camera);
                     var oldDrag = camera.screen2virtual(MouseEvents.drag);
                     camera.x += oldDrag.x - newDrag.x;
                     camera.y += oldDrag.y - newDrag.y;

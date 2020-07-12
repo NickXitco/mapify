@@ -17,7 +17,7 @@ const MouseEvents = {
     zooming: false,
     zoomCoordinates: {},
 
-    zoom: function () {
+    zoom: function (camera) {
         if (this.zooming) {
             this.scrollStep++;
             camera.zoom += this.scrollDelta / SCROLL_STEPS;
@@ -42,7 +42,7 @@ const MouseEvents = {
         }
     },
 
-    getVirtualMouseCoordinates: function(p) {
+    getVirtualMouseCoordinates: function(p, camera) {
         return camera.screen2virtual({x: p.mouseX, y: p.mouseY});
     }
 }

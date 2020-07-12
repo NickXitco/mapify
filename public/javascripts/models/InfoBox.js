@@ -3,7 +3,7 @@ const InfoBox  ={
     artistName: document.getElementById("infoBoxArtistName"),
     artistGenre: document.getElementById("infoBoxArtistGenre"),
     
-    drawInfoBox: function (hoveredArtist) {
+    drawInfoBox: function (camera, hoveredArtist) {
         if (!hoveredArtist) {
             this.div.style.visibility = "hidden";
             return;

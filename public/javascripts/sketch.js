@@ -2,10 +2,9 @@
 let nodeLookup = {};
 let quadHead;
 let p;
-
+let camera;
 
 /* STILL AT GLOBAL LEVEL */
-let camera;
 let hoveredArtist = null;
 let clickedLoading = false;
 let clickedArtist = null;
