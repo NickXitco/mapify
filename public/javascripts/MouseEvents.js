@@ -56,7 +56,6 @@ function handlePointClick(quadHead, hoveredArtist, clickedArtist, nodeLookup, p)
 
     if (hoveredArtist) {
         if (hoveredArtist !== clickedArtist) {
-            newEdges = true;
             Sidebar.resetSidebar(false);
             return hoveredArtist;
         }

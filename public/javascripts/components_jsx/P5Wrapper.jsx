@@ -118,7 +118,13 @@ class P5Wrapper extends React.Component {
             createTimingEvent("Darken Scene for Related Nodes");
 
             if (clickedArtist && clickedArtist.loaded) {
-                drawEdges(p, camera, clickedArtist, hoveredArtist);
+                if (newEdges) {
+                    edges = makeEdges(clickedArtist)
+                    newEdges = false;
+                } else{
+                    drawEdges(p, camera, clickedArtist, hoveredArtist);
+                }
+
                 createTimingEvent("Draw Related Edges");
                 drawRelatedNodes(p, camera, clickedArtist);
                 createTimingEvent("Draw Related Nodes");
@@ -202,6 +208,7 @@ class P5Wrapper extends React.Component {
 
                 if (Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y) < 5) {
                     clickedArtist = handlePointClick(quadHead, hoveredArtist, clickedArtist, nodeLookup, p);
+                    newEdges = Boolean(clickedArtist);
                 }
 
                 MouseEvents.driftVec = p.createVector(p.winMouseX - p.pwinMouseX, p.winMouseY - p.pwinMouseY);

@@ -87,26 +87,26 @@ function drawRelatedNodes(p, camera, clickedArtist) {
     p.pop();
 }
 
-function drawEdges(p, camera, clickedArtist, hoveredArtist) {
-    if (newEdges) {
-        edges = [];
-        for (const related of clickedArtist.relatedVertices) {
-            const u = clickedArtist;
-            const v = related;
-            Math.seedrandom(u.id + v.id);
-            edges.push({
-                u: u,
-                v: v,
-                cUrad: Math.random() / 2,
-                cUang: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
-                cVrad: Math.random() / 2,
-                cVang: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
-                tMax: 0
-            });
-        }
-        newEdges = false;
+function makeEdges(artist) {
+    let edges = [];
+    for (const related of artist.relatedVertices) {
+        const u = artist;
+        const v = related;
+        Math.seedrandom(u.id + v.id);
+        edges.push({
+            u: u,
+            v: v,
+            cUrad: Math.random() / 2,
+            cUang: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
+            cVrad: Math.random() / 2,
+            cVang: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
+            tMax: 0
+        });
     }
+    return edges;
+}
 
+function drawEdges(p, camera, clickedArtist, hoveredArtist) {
     for (const e of edges) {
         if (!(hoveredArtist !== null && hoveredArtist !== clickedArtist && hoveredArtist !== e.v)) {
             EdgeDrawer.drawEdge(p, camera, e);

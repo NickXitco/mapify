@@ -11,10 +11,10 @@ let unprocessedResponses = [];
 let unloadedQuads = new Set();
 let loadingQuads = new Set();
 let unloadedPQ = new PriorityQueue((a, b) => Utils.dist(camera.x, camera.y, a.x, a.y) - Utils.dist(camera.x, camera.y, b.x, b.y));
-
+let newEdges = true;
 
 /* STILL AT GLOBAL LEVEL */
-let newEdges = true;
+
 let edges = [];
 
 let nodeOccurences = {};
