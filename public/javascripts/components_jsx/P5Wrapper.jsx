@@ -72,11 +72,11 @@ class P5Wrapper extends React.Component {
             Debug.createTimingEvent("Get Hovered Artist");
 
             if (!clickedArtist && GenreHelpers.genreNodes.size === 0) {
-                darkenOpacity = 0;
+                this.darkenOpacity = 0;
             }
 
             if (GenreHelpers.genreNodes.size > 0) {
-                darkenOpacity = darkenScene(p, darkenOpacity, camera);
+                this.darkenOpacity = darkenScene(p, this.darkenOpacity, camera);
             }
 
             Debug.createTimingEvent("Darken Scene for Genre Nodes");
@@ -110,7 +110,7 @@ class P5Wrapper extends React.Component {
             Debug.createTimingEvent("Draw Genre Nodes");
 
             if (clickedArtist) {
-                darkenOpacity = darkenScene(p, darkenOpacity, camera);
+                this.darkenOpacity = darkenScene(p, this.darkenOpacity, camera);
             }
 
             Debug.createTimingEvent("Darken Scene for Related Nodes");
