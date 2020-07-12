@@ -14,7 +14,7 @@ class P5Wrapper extends React.Component {
 
             camera.zoomCamera({x: 0, y: 0});
 
-            loadInitialQuads(loadingQuads, this.unprocessedResponses).then((qH) => {
+            loadInitialQuads(this.loadingQuads, this.unprocessedResponses).then((qH) => {
                 quadHead = qH;
                 this.loading = false
             });
@@ -56,9 +56,9 @@ class P5Wrapper extends React.Component {
 
             Debug.createTimingEvent("Camera Moves");
 
-            drawOnscreenQuads(p, quadHead, camera, hoveredArtist, loadingQuads, this.unloadedQuads, unloadedPQ);
+            drawOnscreenQuads(p, quadHead, camera, hoveredArtist, this.loadingQuads, this.unloadedQuads, unloadedPQ);
 
-            loadUnloaded(this.unprocessedResponses, unloadedPQ, loadingQuads, this.unloadedQuads);
+            loadUnloaded(this.unprocessedResponses, unloadedPQ, this.loadingQuads, this.unloadedQuads);
 
             if (!Sidebar.hoverFlag && !SearchBox.hoverFlag) {
                 hoveredArtist = getHoveredArtist(p, camera, clickedArtist, quadHead);
@@ -139,7 +139,7 @@ class P5Wrapper extends React.Component {
             Debug.createTimingEvent("Sidebar");
 
             if (p.frameCount % 5 === 0) { //TODO adjust this until it feels right, or adjust it dynamically?
-                processOne(p, camera, quadHead, nodeLookup, loadingQuads, this.unprocessedResponses);
+                processOne(p, camera, quadHead, nodeLookup, this.loadingQuads, this.unprocessedResponses);
             }
 
             Debug.createTimingEvent("Quad Processing");
@@ -148,7 +148,7 @@ class P5Wrapper extends React.Component {
             InfoBox.drawInfoBox(camera, hoveredArtist);
 
             Debug.createTimingEvent("Info Box");
-            Debug.debugAll(p, camera, hoveredArtist, this.unloadedQuads, loadingQuads, this.unprocessedResponses);
+            Debug.debugAll(p, camera, hoveredArtist, this.unloadedQuads, this.loadingQuads, this.unprocessedResponses);
         };
 
         p.mouseWheel = (e) => {
