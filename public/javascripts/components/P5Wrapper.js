@@ -22,7 +22,9 @@ var P5Wrapper = function (_React$Component) {
                 });
                 camera.zoomCamera({ x: 0, y: 0 });
 
-                loadInitialQuads().then(); //TODO loadInitialQuads, probably the first 16? but load the first 128 (or more?) into memory
+                loadInitialQuads(quadHead, loadingQuads).then(function () {
+                    loading = false;
+                }); //TODO loadInitialQuads, probably the first 16? but load the first 128 (or more?) into memory
 
                 p.angleMode(p.DEGREES);
                 p.rectMode(p.RADIUS);
@@ -64,7 +66,7 @@ var P5Wrapper = function (_React$Component) {
 
                 drawOnscreenQuads(quadHead, camera);
 
-                loadUnloaded();
+                loadUnloaded(unloadedQuadsPriorityQueue, loadingQuads, unloadedQuads);
                 getHoveredArtist();
 
                 if (clickedArtist && !clickedArtist.loaded && !clickedLoading) {
@@ -78,7 +80,7 @@ var P5Wrapper = function (_React$Component) {
                 }
 
                 if (GenreHelpers.genreNodes.size > 0) {
-                    darkenScene();
+                    darkenOpacity = darkenScene(p, darkenOpacity, camera);
                 }
 
                 createTimingEvent("Darken Scene for Genre Nodes");
@@ -134,7 +136,7 @@ var P5Wrapper = function (_React$Component) {
                 createTimingEvent("Draw Genre Nodes");
 
                 if (edgeDrawing) {
-                    darkenScene();
+                    darkenOpacity = darkenScene(p, darkenOpacity, camera);
                 }
 
                 createTimingEvent("Darken Scene for Related Nodes");

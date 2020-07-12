@@ -24,8 +24,8 @@ const Debug = {
         p.push();
         strokeWeight(1);
         p.stroke("aqua");
-        line(p.width / 2, 0, p.width / 2, canvas.height);
-        line(0, canvas.height / 2, p.width, canvas.height / 2);
+        line(p.width / 2, 0, p.width / 2, p.height);
+        line(0, p.height / 2, p.width, p.height / 2);
         p.pop();
     },
 
@@ -34,7 +34,7 @@ const Debug = {
         let fps = p.frameRate();
         p.fill(255);
         p.stroke(0);
-        p.text("FPS: " + fps.toFixed(2), 10, canvas.height - 10);
+        p.text("FPS: " + fps.toFixed(2), 10, p.height - 10);
         p.pop();
     },
 
@@ -69,7 +69,7 @@ const Debug = {
         p.fill("white");
         p.noStroke();
         p.text("Canvas Width: " + p.width, 10, 200);
-        p.text("Canvas canvas.height: " + canvas.height, 10, 225);
+        p.text("Canvas Height: " + p.height, 10, 225);
         p.pop();
     },
 
@@ -95,7 +95,7 @@ const Debug = {
             total += timingEvents[timingName];
         }
 
-        let currentHeight = canvas.height - 40
+        let currentHeight = p.height - 40
         for (const timingName of Object.keys(timingEvents)) {
             const percentage = timingEvents[timingName] / total;
 
@@ -117,7 +117,7 @@ const Debug = {
         p.fill("white");
         p.noStroke();
         p.textAlign(p.RIGHT);
-        p.text(`Version ${VersionHelper.versionNumber}`, p.width - 10, canvas.height - 10);
+        p.text(`Version ${VersionHelper.versionNumber}`, p.width - 10, p.height - 10);
         p.pop();
     },
 

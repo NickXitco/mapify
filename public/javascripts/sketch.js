@@ -34,26 +34,27 @@ async function getClickedRelated(id) {
     );
 }
 
-async function loadInitialQuads() {
+async function loadInitialQuads(quadHead, loadingQuads) {
     const response = await fetch('quad/A'); //TODO validation on this response
     const data = await response.json();
     quadHead = new Quad(data.x, data.y, data.r, null, null, "A", null);
     loadingQuads.add(quadHead);
     await quadHead.fetchQuad();
     quadHead.splitDown(4);
-    loading = false;
 }
 
-function darkenScene() {
+function darkenScene(p, darkenOpacity, camera) {
     p.push();
     p.noStroke();
     p.fill(p.color(0, Eases.easeOutQuart(darkenOpacity) * 180));
-    darkenOpacity = Math.min(darkenOpacity + 0.05, 1);
     p.rectMode(p.RADIUS);
     p.rect(camera.x, -camera.y, camera.width / 2, camera.height / 2);
     p.pop();
+    return Math.min(darkenOpacity + 0.05, 1);
 }
 
+
+//TODO make these two a function of Debug
 let lastTime = 0;
 function createTimingEvent(name) {
     timingEvents[name] = performance.now() - lastTime;
@@ -67,7 +68,10 @@ function resetTiming() {
     }
 }
 
-function loadUnloaded() {
+
+
+
+function loadUnloaded(unloadedQuadsPriorityQueue, loadingQuads, unloadedQuads) {
     while (!unloadedQuadsPriorityQueue.isEmpty()) {
         const quad = unloadedQuadsPriorityQueue.pop();
         loadingQuads.add(quad);

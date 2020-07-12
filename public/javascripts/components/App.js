@@ -12,7 +12,40 @@ var App = function (_React$Component) {
     function App(props) {
         _classCallCheck(this, App);
 
-        return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
+        var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
+
+        _this.state = {
+            canvas: null,
+            p5: null,
+            loading: true,
+            camera: null,
+
+            hoveredArtist: null,
+            clickedLoading: false,
+            clickedArist: null,
+
+            darkenOpacityT: 0,
+
+            quadHead: null,
+            unproccessResponses: [],
+
+            unloadedQuads: new Set(),
+            loadingQuads: new Set(),
+            unloadedQuadsPriorityQueue: new PriorityQueue(function (a, b) {
+                return Utils.dist(_this.state.camera.x, _this.state.camera.y, a.x, a.y) - Utils.dist(_this.state.camera.x, _this.state.camera.y, b.x, b.y);
+            }),
+
+            edgeDrawing: false,
+            newEdges: true,
+            edges: [],
+
+            nodeLookup: {},
+            nodeOccurences: {},
+
+            timingEvents: {},
+            lastTime: 0
+        };
+        return _this;
     }
 
     _createClass(App, [{

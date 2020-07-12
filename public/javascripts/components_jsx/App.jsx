@@ -27,7 +27,8 @@ class App extends React.Component {
             nodeLookup: {},
             nodeOccurences: {},
 
-            timingEvents: {}
+            timingEvents: {},
+            lastTime: 0
         }
     }
 
