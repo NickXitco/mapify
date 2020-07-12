@@ -152,10 +152,10 @@ var P5Wrapper = function (_React$Component) {
 
                 if (clickedArtist && clickedArtist.loaded) {
                     if (_this.newEdges) {
-                        edges = makeEdges(clickedArtist);
+                        _this.edges = makeEdges(clickedArtist);
                         _this.newEdges = false;
                     } else {
-                        drawEdges(p, camera, edges, clickedArtist, hoveredArtist);
+                        drawEdges(p, camera, _this.edges, clickedArtist, hoveredArtist);
                     }
 
                     Debug.createTimingEvent("Draw Related Edges");
