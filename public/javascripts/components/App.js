@@ -45,10 +45,18 @@ var App = function (_React$Component) {
             timingEvents: {},
             lastTime: 0
         };
+
+        _this.testStateLift = _this.testStateLift.bind(_this);
+
         return _this;
     }
 
     _createClass(App, [{
+        key: "testStateLift",
+        value: function testStateLift() {
+            console.trace(this);
+        }
+    }, {
         key: "componentDidMount",
         value: function componentDidMount() {}
     }, {
@@ -60,7 +68,7 @@ var App = function (_React$Component) {
             return React.createElement(
                 "div",
                 { className: "fullScreen" },
-                React.createElement(P5Wrapper, null)
+                React.createElement(P5Wrapper, { onCanvasUpdate: this.testStateLift })
             );
         }
     }]);

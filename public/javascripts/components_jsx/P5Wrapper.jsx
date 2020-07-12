@@ -4,10 +4,15 @@ class P5Wrapper extends React.Component {
         this.myRef = React.createRef()
     }
 
+
+
     Sketch = (p) => {
         p.setup = () => {
             canvas = p.createCanvas(window.innerWidth, window.innerHeight);
             canvas.mouseOver(() => {Sidebar.hoverFlag = false; SearchBox.hoverFlag = false;})
+
+            this.props.onCanvasUpdate();
+
             camera.zoomCamera({x: 0, y: 0});
 
             loadInitialQuads(loadingQuads).then((qH) => {

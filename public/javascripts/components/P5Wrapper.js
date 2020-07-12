@@ -20,6 +20,9 @@ var P5Wrapper = function (_React$Component) {
                 canvas.mouseOver(function () {
                     Sidebar.hoverFlag = false;SearchBox.hoverFlag = false;
                 });
+
+                _this.props.onCanvasUpdate();
+
                 camera.zoomCamera({ x: 0, y: 0 });
 
                 loadInitialQuads(loadingQuads).then(function (qH) {
