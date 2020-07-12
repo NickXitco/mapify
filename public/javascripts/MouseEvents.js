@@ -78,9 +78,3 @@ function handlePointClick() {
         Sidebar.resetSidebar(true);
     }
 }
-
-
-function mouseReleased() {
-
-}
-
