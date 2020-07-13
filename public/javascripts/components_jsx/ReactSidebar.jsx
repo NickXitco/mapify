@@ -13,9 +13,14 @@ class ReactSidebar extends React.Component {
 
     render() {
         if (this.props.type === "artist") {
+            if (!this.props.artist) {
+                return null;
+            }
+
+
             return (
                 <div className={"sidebar"}>
-                    <div className={"sidebarStroke"}/>
+                    <SidebarStroke color={this.props.artist.colorToString()}/>
                     <div className={"nameAndPicture"}>
                         <div className={"sidebarPicture"}/>
                         <div className={"name"}>

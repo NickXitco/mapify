@@ -16,11 +16,21 @@ class App extends React.Component {
             nodeOccurences: {},
 
             timingEvents: {},
-            lastTime: 0
+            lastTime: 0,
+
+            testArtist: null,
+
+            wobblyState: 0
         }
 
         this.canvasUpdate = this.canvasUpdate.bind(this);
+        this.updateClickedArtist = this.updateClickedArtist.bind(this);
 
+    }
+
+    updateClickedArtist(artist) {
+        this.setState({testArtist: artist});
+        this.setState({wobblyState: 1});
     }
 
     canvasUpdate(canvas) {
@@ -41,6 +51,16 @@ class App extends React.Component {
             }
         })
         this.ro.observe(document.getElementById("root"));
+        this.setState({testArtist: new Artist(
+            {name: "TestArtist", id: "6", followers: 2000, popularity: 5, x: 50, y: 50, size: 20,
+                r: 25, g: 255, b: 50,
+                genres: ["pop"],
+                relatedIDS: [],
+                relatedVertices: [],
+                quad: null,
+                loaded: true
+            })
+            })
     }
 
 
@@ -53,10 +73,12 @@ class App extends React.Component {
     }
 
     render() {
+        console.log(this.state);
+        console.log("Doing a render!");
         return (
             <div className={"fullScreen"}>
-                <ReactSidebar type={"artist"}/>
-                <P5Wrapper canvasUpdate={this.canvasUpdate}/>
+                <ReactSidebar type={"artist"} artist={this.state.testArtist}/>
+                <P5Wrapper canvasUpdate={this.canvasUpdate} updateArtist={this.updateClickedArtist} wobblyState={this.state.wobblyState}/>
             </div>
         );
     }

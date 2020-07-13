@@ -25,10 +25,14 @@ var ReactSidebar = function (_React$Component) {
         key: "render",
         value: function render() {
             if (this.props.type === "artist") {
+                if (!this.props.artist) {
+                    return null;
+                }
+
                 return React.createElement(
                     "div",
                     { className: "sidebar" },
-                    React.createElement("div", { className: "sidebarStroke" }),
+                    React.createElement(SidebarStroke, { color: this.props.artist.colorToString() }),
                     React.createElement(
                         "div",
                         { className: "nameAndPicture" },

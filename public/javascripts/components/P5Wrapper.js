@@ -39,6 +39,8 @@ var P5Wrapper = function (_React$Component) {
             };
 
             p.draw = function () {
+                console.log(_this.props.wobblyState);
+
                 if (_this.loading) {
                     drawLoading();
                     return;
@@ -154,6 +156,7 @@ var P5Wrapper = function (_React$Component) {
                     if (_this.newEdges) {
                         _this.edges = makeEdges(clickedArtist);
                         _this.newEdges = false;
+                        _this.props.updateArtist(clickedArtist); //TODO just call this whenever we want the artist to update.
                     } else {
                         drawEdges(p, camera, _this.edges, clickedArtist, hoveredArtist);
                     }

@@ -28,15 +28,26 @@ var App = function (_React$Component) {
             nodeOccurences: {},
 
             timingEvents: {},
-            lastTime: 0
+            lastTime: 0,
+
+            testArtist: null,
+
+            wobblyState: 0
         };
 
         _this.canvasUpdate = _this.canvasUpdate.bind(_this);
+        _this.updateClickedArtist = _this.updateClickedArtist.bind(_this);
 
         return _this;
     }
 
     _createClass(App, [{
+        key: "updateClickedArtist",
+        value: function updateClickedArtist(artist) {
+            this.setState({ testArtist: artist });
+            this.setState({ wobblyState: 1 });
+        }
+    }, {
         key: "canvasUpdate",
         value: function canvasUpdate(canvas) {
             this.setState({ canvas: canvas });
@@ -56,6 +67,15 @@ var App = function (_React$Component) {
                 }
             });
             this.ro.observe(document.getElementById("root"));
+            this.setState({ testArtist: new Artist({ name: "TestArtist", id: "6", followers: 2000, popularity: 5, x: 50, y: 50, size: 20,
+                    r: 25, g: 255, b: 50,
+                    genres: ["pop"],
+                    relatedIDS: [],
+                    relatedVertices: [],
+                    quad: null,
+                    loaded: true
+                })
+            });
         }
     }, {
         key: "componentDidMount",
@@ -66,11 +86,13 @@ var App = function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
+            console.log(this.state);
+            console.log("Doing a render!");
             return React.createElement(
                 "div",
                 { className: "fullScreen" },
-                React.createElement(ReactSidebar, { type: "artist" }),
-                React.createElement(P5Wrapper, { canvasUpdate: this.canvasUpdate })
+                React.createElement(ReactSidebar, { type: "artist", artist: this.state.testArtist }),
+                React.createElement(P5Wrapper, { canvasUpdate: this.canvasUpdate, updateArtist: this.updateClickedArtist, wobblyState: this.state.wobblyState })
             );
         }
     }]);

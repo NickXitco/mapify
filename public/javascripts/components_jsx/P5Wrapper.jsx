@@ -28,6 +28,9 @@ class P5Wrapper extends React.Component {
         };
 
         p.draw = () => {
+            console.log(this.props.wobblyState);
+
+
             if (this.loading) {
                 drawLoading();
                 return;
@@ -119,6 +122,7 @@ class P5Wrapper extends React.Component {
                 if (this.newEdges) {
                     this.edges = makeEdges(clickedArtist)
                     this.newEdges = false;
+                    this.props.updateArtist(clickedArtist); //TODO just call this whenever we want the artist to update.
                 } else{
                     drawEdges(p, camera, this.edges, clickedArtist, hoveredArtist);
                 }
