@@ -6,43 +6,46 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var ReactSidebar = function (_React$Component) {
-    _inherits(ReactSidebar, _React$Component);
+var GenresList = function (_React$Component) {
+    _inherits(GenresList, _React$Component);
 
-    function ReactSidebar(props) {
-        _classCallCheck(this, ReactSidebar);
+    function GenresList(props) {
+        _classCallCheck(this, GenresList);
 
-        return _possibleConstructorReturn(this, (ReactSidebar.__proto__ || Object.getPrototypeOf(ReactSidebar)).call(this, props));
+        return _possibleConstructorReturn(this, (GenresList.__proto__ || Object.getPrototypeOf(GenresList)).call(this, props));
     }
 
-    _createClass(ReactSidebar, [{
-        key: "componentDidMount",
-        value: function componentDidMount() {}
-    }, {
-        key: "componentWillUnmount",
-        value: function componentWillUnmount() {}
-    }, {
+    _createClass(GenresList, [{
         key: "render",
         value: function render() {
-            if (this.props.type === "artist") {
-                if (!this.props.artist) {
-                    return null;
-                }
-
-                return React.createElement(
-                    "div",
-                    { className: "sidebar" },
-                    React.createElement(SidebarStroke, { color: this.props.artist.colorToString() }),
-                    React.createElement(ArtistProfile, { artist: this.props.artist }),
-                    React.createElement(FollowersStats, { artist: this.props.artist }),
-                    React.createElement(GenresList, { genres: this.props.artist.genres }),
-                    React.createElement(ArtistsList, { artists: this.props.artist.relatedVertices })
-                );
-            } else {
+            if (this.props.genres.length === 0) {
                 return null;
             }
+
+            var genres = this.props.genres.map(function (genre) {
+                return React.createElement(
+                    "li",
+                    { className: "sidebarListItem", key: genre.toString() },
+                    genre.toString()
+                );
+            });
+
+            return React.createElement(
+                "div",
+                { className: "genresSection" },
+                React.createElement(
+                    "h2",
+                    null,
+                    "Genres"
+                ),
+                React.createElement(
+                    "ul",
+                    { className: "genresList" },
+                    genres
+                )
+            );
         }
     }]);
 
-    return ReactSidebar;
+    return GenresList;
 }(React.Component);

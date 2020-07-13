@@ -6,43 +6,35 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var ReactSidebar = function (_React$Component) {
-    _inherits(ReactSidebar, _React$Component);
+var FollowersStats = function (_React$Component) {
+    _inherits(FollowersStats, _React$Component);
 
-    function ReactSidebar(props) {
-        _classCallCheck(this, ReactSidebar);
+    function FollowersStats(props) {
+        _classCallCheck(this, FollowersStats);
 
-        return _possibleConstructorReturn(this, (ReactSidebar.__proto__ || Object.getPrototypeOf(ReactSidebar)).call(this, props));
+        return _possibleConstructorReturn(this, (FollowersStats.__proto__ || Object.getPrototypeOf(FollowersStats)).call(this, props));
     }
 
-    _createClass(ReactSidebar, [{
-        key: "componentDidMount",
-        value: function componentDidMount() {}
-    }, {
-        key: "componentWillUnmount",
-        value: function componentWillUnmount() {}
-    }, {
+    _createClass(FollowersStats, [{
         key: "render",
         value: function render() {
-            if (this.props.type === "artist") {
-                if (!this.props.artist) {
-                    return null;
-                }
-
-                return React.createElement(
-                    "div",
-                    { className: "sidebar" },
-                    React.createElement(SidebarStroke, { color: this.props.artist.colorToString() }),
-                    React.createElement(ArtistProfile, { artist: this.props.artist }),
-                    React.createElement(FollowersStats, { artist: this.props.artist }),
-                    React.createElement(GenresList, { genres: this.props.artist.genres }),
-                    React.createElement(ArtistsList, { artists: this.props.artist.relatedVertices })
-                );
-            } else {
-                return null;
-            }
+            return React.createElement(
+                "div",
+                { className: "followersSection" },
+                React.createElement(
+                    "p",
+                    { className: "followerCount" },
+                    this.props.artist.followers >= 1000000 ? (this.props.artist.followers * 1.0 / 1000000).toFixed(1).toString() + " Million" : this.props.artist.followers >= 1000 ? (this.props.artist.followers * 1.0 / 1000).toFixed(1).toString() + " Thousand" : this.props.artist.followers.toString()
+                ),
+                React.createElement(
+                    "p",
+                    { className: "followers" },
+                    this.props.artist.followers === 1 ? "Follower" : "Followers"
+                ),
+                React.createElement("p", { className: "followerRanking" })
+            );
         }
     }]);
 
-    return ReactSidebar;
+    return FollowersStats;
 }(React.Component);

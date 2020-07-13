@@ -6,43 +6,42 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var ReactSidebar = function (_React$Component) {
-    _inherits(ReactSidebar, _React$Component);
+var ArtistProfile = function (_React$Component) {
+    _inherits(ArtistProfile, _React$Component);
 
-    function ReactSidebar(props) {
-        _classCallCheck(this, ReactSidebar);
+    function ArtistProfile(props) {
+        _classCallCheck(this, ArtistProfile);
 
-        return _possibleConstructorReturn(this, (ReactSidebar.__proto__ || Object.getPrototypeOf(ReactSidebar)).call(this, props));
+        return _possibleConstructorReturn(this, (ArtistProfile.__proto__ || Object.getPrototypeOf(ArtistProfile)).call(this, props));
     }
 
-    _createClass(ReactSidebar, [{
-        key: "componentDidMount",
-        value: function componentDidMount() {}
-    }, {
-        key: "componentWillUnmount",
-        value: function componentWillUnmount() {}
-    }, {
+    _createClass(ArtistProfile, [{
         key: "render",
         value: function render() {
-            if (this.props.type === "artist") {
-                if (!this.props.artist) {
-                    return null;
-                }
+            var pictureStyle = {
+                boxShadow: "0 0 13px 1px " + this.props.artist.colorToString()
+            };
 
-                return React.createElement(
+            var nameStyle = {
+                fontSize: "30px"
+            };
+
+            return React.createElement(
+                "div",
+                { className: "nameAndPicture" },
+                React.createElement("div", { className: "sidebarPicture", style: pictureStyle }),
+                React.createElement(
                     "div",
-                    { className: "sidebar" },
-                    React.createElement(SidebarStroke, { color: this.props.artist.colorToString() }),
-                    React.createElement(ArtistProfile, { artist: this.props.artist }),
-                    React.createElement(FollowersStats, { artist: this.props.artist }),
-                    React.createElement(GenresList, { genres: this.props.artist.genres }),
-                    React.createElement(ArtistsList, { artists: this.props.artist.relatedVertices })
-                );
-            } else {
-                return null;
-            }
+                    { className: "name" },
+                    React.createElement(
+                        "h1",
+                        { className: "sidebarArtistName", style: nameStyle },
+                        this.props.artist.name
+                    )
+                )
+            );
         }
     }]);
 
-    return ReactSidebar;
+    return ArtistProfile;
 }(React.Component);
