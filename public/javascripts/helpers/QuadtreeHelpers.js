@@ -32,7 +32,7 @@ function process(p, r, q, quadHead, nodeLookup, loadingQuads) {
     }
 
     for (const node of r.data.nodes) {
-        createNewNode(p, node, quadHead, nodeLookup);
+        createNewNode(node, quadHead, nodeLookup);
     }
 
     if (r.data.image !== "") {

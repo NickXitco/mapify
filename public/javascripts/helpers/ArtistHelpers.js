@@ -131,11 +131,11 @@ async function loadArtistFromSearch(p, query, isQueryID, quadHead, nodeLookup) {
         return null;
     }
 
-    createNewNode(p, data, quadHead, nodeLookup);
+    createNewNode(data, quadHead, nodeLookup);
     let node = nodeLookup[data.id];
 
     for (const r of data.related) {
-        createNewNode(p, r, quadHead, nodeLookup);
+        createNewNode(r, quadHead, nodeLookup);
         node.relatedVertices.add(nodeLookup[r.id]);
     }
     node.loaded = true;
@@ -147,10 +147,10 @@ async function loadArtistFromSearch(p, query, isQueryID, quadHead, nodeLookup) {
     return node
 }
 
-function createNewNode(p, data, quadHead, nodeLookup) {
+function createNewNode(data, quadHead, nodeLookup) {
     let exists = true;
     if (!nodeLookup.hasOwnProperty(data.id)) {
-        nodeLookup[data.id] = new Artist(p, data);
+        nodeLookup[data.id] = new Artist(data);
         exists = false;
     }
 
@@ -168,11 +168,11 @@ async function loadArtist(p, artist, quadHead, nodeLookup) {
     const response = await fetch('artist/' + artist.id + "/true");
     const data = await response.json();
 
-    createNewNode(p, data, quadHead, nodeLookup);
+    createNewNode(data, quadHead, nodeLookup);
     let node = nodeLookup[data.id];
 
     for (const r of data.related) {
-        createNewNode(p, r, quadHead, nodeLookup);
+        createNewNode(r, quadHead, nodeLookup);
         node.relatedVertices.add(nodeLookup[r.id]);
     }
     node.loaded = true;
