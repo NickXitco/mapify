@@ -32,6 +32,8 @@ var App = function (_React$Component) {
 
             testArtist: null,
 
+            searchResults: [],
+
             wobblyState: 0
         };
 
@@ -92,6 +94,7 @@ var App = function (_React$Component) {
                 "div",
                 { className: "fullScreen" },
                 React.createElement(ReactSidebar, { type: "artist", artist: this.state.testArtist }),
+                React.createElement(ReactSearchBox, { results: this.state.searchResults }),
                 React.createElement(P5Wrapper, { canvasUpdate: this.canvasUpdate, updateArtist: this.updateClickedArtist, wobblyState: this.state.wobblyState })
             );
         }

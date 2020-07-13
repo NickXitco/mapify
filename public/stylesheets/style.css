@@ -159,7 +159,27 @@ canvas {
   user-select: none;
 }
 
+.searchBox {
+  width: 200px;
+  height: 34px;
+  position: relative;
+  z-index: 2000;
+  float: right;
+  top: 20px;
+  right: 20px;
+
+  display: grid;
+  grid-template-rows: 34px 200px;
+
+  user-select: none;
+}
+
 #searchBar {
+  width: 200px;
+  height: 34px;
+}
+
+.searchBar {
   width: 200px;
   height: 34px;
 }
@@ -183,7 +203,34 @@ canvas {
   user-select: none
 }
 
+.searchInput {
+  font-family: montserrat, sans-serif;
+  font-weight: 300;
+  color: white;
+  display: flex;
+  align-items: center;
+  width: 186px;
+  height: 20px;
+
+  background: rgba(0,0,0,0.6);
+  border: white 2px solid;
+
+  box-shadow: 0 0 6px 1px white;
+
+  padding: 5px;
+  grid-row: 1;
+  user-select: none
+}
+
 #suggestions {
+  width: 100%;
+  grid-row: 2;
+  position: relative;
+  display: none;
+  z-index: -1;
+}
+
+.suggestions {
   width: 100%;
   grid-row: 2;
   position: relative;

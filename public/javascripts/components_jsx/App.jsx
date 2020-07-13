@@ -20,6 +20,8 @@ class App extends React.Component {
 
             testArtist: null,
 
+            searchResults: [],
+
             wobblyState: 0
         }
 
@@ -78,6 +80,7 @@ class App extends React.Component {
         return (
             <div className={"fullScreen"}>
                 <ReactSidebar type={"artist"} artist={this.state.testArtist}/>
+                <ReactSearchBox results={this.state.searchResults}/>
                 <P5Wrapper canvasUpdate={this.canvasUpdate} updateArtist={this.updateClickedArtist} wobblyState={this.state.wobblyState}/>
             </div>
         );

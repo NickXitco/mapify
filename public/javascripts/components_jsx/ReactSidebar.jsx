@@ -17,7 +17,6 @@ class ReactSidebar extends React.Component {
                 return null;
             }
 
-
             return (
                 <div className={"sidebar"}>
                     <SidebarStroke color={this.props.artist.colorToString()}/>
