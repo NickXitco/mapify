@@ -12,10 +12,20 @@ var ReactSearchBox = function (_React$Component) {
     function ReactSearchBox(props) {
         _classCallCheck(this, ReactSearchBox);
 
-        return _possibleConstructorReturn(this, (ReactSearchBox.__proto__ || Object.getPrototypeOf(ReactSearchBox)).call(this, props));
+        var _this = _possibleConstructorReturn(this, (ReactSearchBox.__proto__ || Object.getPrototypeOf(ReactSearchBox)).call(this, props));
+
+        _this.sendSubmitIfEnter = _this.sendSubmitIfEnter.bind(_this);
+        return _this;
     }
 
     _createClass(ReactSearchBox, [{
+        key: "sendSubmitIfEnter",
+        value: function sendSubmitIfEnter(e) {
+            if (e.key === "Enter") {
+                this.props.processSearchSubmit(e.target.value);
+            }
+        }
+    }, {
         key: "render",
         value: function render() {
             var _this2 = this;
@@ -29,6 +39,27 @@ var ReactSearchBox = function (_React$Component) {
                 boxShadow: "0 0 6px 0.5px " + this.props.artist.colorToString()
             };
 
+            var results = this.props.results.map(function (artist) {
+                return React.createElement(
+                    "li",
+                    { className: "suggestion",
+                        key: artist.id.toString(),
+                        onClick: function onClick() {
+                            _this2.props.updateClickedArtist(artist);
+                        }
+                    },
+                    React.createElement(
+                        "div",
+                        { className: "suggestedArtist" },
+                        React.createElement(
+                            "p",
+                            null,
+                            artist.name.toString()
+                        )
+                    )
+                );
+            });
+
             return React.createElement(
                 "div",
                 { className: "searchBox" },
@@ -41,10 +72,15 @@ var ReactSearchBox = function (_React$Component) {
                         placeholder: "search for an artist...",
                         onInput: function onInput(e) {
                             _this2.props.processSearchInputChange(e.target.value);
-                        }
+                        },
+                        onKeyDown: this.sendSubmitIfEnter
                     })
                 ),
-                React.createElement("ul", { className: "suggestions" })
+                React.createElement(
+                    "ul",
+                    { className: "suggestions" },
+                    results
+                )
             );
         }
     }]);

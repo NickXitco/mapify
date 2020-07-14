@@ -62,7 +62,9 @@ var App = function (_React$Component) {
         }
     }, {
         key: "processSearchSubmit",
-        value: function processSearchSubmit() {}
+        value: function processSearchSubmit(value) {
+            console.log(value);
+        }
     }, {
         key: "canvasUpdate",
         value: function canvasUpdate(canvas) {
@@ -117,6 +119,7 @@ var App = function (_React$Component) {
                 React.createElement(ReactSearchBox, {
                     artist: this.state.clickedArtist,
                     results: this.state.searchResults,
+                    updateClickedArtist: this.updateClickedArtist,
                     processSearchSubmit: this.processSearchSubmit,
                     processSearchInputChange: this.processSearchInputChange
                 }),
