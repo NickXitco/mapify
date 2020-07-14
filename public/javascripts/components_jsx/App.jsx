@@ -26,6 +26,8 @@ class App extends React.Component {
         this.canvasUpdate = this.canvasUpdate.bind(this);
         this.updateClickedArtist = this.updateClickedArtist.bind(this);
         this.updateClickedGenre = this.updateClickedGenre.bind(this);
+        this.processSearchInputChange = this.processSearchInputChange.bind(this);
+        this.processSearchSubmit = this.processSearchSubmit.bind(this);
 
     }
 
@@ -36,6 +38,14 @@ class App extends React.Component {
 
     updateClickedGenre(genre) {
         console.log(genre);
+    }
+
+    processSearchInputChange(value) {
+        console.log(value)
+    }
+
+    processSearchSubmit() {
+
     }
 
     canvasUpdate(canvas) {
@@ -94,6 +104,8 @@ class App extends React.Component {
                 <ReactSearchBox
                     artist={this.state.clickedArtist}
                     results={this.state.searchResults}
+                    processSearchSubmit={this.processSearchSubmit}
+                    processSearchInputChange={this.processSearchInputChange}
                 />
 
                 <P5Wrapper

@@ -38,6 +38,8 @@ var App = function (_React$Component) {
         _this.canvasUpdate = _this.canvasUpdate.bind(_this);
         _this.updateClickedArtist = _this.updateClickedArtist.bind(_this);
         _this.updateClickedGenre = _this.updateClickedGenre.bind(_this);
+        _this.processSearchInputChange = _this.processSearchInputChange.bind(_this);
+        _this.processSearchSubmit = _this.processSearchSubmit.bind(_this);
 
         return _this;
     }
@@ -53,6 +55,14 @@ var App = function (_React$Component) {
         value: function updateClickedGenre(genre) {
             console.log(genre);
         }
+    }, {
+        key: "processSearchInputChange",
+        value: function processSearchInputChange(value) {
+            console.log(value);
+        }
+    }, {
+        key: "processSearchSubmit",
+        value: function processSearchSubmit() {}
     }, {
         key: "canvasUpdate",
         value: function canvasUpdate(canvas) {
@@ -106,7 +116,9 @@ var App = function (_React$Component) {
                 }),
                 React.createElement(ReactSearchBox, {
                     artist: this.state.clickedArtist,
-                    results: this.state.searchResults
+                    results: this.state.searchResults,
+                    processSearchSubmit: this.processSearchSubmit,
+                    processSearchInputChange: this.processSearchInputChange
                 }),
                 React.createElement(P5Wrapper, {
                     canvasUpdate: this.canvasUpdate,

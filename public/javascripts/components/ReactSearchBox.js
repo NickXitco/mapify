@@ -18,14 +18,31 @@ var ReactSearchBox = function (_React$Component) {
     _createClass(ReactSearchBox, [{
         key: "render",
         value: function render() {
+            var _this2 = this;
+
+            if (!this.props.artist) {
+                return null;
+            }
+
+            var color = {
+                borderColor: this.props.artist.colorToString(),
+                boxShadow: "0 0 6px 0.5px " + this.props.artist.colorToString()
+            };
 
             return React.createElement(
                 "div",
-                { className: "searchBox", onMouseEnter: "SearchBox.focus()", onMouseLeave: "SearchBox.unfocus()" },
+                { className: "searchBox" },
                 React.createElement(
                     "div",
                     { className: "searchBar" },
-                    React.createElement("input", { className: "searchInput", type: "text", placeholder: "search for an artist..." })
+                    React.createElement("input", { className: "searchInput",
+                        style: color,
+                        type: "text",
+                        placeholder: "search for an artist...",
+                        onInput: function onInput(e) {
+                            _this2.props.processSearchInputChange(e.target.value);
+                        }
+                    })
                 ),
                 React.createElement("ul", { className: "suggestions" })
             );
