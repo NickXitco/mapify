@@ -29,6 +29,8 @@ class App extends React.Component {
         this.processSearchInputChange = this.processSearchInputChange.bind(this);
         this.processSearchSubmit = this.processSearchSubmit.bind(this);
 
+        this.updateHoveredArtist = this.updateHoveredArtist.bind(this);
+
     }
 
     updateClickedArtist(artist) {
@@ -36,16 +38,20 @@ class App extends React.Component {
         this.setState({clickedArtist: artist});
     }
 
+    updateHoveredArtist(artist) {
+        this.setState({hoveredArtist: artist});
+    }
+
     updateClickedGenre(genre) {
         console.log(genre);
     }
 
     processSearchInputChange(value) {
-        console.log(value)
+        console.log(value);
     }
 
-    processSearchSubmit() {
-
+    processSearchSubmit(value) {
+        console.log(value);
     }
 
     canvasUpdate(canvas) {
@@ -93,7 +99,7 @@ class App extends React.Component {
     render() {
         return (
             <div className={"fullScreen"}>
-                <ReactInfobox artist={this.state.clickedArtist}/>
+                <ReactInfobox artist={this.state.hoveredArtist}/>
 
                 <ReactSidebar type={"artist"}
                               artist={this.state.clickedArtist}
@@ -104,14 +110,15 @@ class App extends React.Component {
                 <ReactSearchBox
                     artist={this.state.clickedArtist}
                     results={this.state.searchResults}
+                    updateClickedArtist={this.updateClickedArtist}
                     processSearchSubmit={this.processSearchSubmit}
                     processSearchInputChange={this.processSearchInputChange}
                 />
 
                 <P5Wrapper
                     canvasUpdate={this.canvasUpdate}
-                    updateArtist={this.updateClickedArtist}
-                    wobblyState={this.state.wobblyState}
+                    updateClickedArtist={this.updateClickedArtist}
+                    updateHoveredArtist={this.updateHoveredArtist}
                 />
             </div>
         );

@@ -41,6 +41,8 @@ var App = function (_React$Component) {
         _this.processSearchInputChange = _this.processSearchInputChange.bind(_this);
         _this.processSearchSubmit = _this.processSearchSubmit.bind(_this);
 
+        _this.updateHoveredArtist = _this.updateHoveredArtist.bind(_this);
+
         return _this;
     }
 
@@ -49,6 +51,11 @@ var App = function (_React$Component) {
         value: function updateClickedArtist(artist) {
             console.log(artist);
             this.setState({ clickedArtist: artist });
+        }
+    }, {
+        key: "updateHoveredArtist",
+        value: function updateHoveredArtist(artist) {
+            this.setState({ hoveredArtist: artist });
         }
     }, {
         key: "updateClickedGenre",
@@ -110,7 +117,7 @@ var App = function (_React$Component) {
             return React.createElement(
                 "div",
                 { className: "fullScreen" },
-                React.createElement(ReactInfobox, { artist: this.state.clickedArtist }),
+                React.createElement(ReactInfobox, { artist: this.state.hoveredArtist }),
                 React.createElement(ReactSidebar, { type: "artist",
                     artist: this.state.clickedArtist,
                     updateClickedGenre: this.updateClickedGenre,
@@ -125,8 +132,8 @@ var App = function (_React$Component) {
                 }),
                 React.createElement(P5Wrapper, {
                     canvasUpdate: this.canvasUpdate,
-                    updateArtist: this.updateClickedArtist,
-                    wobblyState: this.state.wobblyState
+                    updateClickedArtist: this.updateClickedArtist,
+                    updateHoveredArtist: this.updateHoveredArtist
                 })
             );
         }

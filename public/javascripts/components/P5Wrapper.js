@@ -73,6 +73,7 @@ var P5Wrapper = function (_React$Component) {
 
                 if (!Sidebar.hoverFlag && !SearchBox.hoverFlag) {
                     hoveredArtist = getHoveredArtist(p, camera, clickedArtist, quadHead);
+                    _this.props.updateHoveredArtist(hoveredArtist);
                 }
 
                 if (clickedArtist && !clickedArtist.loaded && !_this.clickedLoading) {
@@ -154,7 +155,7 @@ var P5Wrapper = function (_React$Component) {
                     if (_this.newEdges) {
                         _this.edges = makeEdges(clickedArtist);
                         _this.newEdges = false;
-                        _this.props.updateArtist(clickedArtist);
+                        _this.props.updateClickedArtist(clickedArtist);
                     } else {
                         drawEdges(p, camera, _this.edges, clickedArtist, hoveredArtist);
                     }
@@ -182,7 +183,6 @@ var P5Wrapper = function (_React$Component) {
                 Debug.createTimingEvent("Quad Processing");
 
                 p.pop();
-                InfoBox.drawInfoBox(camera, hoveredArtist);
 
                 Debug.createTimingEvent("Info Box");
                 Debug.debugAll(p, camera, hoveredArtist, _this.unloadedQuads, _this.loadingQuads, _this.unprocessedResponses);

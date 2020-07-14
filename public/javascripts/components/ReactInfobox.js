@@ -44,22 +44,19 @@ var ReactInfobox = function (_React$Component) {
                 return null;
             }
 
+            var point = camera.virtual2screen({ x: hoveredArtist.x, y: hoveredArtist.y });
+
             var infoBoxDynamicStyles = {
                 height: this.state.height,
                 width: this.state.width,
                 borderColor: this.props.artist.colorToString(),
-                boxShadow: "0 0 3px 1px " + this.props.artist.colorToString()
+                boxShadow: "0 0 3px 1px " + this.props.artist.colorToString(),
 
-                /*
-                top: this.props.point.y + "px"
-                left: (this.props.point.x >= window.innerWidth / 2)
-                    ? (this.props.point.x - this.state.width - 6) + "px"
-                    : (this.props.point.x) + "px"
-                 */
+                top: point.y + "px",
+                left: point.x >= window.innerWidth / 2 ? point.x - this.state.width - 6 + "px" : point.x + "px"
+            };
 
-
-                //const dir = this.props.point.x >= window.innerWidth / 2 ? "Right" : "Left";
-            };var dir = "Left";
+            var dir = point.x >= window.innerWidth / 2 ? "Right" : "Left";
 
             return React.createElement(
                 "div",

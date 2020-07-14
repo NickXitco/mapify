@@ -62,6 +62,7 @@ class P5Wrapper extends React.Component {
 
             if (!Sidebar.hoverFlag && !SearchBox.hoverFlag) {
                 hoveredArtist = getHoveredArtist(p, camera, clickedArtist, quadHead);
+                this.props.updateHoveredArtist(hoveredArtist);
             }
 
             if (clickedArtist && !clickedArtist.loaded && !this.clickedLoading) {
@@ -119,7 +120,7 @@ class P5Wrapper extends React.Component {
                 if (this.newEdges) {
                     this.edges = makeEdges(clickedArtist)
                     this.newEdges = false;
-                    this.props.updateArtist(clickedArtist);
+                    this.props.updateClickedArtist(clickedArtist);
                 } else{
                     drawEdges(p, camera, this.edges, clickedArtist, hoveredArtist);
                 }
@@ -146,7 +147,6 @@ class P5Wrapper extends React.Component {
             Debug.createTimingEvent("Quad Processing");
 
             p.pop();
-            InfoBox.drawInfoBox(camera, hoveredArtist);
 
             Debug.createTimingEvent("Info Box");
             Debug.debugAll(p, camera, hoveredArtist, this.unloadedQuads, this.loadingQuads, this.unprocessedResponses);
