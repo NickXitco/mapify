@@ -11,7 +11,6 @@ const Sidebar = {
     relatedArtistSection: document.getElementById("relatedArtistsSection"),
     relatedArtistsList: document.getElementById("relatedArtistsList"),
     picture: document.getElementById("sidebarPicture"),
-    scrollbar_style: document.getElementById("scrollbar_style"),
     openAmount: 0,
     artist: null,
     hoverFlag: false,
@@ -121,8 +120,6 @@ const Sidebar = {
         Sidebar.picture.style.boxShadow = "0 0 13px 1px " + artist.colorToString();
         Sidebar.stroke.style.boxShadow = "0 0 13px 1px " + artist.colorToString();
         Sidebar.stroke.style.background = artist.colorToString();
-        Sidebar.scrollbar_style.innerHTML = `::-webkit-scrollbar-track {box-shadow: 0 0 5px ${artist.colorToString()};}  \n` +
-            `::-webkit-scrollbar-thumb {background: ${artist.colorToString()};}`
 
 
         SearchBox.input.style.borderColor = artist.colorToString();

@@ -32,6 +32,11 @@ var ReactSidebar = function (_React$Component) {
                 return React.createElement(
                     "div",
                     { className: "sidebar" },
+                    React.createElement(
+                        "style",
+                        null,
+                        "::-webkit-scrollbar-track {box-shadow: 0 0 5px " + this.props.artist.colorToString() + ";}  \n" + ("::-webkit-scrollbar-thumb {background: " + this.props.artist.colorToString() + ";")
+                    ),
                     React.createElement(SidebarStroke, { color: this.props.artist.colorToString() }),
                     React.createElement(ArtistProfile, { artist: this.props.artist, fontDecrement: 3 }),
                     React.createElement(FollowersStats, { artist: this.props.artist }),
