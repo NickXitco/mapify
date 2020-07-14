@@ -58,9 +58,15 @@ var App = function (_React$Component) {
     }, {
         key: "updateClickedArtist",
         value: function updateClickedArtist(artist) {
+            var _this2 = this;
+
             console.log(artist);
             if (artist.loaded) {
                 this.setState({ clickedArtist: artist });
+            } else if (artist.id) {
+                loadArtist(p, artist, quadHead, nodeLookup).then(function () {
+                    _this2.setState({ clickedArtist: nodeLookup[artist.id] });
+                });
             }
         }
     }, {
@@ -71,7 +77,9 @@ var App = function (_React$Component) {
     }, {
         key: "updateHoveredArtist",
         value: function updateHoveredArtist(artist) {
-            this.setState({ hoveredArtist: artist });
+            if (this.state.hoveredArtist !== artist) {
+                this.setState({ hoveredArtist: artist });
+            }
         }
     }, {
         key: "updateClickedGenre",
@@ -81,7 +89,15 @@ var App = function (_React$Component) {
     }, {
         key: "processSearchSubmit",
         value: function processSearchSubmit(value) {
-            console.log(value);
+            var _this3 = this;
+
+            console.trace(value);
+            loadArtistFromSearch(p, value, false, quadHead, nodeLookup).then(function (node) {
+                console.trace(node);
+                if (node) {
+                    _this3.setState({ clickedArtist: node });
+                }
+            });
         }
     }, {
         key: "canvasUpdate",
@@ -119,6 +135,7 @@ var App = function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
+            console.log("Rendering!");
             return React.createElement(
                 "div",
                 { className: "fullScreen" },

@@ -45,6 +45,10 @@ class App extends React.Component {
         console.log(artist);
         if (artist.loaded) {
             this.setState({clickedArtist: artist});
+        } else if (artist.id) {
+            loadArtist(p, artist, quadHead, nodeLookup).then(() =>{
+                    this.setState({clickedArtist: nodeLookup[artist.id]});
+            });
         }
     }
 
@@ -53,7 +57,9 @@ class App extends React.Component {
     }
 
     updateHoveredArtist(artist) {
-        this.setState({hoveredArtist: artist});
+        if (this.state.hoveredArtist !== artist) {
+            this.setState({hoveredArtist: artist});
+        }
     }
 
     updateClickedGenre(genre) {
@@ -61,8 +67,15 @@ class App extends React.Component {
     }
 
     processSearchSubmit(value) {
-        console.log(value);
+        console.trace(value);
+        loadArtistFromSearch(p, value, false, quadHead, nodeLookup).then(node => {
+            console.trace(node);
+            if (node) {
+                this.setState({clickedArtist: node});
+            }
+        });
     }
+
 
     canvasUpdate(canvas) {
         this.setState({canvas: canvas,
@@ -98,6 +111,7 @@ class App extends React.Component {
     }
 
     render() {
+        console.log("Rendering!");
         return (
             <div className={"fullScreen"}>
                 <ReactInfobox artist={this.state.hoveredArtist}/>
