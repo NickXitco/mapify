@@ -20,22 +20,36 @@ class App extends React.Component {
 
             testArtist: null,
 
-            searchResults: [],
+            uiHover: false
         }
 
         this.canvasUpdate = this.canvasUpdate.bind(this);
+
         this.updateClickedArtist = this.updateClickedArtist.bind(this);
+        this.unsetClickedArtist = this.unsetClickedArtist.bind(this);
+
         this.updateClickedGenre = this.updateClickedGenre.bind(this);
-        this.processSearchInputChange = this.processSearchInputChange.bind(this);
         this.processSearchSubmit = this.processSearchSubmit.bind(this);
 
         this.updateHoveredArtist = this.updateHoveredArtist.bind(this);
 
+        this.updateHoverFlag = this.updateHoverFlag.bind(this);
+
+    }
+
+    updateHoverFlag(value) {
+        this.setState({uiHover: value});
     }
 
     updateClickedArtist(artist) {
         console.log(artist);
-        this.setState({clickedArtist: artist});
+        if (artist.loaded) {
+            this.setState({clickedArtist: artist});
+        }
+    }
+
+    unsetClickedArtist() {
+        this.setState({clickedArtist: null});
     }
 
     updateHoveredArtist(artist) {
@@ -44,10 +58,6 @@ class App extends React.Component {
 
     updateClickedGenre(genre) {
         console.log(genre);
-    }
-
-    processSearchInputChange(value) {
-        console.log(value);
     }
 
     processSearchSubmit(value) {
@@ -87,15 +97,6 @@ class App extends React.Component {
         this.ro.observe(document.getElementById("root"));
     }
 
-
-    componentDidMount() {
-
-    }
-
-    componentWillUnmount() {
-
-    }
-
     render() {
         return (
             <div className={"fullScreen"}>
@@ -109,15 +110,15 @@ class App extends React.Component {
 
                 <ReactSearchBox
                     artist={this.state.clickedArtist}
-                    results={this.state.searchResults}
                     updateClickedArtist={this.updateClickedArtist}
                     processSearchSubmit={this.processSearchSubmit}
-                    processSearchInputChange={this.processSearchInputChange}
+                    updateHoverFlag={this.updateHoverFlag}
                 />
 
                 <P5Wrapper
                     canvasUpdate={this.canvasUpdate}
                     updateClickedArtist={this.updateClickedArtist}
+                    unsetClickedArtist={this.unsetClickedArtist}
                     updateHoveredArtist={this.updateHoveredArtist}
                 />
             </div>

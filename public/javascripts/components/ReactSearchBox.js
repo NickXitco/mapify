@@ -14,46 +14,101 @@ var ReactSearchBox = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (ReactSearchBox.__proto__ || Object.getPrototypeOf(ReactSearchBox)).call(this, props));
 
+        _this.state = {
+            value: "",
+            suggestions: []
+        };
+
+        _this.requestCounter = 0;
+        _this.highestReceivedResponse = 0;
+
+        _this.processInput = _this.processInput.bind(_this);
+        _this.processSuggestions = _this.processSuggestions.bind(_this);
+        _this.processSuggestionClick = _this.processSuggestionClick.bind(_this);
+
+        _this.resetState = _this.resetState.bind(_this);
+
         _this.sendSubmitIfEnter = _this.sendSubmitIfEnter.bind(_this);
         return _this;
     }
 
     _createClass(ReactSearchBox, [{
+        key: "processInput",
+        value: function processInput(e) {
+            var _this2 = this;
+
+            var currentInput = e.target.value.valueOf();
+            this.setState({ value: currentInput });
+            var url = "artistSearch/" + encodeURIComponent(currentInput);
+
+            var currentCount = this.requestCounter.valueOf();
+
+            this.requestCounter++;
+
+            fetch(url).then(function (response) {
+                return response.json();
+            }).then(function (data) {
+                //Only accept a response if it's the latest request we've gotten back
+                if (currentCount > _this2.highestReceivedResponse) {
+                    _this2.highestReceivedResponse = currentCount;
+                    _this2.processSuggestions(data);
+                }
+            });
+        }
+    }, {
+        key: "processSuggestions",
+        value: function processSuggestions(data) {
+            if (data.length === 0) {
+                //TODO no results
+            } else {
+                this.setState({ suggestions: data });
+            }
+        }
+    }, {
+        key: "processSuggestionClick",
+        value: function processSuggestionClick(artist) {
+            this.props.updateClickedArtist(artist);
+            this.resetState();
+        }
+    }, {
         key: "sendSubmitIfEnter",
         value: function sendSubmitIfEnter(e) {
             if (e.key === "Enter") {
                 this.props.processSearchSubmit(e.target.value);
+                this.resetState();
             }
+        }
+    }, {
+        key: "resetState",
+        value: function resetState() {
+            this.setState({ value: "", suggestions: [] });
         }
     }, {
         key: "render",
         value: function render() {
-            var _this2 = this;
+            var _this3 = this;
 
-            if (!this.props.artist) {
-                return null;
-            }
+            var color = this.props.artist ? this.props.artist.colorToString() : "white";
 
-            var color = {
-                borderColor: this.props.artist.colorToString(),
-                boxShadow: "0 0 6px 0.5px " + this.props.artist.colorToString()
+            var colorStyle = {
+                borderColor: color,
+                boxShadow: "0 0 6px 0.5px " + color
             };
 
-            var results = this.props.results.map(function (artist) {
+            var results = this.state.suggestions.map(function (artist) {
                 return React.createElement(
                     "li",
                     { className: "suggestion",
-                        key: artist.id.toString(),
-                        onClick: function onClick() {
-                            _this2.props.updateClickedArtist(artist);
-                        }
+                        key: artist.id.toString()
                     },
                     React.createElement(
                         "div",
                         { className: "suggestedArtist" },
                         React.createElement(
                             "p",
-                            null,
+                            { onClick: function onClick() {
+                                    _this3.processSuggestionClick(artist);
+                                } },
                             artist.name.toString()
                         )
                     )
@@ -62,18 +117,24 @@ var ReactSearchBox = function (_React$Component) {
 
             return React.createElement(
                 "div",
-                { className: "searchBox" },
+                { className: "searchBox",
+                    onMouseEnter: function onMouseEnter() {
+                        _this3.props.updateHoverFlag(true);
+                    },
+                    onMouseLeave: function onMouseLeave() {
+                        _this3.props.updateHoverFlag(false);
+                    }
+                },
                 React.createElement(
                     "div",
                     { className: "searchBar" },
                     React.createElement("input", { className: "searchInput",
-                        style: color,
+                        style: colorStyle,
                         type: "text",
                         placeholder: "search for an artist...",
-                        onInput: function onInput(e) {
-                            _this2.props.processSearchInputChange(e.target.value);
-                        },
-                        onKeyDown: this.sendSubmitIfEnter
+                        onInput: this.processInput,
+                        onKeyDown: this.sendSubmitIfEnter,
+                        value: this.state.value
                     })
                 ),
                 React.createElement(

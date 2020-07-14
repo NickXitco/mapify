@@ -243,6 +243,9 @@ var P5Wrapper = function (_React$Component) {
 
                     if (Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y) < 5) {
                         clickedArtist = handlePointClick(quadHead, hoveredArtist, clickedArtist, nodeLookup, p);
+                        if (!clickedArtist) {
+                            _this.props.unsetClickedArtist();
+                        }
                         _this.newEdges = Boolean(clickedArtist);
                     }
 

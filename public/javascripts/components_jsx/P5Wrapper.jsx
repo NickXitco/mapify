@@ -207,6 +207,9 @@ class P5Wrapper extends React.Component {
 
                 if (Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y) < 5) {
                     clickedArtist = handlePointClick(quadHead, hoveredArtist, clickedArtist, nodeLookup, p);
+                    if (!clickedArtist) {
+                        this.props.unsetClickedArtist();
+                    }
                     this.newEdges = Boolean(clickedArtist);
                 }
 

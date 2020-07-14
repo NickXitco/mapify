@@ -297,7 +297,7 @@ canvas {
   width: 100%;
   grid-row: 2;
   position: relative;
-  display: none;
+  display: block;
   z-index: -1;
 }
 

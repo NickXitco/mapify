@@ -32,25 +32,41 @@ var App = function (_React$Component) {
 
             testArtist: null,
 
-            searchResults: []
+            uiHover: false
         };
 
         _this.canvasUpdate = _this.canvasUpdate.bind(_this);
+
         _this.updateClickedArtist = _this.updateClickedArtist.bind(_this);
+        _this.unsetClickedArtist = _this.unsetClickedArtist.bind(_this);
+
         _this.updateClickedGenre = _this.updateClickedGenre.bind(_this);
-        _this.processSearchInputChange = _this.processSearchInputChange.bind(_this);
         _this.processSearchSubmit = _this.processSearchSubmit.bind(_this);
 
         _this.updateHoveredArtist = _this.updateHoveredArtist.bind(_this);
+
+        _this.updateHoverFlag = _this.updateHoverFlag.bind(_this);
 
         return _this;
     }
 
     _createClass(App, [{
+        key: "updateHoverFlag",
+        value: function updateHoverFlag(value) {
+            this.setState({ uiHover: value });
+        }
+    }, {
         key: "updateClickedArtist",
         value: function updateClickedArtist(artist) {
             console.log(artist);
-            this.setState({ clickedArtist: artist });
+            if (artist.loaded) {
+                this.setState({ clickedArtist: artist });
+            }
+        }
+    }, {
+        key: "unsetClickedArtist",
+        value: function unsetClickedArtist() {
+            this.setState({ clickedArtist: null });
         }
     }, {
         key: "updateHoveredArtist",
@@ -61,11 +77,6 @@ var App = function (_React$Component) {
         key: "updateClickedGenre",
         value: function updateClickedGenre(genre) {
             console.log(genre);
-        }
-    }, {
-        key: "processSearchInputChange",
-        value: function processSearchInputChange(value) {
-            console.log(value);
         }
     }, {
         key: "processSearchSubmit",
@@ -106,12 +117,6 @@ var App = function (_React$Component) {
             this.ro.observe(document.getElementById("root"));
         }
     }, {
-        key: "componentDidMount",
-        value: function componentDidMount() {}
-    }, {
-        key: "componentWillUnmount",
-        value: function componentWillUnmount() {}
-    }, {
         key: "render",
         value: function render() {
             return React.createElement(
@@ -125,14 +130,14 @@ var App = function (_React$Component) {
                 }),
                 React.createElement(ReactSearchBox, {
                     artist: this.state.clickedArtist,
-                    results: this.state.searchResults,
                     updateClickedArtist: this.updateClickedArtist,
                     processSearchSubmit: this.processSearchSubmit,
-                    processSearchInputChange: this.processSearchInputChange
+                    updateHoverFlag: this.updateHoverFlag
                 }),
                 React.createElement(P5Wrapper, {
                     canvasUpdate: this.canvasUpdate,
                     updateClickedArtist: this.updateClickedArtist,
+                    unsetClickedArtist: this.unsetClickedArtist,
                     updateHoveredArtist: this.updateHoveredArtist
                 })
             );
