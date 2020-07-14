@@ -20,6 +20,8 @@ var ArtistsList = function (_React$Component) {
     _createClass(ArtistsList, [{
         key: "render",
         value: function render() {
+            var _this2 = this;
+
             if (this.props.artists.size === 0) {
                 return null;
             }
@@ -29,7 +31,12 @@ var ArtistsList = function (_React$Component) {
             var artists = relatedArray.map(function (artist) {
                 return React.createElement(
                     "li",
-                    { className: "sidebarListItem", key: artist.id.toString() },
+                    { className: "sidebarListItem",
+                        key: artist.id.toString(),
+                        onClick: function onClick() {
+                            _this2.props.updateClickedArtist(artist);
+                        }
+                    },
                     artist.name.toString()
                 );
             });

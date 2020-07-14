@@ -43,7 +43,9 @@ var ReactSidebar = function (_React$Component) {
                     React.createElement(GenresList, { genres: this.props.artist.genres,
                         updateClickedGenre: this.props.updateClickedGenre
                     }),
-                    React.createElement(ArtistsList, { artists: this.props.artist.relatedVertices })
+                    React.createElement(ArtistsList, { artists: this.props.artist.relatedVertices,
+                        updateClickedArtist: this.props.updateClickedArtist
+                    })
                 );
             } else {
                 return null;

@@ -12,7 +12,12 @@ class ArtistsList extends React.Component {
         const relatedArray = [...this.props.artists]
 
         const artists = relatedArray.map(artist =>
-            <li className={"sidebarListItem"} key={artist.id.toString()}>{artist.name.toString()}</li>
+            <li className={"sidebarListItem"}
+                key={artist.id.toString()}
+                onClick={() => {this.props.updateClickedArtist(artist)}}
+            >
+                {artist.name.toString()}
+            </li>
         );
 
 

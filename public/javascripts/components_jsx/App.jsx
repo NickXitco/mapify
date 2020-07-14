@@ -30,6 +30,7 @@ class App extends React.Component {
     }
 
     updateClickedArtist(artist) {
+        console.log(artist);
         this.setState({clickedArtist: artist});
     }
 
@@ -87,6 +88,7 @@ class App extends React.Component {
                 <ReactSidebar type={"artist"}
                               artist={this.state.clickedArtist}
                               updateClickedGenre={this.updateClickedGenre}
+                              updateClickedArtist={this.updateClickedArtist}
                 />
 
                 <ReactSearchBox

@@ -45,6 +45,7 @@ var App = function (_React$Component) {
     _createClass(App, [{
         key: "updateClickedArtist",
         value: function updateClickedArtist(artist) {
+            console.log(artist);
             this.setState({ clickedArtist: artist });
         }
     }, {
@@ -100,7 +101,8 @@ var App = function (_React$Component) {
                 React.createElement(ReactInfobox, { artist: this.state.clickedArtist }),
                 React.createElement(ReactSidebar, { type: "artist",
                     artist: this.state.clickedArtist,
-                    updateClickedGenre: this.updateClickedGenre
+                    updateClickedGenre: this.updateClickedGenre,
+                    updateClickedArtist: this.updateClickedArtist
                 }),
                 React.createElement(ReactSearchBox, {
                     artist: this.state.clickedArtist,

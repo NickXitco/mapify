@@ -23,13 +23,20 @@ class ReactSidebar extends React.Component {
                         {`::-webkit-scrollbar-track {box-shadow: 0 0 5px ${this.props.artist.colorToString()};}  \n` +
                          `::-webkit-scrollbar-thumb {background: ${this.props.artist.colorToString()};`}
                     </style>
+
                     <SidebarStroke color={this.props.artist.colorToString()}/>
+
                     <ArtistProfile artist={this.props.artist} fontDecrement={3}/>
+
                     <FollowersStats artist={this.props.artist}/>
+
                     <GenresList genres={this.props.artist.genres}
                                 updateClickedGenre={this.props.updateClickedGenre}
                     />
-                    <ArtistsList artists={this.props.artist.relatedVertices}/>
+
+                    <ArtistsList artists={this.props.artist.relatedVertices}
+                                 updateClickedArtist={this.props.updateClickedArtist}
+                    />
                 </div>
             );
         } else {
