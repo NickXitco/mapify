@@ -32,9 +32,7 @@ var App = function (_React$Component) {
 
             testArtist: null,
 
-            searchResults: [],
-
-            wobblyState: 0
+            searchResults: []
         };
 
         _this.canvasUpdate = _this.canvasUpdate.bind(_this);
@@ -47,29 +45,12 @@ var App = function (_React$Component) {
         key: "updateClickedArtist",
         value: function updateClickedArtist(artist) {
             this.setState({ testArtist: artist });
-            this.setState({ wobblyState: 1 });
         }
     }, {
         key: "canvasUpdate",
         value: function canvasUpdate(canvas) {
-            this.setState({ canvas: canvas });
-            this.ro = new ResizeObserver(function (entries) {
-                if (entries.length !== 1) {
-                    console.log("I don't know what this is");
-                } else {
-                    var cr = entries[0].contentRect;
-                    var w = cr.width;
-                    var h = cr.height;
-                    console.log(w);
-                    console.log(h);
-                    if (p) {
-                        p.resizeCanvas(w, h);
-                    }
-                    camera.zoomCamera({ x: camera.x, y: camera.y });
-                }
-            });
-            this.ro.observe(document.getElementById("root"));
-            this.setState({ testArtist: new Artist({ name: "TestArtist", id: "6", followers: 2000, popularity: 5, x: 50, y: 50, size: 20,
+            this.setState({ canvas: canvas,
+                testArtist: new Artist({ name: "TestArtist", id: "6", followers: 2000, popularity: 5, x: 50, y: 50, size: 20,
                     r: 25, g: 255, b: 50,
                     genres: ["pop"],
                     relatedIDS: [],
@@ -78,6 +59,25 @@ var App = function (_React$Component) {
                     loaded: true
                 })
             });
+            this.initializeResizeObserver();
+        }
+    }, {
+        key: "initializeResizeObserver",
+        value: function initializeResizeObserver() {
+            this.ro = new ResizeObserver(function (entries) {
+                if (entries.length !== 1) {
+                    console.log("I don't know what this is");
+                } else {
+                    var cr = entries[0].contentRect;
+                    var w = cr.width;
+                    var h = cr.height;
+                    if (p) {
+                        p.resizeCanvas(w, h);
+                    }
+                    camera.zoomCamera({ x: camera.x, y: camera.y });
+                }
+            });
+            this.ro.observe(document.getElementById("root"));
         }
     }, {
         key: "componentDidMount",
@@ -88,8 +88,6 @@ var App = function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            console.log(this.state);
-            console.log("Doing a render!");
             return React.createElement(
                 "div",
                 { className: "fullScreen" },

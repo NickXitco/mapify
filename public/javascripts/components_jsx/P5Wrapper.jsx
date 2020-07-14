@@ -28,9 +28,6 @@ class P5Wrapper extends React.Component {
         };
 
         p.draw = () => {
-            console.log(this.props.wobblyState);
-
-
             if (this.loading) {
                 drawLoading();
                 return;

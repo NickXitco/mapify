@@ -39,8 +39,6 @@ var P5Wrapper = function (_React$Component) {
             };
 
             p.draw = function () {
-                console.log(_this.props.wobblyState);
-
                 if (_this.loading) {
                     drawLoading();
                     return;
