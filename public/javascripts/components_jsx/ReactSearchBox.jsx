@@ -71,7 +71,7 @@ class ReactSearchBox extends React.Component {
             boxShadow: "0 0 6px 0.5px " + color
         }
 
-        const results = this.state.suggestions.map(artist =>
+        let suggestions = this.state.suggestions.map(artist =>
             <li className={"suggestion"}
                 key={artist.id.toString()}
             >
@@ -82,6 +82,20 @@ class ReactSearchBox extends React.Component {
                 </div>
             </li>
         );
+
+        if (suggestions.length === 0 && this.state.value.length > 0) {
+            suggestions.push(
+                <li className={"suggestion"}
+                    key={"noResults"}
+                >
+                    <div className={"suggestedArtist"}>
+                        <p>
+                            No Results Found.
+                        </p>
+                    </div>
+                </li>
+            )
+        }
 
         return (
             <div className={"searchBox"}
@@ -99,7 +113,7 @@ class ReactSearchBox extends React.Component {
                     />
                 </div>
                 <ul className={"suggestions"}>
-                    {results}
+                    {suggestions}
                 </ul>
             </div>
         )

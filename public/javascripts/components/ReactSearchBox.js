@@ -95,7 +95,7 @@ var ReactSearchBox = function (_React$Component) {
                 boxShadow: "0 0 6px 0.5px " + color
             };
 
-            var results = this.state.suggestions.map(function (artist) {
+            var suggestions = this.state.suggestions.map(function (artist) {
                 return React.createElement(
                     "li",
                     { className: "suggestion",
@@ -114,6 +114,24 @@ var ReactSearchBox = function (_React$Component) {
                     )
                 );
             });
+
+            if (suggestions.length === 0 && this.state.value.length > 0) {
+                suggestions.push(React.createElement(
+                    "li",
+                    { className: "suggestion",
+                        key: "noResults"
+                    },
+                    React.createElement(
+                        "div",
+                        { className: "suggestedArtist" },
+                        React.createElement(
+                            "p",
+                            null,
+                            "No Results Found."
+                        )
+                    )
+                ));
+            }
 
             return React.createElement(
                 "div",
@@ -140,7 +158,7 @@ var ReactSearchBox = function (_React$Component) {
                 React.createElement(
                     "ul",
                     { className: "suggestions" },
-                    results
+                    suggestions
                 )
             );
         }
