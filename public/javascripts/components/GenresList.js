@@ -18,6 +18,8 @@ var GenresList = function (_React$Component) {
     _createClass(GenresList, [{
         key: "render",
         value: function render() {
+            var _this2 = this;
+
             if (this.props.genres.length === 0) {
                 return null;
             }
@@ -25,7 +27,12 @@ var GenresList = function (_React$Component) {
             var genres = this.props.genres.map(function (genre) {
                 return React.createElement(
                     "li",
-                    { className: "sidebarListItem", key: genre.toString() },
+                    { className: "sidebarListItem",
+                        key: genre.toString(),
+                        onClick: function onClick() {
+                            _this2.props.updateClickedGenre(genre.toString());
+                        }
+                    },
                     genre.toString()
                 );
             });

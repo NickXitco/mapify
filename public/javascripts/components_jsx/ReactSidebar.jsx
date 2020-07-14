@@ -26,7 +26,9 @@ class ReactSidebar extends React.Component {
                     <SidebarStroke color={this.props.artist.colorToString()}/>
                     <ArtistProfile artist={this.props.artist} fontDecrement={3}/>
                     <FollowersStats artist={this.props.artist}/>
-                    <GenresList genres={this.props.artist.genres}/>
+                    <GenresList genres={this.props.artist.genres}
+                                updateClickedGenre={this.props.updateClickedGenre}
+                    />
                     <ArtistsList artists={this.props.artist.relatedVertices}/>
                 </div>
             );

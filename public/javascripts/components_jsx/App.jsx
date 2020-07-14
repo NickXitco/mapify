@@ -25,11 +25,16 @@ class App extends React.Component {
 
         this.canvasUpdate = this.canvasUpdate.bind(this);
         this.updateClickedArtist = this.updateClickedArtist.bind(this);
+        this.updateClickedGenre = this.updateClickedGenre.bind(this);
 
     }
 
     updateClickedArtist(artist) {
         this.setState({clickedArtist: artist});
+    }
+
+    updateClickedGenre(genre) {
+        console.log(genre);
     }
 
     canvasUpdate(canvas) {
@@ -78,9 +83,22 @@ class App extends React.Component {
         return (
             <div className={"fullScreen"}>
                 <ReactInfobox artist={this.state.clickedArtist}/>
-                <ReactSidebar type={"artist"} artist={this.state.clickedArtist}/>
-                <ReactSearchBox artist={this.state.clickedArtist} results={this.state.searchResults}/>
-                <P5Wrapper canvasUpdate={this.canvasUpdate} updateArtist={this.updateClickedArtist} wobblyState={this.state.wobblyState}/>
+
+                <ReactSidebar type={"artist"}
+                              artist={this.state.clickedArtist}
+                              updateClickedGenre={this.updateClickedGenre}
+                />
+
+                <ReactSearchBox
+                    artist={this.state.clickedArtist}
+                    results={this.state.searchResults}
+                />
+
+                <P5Wrapper
+                    canvasUpdate={this.canvasUpdate}
+                    updateArtist={this.updateClickedArtist}
+                    wobblyState={this.state.wobblyState}
+                />
             </div>
         );
     }

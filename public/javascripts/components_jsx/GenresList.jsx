@@ -9,7 +9,12 @@ class GenresList extends React.Component {
         }
 
         const genres = this.props.genres.map(genre =>
-            <li className={"sidebarListItem"} key={genre.toString()}>{genre.toString()}</li>
+            <li className={"sidebarListItem"}
+                key={genre.toString()}
+                onClick={() => {this.props.updateClickedGenre(genre.toString())}}
+            >
+                {genre.toString()}
+            </li>
         );
 
         return (

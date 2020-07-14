@@ -37,6 +37,7 @@ var App = function (_React$Component) {
 
         _this.canvasUpdate = _this.canvasUpdate.bind(_this);
         _this.updateClickedArtist = _this.updateClickedArtist.bind(_this);
+        _this.updateClickedGenre = _this.updateClickedGenre.bind(_this);
 
         return _this;
     }
@@ -45,6 +46,11 @@ var App = function (_React$Component) {
         key: "updateClickedArtist",
         value: function updateClickedArtist(artist) {
             this.setState({ clickedArtist: artist });
+        }
+    }, {
+        key: "updateClickedGenre",
+        value: function updateClickedGenre(genre) {
+            console.log(genre);
         }
     }, {
         key: "canvasUpdate",
@@ -92,9 +98,19 @@ var App = function (_React$Component) {
                 "div",
                 { className: "fullScreen" },
                 React.createElement(ReactInfobox, { artist: this.state.clickedArtist }),
-                React.createElement(ReactSidebar, { type: "artist", artist: this.state.clickedArtist }),
-                React.createElement(ReactSearchBox, { artist: this.state.clickedArtist, results: this.state.searchResults }),
-                React.createElement(P5Wrapper, { canvasUpdate: this.canvasUpdate, updateArtist: this.updateClickedArtist, wobblyState: this.state.wobblyState })
+                React.createElement(ReactSidebar, { type: "artist",
+                    artist: this.state.clickedArtist,
+                    updateClickedGenre: this.updateClickedGenre
+                }),
+                React.createElement(ReactSearchBox, {
+                    artist: this.state.clickedArtist,
+                    results: this.state.searchResults
+                }),
+                React.createElement(P5Wrapper, {
+                    canvasUpdate: this.canvasUpdate,
+                    updateArtist: this.updateClickedArtist,
+                    wobblyState: this.state.wobblyState
+                })
             );
         }
     }]);
