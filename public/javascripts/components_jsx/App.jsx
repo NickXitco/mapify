@@ -79,6 +79,7 @@ class App extends React.Component {
         console.log("Doing a render!");
         return (
             <div className={"fullScreen"}>
+                <ReactInfobox artist={this.state.testArtist}/>
                 <ReactSidebar type={"artist"} artist={this.state.testArtist}/>
                 <ReactSearchBox results={this.state.searchResults}/>
                 <P5Wrapper canvasUpdate={this.canvasUpdate} updateArtist={this.updateClickedArtist} wobblyState={this.state.wobblyState}/>

@@ -118,6 +118,22 @@ canvas {
   overflow: hidden;
 }
 
+.infoBox {
+  user-select: none;
+
+  visibility: visible;
+
+  background-color: rgba(0, 0, 0, .90);
+  position: absolute;
+  z-index: 1000;
+  display: block;
+  border: solid 3px;
+
+  box-shadow: 0 0 3px 3px white;
+
+  overflow: hidden;
+}
+
 .infoBoxText {
   font-family: montserrat, sans-serif;
   font-style: normal;
@@ -141,6 +157,53 @@ canvas {
   text-transform: lowercase;
   vertical-align: text-top;
 }
+
+.infoBoxArtistName {
+  font-weight: 600;
+  text-transform: uppercase;
+  vertical-align: text-bottom;
+}
+
+.infoBoxArtistGenre {
+  font-weight: 100;
+  text-transform: lowercase;
+  vertical-align: text-top;
+}
+
+
+.infoBoxRight {
+  border-radius: 50px 0 100px 0;
+  text-align: left;
+}
+
+.infoBoxArtistNameRight {
+  float: left;
+  padding: 10px 50px 0 20px;
+}
+
+.infoBoxArtistGenreRight {
+  float: left;
+  padding: 0 75px 10px 20px;
+}
+
+
+.infoBoxLeft {
+  border-radius: 0 50px 0 100px;
+  text-align: right;
+}
+
+.infoBoxArtistNameLeft {
+  float: right;
+  padding: 10px 20px 0 50px;
+}
+
+.infoBoxArtistGenreLeft {
+  float: right;
+  padding: 0 20px 10px 75px;
+}
+
+
+
 /*</editor-fold>*/
 
 /*<editor-fold desc="SEARCH BOX STYLINGS">*/

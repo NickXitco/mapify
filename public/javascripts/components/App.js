@@ -93,6 +93,7 @@ var App = function (_React$Component) {
             return React.createElement(
                 "div",
                 { className: "fullScreen" },
+                React.createElement(ReactInfobox, { artist: this.state.testArtist }),
                 React.createElement(ReactSidebar, { type: "artist", artist: this.state.testArtist }),
                 React.createElement(ReactSearchBox, { results: this.state.searchResults }),
                 React.createElement(P5Wrapper, { canvasUpdate: this.canvasUpdate, updateArtist: this.updateClickedArtist, wobblyState: this.state.wobblyState })
