@@ -33,7 +33,7 @@ var ReactSidebar = function (_React$Component) {
                     "div",
                     { className: "sidebar" },
                     React.createElement(SidebarStroke, { color: this.props.artist.colorToString() }),
-                    React.createElement(ArtistProfile, { artist: this.props.artist }),
+                    React.createElement(ArtistProfile, { artist: this.props.artist, fontDecrement: 3 }),
                     React.createElement(FollowersStats, { artist: this.props.artist }),
                     React.createElement(GenresList, { genres: this.props.artist.genres }),
                     React.createElement(ArtistsList, { artists: this.props.artist.relatedVertices })

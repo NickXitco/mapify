@@ -20,7 +20,7 @@ class ReactSidebar extends React.Component {
             return (
                 <div className={"sidebar"}>
                     <SidebarStroke color={this.props.artist.colorToString()}/>
-                    <ArtistProfile artist={this.props.artist}/>
+                    <ArtistProfile artist={this.props.artist} fontDecrement={3}/>
                     <FollowersStats artist={this.props.artist}/>
                     <GenresList genres={this.props.artist.genres}/>
                     <ArtistsList artists={this.props.artist.relatedVertices}/>

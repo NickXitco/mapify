@@ -12,18 +12,71 @@ var ArtistProfile = function (_React$Component) {
     function ArtistProfile(props) {
         _classCallCheck(this, ArtistProfile);
 
-        return _possibleConstructorReturn(this, (ArtistProfile.__proto__ || Object.getPrototypeOf(ArtistProfile)).call(this, props));
+        var _this = _possibleConstructorReturn(this, (ArtistProfile.__proto__ || Object.getPrototypeOf(ArtistProfile)).call(this, props));
+
+        _this.state = {
+            fontSize: 60,
+            artist: null,
+            fontSizeUpdating: false
+        };
+
+        return _this;
     }
 
     _createClass(ArtistProfile, [{
+        key: "componentDidMount",
+        value: function componentDidMount() {
+            var _this2 = this;
+
+            if (this.props.artist !== this.state.artist) {
+                this.setState({ fontSize: 60, artist: this.props.artist }, function () {
+                    _this2.decrementFontSize();
+                });
+            }
+        }
+    }, {
+        key: "componentDidUpdate",
+        value: function componentDidUpdate() {
+            var _this3 = this;
+
+            if (this.props.artist !== this.state.artist) {
+                this.setState({ fontSize: 60, artist: this.props.artist }, function () {
+                    _this3.decrementFontSize();
+                });
+            }
+
+            if (this.fontSizeUpdating) {
+                this.decrementFontSize();
+            }
+        }
+    }, {
+        key: "decrementFontSize",
+        value: function decrementFontSize() {
+            var height = this.nameElement.clientHeight;
+            var width = this.nameElement.clientWidth;
+
+            if (height > 150 || width > 375) {
+                this.setState(function (prevState, props) {
+                    return {
+                        fontSize: prevState.fontSize - props.fontDecrement
+                    };
+                });
+                this.fontSizeUpdating = true;
+            } else {
+                this.fontSizeUpdating = false;
+            }
+        }
+    }, {
         key: "render",
         value: function render() {
+            var _this4 = this;
+
             var pictureStyle = {
                 boxShadow: "0 0 13px 1px " + this.props.artist.colorToString()
             };
 
             var nameStyle = {
-                fontSize: "30px"
+                fontSize: this.state.fontSize
             };
 
             return React.createElement(
@@ -35,7 +88,10 @@ var ArtistProfile = function (_React$Component) {
                     { className: "name" },
                     React.createElement(
                         "h1",
-                        { className: "sidebarArtistName", style: nameStyle },
+                        { className: "sidebarArtistName", style: nameStyle,
+                            ref: function ref(nameElement) {
+                                _this4.nameElement = nameElement;
+                            } },
                         this.props.artist.name
                     )
                 )
