@@ -20,7 +20,7 @@ var App = function (_React$Component) {
             camera: null,
 
             hoveredArtist: null,
-            clickedArist: null,
+            clickedArtist: null,
 
             quadHead: null,
 
@@ -44,13 +44,13 @@ var App = function (_React$Component) {
     _createClass(App, [{
         key: "updateClickedArtist",
         value: function updateClickedArtist(artist) {
-            this.setState({ testArtist: artist });
+            this.setState({ clickedArtist: artist });
         }
     }, {
         key: "canvasUpdate",
         value: function canvasUpdate(canvas) {
             this.setState({ canvas: canvas,
-                testArtist: new Artist({ name: "TestArtist", id: "6", followers: 2000, popularity: 5, x: 50, y: 50, size: 20,
+                clickedArtist: new Artist({ name: "TestArtist", id: "6", followers: 2000, popularity: 5, x: 50, y: 50, size: 20,
                     r: 25, g: 255, b: 50,
                     genres: ["pop"],
                     relatedIDS: [],
@@ -91,9 +91,9 @@ var App = function (_React$Component) {
             return React.createElement(
                 "div",
                 { className: "fullScreen" },
-                React.createElement(ReactInfobox, { artist: this.state.testArtist }),
-                React.createElement(ReactSidebar, { type: "artist", artist: this.state.testArtist }),
-                React.createElement(ReactSearchBox, { results: this.state.searchResults }),
+                React.createElement(ReactInfobox, { artist: this.state.clickedArtist }),
+                React.createElement(ReactSidebar, { type: "artist", artist: this.state.clickedArtist }),
+                React.createElement(ReactSearchBox, { artist: this.state.clickedArtist, results: this.state.searchResults }),
                 React.createElement(P5Wrapper, { canvasUpdate: this.canvasUpdate, updateArtist: this.updateClickedArtist, wobblyState: this.state.wobblyState })
             );
         }
@@ -101,19 +101,5 @@ var App = function (_React$Component) {
 
     return App;
 }(React.Component);
-
-/*
-
-So here's the plan as I see it.
-
-We have an App component that holds:
-    -Info Box
-    -Search Box
-    -Sidebar
-    -Future UI
-    -THE CANVAS :O
-
-    The app holds all (or as many as we can manage) global variables in its state.
- */
 
 ReactDOM.render(React.createElement(App, null), document.getElementById('root'));
