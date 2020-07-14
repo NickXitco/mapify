@@ -217,11 +217,6 @@ var P5Wrapper = function (_React$Component) {
                     MouseEvents.drag = { x: p.mouseX, y: p.mouseY };
                     MouseEvents.start = { x: p.mouseX, y: p.mouseY };
                 }
-
-                if (!SearchBox.hoverFlag) {
-                    SearchBox.deleteSuggestions();
-                    SearchBox.input.value = "";
-                }
             };
 
             p.mouseDragged = function () {

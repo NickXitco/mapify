@@ -37,9 +37,6 @@ const Sidebar = {
             Sidebar.relatedArtistsList.removeChild(Sidebar.relatedArtistsList.lastChild);
         }
 
-        SearchBox.input.style.borderColor = "white";
-        SearchBox.input.style.boxShadow = "0 0 6px 0.5px white";
-
         if (removeFromFlow) {
             Sidebar.dom.style.display = "none";
             Sidebar.openAmount = 0;
@@ -120,10 +117,6 @@ const Sidebar = {
         Sidebar.picture.style.boxShadow = "0 0 13px 1px " + artist.colorToString();
         Sidebar.stroke.style.boxShadow = "0 0 13px 1px " + artist.colorToString();
         Sidebar.stroke.style.background = artist.colorToString();
-
-
-        SearchBox.input.style.borderColor = artist.colorToString();
-        SearchBox.input.style.boxShadow = "0 0 6px 0.5px " + artist.colorToString();
     },
 
     //TODO I KNOW THIS IS AN ABOMINATION GIMME A SEC
@@ -174,10 +167,6 @@ const Sidebar = {
         Sidebar.stroke.style.background = GenreHelpers.genreColor.toString();
         Sidebar.scrollbar_style.innerHTML = `::-webkit-scrollbar-track {box-shadow: 0 0 5px ${GenreHelpers.genreColor.toString()};}  \n` +
             `::-webkit-scrollbar-thumb {background: ${GenreHelpers.genreColor.toString()};}`
-
-
-        SearchBox.input.style.borderColor = GenreHelpers.genreColor.toString();
-        SearchBox.input.style.boxShadow = "0 0 6px 0.5px " + GenreHelpers.genreColor.toString();
     },
 
     getClickedRelated: async function(p, id, quadHead, nodeLookup) {
