@@ -40,16 +40,54 @@ class App extends React.Component {
         this.setState({uiHover: value});
     }
 
+
+    //<editor-fold desc="Clicked Artist Handling">
     updateClickedArtist(artist) {
         console.log(artist);
         if (artist.loaded) {
             this.setState({clickedArtist: artist});
         } else if (artist.id) {
             loadArtist(p, artist, quadHead, nodeLookup).then(() =>{
+                    artist.edges = [];
                     this.setState({clickedArtist: nodeLookup[artist.id]});
             });
         }
     }
+
+    loadArtistFromUI(artist) {
+        if (artist.loaded) {
+            this.setState({clickedArtist: artist});
+        } else {
+            fetch(`artist/${artist.id}/true`)
+                .then(response => response.json())
+                .then(data => {
+                    const node = createNewNode(data, quadHead, nodeLookup);
+                    for (const r of data.related) {
+                        node.relatedVertices.add(createNewNode(r, quadHead, nodeLookup));
+                    }
+                    node.loaded = true;
+                    this.setState({clickedArtist: node});
+                    node.edges = [];
+                })
+        }
+        camera.setCameraMove(artist.x, artist.y, camera.getZoomFromWidth(artist.size * 50), 30);
+    }
+
+    loadArtistFromSearch(searchTerm) {
+        loadArtistFromSearch(p, searchTerm, false, quadHead, nodeLookup).then(node => {
+            console.trace(node);
+            if (node) {
+                this.setState({clickedArtist: node});
+                node.edges = [];
+                camera.setCameraMove(node.x, node.y, camera.getZoomFromWidth(node.size * 50), 30);
+            }
+        });
+    }
+    //</editor-fold>
+
+
+
+
 
     unsetClickedArtist() {
         this.setState({clickedArtist: null});
@@ -71,35 +109,6 @@ class App extends React.Component {
             console.trace(node);
             if (node) {
                 this.setState({clickedArtist: node});
-            }
-        });
-    }
-
-    loadArtistFromUI(artist) {
-        if (artist.loaded) {
-            this.setState({clickedArtist: artist});
-        } else {
-            fetch(`artist/${artist.id}/true`)
-                .then(response => response.json())
-                .then(data => {
-                    const node = createNewNode(data, quadHead, nodeLookup);
-                    for (const r of data.related) {
-                        node.relatedVertices.add(createNewNode(r, quadHead, nodeLookup));
-                    }
-                    node.loaded = true;
-                    this.setState({clickedArtist: node});
-                })
-        }
-
-        camera.setCameraMove(artist.x, artist.y, camera.getZoomFromWidth(artist.size * 50), 30);
-    }
-
-    loadArtistFromSearch(searchTerm) {
-        loadArtistFromSearch(p, searchTerm, false, quadHead, nodeLookup).then(node => {
-            console.trace(node);
-            if (node) {
-                this.setState({clickedArtist: node});
-                camera.setCameraMove(node.x, node.y, camera.getZoomFromWidth(node.size * 50), 30);
             }
         });
     }

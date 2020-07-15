@@ -117,12 +117,13 @@ class P5Wrapper extends React.Component {
             Debug.createTimingEvent("Darken Scene for Related Nodes");
 
             if (clickedArtist && clickedArtist.loaded) {
-                if (this.newEdges) {
-                    this.edges = makeEdges(clickedArtist)
-                    this.newEdges = false;
-                    this.props.updateClickedArtist(clickedArtist);
-                } else{
-                    drawEdges(p, camera, this.edges, clickedArtist, hoveredArtist);
+                if (clickedArtist.relatedVertices.size > 0) {
+                    if (clickedArtist.edges.length === 0) {
+                        clickedArtist.edges = makeEdges(clickedArtist);
+                        this.props.updateClickedArtist(clickedArtist); //TODO why is this here
+                    } else {
+                        drawEdges(p, camera, clickedArtist.edges, clickedArtist, hoveredArtist);
+                    }
                 }
 
                 Debug.createTimingEvent("Draw Related Edges");
@@ -226,9 +227,6 @@ class P5Wrapper extends React.Component {
         this.unloadedQuads = new Set();
         this.loadingQuads = new Set();
         this.unloadedPQ = new PriorityQueue((a, b) => Utils.dist(camera.x, camera.y, a.x, a.y) - Utils.dist(camera.x, camera.y, b.x, b.y));
-
-        this.newEdges = true;
-        this.edges = [];
     }
 
     render() {
