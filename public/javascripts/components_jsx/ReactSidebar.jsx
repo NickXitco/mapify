@@ -18,7 +18,11 @@ class ReactSidebar extends React.Component {
             }
 
             return (
-                <div className={"sidebar"}>
+                <div className={"sidebar"}
+                     onMouseEnter={() => {this.props.updateHoverFlag(true)}}
+                     onMouseLeave={() => {this.props.updateHoverFlag(false)}}
+                >
+
                     <style>
                         {`::-webkit-scrollbar-track {box-shadow: 0 0 5px ${this.props.artist.colorToString()};}  \n` +
                          `::-webkit-scrollbar-thumb {background: ${this.props.artist.colorToString()};`}

@@ -162,6 +162,7 @@ function createNewNode(data, quadHead, nodeLookup) {
         nodeLookup[data.id].quad = null;
     }
     quadHead.insert(nodeLookup[data.id]);
+    return nodeLookup[data.id];
 }
 
 async function loadArtist(p, artist, quadHead, nodeLookup) {

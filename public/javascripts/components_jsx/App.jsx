@@ -9,6 +9,7 @@ class App extends React.Component {
 
             hoveredArtist: null,
             clickedArtist: null,
+            zoomArtist: null,
 
             quadHead: null,
 
@@ -17,8 +18,6 @@ class App extends React.Component {
 
             timingEvents: {},
             lastTime: 0,
-
-            testArtist: null,
 
             uiHover: false
         }
@@ -76,20 +75,36 @@ class App extends React.Component {
         });
     }
 
+    loadArtistFromUI(artist) {
+        if (artist.loaded) {
+            this.setState({clickedArtist: artist});
+        } else {
+            fetch(`artist/${artist.id}/true`)
+                .then(response => response.json())
+                .then(data => {
+                    const node = createNewNode(data, quadHead, nodeLookup);
+                    for (const r of data.related) {
+                        node.relatedVertices.add(createNewNode(r, quadHead, nodeLookup));
+                    }
+                    node.loaded = true;
+                    this.setState({clickedArtist: node});
+                })
+        }
+
+        camera.setCameraMove(artist.x, artist.y, camera.getZoomFromWidth(artist.size * 50), 30);
+    }
+
+    loadArtistFromSearch(searchTerm) {
+        /*
+        1. Fetch artist from DB
+        2. Load the artist
+        3. set the clickedArtist state and set the camera move
+         */
+    }
+
 
     canvasUpdate(canvas) {
-        this.setState({canvas: canvas,
-                       clickedArtist: new Artist(
-                        {name: "TestArtist", id: "6", followers: 2000, popularity: 5, x: 50, y: 50, size: 20,
-                            r: 25, g: 255, b: 50,
-                            genres: ["pop"],
-                            relatedIDS: [],
-                            relatedVertices: [],
-                            quad: null,
-                            loaded: true
-                            }
-                        )
-                    })
+        this.setState({canvas: canvas})
         this.initializeResizeObserver()
     }
 
@@ -116,10 +131,12 @@ class App extends React.Component {
             <div className={"fullScreen"}>
                 <ReactInfobox artist={this.state.hoveredArtist}/>
 
-                <ReactSidebar type={"artist"}
-                              artist={this.state.clickedArtist}
-                              updateClickedGenre={this.updateClickedGenre}
-                              updateClickedArtist={this.updateClickedArtist}
+                <ReactSidebar
+                    type={"artist"}
+                    artist={this.state.clickedArtist}
+                    updateClickedGenre={this.updateClickedGenre}
+                    updateClickedArtist={this.updateClickedArtist}
+                    updateHoverFlag={this.updateHoverFlag}
                 />
 
                 <ReactSearchBox
@@ -131,6 +148,10 @@ class App extends React.Component {
 
                 <P5Wrapper
                     canvasUpdate={this.canvasUpdate}
+
+                    uiHover={this.state.uiHover}
+                    updateHoverFlag={this.updateHoverFlag}
+
                     updateClickedArtist={this.updateClickedArtist}
                     unsetClickedArtist={this.unsetClickedArtist}
                     updateHoveredArtist={this.updateHoveredArtist}

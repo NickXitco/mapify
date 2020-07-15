@@ -22,6 +22,8 @@ class Artist {
 
     loaded;
 
+    edges;
+
     constructor(doc) {
         this.name = doc.name;
         this.id = doc.id;
@@ -44,6 +46,8 @@ class Artist {
         this.relatedVertices = new Set();
         this.quad = null;
         this.loaded = false;
+
+        this.edges = [];
     }
 
     colorToString() {

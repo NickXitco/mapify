@@ -21,6 +21,7 @@ var App = function (_React$Component) {
 
             hoveredArtist: null,
             clickedArtist: null,
+            zoomArtist: null,
 
             quadHead: null,
 
@@ -29,8 +30,6 @@ var App = function (_React$Component) {
 
             timingEvents: {},
             lastTime: 0,
-
-            testArtist: null,
 
             uiHover: false
         };
@@ -100,18 +99,62 @@ var App = function (_React$Component) {
             });
         }
     }, {
+        key: "loadArtistFromUI",
+        value: function loadArtistFromUI(artist) {
+            var _this4 = this;
+
+            if (artist.loaded) {
+                this.setState({ clickedArtist: artist });
+            } else {
+                fetch("artist/" + artist.id + "/true").then(function (response) {
+                    return response.json();
+                }).then(function (data) {
+                    var node = createNewNode(data, quadHead, nodeLookup);
+                    var _iteratorNormalCompletion = true;
+                    var _didIteratorError = false;
+                    var _iteratorError = undefined;
+
+                    try {
+                        for (var _iterator = data.related[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                            var r = _step.value;
+
+                            node.relatedVertices.add(createNewNode(r, quadHead, nodeLookup));
+                        }
+                    } catch (err) {
+                        _didIteratorError = true;
+                        _iteratorError = err;
+                    } finally {
+                        try {
+                            if (!_iteratorNormalCompletion && _iterator.return) {
+                                _iterator.return();
+                            }
+                        } finally {
+                            if (_didIteratorError) {
+                                throw _iteratorError;
+                            }
+                        }
+                    }
+
+                    node.loaded = true;
+                    _this4.setState({ clickedArtist: node });
+                });
+            }
+
+            camera.setCameraMove(artist.x, artist.y, camera.getZoomFromWidth(artist.size * 50), 30);
+        }
+    }, {
+        key: "loadArtistFromSearch",
+        value: function loadArtistFromSearch(searchTerm) {
+            /*
+            1. Fetch artist from DB
+            2. Load the artist
+            3. set the clickedArtist state and set the camera move
+             */
+        }
+    }, {
         key: "canvasUpdate",
         value: function canvasUpdate(canvas) {
-            this.setState({ canvas: canvas,
-                clickedArtist: new Artist({ name: "TestArtist", id: "6", followers: 2000, popularity: 5, x: 50, y: 50, size: 20,
-                    r: 25, g: 255, b: 50,
-                    genres: ["pop"],
-                    relatedIDS: [],
-                    relatedVertices: [],
-                    quad: null,
-                    loaded: true
-                })
-            });
+            this.setState({ canvas: canvas });
             this.initializeResizeObserver();
         }
     }, {
@@ -140,10 +183,12 @@ var App = function (_React$Component) {
                 "div",
                 { className: "fullScreen" },
                 React.createElement(ReactInfobox, { artist: this.state.hoveredArtist }),
-                React.createElement(ReactSidebar, { type: "artist",
+                React.createElement(ReactSidebar, {
+                    type: "artist",
                     artist: this.state.clickedArtist,
                     updateClickedGenre: this.updateClickedGenre,
-                    updateClickedArtist: this.updateClickedArtist
+                    updateClickedArtist: this.updateClickedArtist,
+                    updateHoverFlag: this.updateHoverFlag
                 }),
                 React.createElement(ReactSearchBox, {
                     artist: this.state.clickedArtist,
@@ -153,6 +198,10 @@ var App = function (_React$Component) {
                 }),
                 React.createElement(P5Wrapper, {
                     canvasUpdate: this.canvasUpdate,
+
+                    uiHover: this.state.uiHover,
+                    updateHoverFlag: this.updateHoverFlag,
+
                     updateClickedArtist: this.updateClickedArtist,
                     unsetClickedArtist: this.unsetClickedArtist,
                     updateHoveredArtist: this.updateHoveredArtist

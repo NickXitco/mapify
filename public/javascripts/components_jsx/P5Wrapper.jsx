@@ -8,7 +8,7 @@ class P5Wrapper extends React.Component {
     Sketch = (p) => {
         p.setup = () => {
             const canvas = p.createCanvas(window.innerWidth, window.innerHeight);
-            canvas.mouseOver(() => {Sidebar.hoverFlag = false; SearchBox.hoverFlag = false;})
+            canvas.mouseOver(() => {this.props.updateHoverFlag(false)})
 
             this.props.canvasUpdate(canvas);
 
@@ -60,7 +60,7 @@ class P5Wrapper extends React.Component {
 
             loadUnloaded(this.unprocessedResponses, this.unloadedPQ, this.loadingQuads, this.unloadedQuads);
 
-            if (!Sidebar.hoverFlag && !SearchBox.hoverFlag) {
+            if (!this.props.uiHover) {
                 hoveredArtist = getHoveredArtist(p, camera, clickedArtist, quadHead);
                 this.props.updateHoveredArtist(hoveredArtist);
             }
@@ -153,7 +153,7 @@ class P5Wrapper extends React.Component {
         };
 
         p.mouseWheel = (e) => {
-            if (Sidebar.hoverFlag) {
+            if (this.props.uiHover) {
                 return;
             }
             e.preventDefault();
@@ -176,7 +176,7 @@ class P5Wrapper extends React.Component {
         }
 
         p.mousePressed = () => {
-            if (!SearchBox.hoverFlag && !Sidebar.hoverFlag) {
+            if (!this.props.uiHover) {
                 MouseEvents.dragging = true;
                 MouseEvents.drag = {x: p.mouseX, y: p.mouseY};
                 MouseEvents.start = {x: p.mouseX, y: p.mouseY};

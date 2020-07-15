@@ -18,7 +18,7 @@ var P5Wrapper = function (_React$Component) {
             p.setup = function () {
                 var canvas = p.createCanvas(window.innerWidth, window.innerHeight);
                 canvas.mouseOver(function () {
-                    Sidebar.hoverFlag = false;SearchBox.hoverFlag = false;
+                    _this.props.updateHoverFlag(false);
                 });
 
                 _this.props.canvasUpdate(canvas);
@@ -71,7 +71,7 @@ var P5Wrapper = function (_React$Component) {
 
                 loadUnloaded(_this.unprocessedResponses, _this.unloadedPQ, _this.loadingQuads, _this.unloadedQuads);
 
-                if (!Sidebar.hoverFlag && !SearchBox.hoverFlag) {
+                if (!_this.props.uiHover) {
                     hoveredArtist = getHoveredArtist(p, camera, clickedArtist, quadHead);
                     _this.props.updateHoveredArtist(hoveredArtist);
                 }
@@ -189,7 +189,7 @@ var P5Wrapper = function (_React$Component) {
             };
 
             p.mouseWheel = function (e) {
-                if (Sidebar.hoverFlag) {
+                if (_this.props.uiHover) {
                     return;
                 }
                 e.preventDefault();
@@ -212,7 +212,7 @@ var P5Wrapper = function (_React$Component) {
             };
 
             p.mousePressed = function () {
-                if (!SearchBox.hoverFlag && !Sidebar.hoverFlag) {
+                if (!_this.props.uiHover) {
                     MouseEvents.dragging = true;
                     MouseEvents.drag = { x: p.mouseX, y: p.mouseY };
                     MouseEvents.start = { x: p.mouseX, y: p.mouseY };

@@ -24,6 +24,8 @@ var ReactSidebar = function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
+            var _this2 = this;
+
             if (this.props.type === "artist") {
                 if (!this.props.artist) {
                     return null;
@@ -31,7 +33,14 @@ var ReactSidebar = function (_React$Component) {
 
                 return React.createElement(
                     "div",
-                    { className: "sidebar" },
+                    { className: "sidebar",
+                        onMouseEnter: function onMouseEnter() {
+                            _this2.props.updateHoverFlag(true);
+                        },
+                        onMouseLeave: function onMouseLeave() {
+                            _this2.props.updateHoverFlag(false);
+                        }
+                    },
                     React.createElement(
                         "style",
                         null,
