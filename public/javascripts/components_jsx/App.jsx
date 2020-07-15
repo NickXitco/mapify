@@ -95,11 +95,13 @@ class App extends React.Component {
     }
 
     loadArtistFromSearch(searchTerm) {
-        /*
-        1. Fetch artist from DB
-        2. Load the artist
-        3. set the clickedArtist state and set the camera move
-         */
+        loadArtistFromSearch(p, searchTerm, false, quadHead, nodeLookup).then(node => {
+            console.trace(node);
+            if (node) {
+                this.setState({clickedArtist: node});
+                camera.setCameraMove(node.x, node.y, camera.getZoomFromWidth(node.size * 50), 30);
+            }
+        });
     }
 
 
