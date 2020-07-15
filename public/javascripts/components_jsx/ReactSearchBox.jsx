@@ -40,21 +40,17 @@ class ReactSearchBox extends React.Component {
     }
 
     processSuggestions(data) {
-        if (data.length === 0) {
-            //TODO no results
-        } else {
-            this.setState({suggestions: data});
-        }
+        this.setState({suggestions: data});
     }
 
     processSuggestionClick(artist) {
-        this.props.updateClickedArtist(artist);
+        this.props.loadArtistFromUI(artist);
         this.resetState();
     }
 
     sendSubmitIfEnter(e) {
         if (e.key === "Enter") {
-            this.props.processSearchSubmit(e.target.value);
+            this.props.loadArtistFromSearch(e.target.value);
             this.resetState();
         }
     }

@@ -52,14 +52,6 @@ var P5Wrapper = function (_React$Component) {
                 MouseEvents.drift(camera, p);
                 MouseEvents.zoom(camera);
 
-                if (SearchBox.point) {
-                    camera.setCameraMove(SearchBox.point.x, SearchBox.point.y, camera.getZoomFromWidth(SearchBox.point.size * 50), 30);
-
-                    clickedArtist = SearchBox.point;
-                    _this.newEdges = true;
-                    SearchBox.point = null;
-                }
-
                 camera.doCameraMove();
 
                 p.push();
@@ -152,12 +144,13 @@ var P5Wrapper = function (_React$Component) {
                 Debug.createTimingEvent("Darken Scene for Related Nodes");
 
                 if (clickedArtist && clickedArtist.loaded) {
-                    if (_this.newEdges) {
-                        _this.edges = makeEdges(clickedArtist);
-                        _this.newEdges = false;
-                        _this.props.updateClickedArtist(clickedArtist);
-                    } else {
-                        drawEdges(p, camera, _this.edges, clickedArtist, hoveredArtist);
+                    if (clickedArtist.relatedVertices.size > 0) {
+                        if (clickedArtist.edges.length === 0) {
+                            clickedArtist.edges = makeEdges(clickedArtist);
+                            _this.props.updateClickedArtist(clickedArtist); //TODO why is this here
+                        } else {
+                            drawEdges(p, camera, clickedArtist.edges, clickedArtist, hoveredArtist);
+                        }
                     }
 
                     Debug.createTimingEvent("Draw Related Edges");
@@ -271,9 +264,6 @@ var P5Wrapper = function (_React$Component) {
             this.unloadedPQ = new PriorityQueue(function (a, b) {
                 return Utils.dist(camera.x, camera.y, a.x, a.y) - Utils.dist(camera.x, camera.y, b.x, b.y);
             });
-
-            this.newEdges = true;
-            this.edges = [];
         }
     }, {
         key: "render",

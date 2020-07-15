@@ -41,13 +41,6 @@ class P5Wrapper extends React.Component {
             MouseEvents.drift(camera, p);
             MouseEvents.zoom(camera);
 
-            if (SearchBox.point) {
-                camera.setCameraMove(SearchBox.point.x, SearchBox.point.y, camera.getZoomFromWidth(SearchBox.point.size * 50), 30);
-
-                clickedArtist = SearchBox.point;
-                this.newEdges = true;
-                SearchBox.point = null;
-            }
 
             camera.doCameraMove();
 

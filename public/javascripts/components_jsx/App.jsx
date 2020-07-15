@@ -27,8 +27,10 @@ class App extends React.Component {
         this.updateClickedArtist = this.updateClickedArtist.bind(this);
         this.unsetClickedArtist = this.unsetClickedArtist.bind(this);
 
+        this.loadArtistFromUI = this.loadArtistFromUI.bind(this);
+        this.loadArtistFromSearch = this.loadArtistFromSearch.bind(this);
+
         this.updateClickedGenre = this.updateClickedGenre.bind(this);
-        this.processSearchSubmit = this.processSearchSubmit.bind(this);
 
         this.updateHoveredArtist = this.updateHoveredArtist.bind(this);
 
@@ -87,8 +89,6 @@ class App extends React.Component {
 
 
 
-
-
     unsetClickedArtist() {
         this.setState({clickedArtist: null});
     }
@@ -101,16 +101,6 @@ class App extends React.Component {
 
     updateClickedGenre(genre) {
         console.log(genre);
-    }
-
-    processSearchSubmit(value) {
-        console.trace(value);
-        loadArtistFromSearch(p, value, false, quadHead, nodeLookup).then(node => {
-            console.trace(node);
-            if (node) {
-                this.setState({clickedArtist: node});
-            }
-        });
     }
 
 
@@ -152,8 +142,8 @@ class App extends React.Component {
 
                 <ReactSearchBox
                     artist={this.state.clickedArtist}
-                    updateClickedArtist={this.updateClickedArtist}
-                    processSearchSubmit={this.processSearchSubmit}
+                    loadArtistFromUI={this.loadArtistFromUI}
+                    loadArtistFromSearch={this.loadArtistFromSearch}
                     updateHoverFlag={this.updateHoverFlag}
                 />
 

@@ -39,8 +39,10 @@ var App = function (_React$Component) {
         _this.updateClickedArtist = _this.updateClickedArtist.bind(_this);
         _this.unsetClickedArtist = _this.unsetClickedArtist.bind(_this);
 
+        _this.loadArtistFromUI = _this.loadArtistFromUI.bind(_this);
+        _this.loadArtistFromSearch = _this.loadArtistFromSearch.bind(_this);
+
         _this.updateClickedGenre = _this.updateClickedGenre.bind(_this);
-        _this.processSearchSubmit = _this.processSearchSubmit.bind(_this);
 
         _this.updateHoveredArtist = _this.updateHoveredArtist.bind(_this);
 
@@ -54,6 +56,9 @@ var App = function (_React$Component) {
         value: function updateHoverFlag(value) {
             this.setState({ uiHover: value });
         }
+
+        //<editor-fold desc="Clicked Artist Handling">
+
     }, {
         key: "updateClickedArtist",
         value: function updateClickedArtist(artist) {
@@ -64,44 +69,15 @@ var App = function (_React$Component) {
                 this.setState({ clickedArtist: artist });
             } else if (artist.id) {
                 loadArtist(p, artist, quadHead, nodeLookup).then(function () {
+                    artist.edges = [];
                     _this2.setState({ clickedArtist: nodeLookup[artist.id] });
                 });
             }
         }
     }, {
-        key: "unsetClickedArtist",
-        value: function unsetClickedArtist() {
-            this.setState({ clickedArtist: null });
-        }
-    }, {
-        key: "updateHoveredArtist",
-        value: function updateHoveredArtist(artist) {
-            if (this.state.hoveredArtist !== artist) {
-                this.setState({ hoveredArtist: artist });
-            }
-        }
-    }, {
-        key: "updateClickedGenre",
-        value: function updateClickedGenre(genre) {
-            console.log(genre);
-        }
-    }, {
-        key: "processSearchSubmit",
-        value: function processSearchSubmit(value) {
-            var _this3 = this;
-
-            console.trace(value);
-            loadArtistFromSearch(p, value, false, quadHead, nodeLookup).then(function (node) {
-                console.trace(node);
-                if (node) {
-                    _this3.setState({ clickedArtist: node });
-                }
-            });
-        }
-    }, {
         key: "loadArtistFromUI",
         value: function loadArtistFromUI(artist) {
-            var _this4 = this;
+            var _this3 = this;
 
             if (artist.loaded) {
                 this.setState({ clickedArtist: artist });
@@ -136,20 +112,55 @@ var App = function (_React$Component) {
                     }
 
                     node.loaded = true;
-                    _this4.setState({ clickedArtist: node });
+                    _this3.setState({ clickedArtist: node });
+                    node.edges = [];
                 });
             }
-
             camera.setCameraMove(artist.x, artist.y, camera.getZoomFromWidth(artist.size * 50), 30);
         }
     }, {
         key: "loadArtistFromSearch",
-        value: function loadArtistFromSearch(searchTerm) {
-            /*
-            1. Fetch artist from DB
-            2. Load the artist
-            3. set the clickedArtist state and set the camera move
-             */
+        value: function (_loadArtistFromSearch) {
+            function loadArtistFromSearch(_x) {
+                return _loadArtistFromSearch.apply(this, arguments);
+            }
+
+            loadArtistFromSearch.toString = function () {
+                return _loadArtistFromSearch.toString();
+            };
+
+            return loadArtistFromSearch;
+        }(function (searchTerm) {
+            var _this4 = this;
+
+            loadArtistFromSearch(p, searchTerm, false, quadHead, nodeLookup).then(function (node) {
+                console.trace(node);
+                if (node) {
+                    _this4.setState({ clickedArtist: node });
+                    node.edges = [];
+                    camera.setCameraMove(node.x, node.y, camera.getZoomFromWidth(node.size * 50), 30);
+                }
+            });
+        })
+        //</editor-fold>
+
+
+    }, {
+        key: "unsetClickedArtist",
+        value: function unsetClickedArtist() {
+            this.setState({ clickedArtist: null });
+        }
+    }, {
+        key: "updateHoveredArtist",
+        value: function updateHoveredArtist(artist) {
+            if (this.state.hoveredArtist !== artist) {
+                this.setState({ hoveredArtist: artist });
+            }
+        }
+    }, {
+        key: "updateClickedGenre",
+        value: function updateClickedGenre(genre) {
+            console.log(genre);
         }
     }, {
         key: "canvasUpdate",
@@ -192,8 +203,8 @@ var App = function (_React$Component) {
                 }),
                 React.createElement(ReactSearchBox, {
                     artist: this.state.clickedArtist,
-                    updateClickedArtist: this.updateClickedArtist,
-                    processSearchSubmit: this.processSearchSubmit,
+                    loadArtistFromUI: this.loadArtistFromUI,
+                    loadArtistFromSearch: this.loadArtistFromSearch,
                     updateHoverFlag: this.updateHoverFlag
                 }),
                 React.createElement(P5Wrapper, {

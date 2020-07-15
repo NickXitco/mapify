@@ -58,23 +58,19 @@ var ReactSearchBox = function (_React$Component) {
     }, {
         key: "processSuggestions",
         value: function processSuggestions(data) {
-            if (data.length === 0) {
-                //TODO no results
-            } else {
-                this.setState({ suggestions: data });
-            }
+            this.setState({ suggestions: data });
         }
     }, {
         key: "processSuggestionClick",
         value: function processSuggestionClick(artist) {
-            this.props.updateClickedArtist(artist);
+            this.props.loadArtistFromUI(artist);
             this.resetState();
         }
     }, {
         key: "sendSubmitIfEnter",
         value: function sendSubmitIfEnter(e) {
             if (e.key === "Enter") {
-                this.props.processSearchSubmit(e.target.value);
+                this.props.loadArtistFromSearch(e.target.value);
                 this.resetState();
             }
         }

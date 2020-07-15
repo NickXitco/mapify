@@ -115,15 +115,6 @@ function drawEdges(p, camera, edges, clickedArtist, hoveredArtist) {
 }
 
 async function loadArtistFromSearch(p, query, isQueryID, quadHead, nodeLookup) {
-    let alreadyGot = false;
-    if (isQueryID) {
-        const cachedNode = nodeLookup[query];
-        if (cachedNode) {
-            SearchBox.point = cachedNode;
-            alreadyGot = true;
-        }
-    }
-
     const response = await fetch('artist/' + query + "/" + isQueryID);
     const data = await response.json();
 
@@ -139,10 +130,6 @@ async function loadArtistFromSearch(p, query, isQueryID, quadHead, nodeLookup) {
         node.relatedVertices.add(nodeLookup[r.id]);
     }
     node.loaded = true;
-
-    if (!alreadyGot) {
-        SearchBox.point = node;
-    }
 
     return node
 }
