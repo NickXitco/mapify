@@ -24,13 +24,14 @@ var GenresList = function (_React$Component) {
                 return null;
             }
 
-            var genres = this.props.genres.map(function (genre) {
+            var SIDEBAR_GENRE_LIMIT = 10;
+            var genres = this.props.genres.slice(0, SIDEBAR_GENRE_LIMIT).map(function (genre) {
                 return React.createElement(
                     "li",
                     { className: "sidebarListItem",
                         key: genre.toString(),
                         onClick: function onClick() {
-                            _this2.props.updateClickedGenre(genre.toString());
+                            _this2.props.loadGenreFromSearch(genre.toString());
                         }
                     },
                     genre.toString()
@@ -43,7 +44,7 @@ var GenresList = function (_React$Component) {
                 React.createElement(
                     "h2",
                     null,
-                    "Genres"
+                    this.props.header
                 ),
                 React.createElement(
                     "ul",

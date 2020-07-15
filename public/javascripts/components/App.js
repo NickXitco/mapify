@@ -21,7 +21,8 @@ var App = function (_React$Component) {
 
             hoveredArtist: null,
             clickedArtist: null,
-            zoomArtist: null,
+
+            activeGenre: null,
 
             quadHead: null,
 
@@ -42,19 +43,20 @@ var App = function (_React$Component) {
         _this.loadArtistFromUI = _this.loadArtistFromUI.bind(_this);
         _this.loadArtistFromSearch = _this.loadArtistFromSearch.bind(_this);
 
-        _this.updateClickedGenre = _this.updateClickedGenre.bind(_this);
-
         _this.updateHoveredArtist = _this.updateHoveredArtist.bind(_this);
 
         _this.updateHoverFlag = _this.updateHoverFlag.bind(_this);
 
+        _this.loadGenreFromSearch = _this.loadGenreFromSearch.bind(_this);
         return _this;
     }
 
     _createClass(App, [{
         key: "updateHoverFlag",
         value: function updateHoverFlag(value) {
-            this.setState({ uiHover: value });
+            if (this.state.uiHover !== value) {
+                this.setState({ uiHover: value });
+            }
         }
 
         //<editor-fold desc="Clicked Artist Handling">
@@ -144,7 +146,100 @@ var App = function (_React$Component) {
         })
         //</editor-fold>
 
+    }, {
+        key: "loadGenreFromSearch",
+        value: function loadGenreFromSearch(genreName) {
+            var _this5 = this;
 
+            fetch("genre/" + genreName).then(function (response) {
+                return response.json();
+            }).then(function (data) {
+                console.log(data);
+                if (!data.artists || data.artists.length === 0) {
+                    return;
+                }
+
+                var name = data.name;
+                var r = data.r;
+                var g = data.g;
+                var b = data.b;
+
+                var nodesList = [];
+                var _iteratorNormalCompletion2 = true;
+                var _didIteratorError2 = false;
+                var _iteratorError2 = undefined;
+
+                try {
+                    for (var _iterator2 = data.artists[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                        var node = _step2.value;
+
+                        createNewNode(node, quadHead, nodeLookup);
+                        nodesList.push(nodeLookup[node.id]);
+                    }
+                } catch (err) {
+                    _didIteratorError2 = true;
+                    _iteratorError2 = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                            _iterator2.return();
+                        }
+                    } finally {
+                        if (_didIteratorError2) {
+                            throw _iteratorError2;
+                        }
+                    }
+                }
+
+                var hull = QuickHull.getHull(nodesList);
+                var nodes = new Set(nodesList);
+
+                var easternmost = hull[0];
+                var westernmost = hull[0];
+
+                var _iteratorNormalCompletion3 = true;
+                var _didIteratorError3 = false;
+                var _iteratorError3 = undefined;
+
+                try {
+                    for (var _iterator3 = hull[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                        var point = _step3.value;
+
+                        easternmost = point.x > easternmost.x ? point : easternmost;
+                        //We don't have to update westernmost because genreHull[0] will always be the leftmost extrema
+                    }
+                } catch (err) {
+                    _didIteratorError3 = true;
+                    _iteratorError3 = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                            _iterator3.return();
+                        }
+                    } finally {
+                        if (_didIteratorError3) {
+                            throw _iteratorError3;
+                        }
+                    }
+                }
+
+                var centroid = GenreHelpers.getCentroid(hull);
+                var cameraWidth = Math.abs(easternmost.x - westernmost.x);
+
+                camera.setCameraMove(centroid.x, centroid.y, camera.getZoomFromWidth(cameraWidth), 30);
+
+                _this5.setState({ clickedArtist: null,
+                    activeGenre: {
+                        name: name,
+                        hull: hull,
+                        nodes: nodes,
+                        centroid: centroid,
+                        r: r,
+                        g: g,
+                        b: b
+                    } });
+            });
+        }
     }, {
         key: "unsetClickedArtist",
         value: function unsetClickedArtist() {
@@ -156,11 +251,6 @@ var App = function (_React$Component) {
             if (this.state.hoveredArtist !== artist) {
                 this.setState({ hoveredArtist: artist });
             }
-        }
-    }, {
-        key: "updateClickedGenre",
-        value: function updateClickedGenre(genre) {
-            console.log(genre);
         }
     }, {
         key: "canvasUpdate",
@@ -195,10 +285,12 @@ var App = function (_React$Component) {
                 { className: "fullScreen" },
                 React.createElement(ReactInfobox, { artist: this.state.hoveredArtist }),
                 React.createElement(ReactSidebar, {
-                    type: "artist",
                     artist: this.state.clickedArtist,
-                    updateClickedGenre: this.updateClickedGenre,
-                    updateClickedArtist: this.updateClickedArtist,
+                    genre: this.state.activeGenre,
+
+                    loadArtistFromUI: this.loadArtistFromUI,
+                    loadGenreFromSearch: this.loadGenreFromSearch,
+
                     updateHoverFlag: this.updateHoverFlag
                 }),
                 React.createElement(ReactSearchBox, {

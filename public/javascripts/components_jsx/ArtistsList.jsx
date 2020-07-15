@@ -14,7 +14,7 @@ class ArtistsList extends React.Component {
         const artists = relatedArray.map(artist =>
             <li className={"sidebarListItem"}
                 key={artist.id.toString()}
-                onClick={() => {this.props.updateClickedArtist(artist)}}
+                onClick={() => {this.props.loadArtistFromUI(artist)}}
             >
                 {artist.name.toString()}
             </li>
@@ -23,7 +23,7 @@ class ArtistsList extends React.Component {
 
         return (
             <div className={"relatedArtistsSection"}>
-                <h2>Related Artists</h2>
+                <h2>{this.props.header}</h2>
                 <ul className={"relatedArtistsList"}>
                     {artists}
                 </ul>

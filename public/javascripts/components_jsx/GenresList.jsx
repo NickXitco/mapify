@@ -8,18 +8,20 @@ class GenresList extends React.Component {
             return null;
         }
 
-        const genres = this.props.genres.map(genre =>
+        const SIDEBAR_GENRE_LIMIT = 10
+        const genres = this.props.genres.slice(0, SIDEBAR_GENRE_LIMIT).map(genre =>
             <li className={"sidebarListItem"}
                 key={genre.toString()}
-                onClick={() => {this.props.updateClickedGenre(genre.toString())}}
+                onClick={() => {this.props.loadGenreFromSearch(genre.toString())}}
             >
                 {genre.toString()}
             </li>
         );
 
+
         return (
             <div className={"genresSection"}>
-                <h2>Genres</h2>
+                <h2>{this.props.header}</h2>
                 <ul className={"genresList"}>
                     {genres}
                 </ul>

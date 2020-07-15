@@ -34,7 +34,7 @@ var ArtistsList = function (_React$Component) {
                     { className: "sidebarListItem",
                         key: artist.id.toString(),
                         onClick: function onClick() {
-                            _this2.props.updateClickedArtist(artist);
+                            _this2.props.loadArtistFromUI(artist);
                         }
                     },
                     artist.name.toString()
@@ -47,7 +47,7 @@ var ArtistsList = function (_React$Component) {
                 React.createElement(
                     "h2",
                     null,
-                    "Related Artists"
+                    this.props.header
                 ),
                 React.createElement(
                     "ul",

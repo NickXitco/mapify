@@ -12,11 +12,12 @@ class ReactSidebar extends React.Component {
     }
 
     render() {
-        if (this.props.type === "artist") {
-            if (!this.props.artist) {
-                return null;
-            }
+        if (!this.props.artist && !this.props.genre) {
+            this.props.updateHoverFlag(false);
+            return null;
+        }
 
+        if (this.props.artist) {
             return (
                 <div className={"sidebar"}
                      onMouseEnter={() => {this.props.updateHoverFlag(true)}}
@@ -25,7 +26,7 @@ class ReactSidebar extends React.Component {
 
                     <style>
                         {`::-webkit-scrollbar-track {box-shadow: 0 0 5px ${this.props.artist.colorToString()};}  \n` +
-                         `::-webkit-scrollbar-thumb {background: ${this.props.artist.colorToString()};`}
+                        `::-webkit-scrollbar-thumb {background: ${this.props.artist.colorToString()};`}
                     </style>
 
                     <SidebarStroke color={this.props.artist.colorToString()}/>
@@ -35,16 +36,26 @@ class ReactSidebar extends React.Component {
                     <FollowersStats artist={this.props.artist}/>
 
                     <GenresList genres={this.props.artist.genres}
-                                updateClickedGenre={this.props.updateClickedGenre}
+                                loadGenreFromSearch={this.props.loadGenreFromSearch}
+                                header={"Genres"}
                     />
 
                     <ArtistsList artists={this.props.artist.relatedVertices}
-                                 updateClickedArtist={this.props.updateClickedArtist}
+                                 loadArtistFromUI={this.loadArtistFromUI}
+                                 header={"Related Artists"}
                     />
                 </div>
             );
-        } else {
-            return null;
+        }
+
+        if (this.props.genre) {
+            return (
+                <div className={"sidebar"}
+                     onMouseEnter={() => {this.props.updateHoverFlag(true)}}
+                     onMouseLeave={() => {this.props.updateHoverFlag(false)}}
+                >
+                </div>
+            );
         }
     }
 }

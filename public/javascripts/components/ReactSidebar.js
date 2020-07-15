@@ -26,11 +26,12 @@ var ReactSidebar = function (_React$Component) {
         value: function render() {
             var _this2 = this;
 
-            if (this.props.type === "artist") {
-                if (!this.props.artist) {
-                    return null;
-                }
+            if (!this.props.artist && !this.props.genre) {
+                this.props.updateHoverFlag(false);
+                return null;
+            }
 
+            if (this.props.artist) {
                 return React.createElement(
                     "div",
                     { className: "sidebar",
@@ -50,14 +51,25 @@ var ReactSidebar = function (_React$Component) {
                     React.createElement(ArtistProfile, { artist: this.props.artist, fontDecrement: 3 }),
                     React.createElement(FollowersStats, { artist: this.props.artist }),
                     React.createElement(GenresList, { genres: this.props.artist.genres,
-                        updateClickedGenre: this.props.updateClickedGenre
+                        loadGenreFromSearch: this.props.loadGenreFromSearch,
+                        header: "Genres"
                     }),
                     React.createElement(ArtistsList, { artists: this.props.artist.relatedVertices,
-                        updateClickedArtist: this.props.updateClickedArtist
+                        loadArtistFromUI: this.loadArtistFromUI,
+                        header: "Related Artists"
                     })
                 );
-            } else {
-                return null;
+            }
+
+            if (this.props.genre) {
+                return React.createElement("div", { className: "sidebar",
+                    onMouseEnter: function onMouseEnter() {
+                        _this2.props.updateHoverFlag(true);
+                    },
+                    onMouseLeave: function onMouseLeave() {
+                        _this2.props.updateHoverFlag(false);
+                    }
+                });
             }
         }
     }]);

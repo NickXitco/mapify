@@ -9,7 +9,8 @@ class App extends React.Component {
 
             hoveredArtist: null,
             clickedArtist: null,
-            zoomArtist: null,
+
+            activeGenre: null,
 
             quadHead: null,
 
@@ -30,16 +31,17 @@ class App extends React.Component {
         this.loadArtistFromUI = this.loadArtistFromUI.bind(this);
         this.loadArtistFromSearch = this.loadArtistFromSearch.bind(this);
 
-        this.updateClickedGenre = this.updateClickedGenre.bind(this);
-
         this.updateHoveredArtist = this.updateHoveredArtist.bind(this);
 
         this.updateHoverFlag = this.updateHoverFlag.bind(this);
 
+        this.loadGenreFromSearch = this.loadGenreFromSearch.bind(this);
     }
 
     updateHoverFlag(value) {
-        this.setState({uiHover: value});
+        if (this.state.uiHover !== value) {
+            this.setState({uiHover: value});
+        }
     }
 
 
@@ -87,6 +89,55 @@ class App extends React.Component {
     }
     //</editor-fold>
 
+    loadGenreFromSearch(genreName) {
+        fetch(`genre/${genreName}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                if (!data.artists || data.artists.length === 0) {
+                    return;
+                }
+
+                const name = data.name;
+                const r = data.r;
+                const g = data.g;
+                const b = data.b;
+
+                let nodesList = [];
+                for (const node of data.artists) {
+                    createNewNode(node, quadHead, nodeLookup);
+                    nodesList.push(nodeLookup[node.id]);
+                }
+
+                const hull = QuickHull.getHull(nodesList);
+                const nodes =  new Set(nodesList);
+
+                let easternmost = hull[0];
+                let westernmost = hull[0];
+
+                for (const point of hull) {
+                    easternmost = point.x > easternmost.x ? point : easternmost;
+                    //We don't have to update westernmost because genreHull[0] will always be the leftmost extrema
+                }
+
+                const centroid = GenreHelpers.getCentroid(hull);
+                const cameraWidth = Math.abs(easternmost.x - westernmost.x);
+
+                camera.setCameraMove(centroid.x, centroid.y, camera.getZoomFromWidth(cameraWidth), 30);
+
+                this.setState({clickedArtist: null,
+                                activeGenre: {
+                                    name: name,
+                                    hull: hull,
+                                    nodes: nodes,
+                                    centroid: centroid,
+                                    r: r,
+                                    g: g,
+                                    b: b
+                                }})
+            })
+    }
+
 
 
     unsetClickedArtist() {
@@ -98,11 +149,6 @@ class App extends React.Component {
             this.setState({hoveredArtist: artist});
         }
     }
-
-    updateClickedGenre(genre) {
-        console.log(genre);
-    }
-
 
     canvasUpdate(canvas) {
         this.setState({canvas: canvas})
@@ -133,10 +179,12 @@ class App extends React.Component {
                 <ReactInfobox artist={this.state.hoveredArtist}/>
 
                 <ReactSidebar
-                    type={"artist"}
                     artist={this.state.clickedArtist}
-                    updateClickedGenre={this.updateClickedGenre}
-                    updateClickedArtist={this.updateClickedArtist}
+                    genre={this.state.activeGenre}
+
+                    loadArtistFromUI={this.loadArtistFromUI}
+                    loadGenreFromSearch={this.loadGenreFromSearch}
+
                     updateHoverFlag={this.updateHoverFlag}
                 />
 
