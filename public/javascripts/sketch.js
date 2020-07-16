@@ -1,7 +1,6 @@
 /* P5 Wrapper Globals - Things that belong to the canvas, no one else needs them*/
 /* App Globals - Things needed across the entire UI for right now*/
 let p;
-let camera;
 
 
 async function loadInitialQuads(loadingQuads, unprocessedResponses) {

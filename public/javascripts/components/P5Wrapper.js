@@ -16,14 +16,18 @@ var P5Wrapper = function (_React$Component) {
 
         _this.Sketch = function (p) {
             p.setup = function () {
+                console.log('P5 Setup');
+                console.log(window.innerWidth);
                 var canvas = p.createCanvas(window.innerWidth, window.innerHeight);
                 canvas.mouseOver(function () {
                     _this.props.updateHoverFlag(false);
                 });
 
-                _this.props.canvasUpdate(canvas);
-
-                camera.zoomCamera({ x: 0, y: 0 });
+                var camera = new Camera(0, 0, window.innerHeight, window.innerWidth, 1, _this.props.p5);
+                _this.props.setCamera(camera);
+                _this.unloadedPQ = new PriorityQueue(function (a, b) {
+                    return Utils.dist(camera.x, camera.y, a.x, a.y) - Utils.dist(camera.x, camera.y, b.x, b.y);
+                });
 
                 loadInitialQuads(_this.loadingQuads, _this.unprocessedResponses).then(function (qH) {
                     _this.props.setQuadHead(qH);
@@ -40,6 +44,8 @@ var P5Wrapper = function (_React$Component) {
 
             p.draw = function () {
                 if (_this.loading) {
+                    console.log('P5 Draw');
+                    console.log(window.innerWidth);
                     drawLoading();
                     return;
                 }
@@ -49,22 +55,22 @@ var P5Wrapper = function (_React$Component) {
                 Debug.resetTiming();
                 Debug.createTimingEvent("Drawing Setup");
 
-                MouseEvents.drift(camera, p);
-                MouseEvents.zoom(camera);
+                MouseEvents.drift(_this.props.camera, p);
+                MouseEvents.zoom(_this.props.camera);
 
-                camera.doCameraMove();
+                _this.props.camera.doCameraMove();
 
                 p.push();
-                camera.setView();
+                _this.props.camera.setView();
 
                 Debug.createTimingEvent("Camera Moves");
 
-                drawOnscreenQuads(p, _this.props.quadHead, camera, _this.props.hoveredArtist, _this.loadingQuads, _this.unloadedQuads, _this.unloadedPQ);
+                drawOnscreenQuads(p, _this.props.quadHead, _this.props.camera, _this.props.hoveredArtist, _this.loadingQuads, _this.unloadedQuads, _this.unloadedPQ);
 
                 loadUnloaded(_this.unprocessedResponses, _this.unloadedPQ, _this.loadingQuads, _this.unloadedQuads);
 
                 if (!_this.props.uiHover) {
-                    _this.props.updateHoveredArtist(getHoveredArtist(p, camera, _this.props.clickedArtist, _this.props.quadHead));
+                    _this.props.updateHoveredArtist(getHoveredArtist(p, _this.props.camera, _this.props.clickedArtist, _this.props.quadHead));
                 }
 
                 if (_this.props.clickedArtist && !_this.props.clickedArtist.loaded && !_this.clickedLoading) {
@@ -81,7 +87,7 @@ var P5Wrapper = function (_React$Component) {
                 }
 
                 if (GenreHelpers.genreNodes.size > 0) {
-                    _this.darkenOpacity = darkenScene(p, _this.darkenOpacity, camera);
+                    _this.darkenOpacity = darkenScene(p, _this.darkenOpacity, _this.props.camera);
                 }
 
                 Debug.createTimingEvent("Darken Scene for Genre Nodes");
@@ -131,13 +137,13 @@ var P5Wrapper = function (_React$Component) {
 
                     p.pop();
 
-                    drawNodes(p, camera, GenreHelpers.genreNodes);
+                    drawNodes(p, _this.props.camera, GenreHelpers.genreNodes);
                 }
 
                 Debug.createTimingEvent("Draw Genre Nodes");
 
                 if (_this.props.clickedArtist) {
-                    _this.darkenOpacity = darkenScene(p, _this.darkenOpacity, camera);
+                    _this.darkenOpacity = darkenScene(p, _this.darkenOpacity, _this.props.camera);
                 }
 
                 Debug.createTimingEvent("Darken Scene for Related Nodes");
@@ -148,12 +154,12 @@ var P5Wrapper = function (_React$Component) {
                             _this.props.clickedArtist.edges = makeEdges(_this.props.clickedArtist);
                             _this.props.updateClickedArtist(_this.props.clickedArtist); //TODO why is this here
                         } else {
-                            drawEdges(p, camera, _this.props.clickedArtist.edges, _this.props.clickedArtist, _this.props.hoveredArtist);
+                            drawEdges(p, _this.props.camera, _this.props.clickedArtist.edges, _this.props.clickedArtist, _this.props.hoveredArtist);
                         }
                     }
 
                     Debug.createTimingEvent("Draw Related Edges");
-                    drawRelatedNodes(p, camera, _this.props.clickedArtist);
+                    drawRelatedNodes(p, _this.props.camera, _this.props.clickedArtist);
                     Debug.createTimingEvent("Draw Related Nodes");
                 }
 
@@ -168,7 +174,7 @@ var P5Wrapper = function (_React$Component) {
 
                 if (p.frameCount % 5 === 0) {
                     //TODO adjust this until it feels right, or adjust it dynamically?
-                    processOne(p, camera, _this.props.quadHead, _this.props.nodeLookup, _this.loadingQuads, _this.unprocessedResponses);
+                    processOne(p, _this.props.camera, _this.props.quadHead, _this.props.nodeLookup, _this.loadingQuads, _this.unprocessedResponses);
                 }
 
                 Debug.createTimingEvent("Quad Processing");
@@ -176,7 +182,7 @@ var P5Wrapper = function (_React$Component) {
                 p.pop();
 
                 Debug.createTimingEvent("Info Box");
-                Debug.debugAll(p, camera, _this.props.hoveredArtist, _this.unloadedQuads, _this.loadingQuads, _this.unprocessedResponses);
+                Debug.debugAll(p, _this.props.camera, _this.props.hoveredArtist, _this.unloadedQuads, _this.loadingQuads, _this.unprocessedResponses);
             };
 
             p.mouseWheel = function (e) {
@@ -188,12 +194,12 @@ var P5Wrapper = function (_React$Component) {
                 var isTouchPad = e.wheelDeltaY ? e.wheelDeltaY === -3 * e.deltaY : e.deltaMode === 0;
 
                 if (isTouchPad && !e.ctrlKey) {
-                    camera.x -= e.deltaX * (1 / camera.getZoomFactor().x);
-                    camera.y += e.deltaY * (1 / camera.getZoomFactor().y);
+                    _this.props.camera.x -= e.deltaX * (1 / _this.props.camera.getZoomFactor().x);
+                    _this.props.camera.y += e.deltaY * (1 / _this.props.camera.getZoomFactor().y);
                 } else {
                     MouseEvents.zooming = true;
                     MouseEvents.scrollStep = 0;
-                    MouseEvents.zoomCoordinates = MouseEvents.getVirtualMouseCoordinates(p, camera);
+                    MouseEvents.zoomCoordinates = MouseEvents.getVirtualMouseCoordinates(p, _this.props.camera);
                     if (e.ctrlKey && Math.abs(e.deltaY) < 10) {
                         MouseEvents.scrollDelta = e.deltaY / 10;
                     } else {
@@ -212,20 +218,20 @@ var P5Wrapper = function (_React$Component) {
 
             p.mouseDragged = function () {
                 if (MouseEvents.dragging) {
-                    var newDrag = MouseEvents.getVirtualMouseCoordinates(p, camera);
-                    var oldDrag = camera.screen2virtual(MouseEvents.drag);
-                    camera.x += oldDrag.x - newDrag.x;
-                    camera.y += oldDrag.y - newDrag.y;
+                    var newDrag = MouseEvents.getVirtualMouseCoordinates(p, _this.props.camera);
+                    var oldDrag = _this.props.camera.screen2virtual(MouseEvents.drag);
+                    _this.props.camera.x += oldDrag.x - newDrag.x;
+                    _this.props.camera.y += oldDrag.y - newDrag.y;
                     MouseEvents.drag = { x: p.mouseX, y: p.mouseY };
                 }
             };
 
             p.mouseReleased = function () {
                 if (MouseEvents.dragging) {
-                    var newDrag = MouseEvents.getVirtualMouseCoordinates(p, camera);
-                    var oldDrag = camera.screen2virtual(MouseEvents.drag);
-                    camera.x += oldDrag.x - newDrag.x;
-                    camera.y += oldDrag.y - newDrag.y;
+                    var newDrag = MouseEvents.getVirtualMouseCoordinates(p, _this.props.camera);
+                    var oldDrag = _this.props.camera.screen2virtual(MouseEvents.drag);
+                    _this.props.camera.x += oldDrag.x - newDrag.x;
+                    _this.props.camera.y += oldDrag.y - newDrag.y;
 
                     if (Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y) < 5) {
                         var click = handlePointClick(_this.props.quadHead, _this.props.hoveredArtist, _this.props.clickedArtist, _this.props.nodeLookup, p);
@@ -249,10 +255,11 @@ var P5Wrapper = function (_React$Component) {
     }
 
     _createClass(P5Wrapper, [{
-        key: "componentDidMount",
+        key: 'componentDidMount',
         value: function componentDidMount() {
-            p = new p5(this.Sketch, this.myRef.current);
-            camera = new Camera(0, 0, window.innerHeight, window.innerWidth, 1, p);
+            console.log('P5 Component Mount');
+            console.log(window.innerWidth);
+            this.props.setCanvas(new p5(this.Sketch, this.myRef.current));
 
             this.clickedLoading = false;
             this.darkenOpacity = 0;
@@ -260,14 +267,11 @@ var P5Wrapper = function (_React$Component) {
             this.unprocessedResponses = [];
             this.unloadedQuads = new Set();
             this.loadingQuads = new Set();
-            this.unloadedPQ = new PriorityQueue(function (a, b) {
-                return Utils.dist(camera.x, camera.y, a.x, a.y) - Utils.dist(camera.x, camera.y, b.x, b.y);
-            });
         }
     }, {
-        key: "render",
+        key: 'render',
         value: function render() {
-            return React.createElement("div", { ref: this.myRef });
+            return React.createElement('div', { ref: this.myRef });
         }
     }]);
 

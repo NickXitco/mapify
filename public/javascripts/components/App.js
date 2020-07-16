@@ -35,7 +35,8 @@ var App = function (_React$Component) {
             uiHover: false
         };
 
-        _this.canvasUpdate = _this.canvasUpdate.bind(_this);
+        _this.setCanvas = _this.setCanvas.bind(_this);
+        _this.setCamera = _this.setCamera.bind(_this);
 
         _this.updateClickedArtist = _this.updateClickedArtist.bind(_this);
         _this.unsetClickedArtist = _this.unsetClickedArtist.bind(_this);
@@ -53,7 +54,7 @@ var App = function (_React$Component) {
     }
 
     _createClass(App, [{
-        key: "updateHoverFlag",
+        key: 'updateHoverFlag',
         value: function updateHoverFlag(value) {
             if (this.state.uiHover !== value) {
                 this.setState({ uiHover: value });
@@ -63,7 +64,7 @@ var App = function (_React$Component) {
         //<editor-fold desc="Clicked Artist Handling">
 
     }, {
-        key: "updateClickedArtist",
+        key: 'updateClickedArtist',
         value: function updateClickedArtist(artist) {
             var _this2 = this;
 
@@ -71,21 +72,21 @@ var App = function (_React$Component) {
             if (artist.loaded) {
                 this.setState({ clickedArtist: artist });
             } else if (artist.id) {
-                loadArtist(p, artist, this.state.quadHead, this.state.nodeLookup).then(function () {
+                loadArtist(this.state.p5, artist, this.state.quadHead, this.state.nodeLookup).then(function () {
                     artist.edges = [];
                     _this2.setState({ clickedArtist: _this2.state.nodeLookup[artist.id] });
                 });
             }
         }
     }, {
-        key: "loadArtistFromUI",
+        key: 'loadArtistFromUI',
         value: function loadArtistFromUI(artist) {
             var _this3 = this;
 
             if (artist.loaded) {
                 this.setState({ clickedArtist: artist });
             } else {
-                fetch("artist/" + artist.id + "/true").then(function (response) {
+                fetch('artist/' + artist.id + '/true').then(function (response) {
                     return response.json();
                 }).then(function (data) {
                     var node = createNewNode(data, _this3.state.quadHead, _this3.state.nodeLookup);
@@ -119,10 +120,10 @@ var App = function (_React$Component) {
                     node.edges = [];
                 });
             }
-            camera.setCameraMove(artist.x, artist.y, camera.getZoomFromWidth(artist.size * 50), 30);
+            this.state.camera.setCameraMove(artist.x, artist.y, this.state.camera.getZoomFromWidth(artist.size * 50), 30);
         }
     }, {
-        key: "loadArtistFromSearch",
+        key: 'loadArtistFromSearch',
         value: function (_loadArtistFromSearch) {
             function loadArtistFromSearch(_x) {
                 return _loadArtistFromSearch.apply(this, arguments);
@@ -136,23 +137,23 @@ var App = function (_React$Component) {
         }(function (searchTerm) {
             var _this4 = this;
 
-            loadArtistFromSearch(p, searchTerm, false, this.state.quadHead, this.state.nodeLookup).then(function (node) {
+            loadArtistFromSearch(this.state.p5, searchTerm, false, this.state.quadHead, this.state.nodeLookup).then(function (node) {
                 console.trace(node);
                 if (node) {
                     _this4.setState({ clickedArtist: node });
                     node.edges = [];
-                    camera.setCameraMove(node.x, node.y, camera.getZoomFromWidth(node.size * 50), 30);
+                    _this4.state.camera.setCameraMove(node.x, node.y, _this4.state.camera.getZoomFromWidth(node.size * 50), 30);
                 }
             });
         })
         //</editor-fold>
 
     }, {
-        key: "loadGenreFromSearch",
+        key: 'loadGenreFromSearch',
         value: function loadGenreFromSearch(genreName) {
             var _this5 = this;
 
-            fetch("genre/" + genreName).then(function (response) {
+            fetch('genre/' + genreName).then(function (response) {
                 return response.json();
             }).then(function (data) {
                 console.log(data);
@@ -196,37 +197,53 @@ var App = function (_React$Component) {
 
                 var newGenre = new Genre(name, nodes, r, g, b);
 
-                camera.setCameraMove(newGenre.centroid.x, newGenre.centroid.y, camera.getZoomFromWidth(newGenre.getWidth()), 30);
+                _this5.state.camera.setCameraMove(newGenre.centroid.x, newGenre.centroid.y, _this5.state.camera.getZoomFromWidth(newGenre.getWidth()), 30);
 
                 _this5.setState({ clickedArtist: null, activeGenre: newGenre });
             });
         }
     }, {
-        key: "unsetClickedArtist",
+        key: 'unsetClickedArtist',
         value: function unsetClickedArtist() {
             this.setState({ clickedArtist: null });
         }
     }, {
-        key: "updateHoveredArtist",
+        key: 'updateHoveredArtist',
         value: function updateHoveredArtist(artist) {
             if (this.state.hoveredArtist !== artist) {
                 this.setState({ hoveredArtist: artist });
             }
         }
     }, {
-        key: "canvasUpdate",
-        value: function canvasUpdate(canvas) {
-            this.setState({ canvas: canvas });
+        key: 'setCanvas',
+        value: function setCanvas(p5) {
+            this.setState({ p5: p5 }, function () {
+                console.log('P5 Set state callback');
+                console.log(window.innerWidth);
+            });
             this.initializeResizeObserver();
         }
     }, {
-        key: "setQuadHead",
+        key: 'setCamera',
+        value: function setCamera(camera) {
+            var _this6 = this;
+
+            this.setState({ camera: camera }, function () {
+                console.log('Camera Set state callback');
+                console.log(window.innerWidth);
+                _this6.state.camera.zoomCamera({ x: 0, y: 0 });
+            });
+        }
+    }, {
+        key: 'setQuadHead',
         value: function setQuadHead(quadHead) {
             this.setState({ quadHead: quadHead });
         }
     }, {
-        key: "initializeResizeObserver",
+        key: 'initializeResizeObserver',
         value: function initializeResizeObserver() {
+            var _this7 = this;
+
             this.ro = new ResizeObserver(function (entries) {
                 if (entries.length !== 1) {
                     console.log("I don't know what this is");
@@ -234,22 +251,25 @@ var App = function (_React$Component) {
                     var cr = entries[0].contentRect;
                     var w = cr.width;
                     var h = cr.height;
-                    if (p) {
-                        p.resizeCanvas(w, h);
+                    if (_this7.state.p5) {
+                        _this7.state.p5.resizeCanvas(w, h);
                     }
-                    camera.zoomCamera({ x: camera.x, y: camera.y });
+                    _this7.state.camera.zoomCamera({ x: _this7.state.camera.x, y: _this7.state.camera.y });
                 }
             });
             this.ro.observe(document.getElementById("root"));
         }
     }, {
-        key: "render",
+        key: 'render',
         value: function render() {
             console.log("Rendering!");
             return React.createElement(
-                "div",
+                'div',
                 { className: "fullScreen" },
-                React.createElement(ReactInfobox, { artist: this.state.hoveredArtist }),
+                React.createElement(ReactInfobox, {
+                    artist: this.state.hoveredArtist,
+                    camera: this.state.camera //TODO Do we need?
+                }),
                 React.createElement(ReactSidebar, {
                     artist: this.state.clickedArtist,
                     genre: this.state.activeGenre,
@@ -267,14 +287,16 @@ var App = function (_React$Component) {
                     updateHoverFlag: this.updateHoverFlag
                 }),
                 React.createElement(P5Wrapper, {
-                    canvasUpdate: this.canvasUpdate,
-
                     hoveredArtist: this.state.hoveredArtist,
                     clickedArtist: this.state.clickedArtist,
                     nodeLookup: this.state.nodeLookup //TODO consider removing this from P5 and do all load handling at the app level.
                     , quadHead: this.state.quadHead,
+                    camera: this.state.camera,
+                    p5: this.state.p5,
 
                     setQuadHead: this.setQuadHead,
+                    setCanvas: this.setCanvas,
+                    setCamera: this.setCamera,
 
                     uiHover: this.state.uiHover,
                     updateHoverFlag: this.updateHoverFlag,

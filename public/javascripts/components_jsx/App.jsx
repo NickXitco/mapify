@@ -23,7 +23,8 @@ class App extends React.Component {
             uiHover: false
         }
 
-        this.canvasUpdate = this.canvasUpdate.bind(this);
+        this.setCanvas = this.setCanvas.bind(this);
+        this.setCamera = this.setCamera.bind(this);
 
         this.updateClickedArtist = this.updateClickedArtist.bind(this);
         this.unsetClickedArtist = this.unsetClickedArtist.bind(this);
@@ -52,7 +53,7 @@ class App extends React.Component {
         if (artist.loaded) {
             this.setState({clickedArtist: artist});
         } else if (artist.id) {
-            loadArtist(p, artist, this.state.quadHead, this.state.nodeLookup).then(() =>{
+            loadArtist(this.state.p5, artist, this.state.quadHead, this.state.nodeLookup).then(() =>{
                     artist.edges = [];
                     this.setState({clickedArtist: this.state.nodeLookup[artist.id]});
             });
@@ -75,16 +76,16 @@ class App extends React.Component {
                     node.edges = [];
                 })
         }
-        camera.setCameraMove(artist.x, artist.y, camera.getZoomFromWidth(artist.size * 50), 30);
+        this.state.camera.setCameraMove(artist.x, artist.y, this.state.camera.getZoomFromWidth(artist.size * 50), 30);
     }
 
     loadArtistFromSearch(searchTerm) {
-        loadArtistFromSearch(p, searchTerm, false, this.state.quadHead, this.state.nodeLookup).then(node => {
+        loadArtistFromSearch(this.state.p5, searchTerm, false, this.state.quadHead, this.state.nodeLookup).then(node => {
             console.trace(node);
             if (node) {
                 this.setState({clickedArtist: node});
                 node.edges = [];
-                camera.setCameraMove(node.x, node.y, camera.getZoomFromWidth(node.size * 50), 30);
+                this.state.camera.setCameraMove(node.x, node.y, this.state.camera.getZoomFromWidth(node.size * 50), 30);
             }
         });
     }
@@ -115,8 +116,8 @@ class App extends React.Component {
                 const newGenre = new Genre(name, nodes, r, g, b);
 
 
-                camera.setCameraMove(newGenre.centroid.x, newGenre.centroid.y,
-                                     camera.getZoomFromWidth(newGenre.getWidth()), 30);
+                this.state.camera.setCameraMove(newGenre.centroid.x, newGenre.centroid.y,
+                                                this.state.camera.getZoomFromWidth(newGenre.getWidth()), 30);
 
                 this.setState({clickedArtist: null, activeGenre: newGenre});
             })
@@ -134,9 +135,20 @@ class App extends React.Component {
         }
     }
 
-    canvasUpdate(canvas) {
-        this.setState({canvas: canvas})
-        this.initializeResizeObserver()
+    setCanvas(p5) {
+        this.setState({p5: p5}, () => {
+            console.log('P5 Set state callback');
+            console.log(window.innerWidth);
+        });
+        this.initializeResizeObserver();
+    }
+
+    setCamera(camera) {
+        this.setState({camera: camera}, () => {
+            console.log('Camera Set state callback');
+            console.log(window.innerWidth);
+            this.state.camera.zoomCamera({x: 0, y: 0});
+        })
     }
 
     setQuadHead(quadHead) {
@@ -151,10 +163,10 @@ class App extends React.Component {
                 const cr = entries[0].contentRect;
                 const w = cr.width;
                 const h = cr.height;
-                if (p) {
-                    p.resizeCanvas(w,h);
+                if (this.state.p5) {
+                    this.state.p5.resizeCanvas(w,h);
                 }
-                camera.zoomCamera({x: camera.x, y: camera.y});
+                this.state.camera.zoomCamera({x: this.state.camera.x, y: this.state.camera.y});
             }
         })
         this.ro.observe(document.getElementById("root"));
@@ -164,7 +176,10 @@ class App extends React.Component {
         console.log("Rendering!");
         return (
             <div className={"fullScreen"}>
-                <ReactInfobox artist={this.state.hoveredArtist}/>
+                <ReactInfobox
+                    artist={this.state.hoveredArtist}
+                    camera={this.state.camera} //TODO Do we need?
+                />
 
                 <ReactSidebar
                     artist={this.state.clickedArtist}
@@ -185,14 +200,16 @@ class App extends React.Component {
                 />
 
                 <P5Wrapper
-                    canvasUpdate={this.canvasUpdate}
-
                     hoveredArtist={this.state.hoveredArtist}
                     clickedArtist={this.state.clickedArtist}
                     nodeLookup={this.state.nodeLookup} //TODO consider removing this from P5 and do all load handling at the app level.
                     quadHead={this.state.quadHead}
+                    camera={this.state.camera}
+                    p5={this.state.p5}
 
                     setQuadHead={this.setQuadHead}
+                    setCanvas={this.setCanvas}
+                    setCamera={this.setCamera}
 
                     uiHover={this.state.uiHover}
                     updateHoverFlag={this.updateHoverFlag}

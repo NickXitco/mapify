@@ -7,12 +7,15 @@ class P5Wrapper extends React.Component {
 
     Sketch = (p) => {
         p.setup = () => {
+            console.log('P5 Setup');
+            console.log(window.innerWidth);
             const canvas = p.createCanvas(window.innerWidth, window.innerHeight);
-            canvas.mouseOver(() => {this.props.updateHoverFlag(false)})
+            canvas.mouseOver(() => {this.props.updateHoverFlag(false)});
 
-            this.props.canvasUpdate(canvas);
-
-            camera.zoomCamera({x: 0, y: 0});
+            const camera = new Camera(0, 0, window.innerHeight, window.innerWidth, 1, this.props.p5);
+            this.props.setCamera(camera);
+            this.unloadedPQ = new PriorityQueue((a, b) => Utils.dist(camera.x, camera.y, a.x, a.y)
+                                                                  - Utils.dist(camera.x, camera.y, b.x, b.y));
 
             loadInitialQuads(this.loadingQuads, this.unprocessedResponses).then((qH) => {
                 this.props.setQuadHead(qH);
@@ -29,6 +32,8 @@ class P5Wrapper extends React.Component {
 
         p.draw = () => {
             if (this.loading) {
+                console.log('P5 Draw');
+                console.log(window.innerWidth);
                 drawLoading();
                 return;
             }
@@ -38,23 +43,23 @@ class P5Wrapper extends React.Component {
             Debug.resetTiming();
             Debug.createTimingEvent("Drawing Setup");
 
-            MouseEvents.drift(camera, p);
-            MouseEvents.zoom(camera);
+            MouseEvents.drift(this.props.camera, p);
+            MouseEvents.zoom(this.props.camera);
 
 
-            camera.doCameraMove();
+            this.props.camera.doCameraMove();
 
             p.push();
-            camera.setView();
+            this.props.camera.setView();
 
             Debug.createTimingEvent("Camera Moves");
 
-            drawOnscreenQuads(p, this.props.quadHead, camera, this.props.hoveredArtist, this.loadingQuads, this.unloadedQuads, this.unloadedPQ);
+            drawOnscreenQuads(p, this.props.quadHead, this.props.camera, this.props.hoveredArtist, this.loadingQuads, this.unloadedQuads, this.unloadedPQ);
 
             loadUnloaded(this.unprocessedResponses, this.unloadedPQ, this.loadingQuads, this.unloadedQuads);
 
             if (!this.props.uiHover) {
-                this.props.updateHoveredArtist(getHoveredArtist(p, camera, this.props.clickedArtist, this.props.quadHead));
+                this.props.updateHoveredArtist(getHoveredArtist(p, this.props.camera, this.props.clickedArtist, this.props.quadHead));
             }
 
             if (this.props.clickedArtist && !this.props.clickedArtist.loaded && !this.clickedLoading) {
@@ -69,7 +74,7 @@ class P5Wrapper extends React.Component {
             }
 
             if (GenreHelpers.genreNodes.size > 0) {
-                this.darkenOpacity = darkenScene(p, this.darkenOpacity, camera);
+                this.darkenOpacity = darkenScene(p, this.darkenOpacity, this.props.camera);
             }
 
             Debug.createTimingEvent("Darken Scene for Genre Nodes");
@@ -97,13 +102,13 @@ class P5Wrapper extends React.Component {
 
                 p.pop();
 
-                drawNodes(p, camera, GenreHelpers.genreNodes);
+                drawNodes(p, this.props.camera, GenreHelpers.genreNodes);
             }
 
             Debug.createTimingEvent("Draw Genre Nodes");
 
             if (this.props.clickedArtist) {
-                this.darkenOpacity = darkenScene(p, this.darkenOpacity, camera);
+                this.darkenOpacity = darkenScene(p, this.darkenOpacity, this.props.camera);
             }
 
             Debug.createTimingEvent("Darken Scene for Related Nodes");
@@ -114,12 +119,12 @@ class P5Wrapper extends React.Component {
                         this.props.clickedArtist.edges = makeEdges(this.props.clickedArtist);
                         this.props.updateClickedArtist(this.props.clickedArtist); //TODO why is this here
                     } else {
-                        drawEdges(p, camera, this.props.clickedArtist.edges, this.props.clickedArtist, this.props.hoveredArtist);
+                        drawEdges(p, this.props.camera, this.props.clickedArtist.edges, this.props.clickedArtist, this.props.hoveredArtist);
                     }
                 }
 
                 Debug.createTimingEvent("Draw Related Edges");
-                drawRelatedNodes(p, camera, this.props.clickedArtist);
+                drawRelatedNodes(p, this.props.camera, this.props.clickedArtist);
                 Debug.createTimingEvent("Draw Related Nodes");
             }
 
@@ -133,7 +138,7 @@ class P5Wrapper extends React.Component {
             Debug.createTimingEvent("Sidebar");
 
             if (p.frameCount % 5 === 0) { //TODO adjust this until it feels right, or adjust it dynamically?
-                processOne(p, camera, this.props.quadHead, this.props.nodeLookup, this.loadingQuads, this.unprocessedResponses);
+                processOne(p, this.props.camera, this.props.quadHead, this.props.nodeLookup, this.loadingQuads, this.unprocessedResponses);
             }
 
             Debug.createTimingEvent("Quad Processing");
@@ -141,7 +146,7 @@ class P5Wrapper extends React.Component {
             p.pop();
 
             Debug.createTimingEvent("Info Box");
-            Debug.debugAll(p, camera, this.props.hoveredArtist, this.unloadedQuads, this.loadingQuads, this.unprocessedResponses);
+            Debug.debugAll(p, this.props.camera, this.props.hoveredArtist, this.unloadedQuads, this.loadingQuads, this.unprocessedResponses);
         };
 
         p.mouseWheel = (e) => {
@@ -153,12 +158,12 @@ class P5Wrapper extends React.Component {
             const isTouchPad = e.wheelDeltaY ? e.wheelDeltaY === -3 * e.deltaY : e.deltaMode === 0
 
             if (isTouchPad && !e.ctrlKey) {
-                camera.x -= e.deltaX * (1 / camera.getZoomFactor().x);
-                camera.y += e.deltaY * (1 / camera.getZoomFactor().y);
+                this.props.camera.x -= e.deltaX * (1 / this.props.camera.getZoomFactor().x);
+                this.props.camera.y += e.deltaY * (1 / this.props.camera.getZoomFactor().y);
             } else {
                 MouseEvents.zooming = true;
                 MouseEvents.scrollStep = 0;
-                MouseEvents.zoomCoordinates = MouseEvents.getVirtualMouseCoordinates(p, camera);
+                MouseEvents.zoomCoordinates = MouseEvents.getVirtualMouseCoordinates(p, this.props.camera);
                 if (e.ctrlKey && Math.abs(e.deltaY) < 10) {
                     MouseEvents.scrollDelta = e.deltaY / 10;
                 } else {
@@ -177,20 +182,20 @@ class P5Wrapper extends React.Component {
 
         p.mouseDragged = () => {
             if (MouseEvents.dragging) {
-                const newDrag = MouseEvents.getVirtualMouseCoordinates(p, camera);
-                const oldDrag = camera.screen2virtual(MouseEvents.drag);
-                camera.x += (oldDrag.x - newDrag.x);
-                camera.y += (oldDrag.y - newDrag.y);
+                const newDrag = MouseEvents.getVirtualMouseCoordinates(p, this.props.camera);
+                const oldDrag = this.props.camera.screen2virtual(MouseEvents.drag);
+                this.props.camera.x += (oldDrag.x - newDrag.x);
+                this.props.camera.y += (oldDrag.y - newDrag.y);
                 MouseEvents.drag = {x: p.mouseX, y: p.mouseY};
             }
         }
 
         p.mouseReleased = () => {
             if (MouseEvents.dragging) {
-                const newDrag = MouseEvents.getVirtualMouseCoordinates(p, camera);
-                const oldDrag = camera.screen2virtual(MouseEvents.drag);
-                camera.x += (oldDrag.x - newDrag.x);
-                camera.y += (oldDrag.y - newDrag.y);
+                const newDrag = MouseEvents.getVirtualMouseCoordinates(p, this.props.camera);
+                const oldDrag = this.props.camera.screen2virtual(MouseEvents.drag);
+                this.props.camera.x += (oldDrag.x - newDrag.x);
+                this.props.camera.y += (oldDrag.y - newDrag.y);
 
                 if (Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y) < 5) {
                     const click = handlePointClick(this.props.quadHead, this.props.hoveredArtist, this.props.clickedArtist, this.props.nodeLookup, p);
@@ -209,8 +214,9 @@ class P5Wrapper extends React.Component {
     }
 
     componentDidMount() {
-        p = new p5(this.Sketch, this.myRef.current);
-        camera = new Camera(0, 0, window.innerHeight, window.innerWidth, 1, p);
+        console.log('P5 Component Mount');
+        console.log(window.innerWidth);
+        this.props.setCanvas(new p5(this.Sketch, this.myRef.current));
 
         this.clickedLoading = false;
         this.darkenOpacity = 0;
@@ -218,7 +224,6 @@ class P5Wrapper extends React.Component {
         this.unprocessedResponses = [];
         this.unloadedQuads = new Set();
         this.loadingQuads = new Set();
-        this.unloadedPQ = new PriorityQueue((a, b) => Utils.dist(camera.x, camera.y, a.x, a.y) - Utils.dist(camera.x, camera.y, b.x, b.y));
     }
 
     render() {

@@ -26,7 +26,7 @@ class ReactInfobox extends React.Component {
             return null;
         }
 
-        const point = camera.virtual2screen({x: this.props.artist.x, y: this.props.artist.y});
+        const point = this.props.camera.virtual2screen({x: this.props.artist.x, y: this.props.artist.y});
 
         const infoBoxDynamicStyles = {
             height: this.state.height,
