@@ -183,6 +183,7 @@ class App extends React.Component {
                     canvasUpdate={this.canvasUpdate}
 
                     hoveredArtist={this.state.hoveredArtist}
+                    clickedArtist={this.state.clickedArtist}
 
                     uiHover={this.state.uiHover}
                     updateHoverFlag={this.updateHoverFlag}

@@ -4,8 +4,6 @@ let nodeLookup = {};
 
 let quadHead;
 
-let clickedArtist = null;
-
 let p;
 let camera;
 

@@ -54,17 +54,17 @@ class P5Wrapper extends React.Component {
             loadUnloaded(this.unprocessedResponses, this.unloadedPQ, this.loadingQuads, this.unloadedQuads);
 
             if (!this.props.uiHover) {
-                this.props.updateHoveredArtist(getHoveredArtist(p, camera, clickedArtist, quadHead));
+                this.props.updateHoveredArtist(getHoveredArtist(p, camera, this.props.clickedArtist, quadHead));
             }
 
-            if (clickedArtist && !clickedArtist.loaded && !this.clickedLoading) {
+            if (this.props.clickedArtist && !this.props.clickedArtist.loaded && !this.clickedLoading) {
                 this.clickedLoading = true;
-                loadArtist(p, clickedArtist, quadHead, nodeLookup).then(() => {this.clickedLoading = false});
+                loadArtist(p, this.props.clickedArtist, quadHead, nodeLookup).then(() => {this.clickedLoading = false});
             }
 
             Debug.createTimingEvent("Get Hovered Artist");
 
-            if (!clickedArtist && GenreHelpers.genreNodes.size === 0) {
+            if (!this.props.clickedArtist && GenreHelpers.genreNodes.size === 0) {
                 this.darkenOpacity = 0;
             }
 
@@ -102,24 +102,24 @@ class P5Wrapper extends React.Component {
 
             Debug.createTimingEvent("Draw Genre Nodes");
 
-            if (clickedArtist) {
+            if (this.props.clickedArtist) {
                 this.darkenOpacity = darkenScene(p, this.darkenOpacity, camera);
             }
 
             Debug.createTimingEvent("Darken Scene for Related Nodes");
 
-            if (clickedArtist && clickedArtist.loaded) {
-                if (clickedArtist.relatedVertices.size > 0) {
-                    if (clickedArtist.edges.length === 0) {
-                        clickedArtist.edges = makeEdges(clickedArtist);
-                        this.props.updateClickedArtist(clickedArtist); //TODO why is this here
+            if (this.props.clickedArtist && this.props.clickedArtist.loaded) {
+                if (this.props.clickedArtist.relatedVertices.size > 0) {
+                    if (this.props.clickedArtist.edges.length === 0) {
+                        this.props.clickedArtist.edges = makeEdges(this.props.clickedArtist);
+                        this.props.updateClickedArtist(this.props.clickedArtist); //TODO why is this here
                     } else {
-                        drawEdges(p, camera, clickedArtist.edges, clickedArtist, this.props.hoveredArtist);
+                        drawEdges(p, camera, this.props.clickedArtist.edges, this.props.clickedArtist, this.props.hoveredArtist);
                     }
                 }
 
                 Debug.createTimingEvent("Draw Related Edges");
-                drawRelatedNodes(p, camera, clickedArtist);
+                drawRelatedNodes(p, camera, this.props.clickedArtist);
                 Debug.createTimingEvent("Draw Related Nodes");
             }
 
@@ -193,8 +193,10 @@ class P5Wrapper extends React.Component {
                 camera.y += (oldDrag.y - newDrag.y);
 
                 if (Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y) < 5) {
-                    clickedArtist = handlePointClick(quadHead, this.props.hoveredArtist, clickedArtist, nodeLookup, p);
-                    if (!clickedArtist) {
+                    const click = handlePointClick(quadHead, this.props.hoveredArtist, this.props.clickedArtist, nodeLookup, p);
+                    if (click) {
+                        this.props.updateClickedArtist(click)
+                    } else {
                         this.props.unsetClickedArtist();
                     }
                 }
