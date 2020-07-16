@@ -55,21 +55,35 @@ var ReactSidebar = function (_React$Component) {
                         header: "Genres"
                     }),
                     React.createElement(ArtistsList, { artists: this.props.artist.relatedVertices,
-                        loadArtistFromUI: this.loadArtistFromUI,
+                        loadArtistFromUI: this.props.loadArtistFromUI,
                         header: "Related Artists"
                     })
                 );
             }
 
             if (this.props.genre) {
-                return React.createElement("div", { className: "sidebar",
-                    onMouseEnter: function onMouseEnter() {
-                        _this2.props.updateHoverFlag(true);
+                return React.createElement(
+                    "div",
+                    { className: "sidebar",
+                        onMouseEnter: function onMouseEnter() {
+                            _this2.props.updateHoverFlag(true);
+                        },
+                        onMouseLeave: function onMouseLeave() {
+                            _this2.props.updateHoverFlag(false);
+                        }
                     },
-                    onMouseLeave: function onMouseLeave() {
-                        _this2.props.updateHoverFlag(false);
-                    }
-                });
+                    React.createElement(
+                        "style",
+                        null,
+                        "::-webkit-scrollbar-track {box-shadow: 0 0 5px " + this.props.genre.colorToString() + ";}  \n" + ("::-webkit-scrollbar-thumb {background: " + this.props.genre.colorToString() + ";")
+                    ),
+                    React.createElement(SidebarStroke, { color: this.props.genre.colorToString() }),
+                    React.createElement(ArtistProfile, { artist: this.props.genre, fontDecrement: 3 }),
+                    React.createElement(ArtistsList, { artists: this.props.genre.nodes,
+                        loadArtistFromUI: this.props.loadArtistFromUI,
+                        header: "Artists in Genre"
+                    })
+                );
             }
         }
     }]);

@@ -191,53 +191,13 @@ var App = function (_React$Component) {
                     }
                 }
 
-                var hull = QuickHull.getHull(nodesList);
                 var nodes = new Set(nodesList);
 
-                var easternmost = hull[0];
-                var westernmost = hull[0];
+                var newGenre = new Genre(name, nodes, r, g, b);
 
-                var _iteratorNormalCompletion3 = true;
-                var _didIteratorError3 = false;
-                var _iteratorError3 = undefined;
+                camera.setCameraMove(newGenre.centroid.x, newGenre.centroid.y, camera.getZoomFromWidth(newGenre.getWidth()), 30);
 
-                try {
-                    for (var _iterator3 = hull[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                        var point = _step3.value;
-
-                        easternmost = point.x > easternmost.x ? point : easternmost;
-                        //We don't have to update westernmost because genreHull[0] will always be the leftmost extrema
-                    }
-                } catch (err) {
-                    _didIteratorError3 = true;
-                    _iteratorError3 = err;
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                            _iterator3.return();
-                        }
-                    } finally {
-                        if (_didIteratorError3) {
-                            throw _iteratorError3;
-                        }
-                    }
-                }
-
-                var centroid = GenreHelpers.getCentroid(hull);
-                var cameraWidth = Math.abs(easternmost.x - westernmost.x);
-
-                camera.setCameraMove(centroid.x, centroid.y, camera.getZoomFromWidth(cameraWidth), 30);
-
-                _this5.setState({ clickedArtist: null,
-                    activeGenre: {
-                        name: name,
-                        hull: hull,
-                        nodes: nodes,
-                        centroid: centroid,
-                        r: r,
-                        g: g,
-                        b: b
-                    } });
+                _this5.setState({ clickedArtist: null, activeGenre: newGenre });
             });
         }
     }, {

@@ -109,32 +109,15 @@ class App extends React.Component {
                     nodesList.push(nodeLookup[node.id]);
                 }
 
-                const hull = QuickHull.getHull(nodesList);
-                const nodes =  new Set(nodesList);
+                const nodes = new Set(nodesList);
 
-                let easternmost = hull[0];
-                let westernmost = hull[0];
+                const newGenre = new Genre(name, nodes, r, g, b);
 
-                for (const point of hull) {
-                    easternmost = point.x > easternmost.x ? point : easternmost;
-                    //We don't have to update westernmost because genreHull[0] will always be the leftmost extrema
-                }
 
-                const centroid = GenreHelpers.getCentroid(hull);
-                const cameraWidth = Math.abs(easternmost.x - westernmost.x);
+                camera.setCameraMove(newGenre.centroid.x, newGenre.centroid.y,
+                                     camera.getZoomFromWidth(newGenre.getWidth()), 30);
 
-                camera.setCameraMove(centroid.x, centroid.y, camera.getZoomFromWidth(cameraWidth), 30);
-
-                this.setState({clickedArtist: null,
-                                activeGenre: {
-                                    name: name,
-                                    hull: hull,
-                                    nodes: nodes,
-                                    centroid: centroid,
-                                    r: r,
-                                    g: g,
-                                    b: b
-                                }})
+                this.setState({clickedArtist: null, activeGenre: newGenre});
             })
     }
 

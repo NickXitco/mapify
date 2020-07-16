@@ -41,7 +41,7 @@ class ReactSidebar extends React.Component {
                     />
 
                     <ArtistsList artists={this.props.artist.relatedVertices}
-                                 loadArtistFromUI={this.loadArtistFromUI}
+                                 loadArtistFromUI={this.props.loadArtistFromUI}
                                  header={"Related Artists"}
                     />
                 </div>
@@ -54,6 +54,21 @@ class ReactSidebar extends React.Component {
                      onMouseEnter={() => {this.props.updateHoverFlag(true)}}
                      onMouseLeave={() => {this.props.updateHoverFlag(false)}}
                 >
+
+                    <style>
+                        {`::-webkit-scrollbar-track {box-shadow: 0 0 5px ${this.props.genre.colorToString()};}  \n` +
+                        `::-webkit-scrollbar-thumb {background: ${this.props.genre.colorToString()};`}
+                    </style>
+
+                    <SidebarStroke color={this.props.genre.colorToString()}/>
+
+                    <ArtistProfile artist={this.props.genre} fontDecrement={3}/>
+
+                    <ArtistsList artists={this.props.genre.nodes}
+                                 loadArtistFromUI={this.props.loadArtistFromUI}
+                                 header={"Artists in Genre"}
+                    />
+
                 </div>
             );
         }
