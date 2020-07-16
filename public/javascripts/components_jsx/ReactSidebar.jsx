@@ -52,6 +52,7 @@ class ReactSidebar extends React.Component {
 
                     <ArtistsList artists={this.props.artist.relatedVertices}
                                  loadArtistFromUI={this.props.loadArtistFromUI}
+                                 updateHoveredArtist={this.props.updateHoveredArtist}
                                  header={"Related Artists"}
                     />
                 </div>
@@ -76,6 +77,7 @@ class ReactSidebar extends React.Component {
 
                     <ArtistsList artists={this.props.genre.nodes}
                                  loadArtistFromUI={this.props.loadArtistFromUI}
+                                 updateHoveredArtist={this.props.updateHoveredArtist}
                                  header={"Artists in Genre"}
                     />
 

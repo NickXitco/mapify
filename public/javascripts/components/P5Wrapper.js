@@ -59,13 +59,12 @@ var P5Wrapper = function (_React$Component) {
 
                 Debug.createTimingEvent("Camera Moves");
 
-                drawOnscreenQuads(p, quadHead, camera, hoveredArtist, _this.loadingQuads, _this.unloadedQuads, _this.unloadedPQ);
+                drawOnscreenQuads(p, quadHead, camera, _this.props.hoveredArtist, _this.loadingQuads, _this.unloadedQuads, _this.unloadedPQ);
 
                 loadUnloaded(_this.unprocessedResponses, _this.unloadedPQ, _this.loadingQuads, _this.unloadedQuads);
 
                 if (!_this.props.uiHover) {
-                    hoveredArtist = getHoveredArtist(p, camera, clickedArtist, quadHead);
-                    _this.props.updateHoveredArtist(hoveredArtist);
+                    _this.props.updateHoveredArtist(getHoveredArtist(p, camera, clickedArtist, quadHead));
                 }
 
                 if (clickedArtist && !clickedArtist.loaded && !_this.clickedLoading) {
@@ -149,7 +148,7 @@ var P5Wrapper = function (_React$Component) {
                             clickedArtist.edges = makeEdges(clickedArtist);
                             _this.props.updateClickedArtist(clickedArtist); //TODO why is this here
                         } else {
-                            drawEdges(p, camera, clickedArtist.edges, clickedArtist, hoveredArtist);
+                            drawEdges(p, camera, clickedArtist.edges, clickedArtist, _this.props.hoveredArtist);
                         }
                     }
 
@@ -177,7 +176,7 @@ var P5Wrapper = function (_React$Component) {
                 p.pop();
 
                 Debug.createTimingEvent("Info Box");
-                Debug.debugAll(p, camera, hoveredArtist, _this.unloadedQuads, _this.loadingQuads, _this.unprocessedResponses);
+                Debug.debugAll(p, camera, _this.props.hoveredArtist, _this.unloadedQuads, _this.loadingQuads, _this.unprocessedResponses);
             };
 
             p.mouseWheel = function (e) {
@@ -229,11 +228,10 @@ var P5Wrapper = function (_React$Component) {
                     camera.y += oldDrag.y - newDrag.y;
 
                     if (Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y) < 5) {
-                        clickedArtist = handlePointClick(quadHead, hoveredArtist, clickedArtist, nodeLookup, p);
+                        clickedArtist = handlePointClick(quadHead, _this.props.hoveredArtist, clickedArtist, nodeLookup, p);
                         if (!clickedArtist) {
                             _this.props.unsetClickedArtist();
                         }
-                        _this.newEdges = Boolean(clickedArtist);
                     }
 
                     MouseEvents.driftVec = p.createVector(p.winMouseX - p.pwinMouseX, p.winMouseY - p.pwinMouseY);

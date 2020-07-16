@@ -67,6 +67,7 @@ var ReactSidebar = function (_React$Component) {
                     }),
                     React.createElement(ArtistsList, { artists: this.props.artist.relatedVertices,
                         loadArtistFromUI: this.props.loadArtistFromUI,
+                        updateHoveredArtist: this.props.updateHoveredArtist,
                         header: "Related Artists"
                     })
                 );
@@ -92,6 +93,7 @@ var ReactSidebar = function (_React$Component) {
                     React.createElement(ArtistProfile, { artist: this.props.genre, fontDecrement: 3 }),
                     React.createElement(ArtistsList, { artists: this.props.genre.nodes,
                         loadArtistFromUI: this.props.loadArtistFromUI,
+                        updateHoveredArtist: this.props.updateHoveredArtist,
                         header: "Artists in Genre"
                     })
                 );

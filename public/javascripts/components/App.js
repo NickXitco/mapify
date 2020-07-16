@@ -250,6 +250,7 @@ var App = function (_React$Component) {
 
                     loadArtistFromUI: this.loadArtistFromUI,
                     loadGenreFromSearch: this.loadGenreFromSearch,
+                    updateHoveredArtist: this.updateHoveredArtist,
 
                     updateHoverFlag: this.updateHoverFlag
                 }),
@@ -261,6 +262,8 @@ var App = function (_React$Component) {
                 }),
                 React.createElement(P5Wrapper, {
                     canvasUpdate: this.canvasUpdate,
+
+                    hoveredArtist: this.state.hoveredArtist,
 
                     uiHover: this.state.uiHover,
                     updateHoverFlag: this.updateHoverFlag,

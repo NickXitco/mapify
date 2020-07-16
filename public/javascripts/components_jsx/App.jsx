@@ -167,6 +167,7 @@ class App extends React.Component {
 
                     loadArtistFromUI={this.loadArtistFromUI}
                     loadGenreFromSearch={this.loadGenreFromSearch}
+                    updateHoveredArtist={this.updateHoveredArtist}
 
                     updateHoverFlag={this.updateHoverFlag}
                 />
@@ -180,6 +181,8 @@ class App extends React.Component {
 
                 <P5Wrapper
                     canvasUpdate={this.canvasUpdate}
+
+                    hoveredArtist={this.state.hoveredArtist}
 
                     uiHover={this.state.uiHover}
                     updateHoverFlag={this.updateHoverFlag}

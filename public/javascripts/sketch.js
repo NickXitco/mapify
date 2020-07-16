@@ -4,7 +4,6 @@ let nodeLookup = {};
 
 let quadHead;
 
-let hoveredArtist = null;
 let clickedArtist = null;
 
 let p;

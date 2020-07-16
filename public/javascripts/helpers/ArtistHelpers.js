@@ -1,6 +1,6 @@
 const MAX_CURVE_ANGLE = 180;
 
-//TODO return hoveredArtist
+
 function getHoveredArtist(p, camera, clickedArtist, quadHead) {
     let stack = [];
     const mP = MouseEvents.getVirtualMouseCoordinates(p, camera);

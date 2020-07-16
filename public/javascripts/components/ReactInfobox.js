@@ -44,7 +44,7 @@ var ReactInfobox = function (_React$Component) {
                 return null;
             }
 
-            var point = camera.virtual2screen({ x: hoveredArtist.x, y: hoveredArtist.y });
+            var point = camera.virtual2screen({ x: this.props.artist.x, y: this.props.artist.y });
 
             var infoBoxDynamicStyles = {
                 height: this.state.height,
