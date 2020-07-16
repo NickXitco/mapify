@@ -55,22 +55,7 @@ function handlePointClick(quadHead, hoveredArtist, clickedArtist, nodeLookup, p)
     }
 
     if (hoveredArtist) {
-        if (hoveredArtist !== clickedArtist) {
-            Sidebar.resetSidebar(false);
-            return hoveredArtist;
-        }
-
-        return clickedArtist;
-    }
-
-    if (clickedArtist && GenreHelpers.genreNodes.size > 0) {
-        Sidebar.resetSidebar(false);
-        Sidebar.setGenreSidebar(p, quadHead, nodeLookup);
-    } else if (clickedArtist) {
-        Sidebar.resetSidebar(true);
-    } else if (GenreHelpers.genreNodes.size > 0) {
-        GenreHelpers.resetGenreView();
-        Sidebar.resetSidebar(true);
+        return hoveredArtist;
     }
 
     return null;

@@ -124,13 +124,12 @@ class P5Wrapper extends React.Component {
                 Debug.createTimingEvent("Draw Related Nodes");
             }
 
-            if (clickedArtist && clickedArtist.loaded && Sidebar.artist !== clickedArtist) {
-                Sidebar.setArtistSidebar(p, camera, clickedArtist, quadHead, nodeLookup);
-            }
-
+            //TODO reimplement
+            /*
             if (clickedArtist && Sidebar.openAmount < 1) {
                 Sidebar.openSidebar();
             }
+             */
 
             Debug.createTimingEvent("Sidebar");
 

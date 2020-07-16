@@ -16,6 +16,17 @@ var ReactSidebar = function (_React$Component) {
     }
 
     _createClass(ReactSidebar, [{
+        key: "componentDidUpdate",
+        value: function componentDidUpdate() {
+            /*
+            openSidebar: function () {
+                const twentyFive = window.innerWidth.width / 4;
+                Sidebar.dom.style.left = Utils.map(Eases.easeOutQuart(Sidebar.openAmount), 0, 1, twentyFive, 0) + "px";
+                Sidebar.openAmount = Math.min(1, Sidebar.openAmount + 0.05);
+            }
+             */
+        }
+    }, {
         key: "componentDidMount",
         value: function componentDidMount() {}
     }, {
