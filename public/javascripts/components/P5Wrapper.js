@@ -69,7 +69,7 @@ var P5Wrapper = function (_React$Component) {
 
                 if (_this.props.clickedArtist && !_this.props.clickedArtist.loaded && !_this.clickedLoading) {
                     _this.clickedLoading = true;
-                    loadArtist(p, _this.props.clickedArtist, quadHead, nodeLookup).then(function () {
+                    loadArtist(p, _this.props.clickedArtist, quadHead, _this.props.nodeLookup).then(function () {
                         _this.clickedLoading = false;
                     });
                 }
@@ -168,7 +168,7 @@ var P5Wrapper = function (_React$Component) {
 
                 if (p.frameCount % 5 === 0) {
                     //TODO adjust this until it feels right, or adjust it dynamically?
-                    processOne(p, camera, quadHead, nodeLookup, _this.loadingQuads, _this.unprocessedResponses);
+                    processOne(p, camera, quadHead, _this.props.nodeLookup, _this.loadingQuads, _this.unprocessedResponses);
                 }
 
                 Debug.createTimingEvent("Quad Processing");
@@ -228,7 +228,7 @@ var P5Wrapper = function (_React$Component) {
                     camera.y += oldDrag.y - newDrag.y;
 
                     if (Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y) < 5) {
-                        var click = handlePointClick(quadHead, _this.props.hoveredArtist, _this.props.clickedArtist, nodeLookup, p);
+                        var click = handlePointClick(quadHead, _this.props.hoveredArtist, _this.props.clickedArtist, _this.props.nodeLookup, p);
                         if (click) {
                             _this.props.updateClickedArtist(click);
                         } else {

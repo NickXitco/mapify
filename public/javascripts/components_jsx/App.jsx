@@ -51,9 +51,9 @@ class App extends React.Component {
         if (artist.loaded) {
             this.setState({clickedArtist: artist});
         } else if (artist.id) {
-            loadArtist(p, artist, quadHead, nodeLookup).then(() =>{
+            loadArtist(p, artist, quadHead, this.state.nodeLookup).then(() =>{
                     artist.edges = [];
-                    this.setState({clickedArtist: nodeLookup[artist.id]});
+                    this.setState({clickedArtist: this.state.nodeLookup[artist.id]});
             });
         }
     }
@@ -65,9 +65,9 @@ class App extends React.Component {
             fetch(`artist/${artist.id}/true`)
                 .then(response => response.json())
                 .then(data => {
-                    const node = createNewNode(data, quadHead, nodeLookup);
+                    const node = createNewNode(data, quadHead, this.state.nodeLookup);
                     for (const r of data.related) {
-                        node.relatedVertices.add(createNewNode(r, quadHead, nodeLookup));
+                        node.relatedVertices.add(createNewNode(r, quadHead, this.state.nodeLookup));
                     }
                     node.loaded = true;
                     this.setState({clickedArtist: node});
@@ -78,7 +78,7 @@ class App extends React.Component {
     }
 
     loadArtistFromSearch(searchTerm) {
-        loadArtistFromSearch(p, searchTerm, false, quadHead, nodeLookup).then(node => {
+        loadArtistFromSearch(p, searchTerm, false, quadHead, this.state.nodeLookup).then(node => {
             console.trace(node);
             if (node) {
                 this.setState({clickedArtist: node});
@@ -105,8 +105,8 @@ class App extends React.Component {
 
                 let nodesList = [];
                 for (const node of data.artists) {
-                    createNewNode(node, quadHead, nodeLookup);
-                    nodesList.push(nodeLookup[node.id]);
+                    createNewNode(node, quadHead, this.state.nodeLookup);
+                    nodesList.push(this.state.nodeLookup[node.id]);
                 }
 
                 const nodes = new Set(nodesList);
@@ -184,6 +184,7 @@ class App extends React.Component {
 
                     hoveredArtist={this.state.hoveredArtist}
                     clickedArtist={this.state.clickedArtist}
+                    nodeLookup={this.state.nodeLookup} //TODO consider removing this from P5 and do all load handling at the app level.
 
                     uiHover={this.state.uiHover}
                     updateHoverFlag={this.updateHoverFlag}

@@ -59,7 +59,7 @@ class P5Wrapper extends React.Component {
 
             if (this.props.clickedArtist && !this.props.clickedArtist.loaded && !this.clickedLoading) {
                 this.clickedLoading = true;
-                loadArtist(p, this.props.clickedArtist, quadHead, nodeLookup).then(() => {this.clickedLoading = false});
+                loadArtist(p, this.props.clickedArtist, quadHead, this.props.nodeLookup).then(() => {this.clickedLoading = false});
             }
 
             Debug.createTimingEvent("Get Hovered Artist");
@@ -133,7 +133,7 @@ class P5Wrapper extends React.Component {
             Debug.createTimingEvent("Sidebar");
 
             if (p.frameCount % 5 === 0) { //TODO adjust this until it feels right, or adjust it dynamically?
-                processOne(p, camera, quadHead, nodeLookup, this.loadingQuads, this.unprocessedResponses);
+                processOne(p, camera, quadHead, this.props.nodeLookup, this.loadingQuads, this.unprocessedResponses);
             }
 
             Debug.createTimingEvent("Quad Processing");
@@ -193,7 +193,7 @@ class P5Wrapper extends React.Component {
                 camera.y += (oldDrag.y - newDrag.y);
 
                 if (Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y) < 5) {
-                    const click = handlePointClick(quadHead, this.props.hoveredArtist, this.props.clickedArtist, nodeLookup, p);
+                    const click = handlePointClick(quadHead, this.props.hoveredArtist, this.props.clickedArtist, this.props.nodeLookup, p);
                     if (click) {
                         this.props.updateClickedArtist(click)
                     } else {
