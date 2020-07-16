@@ -36,6 +36,7 @@ class App extends React.Component {
         this.updateHoverFlag = this.updateHoverFlag.bind(this);
 
         this.loadGenreFromSearch = this.loadGenreFromSearch.bind(this);
+        this.setQuadHead = this.setQuadHead.bind(this);
     }
 
     updateHoverFlag(value) {
@@ -51,7 +52,7 @@ class App extends React.Component {
         if (artist.loaded) {
             this.setState({clickedArtist: artist});
         } else if (artist.id) {
-            loadArtist(p, artist, quadHead, this.state.nodeLookup).then(() =>{
+            loadArtist(p, artist, this.state.quadHead, this.state.nodeLookup).then(() =>{
                     artist.edges = [];
                     this.setState({clickedArtist: this.state.nodeLookup[artist.id]});
             });
@@ -65,9 +66,9 @@ class App extends React.Component {
             fetch(`artist/${artist.id}/true`)
                 .then(response => response.json())
                 .then(data => {
-                    const node = createNewNode(data, quadHead, this.state.nodeLookup);
+                    const node = createNewNode(data, this.state.quadHead, this.state.nodeLookup);
                     for (const r of data.related) {
-                        node.relatedVertices.add(createNewNode(r, quadHead, this.state.nodeLookup));
+                        node.relatedVertices.add(createNewNode(r, this.state.quadHead, this.state.nodeLookup));
                     }
                     node.loaded = true;
                     this.setState({clickedArtist: node});
@@ -78,7 +79,7 @@ class App extends React.Component {
     }
 
     loadArtistFromSearch(searchTerm) {
-        loadArtistFromSearch(p, searchTerm, false, quadHead, this.state.nodeLookup).then(node => {
+        loadArtistFromSearch(p, searchTerm, false, this.state.quadHead, this.state.nodeLookup).then(node => {
             console.trace(node);
             if (node) {
                 this.setState({clickedArtist: node});
@@ -105,7 +106,7 @@ class App extends React.Component {
 
                 let nodesList = [];
                 for (const node of data.artists) {
-                    createNewNode(node, quadHead, this.state.nodeLookup);
+                    createNewNode(node, this.state.quadHead, this.state.nodeLookup);
                     nodesList.push(this.state.nodeLookup[node.id]);
                 }
 
@@ -136,6 +137,10 @@ class App extends React.Component {
     canvasUpdate(canvas) {
         this.setState({canvas: canvas})
         this.initializeResizeObserver()
+    }
+
+    setQuadHead(quadHead) {
+        this.setState({quadHead: quadHead});
     }
 
     initializeResizeObserver() {
@@ -185,6 +190,9 @@ class App extends React.Component {
                     hoveredArtist={this.state.hoveredArtist}
                     clickedArtist={this.state.clickedArtist}
                     nodeLookup={this.state.nodeLookup} //TODO consider removing this from P5 and do all load handling at the app level.
+                    quadHead={this.state.quadHead}
+
+                    setQuadHead={this.setQuadHead}
 
                     uiHover={this.state.uiHover}
                     updateHoverFlag={this.updateHoverFlag}

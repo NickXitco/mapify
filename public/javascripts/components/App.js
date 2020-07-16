@@ -48,6 +48,7 @@ var App = function (_React$Component) {
         _this.updateHoverFlag = _this.updateHoverFlag.bind(_this);
 
         _this.loadGenreFromSearch = _this.loadGenreFromSearch.bind(_this);
+        _this.setQuadHead = _this.setQuadHead.bind(_this);
         return _this;
     }
 
@@ -70,7 +71,7 @@ var App = function (_React$Component) {
             if (artist.loaded) {
                 this.setState({ clickedArtist: artist });
             } else if (artist.id) {
-                loadArtist(p, artist, quadHead, this.state.nodeLookup).then(function () {
+                loadArtist(p, artist, this.state.quadHead, this.state.nodeLookup).then(function () {
                     artist.edges = [];
                     _this2.setState({ clickedArtist: _this2.state.nodeLookup[artist.id] });
                 });
@@ -87,7 +88,7 @@ var App = function (_React$Component) {
                 fetch("artist/" + artist.id + "/true").then(function (response) {
                     return response.json();
                 }).then(function (data) {
-                    var node = createNewNode(data, quadHead, _this3.state.nodeLookup);
+                    var node = createNewNode(data, _this3.state.quadHead, _this3.state.nodeLookup);
                     var _iteratorNormalCompletion = true;
                     var _didIteratorError = false;
                     var _iteratorError = undefined;
@@ -96,7 +97,7 @@ var App = function (_React$Component) {
                         for (var _iterator = data.related[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                             var r = _step.value;
 
-                            node.relatedVertices.add(createNewNode(r, quadHead, _this3.state.nodeLookup));
+                            node.relatedVertices.add(createNewNode(r, _this3.state.quadHead, _this3.state.nodeLookup));
                         }
                     } catch (err) {
                         _didIteratorError = true;
@@ -135,7 +136,7 @@ var App = function (_React$Component) {
         }(function (searchTerm) {
             var _this4 = this;
 
-            loadArtistFromSearch(p, searchTerm, false, quadHead, this.state.nodeLookup).then(function (node) {
+            loadArtistFromSearch(p, searchTerm, false, this.state.quadHead, this.state.nodeLookup).then(function (node) {
                 console.trace(node);
                 if (node) {
                     _this4.setState({ clickedArtist: node });
@@ -173,7 +174,7 @@ var App = function (_React$Component) {
                     for (var _iterator2 = data.artists[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                         var node = _step2.value;
 
-                        createNewNode(node, quadHead, _this5.state.nodeLookup);
+                        createNewNode(node, _this5.state.quadHead, _this5.state.nodeLookup);
                         nodesList.push(_this5.state.nodeLookup[node.id]);
                     }
                 } catch (err) {
@@ -217,6 +218,11 @@ var App = function (_React$Component) {
         value: function canvasUpdate(canvas) {
             this.setState({ canvas: canvas });
             this.initializeResizeObserver();
+        }
+    }, {
+        key: "setQuadHead",
+        value: function setQuadHead(quadHead) {
+            this.setState({ quadHead: quadHead });
         }
     }, {
         key: "initializeResizeObserver",
@@ -266,8 +272,11 @@ var App = function (_React$Component) {
                     hoveredArtist: this.state.hoveredArtist,
                     clickedArtist: this.state.clickedArtist,
                     nodeLookup: this.state.nodeLookup //TODO consider removing this from P5 and do all load handling at the app level.
+                    , quadHead: this.state.quadHead,
 
-                    , uiHover: this.state.uiHover,
+                    setQuadHead: this.setQuadHead,
+
+                    uiHover: this.state.uiHover,
                     updateHoverFlag: this.updateHoverFlag,
 
                     updateClickedArtist: this.updateClickedArtist,
