@@ -27,7 +27,7 @@ class App extends React.Component {
         this.setCamera = this.setCamera.bind(this);
 
         this.updateClickedArtist = this.updateClickedArtist.bind(this);
-        this.unsetClickedArtist = this.unsetClickedArtist.bind(this);
+        this.handleEmptyClick = this.handleEmptyClick.bind(this);
 
         this.loadArtistFromUI = this.loadArtistFromUI.bind(this);
         this.loadArtistFromSearch = this.loadArtistFromSearch.bind(this);
@@ -123,9 +123,20 @@ class App extends React.Component {
             })
     }
 
-
-
-    unsetClickedArtist() {
+    /**
+     *                 artist
+     *                0     |     1
+     *          |-------------------------
+     *        0 | both null | both null
+     * genre    |--------------------------
+     *        1 | both null | artist null,
+     *          |           | genre unchanged
+     *
+     */
+    handleEmptyClick() {
+        if (!(this.state.activeGenre && this.state.clickedArtist)) {
+            this.setState({activeGenre: null});
+        }
         this.setState({clickedArtist: null});
     }
 
@@ -202,6 +213,9 @@ class App extends React.Component {
                 <P5Wrapper
                     hoveredArtist={this.state.hoveredArtist}
                     clickedArtist={this.state.clickedArtist}
+
+                    genre={this.state.activeGenre}
+
                     nodeLookup={this.state.nodeLookup} //TODO consider removing this from P5 and do all load handling at the app level.
                     quadHead={this.state.quadHead}
                     camera={this.state.camera}
@@ -215,7 +229,7 @@ class App extends React.Component {
                     updateHoverFlag={this.updateHoverFlag}
 
                     updateClickedArtist={this.updateClickedArtist}
-                    unsetClickedArtist={this.unsetClickedArtist}
+                    handleEmptyClick={this.handleEmptyClick}
                     updateHoveredArtist={this.updateHoveredArtist}
                 />
             </div>

@@ -39,7 +39,7 @@ var App = function (_React$Component) {
         _this.setCamera = _this.setCamera.bind(_this);
 
         _this.updateClickedArtist = _this.updateClickedArtist.bind(_this);
-        _this.unsetClickedArtist = _this.unsetClickedArtist.bind(_this);
+        _this.handleEmptyClick = _this.handleEmptyClick.bind(_this);
 
         _this.loadArtistFromUI = _this.loadArtistFromUI.bind(_this);
         _this.loadArtistFromSearch = _this.loadArtistFromSearch.bind(_this);
@@ -202,9 +202,24 @@ var App = function (_React$Component) {
                 _this5.setState({ clickedArtist: null, activeGenre: newGenre });
             });
         }
+
+        /**
+         *                 artist
+         *                0     |     1
+         *          |-------------------------
+         *        0 | both null | both null
+         * genre    |--------------------------
+         *        1 | both null | artist null,
+         *          |           | genre unchanged
+         *
+         */
+
     }, {
-        key: 'unsetClickedArtist',
-        value: function unsetClickedArtist() {
+        key: 'handleEmptyClick',
+        value: function handleEmptyClick() {
+            if (!(this.state.activeGenre && this.state.clickedArtist)) {
+                this.setState({ activeGenre: null });
+            }
             this.setState({ clickedArtist: null });
         }
     }, {
@@ -289,6 +304,9 @@ var App = function (_React$Component) {
                 React.createElement(P5Wrapper, {
                     hoveredArtist: this.state.hoveredArtist,
                     clickedArtist: this.state.clickedArtist,
+
+                    genre: this.state.activeGenre,
+
                     nodeLookup: this.state.nodeLookup //TODO consider removing this from P5 and do all load handling at the app level.
                     , quadHead: this.state.quadHead,
                     camera: this.state.camera,
@@ -302,7 +320,7 @@ var App = function (_React$Component) {
                     updateHoverFlag: this.updateHoverFlag,
 
                     updateClickedArtist: this.updateClickedArtist,
-                    unsetClickedArtist: this.unsetClickedArtist,
+                    handleEmptyClick: this.handleEmptyClick,
                     updateHoveredArtist: this.updateHoveredArtist
                 })
             );

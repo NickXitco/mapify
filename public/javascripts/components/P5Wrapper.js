@@ -70,7 +70,7 @@ var P5Wrapper = function (_React$Component) {
                 loadUnloaded(_this.unprocessedResponses, _this.unloadedPQ, _this.loadingQuads, _this.unloadedQuads);
 
                 if (!_this.props.uiHover) {
-                    _this.props.updateHoveredArtist(getHoveredArtist(p, _this.props.camera, _this.props.clickedArtist, _this.props.quadHead));
+                    _this.props.updateHoveredArtist(getHoveredArtist(p, _this.props.camera, _this.props.clickedArtist, _this.props.quadHead, _this.props.genre));
                 }
 
                 if (_this.props.clickedArtist && !_this.props.clickedArtist.loaded && !_this.clickedLoading) {
@@ -82,31 +82,31 @@ var P5Wrapper = function (_React$Component) {
 
                 Debug.createTimingEvent("Get Hovered Artist");
 
-                if (!_this.props.clickedArtist && GenreHelpers.genreNodes.size === 0) {
+                if (!_this.props.clickedArtist && !_this.props.genre) {
                     _this.darkenOpacity = 0;
                 }
 
-                if (GenreHelpers.genreNodes.size > 0) {
+                if (_this.props.genre) {
                     _this.darkenOpacity = darkenScene(p, _this.darkenOpacity, _this.props.camera);
                 }
 
                 Debug.createTimingEvent("Darken Scene for Genre Nodes");
 
-                if (GenreHelpers.genreNodes.size > 0) {
-
+                //TODO refactor into genre class method
+                if (_this.props.genre) {
                     p.push();
                     p.noStroke();
-                    p.fill(GenreHelpers.genreColor);
+                    p.fill(p.color(_this.props.genre.r, _this.props.genre.g, _this.props.genre.b));
                     p.textSize(50);
                     p.textAlign(p.CENTER);
-                    p.text(GenreHelpers.genreName, GenreHelpers.genrePoint.x, -GenreHelpers.genrePoint.y);
+                    p.text(_this.props.genre.name, _this.props.genre.centroid.x, -_this.props.genre.centroid.y);
 
-                    p.stroke(GenreHelpers.genreColor);
+                    p.stroke(p.color(_this.props.genre.r, _this.props.genre.g, _this.props.genre.b));
                     p.noFill();
                     p.strokeWeight(2);
                     p.beginShape();
 
-                    var shiftedHull = GenreHelpers.offsetHull(GenreHelpers.genreHull, GenreHelpers.genrePoint, 20);
+                    var shiftedHull = _this.props.genre.offsetHull(20);
                     var _iteratorNormalCompletion = true;
                     var _didIteratorError = false;
                     var _iteratorError = undefined;
@@ -137,7 +137,7 @@ var P5Wrapper = function (_React$Component) {
 
                     p.pop();
 
-                    drawNodes(p, _this.props.camera, GenreHelpers.genreNodes);
+                    drawNodes(p, _this.props.camera, _this.props.genre.nodes);
                 }
 
                 Debug.createTimingEvent("Draw Genre Nodes");
@@ -234,11 +234,11 @@ var P5Wrapper = function (_React$Component) {
                     _this.props.camera.y += oldDrag.y - newDrag.y;
 
                     if (Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y) < 5) {
-                        var click = handlePointClick(_this.props.quadHead, _this.props.hoveredArtist, _this.props.clickedArtist, _this.props.nodeLookup, p);
-                        if (click) {
-                            _this.props.updateClickedArtist(click);
+                        var clickedArtist = handlePointClick(_this.props.quadHead, _this.props.hoveredArtist, _this.props.clickedArtist, _this.props.nodeLookup, p);
+                        if (clickedArtist) {
+                            _this.props.updateClickedArtist(clickedArtist);
                         } else {
-                            _this.props.unsetClickedArtist();
+                            _this.props.handleEmptyClick();
                         }
                     }
 

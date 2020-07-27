@@ -1,7 +1,7 @@
 const MAX_CURVE_ANGLE = 180;
 
 
-function getHoveredArtist(p, camera, clickedArtist, quadHead) {
+function getHoveredArtist(p, camera, clickedArtist, quadHead, genre) {
     let stack = [];
     const mP = MouseEvents.getVirtualMouseCoordinates(p, camera);
     stack.push(quadHead);
@@ -26,13 +26,6 @@ function getHoveredArtist(p, camera, clickedArtist, quadHead) {
         return null;
     }
 
-    /*
-    let evicted = quadCache.insert(foundQuad, foundQuad.name);
-    if (evicted) {
-        evicted.deleteSelf(nodeOccurences, nodeLookup);
-    }
-     */
-
     let closest = null;
     let closestDistance = Infinity;
     for (const node of foundQuad.renderableNodes) {
@@ -53,8 +46,8 @@ function getHoveredArtist(p, camera, clickedArtist, quadHead) {
         }
     }
 
-    if (GenreHelpers.genreNodes.size > 0) {
-        if (GenreHelpers.genreNodes.has(closest)) {
+    if (genre) {
+        if (genre.nodes.has(closest)) {
             return closest;
         } else {
             return null;

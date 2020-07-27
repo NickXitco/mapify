@@ -59,7 +59,7 @@ class P5Wrapper extends React.Component {
             loadUnloaded(this.unprocessedResponses, this.unloadedPQ, this.loadingQuads, this.unloadedQuads);
 
             if (!this.props.uiHover) {
-                this.props.updateHoveredArtist(getHoveredArtist(p, this.props.camera, this.props.clickedArtist, this.props.quadHead));
+                this.props.updateHoveredArtist(getHoveredArtist(p, this.props.camera, this.props.clickedArtist, this.props.quadHead, this.props.genre));
             }
 
             if (this.props.clickedArtist && !this.props.clickedArtist.loaded && !this.clickedLoading) {
@@ -69,31 +69,32 @@ class P5Wrapper extends React.Component {
 
             Debug.createTimingEvent("Get Hovered Artist");
 
-            if (!this.props.clickedArtist && GenreHelpers.genreNodes.size === 0) {
+            if (!this.props.clickedArtist && !this.props.genre) {
                 this.darkenOpacity = 0;
             }
 
-            if (GenreHelpers.genreNodes.size > 0) {
+            if (this.props.genre) {
                 this.darkenOpacity = darkenScene(p, this.darkenOpacity, this.props.camera);
             }
 
             Debug.createTimingEvent("Darken Scene for Genre Nodes");
 
-            if (GenreHelpers.genreNodes.size > 0) {
 
+            //TODO refactor into genre class method
+            if (this.props.genre) {
                 p.push();
                 p.noStroke();
-                p.fill(GenreHelpers.genreColor);
+                p.fill(p.color(this.props.genre.r, this.props.genre.g, this.props.genre.b));
                 p.textSize(50);
                 p.textAlign(p.CENTER);
-                p.text(GenreHelpers.genreName, GenreHelpers.genrePoint.x, -GenreHelpers.genrePoint.y);
+                p.text(this.props.genre.name, this.props.genre.centroid.x, -this.props.genre.centroid.y);
 
-                p.stroke(GenreHelpers.genreColor);
+                p.stroke(p.color(this.props.genre.r, this.props.genre.g, this.props.genre.b));
                 p.noFill();
                 p.strokeWeight(2);
                 p.beginShape();
 
-                const shiftedHull = GenreHelpers.offsetHull(GenreHelpers.genreHull, GenreHelpers.genrePoint, 20);
+                const shiftedHull = this.props.genre.offsetHull(20);
                 for (const point of shiftedHull) {
                     p.vertex(point.x, -point.y);
                 }
@@ -102,7 +103,7 @@ class P5Wrapper extends React.Component {
 
                 p.pop();
 
-                drawNodes(p, this.props.camera, GenreHelpers.genreNodes);
+                drawNodes(p, this.props.camera, this.props.genre.nodes);
             }
 
             Debug.createTimingEvent("Draw Genre Nodes");
@@ -198,11 +199,11 @@ class P5Wrapper extends React.Component {
                 this.props.camera.y += (oldDrag.y - newDrag.y);
 
                 if (Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y) < 5) {
-                    const click = handlePointClick(this.props.quadHead, this.props.hoveredArtist, this.props.clickedArtist, this.props.nodeLookup, p);
-                    if (click) {
-                        this.props.updateClickedArtist(click)
+                    const clickedArtist = handlePointClick(this.props.quadHead, this.props.hoveredArtist, this.props.clickedArtist, this.props.nodeLookup, p);
+                    if (clickedArtist) {
+                        this.props.updateClickedArtist(clickedArtist)
                     } else {
-                        this.props.unsetClickedArtist();
+                        this.props.handleEmptyClick();
                     }
                 }
 

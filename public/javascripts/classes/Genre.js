@@ -59,11 +59,11 @@ class Genre {
         return (u.x * v.y - v.x * u.y);
     }
 
-    offsetHull(hull, centroid, offsetAmount) {
+    offsetHull(offsetAmount) {
         let shiftedHull = [];
-        for (const point of hull) {
-            const shiftX = point.x - centroid.x;
-            const shiftY = point.y - centroid.y;
+        for (const point of this.hull) {
+            const shiftX = point.x - this.centroid.x;
+            const shiftY = point.y - this.centroid.y;
             const scale = 1 + (offsetAmount / Math.sqrt(shiftX * shiftX + shiftY * shiftY));
             shiftedHull.push({x: point.x * scale, y: point.y * scale});
         }
