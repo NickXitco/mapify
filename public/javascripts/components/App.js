@@ -260,6 +260,7 @@ var App = function (_React$Component) {
             return React.createElement(
                 'div',
                 { className: "fullScreen" },
+                React.createElement(Changelog, null),
                 React.createElement(ReactInfobox, {
                     artist: this.state.hoveredArtist,
                     point: this.state.hoverPoint

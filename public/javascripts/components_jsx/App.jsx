@@ -188,6 +188,8 @@ class App extends React.Component {
         console.log("Rendering!");
         return (
             <div className={"fullScreen"}>
+                <Changelog/>
+
                 <ReactInfobox
                     artist={this.state.hoveredArtist}
                     point={this.state.hoverPoint}
