@@ -26,8 +26,6 @@ class ReactInfobox extends React.Component {
             return null;
         }
 
-        const point = this.props.camera.virtual2screen({x: this.props.artist.x, y: this.props.artist.y});
-
         const infoBoxDynamicStyles = {
             height: this.state.height,
             width: this.state.width,
@@ -35,13 +33,13 @@ class ReactInfobox extends React.Component {
             boxShadow: "0 0 3px 1px " + this.props.artist.colorToString(),
 
 
-            top: point.y + "px",
-            left: (point.x >= window.innerWidth / 2)
-                ? (point.x - this.state.width - 6) + "px"
-                : (point.x) + "px"
+            top: this.props.point.y + "px",
+            left: (this.props.point.x >= window.innerWidth / 2)
+                ? (this.props.point.x - this.state.width - 6) + "px"
+                : (this.props.point.x) + "px"
         }
 
-        const dir = point.x >= window.innerWidth / 2 ? "Right" : "Left";
+        const dir = this.props.point.x >= window.innerWidth / 2 ? "Right" : "Left";
 
         return (
             <div className={"infoBox infoBox" + dir}  style={infoBoxDynamicStyles}>

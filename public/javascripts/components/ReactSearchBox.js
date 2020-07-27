@@ -37,7 +37,7 @@ var ReactSearchBox = function (_React$Component) {
         value: function processInput(e) {
             var _this2 = this;
 
-            var currentInput = e.target.value.valueOf();
+            var currentInput = e.target.value.valueOf().toString();
             this.setState({ value: currentInput });
             var url = "artistSearch/" + encodeURIComponent(currentInput);
 

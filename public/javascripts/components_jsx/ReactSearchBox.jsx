@@ -20,7 +20,7 @@ class ReactSearchBox extends React.Component {
     }
 
     processInput(e) {
-        const currentInput = e.target.value.valueOf();
+        const currentInput = e.target.value.valueOf().toString();
         this.setState({value: currentInput});
         const url = "artistSearch/" + encodeURIComponent(currentInput);
 

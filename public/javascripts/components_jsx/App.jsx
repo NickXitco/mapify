@@ -9,13 +9,14 @@ class App extends React.Component {
 
             hoveredArtist: null,
             clickedArtist: null,
+            hoverPoint: {},
 
             activeGenre: null,
 
             quadHead: null,
 
             nodeLookup: {},
-            nodeOccurences: {},
+            nodeOccurrences: {},
 
             timingEvents: {},
             lastTime: 0,
@@ -33,6 +34,7 @@ class App extends React.Component {
         this.loadArtistFromSearch = this.loadArtistFromSearch.bind(this);
 
         this.updateHoveredArtist = this.updateHoveredArtist.bind(this);
+        this.updateHoverPoint = this.updateHoverPoint.bind(this);
 
         this.updateHoverFlag = this.updateHoverFlag.bind(this);
 
@@ -130,6 +132,16 @@ class App extends React.Component {
         if (this.state.hoveredArtist !== artist) {
             this.setState({hoveredArtist: artist});
         }
+        if (artist) {
+            this.updateHoverPoint(artist);
+        }
+    }
+
+    updateHoverPoint(artist) {
+        const point = this.state.camera.virtual2screen({x: artist.x, y: artist.y});
+        if (this.state.hoverPoint !== point) {
+            this.setState({hoverPoint: point});
+        }
     }
 
     setCanvas(p5) {
@@ -177,7 +189,7 @@ class App extends React.Component {
             <div className={"fullScreen"}>
                 <ReactInfobox
                     artist={this.state.hoveredArtist}
-                    camera={this.state.camera} //TODO Do we need?
+                    point={this.state.hoverPoint}
                 />
 
                 <ReactSidebar

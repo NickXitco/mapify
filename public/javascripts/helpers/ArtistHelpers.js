@@ -89,9 +89,9 @@ function makeEdges(artist) {
         edges.push({
             u: u,
             v: v,
-            cUrad: Math.random() / 2,
-            cUang: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
-            cVrad: Math.random() / 2,
+            cURad: Math.random() / 2,
+            cUAng: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
+            cVRad: Math.random() / 2,
             cVang: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
             tMax: 0
         });
