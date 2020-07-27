@@ -269,7 +269,9 @@ var App = function (_React$Component) {
                     if (_this7.state.p5) {
                         _this7.state.p5.resizeCanvas(w, h);
                     }
-                    _this7.state.camera.zoomCamera({ x: _this7.state.camera.x, y: _this7.state.camera.y });
+                    if (_this7.state.camera) {
+                        _this7.state.camera.zoomCamera({ x: _this7.state.camera.x, y: _this7.state.camera.y });
+                    }
                 }
             });
             this.ro.observe(document.getElementById("root"));

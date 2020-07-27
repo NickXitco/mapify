@@ -177,7 +177,9 @@ class App extends React.Component {
                 if (this.state.p5) {
                     this.state.p5.resizeCanvas(w,h);
                 }
-                this.state.camera.zoomCamera({x: this.state.camera.x, y: this.state.camera.y});
+                if (this.state.camera) {
+                    this.state.camera.zoomCamera({x: this.state.camera.x, y: this.state.camera.y});
+                }
             }
         })
         this.ro.observe(document.getElementById("root"));
