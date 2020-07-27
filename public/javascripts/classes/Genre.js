@@ -95,6 +95,24 @@ class Genre {
         return shiftedHull;
     }
 
+    drawGenreFence(p) {
+        p.push();
+
+        p.stroke(p.color(this.r, this.g, this.b));
+        p.noFill();
+        p.strokeWeight(2);
+        p.beginShape();
+
+        const shiftedHull = this.offsetHull(20);
+        for (const point of shiftedHull) {
+            p.vertex(point.x, -point.y);
+        }
+        p.vertex(shiftedHull[0].x, -shiftedHull[0].y);
+        p.endShape();
+
+        p.pop();
+    }
+
 
     colorToString() {
         return `rgb(${this.r}, ${this.g}, ${this.b})`

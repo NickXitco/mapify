@@ -92,51 +92,8 @@ var P5Wrapper = function (_React$Component) {
 
                 Debug.createTimingEvent("Darken Scene for Genre Nodes");
 
-                //TODO refactor into genre class method
                 if (_this.props.genre) {
-                    p.push();
-                    p.noStroke();
-                    p.fill(p.color(_this.props.genre.r, _this.props.genre.g, _this.props.genre.b));
-                    p.textSize(50);
-                    p.textAlign(p.CENTER);
-                    p.text(_this.props.genre.name, _this.props.genre.centroid.x, -_this.props.genre.centroid.y);
-
-                    p.stroke(p.color(_this.props.genre.r, _this.props.genre.g, _this.props.genre.b));
-                    p.noFill();
-                    p.strokeWeight(2);
-                    p.beginShape();
-
-                    var shiftedHull = _this.props.genre.offsetHull(20);
-                    var _iteratorNormalCompletion = true;
-                    var _didIteratorError = false;
-                    var _iteratorError = undefined;
-
-                    try {
-                        for (var _iterator = shiftedHull[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                            var point = _step.value;
-
-                            p.vertex(point.x, -point.y);
-                        }
-                    } catch (err) {
-                        _didIteratorError = true;
-                        _iteratorError = err;
-                    } finally {
-                        try {
-                            if (!_iteratorNormalCompletion && _iterator.return) {
-                                _iterator.return();
-                            }
-                        } finally {
-                            if (_didIteratorError) {
-                                throw _iteratorError;
-                            }
-                        }
-                    }
-
-                    p.vertex(shiftedHull[0].x, -shiftedHull[0].y);
-                    p.endShape();
-
-                    p.pop();
-
+                    _this.props.genre.drawGenreFence(p);
                     drawNodes(p, _this.props.camera, _this.props.genre.nodes);
                 }
 

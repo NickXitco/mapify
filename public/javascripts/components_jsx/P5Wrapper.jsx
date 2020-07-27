@@ -79,30 +79,8 @@ class P5Wrapper extends React.Component {
 
             Debug.createTimingEvent("Darken Scene for Genre Nodes");
 
-
-            //TODO refactor into genre class method
             if (this.props.genre) {
-                p.push();
-                p.noStroke();
-                p.fill(p.color(this.props.genre.r, this.props.genre.g, this.props.genre.b));
-                p.textSize(50);
-                p.textAlign(p.CENTER);
-                p.text(this.props.genre.name, this.props.genre.centroid.x, -this.props.genre.centroid.y);
-
-                p.stroke(p.color(this.props.genre.r, this.props.genre.g, this.props.genre.b));
-                p.noFill();
-                p.strokeWeight(2);
-                p.beginShape();
-
-                const shiftedHull = this.props.genre.offsetHull(20);
-                for (const point of shiftedHull) {
-                    p.vertex(point.x, -point.y);
-                }
-                p.vertex(shiftedHull[0].x, -shiftedHull[0].y);
-                p.endShape();
-
-                p.pop();
-
+                this.props.genre.drawGenreFence(p);
                 drawNodes(p, this.props.camera, this.props.genre.nodes);
             }
 
