@@ -27,7 +27,7 @@ class Genre {
         this.bubble = this.getBubble(.75);
     }
 
-    getBubble(percentageThreshold, distanceThreshold) {
+    getBubble(percentageThreshold) {
         if (percentageThreshold > 1) {
             return [...this.nodes];
         }
