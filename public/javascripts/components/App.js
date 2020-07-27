@@ -21,6 +21,7 @@ var App = function (_React$Component) {
 
             hoveredArtist: null,
             clickedArtist: null,
+            hoverPoint: {},
 
             activeGenre: null,
 
@@ -45,6 +46,7 @@ var App = function (_React$Component) {
         _this.loadArtistFromSearch = _this.loadArtistFromSearch.bind(_this);
 
         _this.updateHoveredArtist = _this.updateHoveredArtist.bind(_this);
+        _this.updateHoverPoint = _this.updateHoverPoint.bind(_this);
 
         _this.updateHoverFlag = _this.updateHoverFlag.bind(_this);
 
@@ -190,6 +192,17 @@ var App = function (_React$Component) {
             if (this.state.hoveredArtist !== artist) {
                 this.setState({ hoveredArtist: artist });
             }
+            if (artist) {
+                this.updateHoverPoint(artist);
+            }
+        }
+    }, {
+        key: 'updateHoverPoint',
+        value: function updateHoverPoint(artist) {
+            var point = this.state.camera.virtual2screen({ x: artist.x, y: artist.y });
+            if (this.state.hoverPoint !== point) {
+                this.setState({ hoverPoint: point });
+            }
         }
     }, {
         key: 'setCanvas',
@@ -247,7 +260,7 @@ var App = function (_React$Component) {
                 { className: "fullScreen" },
                 React.createElement(ReactInfobox, {
                     artist: this.state.hoveredArtist,
-                    camera: this.state.camera //TODO Do we need?
+                    point: this.state.hoverPoint
                 }),
                 React.createElement(ReactSidebar, {
                     artist: this.state.clickedArtist,
