@@ -3,33 +3,17 @@ class ReactSidebar extends React.Component {
         super(props);
     }
 
-    componentDidUpdate() {
-        /*
-        openSidebar: function () {
-            const twentyFive = window.innerWidth.width / 4;
-            Sidebar.dom.style.left = Utils.map(Eases.easeOutQuart(Sidebar.openAmount), 0, 1, twentyFive, 0) + "px";
-            Sidebar.openAmount = Math.min(1, Sidebar.openAmount + 0.05);
-        }
-         */
-    }
-
-    componentDidMount() {
-
-    }
-
-    componentWillUnmount() {
-
-    }
-
     render() {
         if (!this.props.artist && !this.props.genre) {
             this.props.updateHoverFlag(false);
-            return null;
+            return (<div className="sidebar sidebar-closed">
+                    <SidebarStroke color={"white"}/>
+                </div>);
         }
 
         if (this.props.artist) {
             return (
-                <div className={"sidebar"}
+                <div className="sidebar sidebar-open"
                      onMouseEnter={() => {this.props.updateHoverFlag(true)}}
                      onMouseLeave={() => {this.props.updateHoverFlag(false)}}
                 >
@@ -61,7 +45,7 @@ class ReactSidebar extends React.Component {
 
         if (this.props.genre) {
             return (
-                <div className={"sidebar"}
+                <div className="sidebar sidebar-open"
                      onMouseEnter={() => {this.props.updateHoverFlag(true)}}
                      onMouseLeave={() => {this.props.updateHoverFlag(false)}}
                 >

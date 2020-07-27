@@ -16,36 +16,23 @@ var ReactSidebar = function (_React$Component) {
     }
 
     _createClass(ReactSidebar, [{
-        key: "componentDidUpdate",
-        value: function componentDidUpdate() {
-            /*
-            openSidebar: function () {
-                const twentyFive = window.innerWidth.width / 4;
-                Sidebar.dom.style.left = Utils.map(Eases.easeOutQuart(Sidebar.openAmount), 0, 1, twentyFive, 0) + "px";
-                Sidebar.openAmount = Math.min(1, Sidebar.openAmount + 0.05);
-            }
-             */
-        }
-    }, {
-        key: "componentDidMount",
-        value: function componentDidMount() {}
-    }, {
-        key: "componentWillUnmount",
-        value: function componentWillUnmount() {}
-    }, {
         key: "render",
         value: function render() {
             var _this2 = this;
 
             if (!this.props.artist && !this.props.genre) {
                 this.props.updateHoverFlag(false);
-                return null;
+                return React.createElement(
+                    "div",
+                    { className: "sidebar sidebar-closed" },
+                    React.createElement(SidebarStroke, { color: "white" })
+                );
             }
 
             if (this.props.artist) {
                 return React.createElement(
                     "div",
-                    { className: "sidebar",
+                    { className: "sidebar sidebar-open",
                         onMouseEnter: function onMouseEnter() {
                             _this2.props.updateHoverFlag(true);
                         },
@@ -76,7 +63,7 @@ var ReactSidebar = function (_React$Component) {
             if (this.props.genre) {
                 return React.createElement(
                     "div",
-                    { className: "sidebar",
+                    { className: "sidebar sidebar-open",
                         onMouseEnter: function onMouseEnter() {
                             _this2.props.updateHoverFlag(true);
                         },

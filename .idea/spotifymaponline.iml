@@ -16,5 +16,6 @@
     <orderEntry type="library" name="odg2bvl" level="application" />
     <orderEntry type="library" name="react" level="application" />
     <orderEntry type="library" name="react-dom" level="application" />
+    <orderEntry type="library" name="react-transition-group" level="application" />
   </component>
 </module>
