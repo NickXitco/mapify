@@ -121,7 +121,7 @@ canvas {
 .infoBoxText {
   font-family: montserrat, sans-serif;
   font-style: normal;
-  font-size: 48px;
+  font-size: 36px;
 
   width: auto;
   display: inline;
@@ -144,37 +144,34 @@ canvas {
 
 
 .infoBoxRight {
-  border-radius: 50px 0 100px 0;
+  border-radius: 38px 0 75px 0;
   text-align: left;
 }
 
 .infoBoxArtistNameRight {
   float: left;
-  padding: 10px 50px 0 20px;
+  padding: 8px 38px 0 20px;
 }
 
 .infoBoxArtistGenreRight {
   float: left;
-  padding: 0 75px 10px 20px;
+  padding: 0 75px 8px 16px;
 }
 
-
 .infoBoxLeft {
-  border-radius: 0 50px 0 100px;
+  border-radius: 0 38px 0 75px;
   text-align: right;
 }
 
 .infoBoxArtistNameLeft {
   float: right;
-  padding: 10px 20px 0 50px;
+  padding: 8px 16px 0 38px;
 }
 
 .infoBoxArtistGenreLeft {
   float: right;
-  padding: 0 20px 10px 75px;
+  padding: 0 16px 8px 56px;
 }
-
-
 
 /*</editor-fold>*/
 
@@ -251,14 +248,14 @@ canvas {
 .sidebar {
   visibility: visible;
   background: rgba(0, 0, 0, 0.90);
-  width: 600px;
+  width: 450px;
   height: 100%;
   float: right;
   position: relative;
   z-index: 2000;
   display: flex;
   flex-direction: column;
-  margin-right: -616px;
+  margin-right: -462px;
   transition: margin-right 0.6s cubic-bezier(0.5, 1, 0.89, 1);
 }
 
@@ -267,7 +264,7 @@ canvas {
 }
 
 .sidebar-closed {
-  margin-right: -616px;
+  margin-right: -462px;
 }
 
 .sidebarStroke {
@@ -282,16 +279,16 @@ canvas {
 .nameAndPicture {
   position: static;
   width: 100%;
-  height: 210px;
+  height: 158px;
   display: grid;
-  grid-template-columns: 210px auto;
+  grid-template-columns: 158px auto;
 }
 
 .sidebarPicture {
-  width: 150px;
-  height: 150px;
+  width: 113px;
+  height: 113px;
   display: block;
-  margin: 30px;
+  margin: 23px;
   border-radius: 50%;
   position: static;
 }
@@ -299,7 +296,7 @@ canvas {
 .name {
   display: flex;
   align-items: center;
-  height: 210px;
+  height: 158px;
   width: 100%;
   position: static;
 }
@@ -308,7 +305,7 @@ canvas {
 .followersSection {
   position: static;
   width: 100%;
-  padding: 15px 30px;
+  padding: 10px 22px;
 }
 
 .followerCount {
@@ -317,7 +314,7 @@ canvas {
   font-style: normal;
   color: white;
   text-transform: uppercase;
-  font-size: 29px;
+  font-size: 22px;
   margin-right: 0.15em;
 }
 
@@ -327,7 +324,7 @@ canvas {
   font-style: normal;
   color: white;
   text-transform: uppercase;
-  font-size: 29px;
+  font-size: 22px;
 }
 
 .followerRanking {
@@ -336,13 +333,13 @@ canvas {
   font-style: italic;
   color: white;
   text-transform: uppercase;
-  font-size: 29px;
+  font-size: 22px;
 }
 /*</editor-fold>*/
 /*<editor-fold desc="GENRES">*/
 .genresSection {
   position: relative;
-  padding: 15px 30px;
+  padding: 10px 22px;
 }
 
 .genresList {
@@ -364,7 +361,7 @@ canvas {
 .relatedArtistsSection {
   width: 90%;
   position: static;
-  padding: 15px 30px;
+  padding: 10px 22px;
   display: flex;
   overflow-y: auto;
   flex-direction: column;
@@ -372,7 +369,7 @@ canvas {
 
 .sidebarListItem {
   font-family: montserrat, sans-serif;
-  font-size: 22px;
+  font-size: 16px;
   text-transform: uppercase;
   font-weight: 200;
   position: static;
@@ -388,7 +385,7 @@ canvas {
 }
 
 .relatedArtistsSection p {
-  font-size: 26px;
+  font-size: 16px;
   text-transform: uppercase;
   font-weight: 200;
 }

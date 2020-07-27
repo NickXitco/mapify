@@ -55,7 +55,7 @@ var ArtistProfile = function (_React$Component) {
             var height = this.nameElement.clientHeight;
             var width = this.nameElement.clientWidth;
 
-            if (height > 150 || width > 375) {
+            if (height > 113 || width > 275) {
                 this.setState(function (prevState, props) {
                     return {
                         fontSize: prevState.fontSize - props.fontDecrement
