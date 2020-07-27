@@ -77,7 +77,7 @@ class Genre {
             radius = Math.max(radius, distance(bubbleAverage, point));
         }
 
-        return {nodes: [...bubble], radius: radius, center: bubbleAverage};
+        return {nodes: [...bubble], radius: radius, center: Genre.centroid(QuickHull.getHull([...bubble]))};
     }
 
     static centroid(points) {
