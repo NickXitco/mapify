@@ -27,8 +27,8 @@ class Genre {
         this.bubble = this.getBubble(.75);
     }
 
-    getBubble(threshold) {
-        if (threshold > 1) {
+    getBubble(percentageThreshold, distanceThreshold) {
+        if (percentageThreshold > 1) {
             return [...this.nodes];
         }
 
@@ -57,7 +57,7 @@ class Genre {
         let radius = 0;
         let bubbleAverage = {x: closestToAverage.x, y: closestToAverage.y};
 
-        while (bubble.size < this.nodes.size * threshold) {
+        while (bubble.size < this.nodes.size * percentageThreshold) {
             let nearest = null;
             for (const point of this.nodes) {
                 if (bubble.has(point)) continue;
@@ -66,6 +66,7 @@ class Genre {
                     nearest = point;
                 }
             }
+
             const n = bubble.size;
             bubbleAverage.x = (n * bubbleAverage.x + nearest.x) / (n + 1);
             bubbleAverage.y = (n * bubbleAverage.y + nearest.y) / (n + 1);

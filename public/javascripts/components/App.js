@@ -160,18 +160,10 @@ var App = function (_React$Component) {
                 var nodes = new Set(nodesList);
 
                 var newGenre = new Genre(name, nodes, r, g, b);
+                var bubble = newGenre.bubble;
+                var camWidth = Math.min(7500, bubble.radius * 4);
 
-                var newWidth = void 0;
-                var genreHeight = newGenre.getHeight();
-                var genreWidth = newGenre.getWidth();
-
-                if (genreHeight > genreWidth) {
-                    newWidth = genreHeight * (_this4.state.camera.width / _this4.state.camera.height);
-                } else {
-                    newWidth = genreWidth;
-                }
-
-                _this4.state.camera.setCameraMove(newGenre.centroid.x, newGenre.centroid.y, _this4.state.camera.getZoomFromWidth(newWidth), 30);
+                _this4.state.camera.setCameraMove(bubble.center.x, bubble.center.y, _this4.state.camera.getZoomFromWidth(camWidth), 30);
 
                 _this4.setState({ clickedArtist: null, activeGenre: newGenre });
             });
