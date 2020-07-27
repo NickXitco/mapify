@@ -1,4 +1,4 @@
-function processOne() {
+function processOne(p, camera, quadHead, nodeLookup, loadingQuads, unprocessedResponses) {
     if (unprocessedResponses.length === 0) {
         return;
     }
@@ -8,7 +8,7 @@ function processOne() {
         const q = response.quad;
 
         if (camera.contains(q)) {
-            process(response, q);
+            process(p, response, q, quadHead, nodeLookup, loadingQuads);
             unprocessedResponses.splice(i, 1);
             return;
         }
@@ -17,10 +17,10 @@ function processOne() {
 
     const r = unprocessedResponses.pop();
     const q = r.quad;
-    process(r, q);
+    process(p, r, q, quadHead, nodeLookup, loadingQuads);
 }
 
-function process(r, q) {
+function process(p, r, q, quadHead, nodeLookup, loadingQuads) {
     if (Object.keys(r.data).length === 0) {
         q.loaded = true;
         loadingQuads.delete(q);
@@ -32,11 +32,11 @@ function process(r, q) {
     }
 
     for (const node of r.data.nodes) {
-        createNewNode(node);
+        createNewNode(node, quadHead, nodeLookup);
     }
 
     if (r.data.image !== "") {
-        loadImage('data:image/png;base64, ' + r.data.image, (img) => {
+        p.loadImage('data:image/png;base64, ' + r.data.image, (img) => {
             q.image = img;
             q.loaded = true;
             loadingQuads.delete(q);
@@ -62,7 +62,7 @@ function bubbleAddQuad(q, quads) {
     }
 }
 
-function drawOnscreenQuads(quadHead, camera) {
+function drawOnscreenQuads(p, quadHead, camera, hoveredArtist, loadingQuads, unloadedQuads, unloadedQuadsPriorityQueue) {
     let quads = new Set();
     let stack = [];
     stack.push(quadHead);
@@ -91,58 +91,56 @@ function drawOnscreenQuads(quadHead, camera) {
         }
     }
 
-    createTimingEvent("Visible Quads Finding");
+    Debug.createTimingEvent("Visible Quads Finding");
 
     const sortedQuads = [...quads].sort((a, b) => a.name.length - b.name.length);
     for (const q of sortedQuads) {
         if (q.image) {
-            image(q.image, q.x - q.r, -(q.y + q.r), q.r * 2, q.r * 2, 0, 0);
+            p.image(q.image, q.x - q.r, -(q.y + q.r), q.r * 2, q.r * 2, 0, 0);
         } else {
-            push();
-            noFill();
+            p.push();
+            p.noFill();
             for (const n of q.renderableNodes) {
-                stroke(n.color);
-                strokeWeight(n.size / 5);
-                circle(n.x, -n.y, n.size);
+                p.stroke(p.color(n.r, n.g, n.b));
+                p.strokeWeight(n.size / 5);
+                p.circle(n.x, -n.y, n.size);
             }
-            pop();
+            p.pop();
         }
         //debugText(q);
     }
 
     if (hoveredArtist) {
-        push();
-        noStroke();
-        hoveredArtist.color.setAlpha(127);
-        fill(hoveredArtist.color);
-        hoveredArtist.color.setAlpha(255);
-        circle(hoveredArtist.x, -hoveredArtist.y, hoveredArtist.size);
-        pop();
+        p.push();
+        p.noStroke();
+        p.fill(hoveredArtist.r, hoveredArtist.g, hoveredArtist.b, 127);
+        p.circle(hoveredArtist.x, -hoveredArtist.y, hoveredArtist.size);
+        p.pop();
     }
 
 
     function debugText(q) {
-        textSize(q.r / 20);
-        fill('green');
-        noStroke();
-        textAlign(LEFT, TOP);
-        text('Displayed Size: (' + q.r * 2 * camera.getZoomFactor().x + ', ' + q.r * 2 * camera.getZoomFactor().y + ')', q.x - q.r, -(q.y + q.r * 0.95));
-        text('Number of Nodes Inside: ' + q.renderableNodes.size, q.x - q.r, -(q.y + q.r * 0.90));
+        p.textSize(q.r / 20);
+        p.fill('green');
+        p.noStroke();
+        p.textAlign(LEFT, TOP);
+        p.text('Displayed Size: (' + q.r * 2 * camera.getZoomFactor().x + ', ' + q.r * 2 * camera.getZoomFactor().y + ')', q.x - q.r, -(q.y + q.r * 0.95));
+        p.text('Number of Nodes Inside: ' + q.renderableNodes.size, q.x - q.r, -(q.y + q.r * 0.90));
         if (q.image) {
-            text('Actual Size: (' + q.image.width + ', ' + q.image.height + ')', q.x - q.r, -(q.y + q.r));
+            p.text('Actual Size: (' + q.image.width + ', ' + q.image.height + ')', q.x - q.r, -(q.y + q.r));
         }
 
 
-        fill('white');
-        noStroke();
-        textAlign(CENTER, CENTER);
-        text(q.name, q.x, -q.y);
-        textSize(q.r / 20);
-        noFill();
-        stroke('white');
-        strokeWeight(q.r / 100);
-        rect(q.x, -q.y, q.r, q.r);
+        p.fill('white');
+        p.noStroke();
+        p.textAlign(p.CENTER, p.CENTER);
+        p.text(q.name, q.x, -q.y);
+        p.textSize(q.r / 20);
+        p.noFill();
+        p.stroke('white');
+        p.strokeWeight(q.r / 100);
+        p.rect(q.x, -q.y, q.r, q.r);
     }
 
-    createTimingEvent("Visible Quads Drawing");
+    Debug.createTimingEvent("Visible Quads Drawing");
 }

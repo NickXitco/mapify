@@ -60,10 +60,6 @@ const QuickHull = {
         return halfHull;
     },
 
-    collinear: function (p, q, r) {
-        return this.area2(p, q, r) === 0;
-    },
-
     area2: function(p, q, r) {
         let a = 0;
         a += (( q.x + p.x ) ) * ( q.y - p.y );

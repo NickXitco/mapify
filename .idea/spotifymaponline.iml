@@ -3,6 +3,7 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/public/javascripts/components" />
       <excludeFolder url="file://$MODULE_DIR$/temp" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
     </content>
@@ -13,5 +14,8 @@
     <orderEntry type="library" name="p5.dom" level="application" />
     <orderEntry type="library" name="p5.sound" level="application" />
     <orderEntry type="library" name="odg2bvl" level="application" />
+    <orderEntry type="library" name="react" level="application" />
+    <orderEntry type="library" name="react-dom" level="application" />
+    <orderEntry type="library" name="react-transition-group" level="application" />
   </component>
 </module>

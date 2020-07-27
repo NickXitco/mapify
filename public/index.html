@@ -6,61 +6,21 @@
     <title></title>
 </head>
 
-<style id="scrollbar_style">
-    ::-webkit-scrollbar-track {box-shadow: 0 0 5px rgb(165, 138, 255);}
-    ::-webkit-scrollbar-thumb {background: rgba(165, 138, 255, 0.5);}
-</style>
-
 <body>
-    <div id="infoBox">
-        <p class="infoBoxText" id="infoBoxArtistName">Ed Sheeran</p>
-        <p class="infoBoxText" id="infoBoxArtistGenre">Pop</p>
-    </div>
-
-    <div id="sidebar" onmouseenter="Sidebar.hoverFlag = true" onmouseleave="Sidebar.hoverFlag = false">
-        <div id="sidebarStroke"></div>
-        <div id="nameAndPicture">
-            <div id="sidebarPicture"></div>
-            <div id="name">
-                <h1 id="sidebarArtistName"></h1>
-            </div>
-        </div>
-
-        <div id="followersSection">
-            <p id="followerCount"></p>
-            <p id="followers"></p>
-            <p id="followerRanking"></p>
-        </div>
-
-        <div id="genresSection">
-            <h2>Genres</h2>
-            <ul id="genresList"></ul>
-        </div>
-
-        <div id="relatedArtistsSection">
-            <h2>Related Artists</h2>
-            <ul id="relatedArtistsList"></ul>
-        </div>
-    </div>
-
-    <div id="searchBox" onmouseenter="SearchBox.focus()" onmouseleave="SearchBox.unfocus()">
-        <div id="searchBar">
-            <input id="searchInput" type="text" placeholder="search for an artist...">
-        </div>
-        <ul id="suggestions">
-        </ul>
-    </div>
+    <div id="root"></div>
 </body>
+
+
+<script lang="javascript" type="text/javascript" src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.min.js"></script>
+<script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script>
 
 <script src="javascripts/classes/Cache.js"></script>
 <script src="javascripts/classes/PriorityQueue.js"></script>
 <script src="javascripts/classes/Quad.js"></script>
 <script src="javascripts/classes/Artist.js"></script>
 <script src="javascripts/classes/Camera.js"></script>
-
-<script src="javascripts/models/InfoBox.js"></script>
-<script src="javascripts/models/SearchBox.js"></script>
-<script src="javascripts/models/Sidebar.js"></script>
+<script src="javascripts/classes/Genre.js"></script>
 
 <script src="javascripts/helpers/ColorUtilities.js"></script>
 <script src="javascripts/helpers/seedrandom.js"></script>
@@ -70,14 +30,23 @@
 <script src="javascripts/helpers/Utils.js"></script>
 <script src="javascripts/helpers/QuadtreeHelpers.js"></script>
 <script src="javascripts/helpers/QuickHull.js"></script>
-<script src="javascripts/helpers/GenreHelpers.js"></script>
 
 <script src="javascripts/Debug.js"></script>
 <script src="javascripts/MouseEvents.js"></script>
 <script src="javascripts/sketch.js"></script>
 
-<script src="javascripts/helpers/VersioningHelpers.js"></script>
+<script src="javascripts/components/P5Wrapper.js"></script>
+<script src="javascripts/components/SidebarStroke.js"></script>
+<script src="javascripts/components/FollowersStats.js"></script>
+<script src="javascripts/components/GenresList.js"></script>
+<script src="javascripts/components/ArtistsList.js"></script>
+<script src="javascripts/components/ArtistProfile.js"></script>
 
-<script lang="javascript" type="text/javascript" src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.min.js"></script>
+<script src="javascripts/components/ReactSearchBox.js"></script>
+<script src="javascripts/components/ReactInfobox.js"></script>
+<script src="javascripts/components/ReactSidebar.js"></script>
+<script src="javascripts/components/App.js"></script>
+
+<script src="javascripts/helpers/VersioningHelpers.js"></script>
 
 </html>

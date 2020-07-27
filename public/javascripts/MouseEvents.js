@@ -17,11 +17,11 @@ const MouseEvents = {
     zooming: false,
     zoomCoordinates: {},
 
-    zoom: function () {
+    zoom: function (camera) {
         if (this.zooming) {
             this.scrollStep++;
             camera.zoom += this.scrollDelta / SCROLL_STEPS;
-            camera.zoom = min(camera.zoom, 8.5);
+            camera.zoom = Math.min(camera.zoom, 8.5);
             camera.zoomCamera(this.zoomCoordinates);
             if (this.scrollStep === SCROLL_STEPS) {
                 this.zooming = false;
@@ -30,121 +30,33 @@ const MouseEvents = {
         }
     },
 
-    drift: function (camera) {
+    drift: function (camera, p) {
         if (this.drifting) {
             if (this.driftVec.mag() < DRIFT_THRESHOLD) {
                 this.drifting = false;
                 return;
             }
             this.driftVec.div(1.1);
-            camera.x -= this.driftVec.x * (camera.width / width);
-            camera.y += this.driftVec.y * (camera.height / height);
+            camera.x -= this.driftVec.x * (camera.width / p.width);
+            camera.y += this.driftVec.y * (camera.height / p.height);
         }
     },
 
-    getVirtualMouseCoordinates: function() {
-        return camera.screen2virtual({x: mouseX, y: mouseY});
+    getVirtualMouseCoordinates: function(p, camera) {
+        return camera.screen2virtual({x: p.mouseX, y: p.mouseY});
     }
 }
 
-// noinspection JSUnusedGlobalSymbols
-function mouseWheel(e) {
-    if (Sidebar.hoverFlag) {
-        return;
-    }
-    e.preventDefault();
-
-    const isTouchPad = e.wheelDeltaY ? e.wheelDeltaY === -3 * e.deltaY : e.deltaMode === 0
-
-    if (isTouchPad && !e.ctrlKey) {
-        camera.x -= e.deltaX * (1 / camera.getZoomFactor().x);
-        camera.y += e.deltaY * (1 / camera.getZoomFactor().y);
-    } else {
-        MouseEvents.zooming = true;
-        MouseEvents.scrollStep = 0;
-        MouseEvents.zoomCoordinates = MouseEvents.getVirtualMouseCoordinates();
-        if (e.ctrlKey && Math.abs(e.deltaY) < 10) {
-            MouseEvents.scrollDelta = e.deltaY / 10;
-        } else {
-            MouseEvents.scrollDelta = e.deltaY / 300;
-        }
-    }
-}
-
-
-
-// noinspection JSUnusedGlobalSymbols
-function mousePressed() {
-    if (!SearchBox.hoverFlag && !Sidebar.hoverFlag) {
-        MouseEvents.dragging = true;
-        MouseEvents.drag = {x: mouseX, y: mouseY};
-        MouseEvents.start = {x: mouseX, y: mouseY};
-    }
-
-    if (!SearchBox.hoverFlag) {
-        SearchBox.deleteSuggestions();
-        SearchBox.input.value = "";
-    }
-}
-
-// noinspection JSUnusedGlobalSymbols
-function mouseDragged() {
-    if (MouseEvents.dragging) {
-        const newDrag = MouseEvents.getVirtualMouseCoordinates();
-        const oldDrag = camera.screen2virtual(MouseEvents.drag);
-        camera.x += (oldDrag.x - newDrag.x);
-        camera.y += (oldDrag.y - newDrag.y);
-        MouseEvents.drag = {x: mouseX, y: mouseY};
-    }
-}
-
-function handlePointClick() {
+function handlePointClick(quadHead, hoveredArtist, clickedArtist, nodeLookup, p) {
     if (VersionHelper.showingChangelog) {
         VersionHelper.removeChangelog();
-    } else if (dist(width - 10, height - 10, mouseX, mouseY) < 75) {
+    } else if (Utils.dist(p.width - 10, p.height - 10, p.mouseX, p.mouseY) < 75) {
         VersionHelper.drawChangelog();
     }
 
     if (hoveredArtist) {
-        if (hoveredArtist !== clickedArtist) {
-            newEdges = true;
-            clickedArtist = hoveredArtist;
-            Sidebar.resetSidebar(false);
-        }
-        edgeDrawing = true;
-        return;
+        return hoveredArtist;
     }
 
-    if (edgeDrawing && GenreHelpers.genreNodes.size > 0) {
-        edgeDrawing = false;
-        clickedArtist = null;
-        Sidebar.resetSidebar(false);
-        Sidebar.setGenreSidebar();
-    } else if (edgeDrawing) {
-        edgeDrawing = false;
-        clickedArtist = null;
-        Sidebar.resetSidebar(true);
-    } else if (GenreHelpers.genreNodes.size > 0) {
-        GenreHelpers.resetGenreView();
-        Sidebar.resetSidebar(true);
-    }
+    return null;
 }
-
-// noinspection JSUnusedGlobalSymbols
-function mouseReleased() {
-    if (MouseEvents.dragging) {
-        const newDrag = MouseEvents.getVirtualMouseCoordinates();
-        const oldDrag = camera.screen2virtual(MouseEvents.drag);
-        camera.x += (oldDrag.x - newDrag.x);
-        camera.y += (oldDrag.y - newDrag.y);
-
-        if (dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y) < 5) {
-            handlePointClick();
-        }
-
-        MouseEvents.driftVec = createVector(winMouseX - pwinMouseX, winMouseY - pwinMouseY);
-        MouseEvents.drifting = true;
-        MouseEvents.dragging = false;
-    }
-}
-

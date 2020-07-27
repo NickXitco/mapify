@@ -1,10 +1,9 @@
-function getHoveredArtist() {
-    if (SearchBox.hoverFlag || Sidebar.hoverFlag) {
-        return;
-    }
+const MAX_CURVE_ANGLE = 180;
 
+
+function getHoveredArtist(p, camera, clickedArtist, quadHead, genre) {
     let stack = [];
-    const mP = MouseEvents.getVirtualMouseCoordinates();
+    const mP = MouseEvents.getVirtualMouseCoordinates(p, camera);
     stack.push(quadHead);
     let foundQuad;
     while (stack.length > 0) {
@@ -24,21 +23,13 @@ function getHoveredArtist() {
     }
 
     if (!foundQuad) {
-        hoveredArtist = null;
-        return;
+        return null;
     }
-
-    /*
-    let evicted = quadCache.insert(foundQuad, foundQuad.name);
-    if (evicted) {
-        evicted.deleteSelf(nodeOccurences, nodeLookup);
-    }
-     */
 
     let closest = null;
     let closestDistance = Infinity;
     for (const node of foundQuad.renderableNodes) {
-        let d = dist(mP.x, mP.y, node.x, node.y);
+        let d = Utils.dist(mP.x, mP.y, node.x, node.y);
         if (d < node.size / 2) {
             if (d < closestDistance) {
                 closest = node;
@@ -49,120 +40,98 @@ function getHoveredArtist() {
 
     if (clickedArtist) {
         if (clickedArtist.relatedVertices.has(closest) || closest === clickedArtist) {
-            hoveredArtist = closest;
+            return closest;
         } else {
-            hoveredArtist = null;
-            return;
+            return null;
         }
     }
 
-    if (GenreHelpers.genreNodes.size > 0) {
-        if (GenreHelpers.genreNodes.has(closest)) {
-            hoveredArtist = closest;
+    if (genre) {
+        if (genre.nodes.has(closest)) {
+            return closest;
         } else {
-            hoveredArtist = null;
-            return;
+            return null;
         }
     }
 
-    hoveredArtist = closest;
+    return closest;
 }
 
-function drawNodes(nodeList) {
+function drawNodes(p, camera, nodeList) {
     for (const node of nodeList) {
         if (camera.containsRegion(node.x, node.y, node.size)) {
-            push();
-            strokeWeight(node.size / 5);
-            fill(color(red(node.color), green(node.color), blue(node.color), 127));
-            stroke(node.color);
-            circle(node.x, -node.y, node.size);
-            pop();
+            p.push();
+            p.strokeWeight(node.size / 5);
+            p.fill(p.color(node.r, node.g, node.b, 127));
+            p.stroke(p.color(node.r, node.g, node.b));
+            p.circle(node.x, -node.y, node.size);
+            p.pop();
         }
     }
 }
 
-function drawRelatedNodes(clickedArtist) {
-    drawNodes(clickedArtist.relatedVertices);
-    push();
-    fill(0, 255);
-    stroke(clickedArtist.color);
-    strokeWeight(clickedArtist.size / 5);
-    circle(clickedArtist.x, -clickedArtist.y, clickedArtist.size);
-    pop();
+function drawRelatedNodes(p, camera, clickedArtist) {
+    drawNodes(p, camera, clickedArtist.relatedVertices);
+    p.push();
+    p.fill(0, 255);
+    p.stroke(clickedArtist.r, clickedArtist.g, clickedArtist.b);
+    p.strokeWeight(clickedArtist.size / 5);
+    p.circle(clickedArtist.x, -clickedArtist.y, clickedArtist.size);
+    p.pop();
 }
 
-function drawEdges(clickedArtist) {
-    if (newEdges) {
-        edges = [];
-        for (const related of clickedArtist.relatedVertices) {
-            const u = clickedArtist;
-            const v = related;
-            Math.seedrandom(u.id + v.id);
-            edges.push({
-                u: u,
-                v: v,
-                cUrad: Math.random() / 2,
-                cUang: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
-                cVrad: Math.random() / 2,
-                cVang: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
-                tMax: 0
-            });
-        }
-        newEdges = false;
+function makeEdges(artist) {
+    let edges = [];
+    for (const related of artist.relatedVertices) {
+        const u = artist;
+        const v = related;
+        Math.seedrandom(u.id + v.id);
+        edges.push({
+            u: u,
+            v: v,
+            cUrad: Math.random() / 2,
+            cUang: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
+            cVrad: Math.random() / 2,
+            cVang: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
+            tMax: 0
+        });
     }
+    return edges;
+}
 
+function drawEdges(p, camera, edges, clickedArtist, hoveredArtist) {
     for (const e of edges) {
         if (!(hoveredArtist !== null && hoveredArtist !== clickedArtist && hoveredArtist !== e.v)) {
-            EdgeDrawer.drawEdge(e);
+            EdgeDrawer.drawEdge(p, camera, e);
         }
     }
 }
 
-async function loadArtistFromSearch(query, isQueryID) {
-    let alreadyGot = false;
-    if (isQueryID) {
-        const cachedNode = nodeLookup[query];
-        if (cachedNode) {
-            SearchBox.point = cachedNode;
-            alreadyGot = true;
-        }
-    }
-
+async function loadArtistFromSearch(p, query, isQueryID, quadHead, nodeLookup) {
     const response = await fetch('artist/' + query + "/" + isQueryID);
     const data = await response.json();
 
     if (Object.keys(data).length === 0) {
-        return;
+        return null;
     }
 
-    createNewNode(data);
+    createNewNode(data, quadHead, nodeLookup);
     let node = nodeLookup[data.id];
 
     for (const r of data.related) {
-        createNewNode(r);
+        createNewNode(r, quadHead, nodeLookup);
         node.relatedVertices.add(nodeLookup[r.id]);
     }
     node.loaded = true;
 
-    if (!alreadyGot) {
-        SearchBox.point = node;
-    }
-
-    clickedArtist = node;
-    edgeDrawing = true;
+    return node
 }
 
-function createNewNode(data) {
+function createNewNode(data, quadHead, nodeLookup) {
     let exists = true;
     if (!nodeLookup.hasOwnProperty(data.id)) {
         nodeLookup[data.id] = new Artist(data);
         exists = false;
-    }
-
-    if (!nodeOccurences.hasOwnProperty(data.id)) {
-        nodeOccurences[data.id] = 1;
-    } else {
-        nodeOccurences[data.id]++;
     }
 
     if (exists) {
@@ -173,20 +142,19 @@ function createNewNode(data) {
         nodeLookup[data.id].quad = null;
     }
     quadHead.insert(nodeLookup[data.id]);
+    return nodeLookup[data.id];
 }
 
-async function loadArtist(artist) {
-    clickedLoading = true;
+async function loadArtist(p, artist, quadHead, nodeLookup) {
     const response = await fetch('artist/' + artist.id + "/true");
     const data = await response.json();
 
-    createNewNode(data);
+    createNewNode(data, quadHead, nodeLookup);
     let node = nodeLookup[data.id];
 
     for (const r of data.related) {
-        createNewNode(r);
+        createNewNode(r, quadHead, nodeLookup);
         node.relatedVertices.add(nodeLookup[r.id]);
     }
     node.loaded = true;
-    clickedLoading = false;
 }
