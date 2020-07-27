@@ -106,7 +106,7 @@ var P5Wrapper = function (_React$Component) {
                 Debug.createTimingEvent("Darken Scene for Related Nodes");
 
                 if (_this.props.clickedArtist && _this.props.clickedArtist.loaded) {
-                    drawEdges(p, _this.props.camera, _this.props.clickedArtist.edges, _this.props.clickedArtist, _this.props.hoveredArtist);
+                    drawEdges(p, _this.props.camera, _this.props.clickedArtist.edges, _this.props.clickedArtist, _this.props.hoveredArtist, _this.props.uiHover);
 
                     Debug.createTimingEvent("Draw Related Edges");
                     drawRelatedNodes(p, _this.props.camera, _this.props.clickedArtist);

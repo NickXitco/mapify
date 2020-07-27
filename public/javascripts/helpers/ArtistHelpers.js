@@ -99,9 +99,11 @@ function makeEdges(artist) {
     return edges;
 }
 
-function drawEdges(p, camera, edges, clickedArtist, hoveredArtist) {
+function drawEdges(p, camera, edges, clickedArtist, hoveredArtist, uiHover) {
     for (const e of edges) {
-        if (!(hoveredArtist !== null && hoveredArtist !== clickedArtist && hoveredArtist !== e.v)) {
+        if (hoveredArtist === null || !uiHover) {
+            EdgeDrawer.drawEdge(p, camera, e);
+        } else if (hoveredArtist === e.v && uiHover) {
             EdgeDrawer.drawEdge(p, camera, e);
         }
     }
