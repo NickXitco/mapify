@@ -59,14 +59,39 @@ class Genre {
         return (u.x * v.y - v.x * u.y);
     }
 
+    //Thank you to Adam @ https://computergraphics.stackexchange.com/questions/5086/how-can-i-offset-shrink-a-triangular-polygon-in-glsl
+    static incircle(A, B, C) {
+        const a = Math.hypot(B.x - C.x, B.y - C.y);
+        const b = Math.hypot(C.x - A.x, C.y - A.y);
+        const c = Math.hypot(A.x - B.x, A.y - B.y);
+
+        const abc = a + b + c;
+
+        const I = {
+            x: (a * A.x + b * B.x + c * C.x) / abc,
+            y: (a * A.y + b * B.y + c * C.y) / abc
+        };
+
+        const r = 0.5 * Math.sqrt((-a + b + c) * (a - b + c) * (a + b - c) / abc);
+
+        return {center: I, radius: r};
+    }
+
     offsetHull(offsetAmount) {
         let shiftedHull = [];
-        for (const point of this.hull) {
-            const shiftX = point.x - this.centroid.x;
-            const shiftY = point.y - this.centroid.y;
-            const scale = 1 + (offsetAmount / Math.sqrt(shiftX * shiftX + shiftY * shiftY));
-            shiftedHull.push({x: point.x * scale, y: point.y * scale});
+        for (let i = 0; i < this.hull.length; i++) {
+            const A = this.hull[(i - 1).mod(this.hull.length)];
+            const B = this.hull[i];
+            const C = this.hull[(i + 1).mod(this.hull.length)];
+
+            const incircle = Genre.incircle(A, B, C);
+            shiftedHull.push({
+                x: B.x - (offsetAmount / incircle.radius) * (incircle.center.x - B.x),
+                y: B.y - (offsetAmount / incircle.radius) * (incircle.center.y - B.y)
+            })
+
         }
+
         return shiftedHull;
     }
 
