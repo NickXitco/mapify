@@ -65,7 +65,7 @@ class App extends React.Component {
 
     loadArtistFromUI(artist) {
         this.updateClickedArtist(artist);
-        this.state.camera.setCameraMove(artist.x, artist.y, this.state.camera.getZoomFromWidth(artist.size * 50), 30);
+        this.state.camera.setCameraMove(artist.x, artist.y, this.state.camera.getZoomFromWidth(artist.size * 50), 45);
     }
 
     loadArtistFromSearch(searchTerm) {
@@ -73,7 +73,7 @@ class App extends React.Component {
             console.trace(artist);
             if (artist) {
                 this.updateClickedArtist(artist);
-                this.state.camera.setCameraMove(artist.x, artist.y, this.state.camera.getZoomFromWidth(artist.size * 50), 30);
+                this.state.camera.setCameraMove(artist.x, artist.y, this.state.camera.getZoomFromWidth(artist.size * 50), 45);
             }
         });
     }
@@ -106,7 +106,7 @@ class App extends React.Component {
                 const camWidth = Math.min(7500, bubble.radius * 4);
 
                 this.state.camera.setCameraMove(bubble.center.x, bubble.center.y,
-                                                this.state.camera.getZoomFromWidth(camWidth), 30);
+                                                this.state.camera.getZoomFromWidth(camWidth), 45);
 
                 this.setState({clickedArtist: null, activeGenre: newGenre});
             })

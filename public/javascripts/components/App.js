@@ -85,7 +85,7 @@ var App = function (_React$Component) {
         key: 'loadArtistFromUI',
         value: function loadArtistFromUI(artist) {
             this.updateClickedArtist(artist);
-            this.state.camera.setCameraMove(artist.x, artist.y, this.state.camera.getZoomFromWidth(artist.size * 50), 30);
+            this.state.camera.setCameraMove(artist.x, artist.y, this.state.camera.getZoomFromWidth(artist.size * 50), 45);
         }
     }, {
         key: 'loadArtistFromSearch',
@@ -106,7 +106,7 @@ var App = function (_React$Component) {
                 console.trace(artist);
                 if (artist) {
                     _this3.updateClickedArtist(artist);
-                    _this3.state.camera.setCameraMove(artist.x, artist.y, _this3.state.camera.getZoomFromWidth(artist.size * 50), 30);
+                    _this3.state.camera.setCameraMove(artist.x, artist.y, _this3.state.camera.getZoomFromWidth(artist.size * 50), 45);
                 }
             });
         })
@@ -163,7 +163,7 @@ var App = function (_React$Component) {
                 var bubble = newGenre.bubble;
                 var camWidth = Math.min(7500, bubble.radius * 4);
 
-                _this4.state.camera.setCameraMove(bubble.center.x, bubble.center.y, _this4.state.camera.getZoomFromWidth(camWidth), 30);
+                _this4.state.camera.setCameraMove(bubble.center.x, bubble.center.y, _this4.state.camera.getZoomFromWidth(camWidth), 45);
 
                 _this4.setState({ clickedArtist: null, activeGenre: newGenre });
             });
