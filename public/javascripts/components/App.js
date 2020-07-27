@@ -161,7 +161,17 @@ var App = function (_React$Component) {
 
                 var newGenre = new Genre(name, nodes, r, g, b);
 
-                _this4.state.camera.setCameraMove(newGenre.centroid.x, newGenre.centroid.y, _this4.state.camera.getZoomFromWidth(newGenre.getWidth()), 30);
+                var newWidth = void 0;
+                var genreHeight = newGenre.getHeight();
+                var genreWidth = newGenre.getWidth();
+
+                if (genreHeight > genreWidth) {
+                    newWidth = genreHeight * (_this4.state.camera.width / _this4.state.camera.height);
+                } else {
+                    newWidth = genreWidth;
+                }
+
+                _this4.state.camera.setCameraMove(newGenre.centroid.x, newGenre.centroid.y, _this4.state.camera.getZoomFromWidth(newWidth), 30);
 
                 _this4.setState({ clickedArtist: null, activeGenre: newGenre });
             });

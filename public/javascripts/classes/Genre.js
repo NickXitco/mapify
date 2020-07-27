@@ -2,10 +2,13 @@ class Genre {
     name;
 
     hull;
+    offsetHull;
 
     nodes;
 
     centroid;
+
+    bubble;
 
     r;
     g;
@@ -19,16 +22,73 @@ class Genre {
         this.b = b;
 
         this.hull = QuickHull.getHull([...nodes]);
-        this.centroid = this.getCentroid(this.hull);
+        this.offsetHull = this.getOffsetHull(20);
+        this.centroid = Genre.centroid(this.hull);
+        this.bubble = this.getBubble(.75);
     }
 
-    getCentroid() {
-        const area = 1 / (6 * Genre.shoelaceArea(this.hull));
+    getBubble(threshold) {
+        if (threshold > 1) {
+            return [...this.nodes];
+        }
+
+        let averagePoint = {x: 0, y: 0};
+        let i = 0;
+        for (const point of this.nodes) {
+            averagePoint.x = (i * averagePoint.x + point.x) / (i + 1);
+            averagePoint.y = (i * averagePoint.y + point.y) / (i + 1);
+            i++;
+        }
+
+        function distance(a, b) {
+            return Math.hypot(a.x - b.x, a.y - b.y);
+        }
+
+        let closestToAverage = null;
+        for (const point of this.nodes) {
+            if (!closestToAverage) {closestToAverage = point; continue;}
+            if (distance(averagePoint, point) < distance(averagePoint, closestToAverage)) {
+                closestToAverage = point;
+            }
+        }
+
+        let bubble = new Set();
+        bubble.add(closestToAverage);
+        let radius = 0;
+        let bubbleAverage = {x: closestToAverage.x, y: closestToAverage.y};
+
+        while (bubble.size < this.nodes.size * threshold) {
+            let nearest = null;
+            for (const point of this.nodes) {
+                if (bubble.has(point)) continue;
+                if (!nearest) {nearest = point; continue;}
+                if (distance(bubbleAverage, point) < distance(bubbleAverage, nearest)) {
+                    nearest = point;
+                }
+            }
+            const n = bubble.size;
+            bubbleAverage.x = (n * bubbleAverage.x + nearest.x) / (n + 1);
+            bubbleAverage.y = (n * bubbleAverage.y + nearest.y) / (n + 1);
+            bubble.add(nearest);
+        }
+
+        for (const point of bubble) {
+            radius = Math.max(radius, distance(bubbleAverage, point));
+        }
+
+        return {nodes: [...bubble], radius: radius, center: bubbleAverage};
+    }
+
+    static centroid(points) {
+        if (points.length === 1) return {x: points[0].x, y: points[0].y};
+        if (points.length === 2) return {x: (points[0].x + points[1].x) / 2, y: (points[0].y + points[1].y) / 2};
+
+        const area = 1 / (6 * Genre.shoelaceArea(points));
         let x = 0;
         let y = 0;
-        for (let i = 0; i < this.hull.length; i++) {
-            const u = this.hull[i];
-            const v = this.hull[(i + 1) % this.hull.length];
+        for (let i = 0; i < points.length; i++) {
+            const u = points[i];
+            const v = points[(i + 1) % points.length];
             x += (u.x + v.x) * Genre.exteriorProduct(u, v);
             y += (u.y + v.y) * Genre.exteriorProduct(u, v);
         }
@@ -45,6 +105,18 @@ class Genre {
         }
 
         return Math.abs(easternmost.x - westernmost.x);
+    }
+
+    getHeight() {
+        let northernmost = this.hull[0];
+        let southernmost = this.hull[0];
+
+        for (const point of this.hull) {
+            northernmost = point.y < northernmost.y ? point : northernmost;
+            southernmost = point.y > southernmost.y ? point : southernmost;
+        }
+
+        return Math.abs(northernmost.y - southernmost.y);
     }
 
     static shoelaceArea(points) {
@@ -77,22 +149,22 @@ class Genre {
         return {center: I, radius: r};
     }
 
-    offsetHull(offsetAmount) {
-        let shiftedHull = [];
+    getOffsetHull(offsetAmount) {
+        let offsetHull = [];
         for (let i = 0; i < this.hull.length; i++) {
             const A = this.hull[(i - 1).mod(this.hull.length)];
             const B = this.hull[i];
             const C = this.hull[(i + 1).mod(this.hull.length)];
 
             const incircle = Genre.incircle(A, B, C);
-            shiftedHull.push({
+            offsetHull.push({
                 x: B.x - (offsetAmount / incircle.radius) * (incircle.center.x - B.x),
                 y: B.y - (offsetAmount / incircle.radius) * (incircle.center.y - B.y)
             })
 
         }
 
-        return shiftedHull;
+        return offsetHull;
     }
 
     drawGenreFence(p) {
@@ -103,12 +175,16 @@ class Genre {
         p.strokeWeight(2);
         p.beginShape();
 
-        const shiftedHull = this.offsetHull(20);
-        for (const point of shiftedHull) {
+        for (const point of this.offsetHull) {
             p.vertex(point.x, -point.y);
         }
-        p.vertex(shiftedHull[0].x, -shiftedHull[0].y);
+        p.vertex(this.offsetHull[0].x, -this.offsetHull[0].y);
         p.endShape();
+
+        p.rect(this.centroid.x, -this.centroid.y, this.getWidth() / 2, this.getHeight() / 2);
+
+        p.noFill();
+        p.circle(this.bubble.center.x, -this.bubble.center.y, this.bubble.radius * 2);
 
         p.pop();
     }

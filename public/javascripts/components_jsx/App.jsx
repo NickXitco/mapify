@@ -103,9 +103,18 @@ class App extends React.Component {
 
                 const newGenre = new Genre(name, nodes, r, g, b);
 
+                let newWidth
+                const genreHeight = newGenre.getHeight();
+                const genreWidth = newGenre.getWidth();
+
+                if (genreHeight > genreWidth) {
+                    newWidth = genreHeight * (this.state.camera.width / this.state.camera.height);
+                } else {
+                    newWidth = genreWidth;
+                }
 
                 this.state.camera.setCameraMove(newGenre.centroid.x, newGenre.centroid.y,
-                                                this.state.camera.getZoomFromWidth(newGenre.getWidth()), 30);
+                                                this.state.camera.getZoomFromWidth(newWidth), 30);
 
                 this.setState({clickedArtist: null, activeGenre: newGenre});
             })
