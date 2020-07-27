@@ -135,6 +135,35 @@ var P5Wrapper = function (_React$Component) {
                     p.vertex(shiftedHull[0].x, -shiftedHull[0].y);
                     p.endShape();
 
+                    p.beginShape();
+                    var _iteratorNormalCompletion2 = true;
+                    var _didIteratorError2 = false;
+                    var _iteratorError2 = undefined;
+
+                    try {
+                        for (var _iterator2 = _this.props.genre.hull[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                            var _point = _step2.value;
+
+                            p.vertex(_point.x, -_point.y);
+                        }
+                    } catch (err) {
+                        _didIteratorError2 = true;
+                        _iteratorError2 = err;
+                    } finally {
+                        try {
+                            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                                _iterator2.return();
+                            }
+                        } finally {
+                            if (_didIteratorError2) {
+                                throw _iteratorError2;
+                            }
+                        }
+                    }
+
+                    p.vertex(_this.props.genre.hull[0].x, -_this.props.genre.hull[0].y);
+                    p.endShape();
+
                     p.pop();
 
                     drawNodes(p, _this.props.camera, _this.props.genre.nodes);

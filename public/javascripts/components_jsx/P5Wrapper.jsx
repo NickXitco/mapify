@@ -101,6 +101,13 @@ class P5Wrapper extends React.Component {
                 p.vertex(shiftedHull[0].x, -shiftedHull[0].y);
                 p.endShape();
 
+                p.beginShape();
+                for (const point of  this.props.genre.hull) {
+                    p.vertex(point.x, -point.y);
+                }
+                p.vertex(this.props.genre.hull[0].x, -this.props.genre.hull[0].y);
+                p.endShape();
+
                 p.pop();
 
                 drawNodes(p, this.props.camera, this.props.genre.nodes);
