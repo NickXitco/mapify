@@ -92,7 +92,7 @@ function makeEdges(artist) {
             cURad: Math.random() / 2,
             cUAng: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
             cVRad: Math.random() / 2,
-            cVang: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
+            cVAng: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
             tMax: 0
         });
     }

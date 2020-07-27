@@ -16,12 +16,12 @@ class EdgeDrawer {
         const vVec = p.createVector(v.x, v.y);
 
         p.push();
-        uVec.lerp(vVec, e.cUrad);
-        vVec.lerp(uVec, e.cVrad);
+        uVec.lerp(vVec, e.cURad);
+        vVec.lerp(uVec, e.cVRad);
         uVec.sub(u.x, u.y);
         vVec.sub(v.x, v.y);
-        uVec.rotate(e.cUang);
-        vVec.rotate(e.cVang);
+        uVec.rotate(e.cUAng);
+        vVec.rotate(e.cVAng);
         uVec.add(u.x, u.y);
         vVec.add(v.x, v.y);
 
