@@ -102,22 +102,6 @@ canvas {
 /*</editor-fold>*/
 
 /*<editor-fold desc="INFO BOX STYLINGS">*/
-#infoBox {
-  user-select: none;
-
-  visibility: hidden;
-
-  background-color: rgba(0, 0, 0, .90);
-  position: absolute;
-  z-index: 1000;
-  display: block;
-  border: solid 3px;
-
-  box-shadow: 0 0 3px 3px white;
-
-  overflow: hidden;
-}
-
 .infoBox {
   user-select: none;
 
@@ -144,18 +128,6 @@ canvas {
   position: static;
   z-index: 1001;
   white-space: nowrap;
-}
-
-#infoBoxArtistName {
-  font-weight: 600;
-  text-transform: uppercase;
-  vertical-align: text-bottom;
-}
-
-#infoBoxArtistGenre {
-  font-weight: 100;
-  text-transform: lowercase;
-  vertical-align: text-top;
 }
 
 .infoBoxArtistName {
@@ -207,21 +179,6 @@ canvas {
 /*</editor-fold>*/
 
 /*<editor-fold desc="SEARCH BOX STYLINGS">*/
-#searchBox {
-  width: 200px;
-  height: 34px;
-  position: relative;
-  z-index: 2000;
-  float: right;
-  top: 20px;
-  right: 20px;
-
-  display: grid;
-  grid-template-rows: 34px 200px;
-
-  user-select: none;
-}
-
 .searchBox {
   width: 200px;
   height: 34px;
@@ -237,33 +194,9 @@ canvas {
   user-select: none;
 }
 
-#searchBar {
-  width: 200px;
-  height: 34px;
-}
-
 .searchBar {
   width: 200px;
   height: 34px;
-}
-
-#searchInput {
-  font-family: montserrat, sans-serif;
-  font-weight: 300;
-  color: white;
-  display: flex;
-  align-items: center;
-  width: 186px;
-  height: 20px;
-
-  background: rgba(0,0,0,0.6);
-  border: white 2px solid;
-
-  box-shadow: 0 0 6px 1px white;
-
-  padding: 5px;
-  grid-row: 1;
-  user-select: none
 }
 
 .searchInput {
@@ -283,14 +216,6 @@ canvas {
   padding: 5px;
   grid-row: 1;
   user-select: none
-}
-
-#suggestions {
-  width: 100%;
-  grid-row: 2;
-  position: relative;
-  display: none;
-  z-index: -1;
 }
 
 .suggestions {
@@ -323,18 +248,6 @@ canvas {
 /*</editor-fold>*/
 
 /*<editor-fold desc="SIDEBAR STYLINGS">*/
-#sidebar {
-  visibility: visible;
-  background: rgba(0, 0, 0, 0.90);
-  width: 600px;
-  height: 100%;
-  float: right;
-  position: relative;
-  z-index: 2000;
-  display: none;
-  flex-direction: column;
-}
-
 .sidebar {
   visibility: visible;
   background: rgba(0, 0, 0, 0.90);
@@ -357,14 +270,6 @@ canvas {
   margin-right: -616px;
 }
 
-#sidebarStroke {
-  opacity: 1;
-  width: 2px;
-  height: 100%;
-  display: block;
-  float: left;
-}
-
 .sidebarStroke {
   opacity: 1;
   width: 2px;
@@ -374,31 +279,6 @@ canvas {
 }
 
 /*<editor-fold desc="NAME AND PICTURE">*/
-#nameAndPicture {
-  position: static;
-  width: 100%;
-  height: 210px;
-  display: grid;
-  grid-template-columns: 210px auto;
-}
-
-#sidebarPicture {
-  width: 150px;
-  height: 150px;
-  display: block;
-  margin: 30px;
-  border-radius: 50%;
-  position: static;
-}
-
-#name {
-  display: flex;
-  align-items: center;
-  height: 210px;
-  width: 100%;
-  position: static;
-}
-
 .nameAndPicture {
   position: static;
   width: 100%;
@@ -425,40 +305,6 @@ canvas {
 }
 /*</editor-fold>*/
 /*<editor-fold desc="FOLLOWERS">*/
-#followersSection {
-  position: static;
-  width: 100%;
-  padding: 15px 30px;
-}
-
-#followerCount {
-  font-family: montserrat, sans-serif;
-  font-weight: 600;
-  font-style: normal;
-  color: white;
-  text-transform: uppercase;
-  font-size: 29px;
-  margin-right: 0.15em;
-}
-
-#followers {
-  font-family: montserrat, sans-serif;
-  font-weight: 300;
-  font-style: normal;
-  color: white;
-  text-transform: uppercase;
-  font-size: 29px;
-}
-
-#followerRanking {
-  font-family: montserrat, sans-serif;
-  font-weight: 100;
-  font-style: italic;
-  color: white;
-  text-transform: uppercase;
-  font-size: 29px;
-}
-
 .followersSection {
   position: static;
   width: 100%;
@@ -494,18 +340,6 @@ canvas {
 }
 /*</editor-fold>*/
 /*<editor-fold desc="GENRES">*/
-#genresSection {
-  position: relative;
-  padding: 15px 30px;
-}
-
-#genresList {
-  position: relative;
-  width: 100%;
-  columns: 2;
-  margin-left: 1em;
-}
-
 .genresSection {
   position: relative;
   padding: 15px 30px;
@@ -519,21 +353,6 @@ canvas {
 }
 /*</editor-fold>*/
 /*<editor-fold desc="RELATED">*/
-#relatedArtistsList {
-  width: 100%;
-  position: static;
-  margin-left: 1em;
-  overflow-y: auto;
-}
-
-#relatedArtistsSection {
-  width: 90%;
-  position: static;
-  padding: 15px 30px;
-  display: flex;
-  overflow-y: auto;
-  flex-direction: column;
-}
 
 .relatedArtistsList {
   width: 100%;
@@ -566,12 +385,6 @@ canvas {
 .sidebarListItem:hover {
   text-decoration: underline;
   cursor: pointer;
-}
-
-#relatedArtistsSection p {
-  font-size: 26px;
-  text-transform: uppercase;
-  font-weight: 200;
 }
 
 .relatedArtistsSection p {
