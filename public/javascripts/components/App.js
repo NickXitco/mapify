@@ -161,7 +161,7 @@ var App = function (_React$Component) {
 
                 var newGenre = new Genre(name, nodes, r, g, b);
                 var bubble = newGenre.bubble;
-                var camWidth = Math.min(7500, bubble.radius * 4);
+                var camWidth = Math.min(5000, bubble.radius * 4);
 
                 _this4.state.camera.setCameraMove(bubble.center.x, bubble.center.y, _this4.state.camera.getZoomFromWidth(camWidth), 45);
 
