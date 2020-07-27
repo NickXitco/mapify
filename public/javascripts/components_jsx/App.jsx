@@ -16,7 +16,7 @@ class App extends React.Component {
             quadHead: null,
 
             nodeLookup: {},
-            nodeOccurences: {},
+            nodeOccurrences: {},
 
             timingEvents: {},
             lastTime: 0,

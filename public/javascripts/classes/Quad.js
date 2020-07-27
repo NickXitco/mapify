@@ -121,17 +121,17 @@ class Quad {
         unprocessedResponses.push({quad: this, data: data});
     }
 
-    deleteSelf(nodeOccurences, nodeLookup) {
+    deleteSelf(nodeOccurrences, nodeLookup) {
         this.image = null;
         this.loaded = false;
         for (const node of this.renderableNodes) {
             if (node.quad === this) {
                 node.quad.n = null;
             }
-            if (nodeOccurences[node.id] === 1) {
+            if (nodeOccurrences[node.id] === 1) {
                 delete nodeLookup[node.id];
-            } else if (nodeOccurences[node.id] > 1) {
-                nodeOccurences[node.id]--;
+            } else if (nodeOccurrences[node.id] > 1) {
+                nodeOccurrences[node.id]--;
             }
         }
         this.renderableNodes.clear();

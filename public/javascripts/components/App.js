@@ -28,7 +28,7 @@ var App = function (_React$Component) {
             quadHead: null,
 
             nodeLookup: {},
-            nodeOccurences: {},
+            nodeOccurrences: {},
 
             timingEvents: {},
             lastTime: 0,
