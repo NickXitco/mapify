@@ -68,58 +68,21 @@ var App = function (_React$Component) {
         value: function updateClickedArtist(artist) {
             var _this2 = this;
 
-            console.log(artist);
             if (artist.loaded) {
+                artist.edges = makeEdges(artist);
                 this.setState({ clickedArtist: artist });
             } else if (artist.id) {
                 loadArtist(this.state.p5, artist, this.state.quadHead, this.state.nodeLookup).then(function () {
-                    artist.edges = [];
-                    _this2.setState({ clickedArtist: _this2.state.nodeLookup[artist.id] });
+                    artist = _this2.state.nodeLookup[artist.id];
+                    artist.edges = makeEdges(artist);
+                    _this2.setState({ clickedArtist: artist });
                 });
             }
         }
     }, {
         key: 'loadArtistFromUI',
         value: function loadArtistFromUI(artist) {
-            var _this3 = this;
-
-            if (artist.loaded) {
-                this.setState({ clickedArtist: artist });
-            } else {
-                fetch('artist/' + artist.id + '/true').then(function (response) {
-                    return response.json();
-                }).then(function (data) {
-                    var node = createNewNode(data, _this3.state.quadHead, _this3.state.nodeLookup);
-                    var _iteratorNormalCompletion = true;
-                    var _didIteratorError = false;
-                    var _iteratorError = undefined;
-
-                    try {
-                        for (var _iterator = data.related[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                            var r = _step.value;
-
-                            node.relatedVertices.add(createNewNode(r, _this3.state.quadHead, _this3.state.nodeLookup));
-                        }
-                    } catch (err) {
-                        _didIteratorError = true;
-                        _iteratorError = err;
-                    } finally {
-                        try {
-                            if (!_iteratorNormalCompletion && _iterator.return) {
-                                _iterator.return();
-                            }
-                        } finally {
-                            if (_didIteratorError) {
-                                throw _iteratorError;
-                            }
-                        }
-                    }
-
-                    node.loaded = true;
-                    _this3.setState({ clickedArtist: node });
-                    node.edges = [];
-                });
-            }
+            this.updateClickedArtist(artist);
             this.state.camera.setCameraMove(artist.x, artist.y, this.state.camera.getZoomFromWidth(artist.size * 50), 30);
         }
     }, {
@@ -135,14 +98,13 @@ var App = function (_React$Component) {
 
             return loadArtistFromSearch;
         }(function (searchTerm) {
-            var _this4 = this;
+            var _this3 = this;
 
-            loadArtistFromSearch(this.state.p5, searchTerm, false, this.state.quadHead, this.state.nodeLookup).then(function (node) {
-                console.trace(node);
-                if (node) {
-                    _this4.setState({ clickedArtist: node });
-                    node.edges = [];
-                    _this4.state.camera.setCameraMove(node.x, node.y, _this4.state.camera.getZoomFromWidth(node.size * 50), 30);
+            loadArtistFromSearch(this.state.p5, searchTerm, false, this.state.quadHead, this.state.nodeLookup).then(function (artist) {
+                console.trace(artist);
+                if (artist) {
+                    _this3.updateClickedArtist(artist);
+                    _this3.state.camera.setCameraMove(artist.x, artist.y, _this3.state.camera.getZoomFromWidth(artist.size * 50), 30);
                 }
             });
         })
@@ -151,7 +113,7 @@ var App = function (_React$Component) {
     }, {
         key: 'loadGenreFromSearch',
         value: function loadGenreFromSearch(genreName) {
-            var _this5 = this;
+            var _this4 = this;
 
             fetch('genre/' + genreName).then(function (response) {
                 return response.json();
@@ -167,28 +129,28 @@ var App = function (_React$Component) {
                 var b = data.b;
 
                 var nodesList = [];
-                var _iteratorNormalCompletion2 = true;
-                var _didIteratorError2 = false;
-                var _iteratorError2 = undefined;
+                var _iteratorNormalCompletion = true;
+                var _didIteratorError = false;
+                var _iteratorError = undefined;
 
                 try {
-                    for (var _iterator2 = data.artists[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                        var node = _step2.value;
+                    for (var _iterator = data.artists[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                        var node = _step.value;
 
-                        createNewNode(node, _this5.state.quadHead, _this5.state.nodeLookup);
-                        nodesList.push(_this5.state.nodeLookup[node.id]);
+                        createNewNode(node, _this4.state.quadHead, _this4.state.nodeLookup);
+                        nodesList.push(_this4.state.nodeLookup[node.id]);
                     }
                 } catch (err) {
-                    _didIteratorError2 = true;
-                    _iteratorError2 = err;
+                    _didIteratorError = true;
+                    _iteratorError = err;
                 } finally {
                     try {
-                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                            _iterator2.return();
+                        if (!_iteratorNormalCompletion && _iterator.return) {
+                            _iterator.return();
                         }
                     } finally {
-                        if (_didIteratorError2) {
-                            throw _iteratorError2;
+                        if (_didIteratorError) {
+                            throw _iteratorError;
                         }
                     }
                 }
@@ -197,9 +159,9 @@ var App = function (_React$Component) {
 
                 var newGenre = new Genre(name, nodes, r, g, b);
 
-                _this5.state.camera.setCameraMove(newGenre.centroid.x, newGenre.centroid.y, _this5.state.camera.getZoomFromWidth(newGenre.getWidth()), 30);
+                _this4.state.camera.setCameraMove(newGenre.centroid.x, newGenre.centroid.y, _this4.state.camera.getZoomFromWidth(newGenre.getWidth()), 30);
 
-                _this5.setState({ clickedArtist: null, activeGenre: newGenre });
+                _this4.setState({ clickedArtist: null, activeGenre: newGenre });
             });
         }
 
@@ -241,12 +203,12 @@ var App = function (_React$Component) {
     }, {
         key: 'setCamera',
         value: function setCamera(camera) {
-            var _this6 = this;
+            var _this5 = this;
 
             this.setState({ camera: camera }, function () {
                 console.log('Camera Set state callback');
                 console.log(window.innerWidth);
-                _this6.state.camera.zoomCamera({ x: 0, y: 0 });
+                _this5.state.camera.zoomCamera({ x: 0, y: 0 });
             });
         }
     }, {
@@ -257,7 +219,7 @@ var App = function (_React$Component) {
     }, {
         key: 'initializeResizeObserver',
         value: function initializeResizeObserver() {
-            var _this7 = this;
+            var _this6 = this;
 
             this.ro = new ResizeObserver(function (entries) {
                 if (entries.length !== 1) {
@@ -266,11 +228,11 @@ var App = function (_React$Component) {
                     var cr = entries[0].contentRect;
                     var w = cr.width;
                     var h = cr.height;
-                    if (_this7.state.p5) {
-                        _this7.state.p5.resizeCanvas(w, h);
+                    if (_this6.state.p5) {
+                        _this6.state.p5.resizeCanvas(w, h);
                     }
-                    if (_this7.state.camera) {
-                        _this7.state.camera.zoomCamera({ x: _this7.state.camera.x, y: _this7.state.camera.y });
+                    if (_this6.state.camera) {
+                        _this6.state.camera.zoomCamera({ x: _this6.state.camera.x, y: _this6.state.camera.y });
                     }
                 }
             });

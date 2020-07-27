@@ -49,43 +49,29 @@ class App extends React.Component {
 
     //<editor-fold desc="Clicked Artist Handling">
     updateClickedArtist(artist) {
-        console.log(artist);
         if (artist.loaded) {
+            artist.edges = makeEdges(artist);
             this.setState({clickedArtist: artist});
         } else if (artist.id) {
             loadArtist(this.state.p5, artist, this.state.quadHead, this.state.nodeLookup).then(() =>{
-                    artist.edges = [];
-                    this.setState({clickedArtist: this.state.nodeLookup[artist.id]});
+                    artist = this.state.nodeLookup[artist.id];
+                    artist.edges = makeEdges(artist);
+                    this.setState({clickedArtist: artist});
             });
         }
     }
 
     loadArtistFromUI(artist) {
-        if (artist.loaded) {
-            this.setState({clickedArtist: artist});
-        } else {
-            fetch(`artist/${artist.id}/true`)
-                .then(response => response.json())
-                .then(data => {
-                    const node = createNewNode(data, this.state.quadHead, this.state.nodeLookup);
-                    for (const r of data.related) {
-                        node.relatedVertices.add(createNewNode(r, this.state.quadHead, this.state.nodeLookup));
-                    }
-                    node.loaded = true;
-                    this.setState({clickedArtist: node});
-                    node.edges = [];
-                })
-        }
+        this.updateClickedArtist(artist);
         this.state.camera.setCameraMove(artist.x, artist.y, this.state.camera.getZoomFromWidth(artist.size * 50), 30);
     }
 
     loadArtistFromSearch(searchTerm) {
-        loadArtistFromSearch(this.state.p5, searchTerm, false, this.state.quadHead, this.state.nodeLookup).then(node => {
-            console.trace(node);
-            if (node) {
-                this.setState({clickedArtist: node});
-                node.edges = [];
-                this.state.camera.setCameraMove(node.x, node.y, this.state.camera.getZoomFromWidth(node.size * 50), 30);
+        loadArtistFromSearch(this.state.p5, searchTerm, false, this.state.quadHead, this.state.nodeLookup).then(artist => {
+            console.trace(artist);
+            if (artist) {
+                this.updateClickedArtist(artist);
+                this.state.camera.setCameraMove(artist.x, artist.y, this.state.camera.getZoomFromWidth(artist.size * 50), 30);
             }
         });
     }

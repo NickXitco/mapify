@@ -115,14 +115,7 @@ class P5Wrapper extends React.Component {
             Debug.createTimingEvent("Darken Scene for Related Nodes");
 
             if (this.props.clickedArtist && this.props.clickedArtist.loaded) {
-                if (this.props.clickedArtist.relatedVertices.size > 0) {
-                    if (this.props.clickedArtist.edges.length === 0) {
-                        this.props.clickedArtist.edges = makeEdges(this.props.clickedArtist);
-                        this.props.updateClickedArtist(this.props.clickedArtist); //TODO why is this here
-                    } else {
-                        drawEdges(p, this.props.camera, this.props.clickedArtist.edges, this.props.clickedArtist, this.props.hoveredArtist);
-                    }
-                }
+                drawEdges(p, this.props.camera, this.props.clickedArtist.edges, this.props.clickedArtist, this.props.hoveredArtist);
 
                 Debug.createTimingEvent("Draw Related Edges");
                 drawRelatedNodes(p, this.props.camera, this.props.clickedArtist);
