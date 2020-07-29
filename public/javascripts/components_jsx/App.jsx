@@ -36,6 +36,10 @@ class App extends React.Component {
                 "Resized UI elements to work better on smaller displays",
                 "Updated changelog behavior"
             ],
+            upcomingFeatures: [
+                "Improved search: partial term (i.e. \"Cold\" for Coldplay) searching, searching for diacritics, etc.",
+                "Genre search and improved genre statistics/info",
+            ]
         }
 
         this.setCanvas = this.setCanvas.bind(this);
@@ -223,6 +227,7 @@ class App extends React.Component {
                     version={this.state.version}
                     headline={this.state.headline}
                     changes={this.state.changes}
+                    upcoming={this.state.upcomingFeatures}
 
                     updateHoverFlag={this.updateHoverFlag}
                     tryRemoveChangelog={this.tryRemoveChangelog}

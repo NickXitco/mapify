@@ -38,7 +38,8 @@ var App = function (_React$Component) {
             showChangelog: !_this.checkVersion("0.5.2"),
             version: "0.5.2",
             headline: "The React Overhaul",
-            changes: ["Restructured the entire app to use React instead of vanilla JavaScript. This shouldn't cause any " + "visible changes, let me know if it does.", "Updated genre fence to be properly offset along the corner nodes.", "Revised camera move on genre click to be more representative of genre clusters.", "Added a hover system for the sidebar, allowing you to see where a sidebar artist is on the map.", "Added genre info and coloring to the sidebar", "Resized UI elements to work better on smaller displays", "Updated changelog behavior"]
+            changes: ["Restructured the entire app to use React instead of vanilla JavaScript. This shouldn't cause any " + "visible changes, let me know if it does.", "Updated genre fence to be properly offset along the corner nodes.", "Revised camera move on genre click to be more representative of genre clusters.", "Added a hover system for the sidebar, allowing you to see where a sidebar artist is on the map.", "Added genre info and coloring to the sidebar", "Resized UI elements to work better on smaller displays", "Updated changelog behavior"],
+            upcomingFeatures: ["Improved search: partial term (i.e. \"Cold\" for Coldplay) searching, searching for diacritics, etc.", "Genre search and improved genre statistics/info"]
         };
 
         _this.setCanvas = _this.setCanvas.bind(_this);
@@ -287,6 +288,7 @@ var App = function (_React$Component) {
                     version: this.state.version,
                     headline: this.state.headline,
                     changes: this.state.changes,
+                    upcoming: this.state.upcomingFeatures,
 
                     updateHoverFlag: this.updateHoverFlag,
                     tryRemoveChangelog: this.tryRemoveChangelog

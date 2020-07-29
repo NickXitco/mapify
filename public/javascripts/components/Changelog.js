@@ -30,6 +30,16 @@ var Changelog = function (_React$Component) {
                 );
             });
 
+            var upcoming = this.props.upcoming.map(function (change, index) {
+                return React.createElement(
+                    "li",
+                    { className: "changelog-list-item",
+                        key: index.toString()
+                    },
+                    change
+                );
+            });
+
             return React.createElement(
                 "div",
                 { className: "changelog",
@@ -62,8 +72,18 @@ var Changelog = function (_React$Component) {
                     ),
                     React.createElement(
                         "ul",
-                        { className: "changelog-list" },
+                        { className: "changelog-list", style: { marginTop: "30px", marginBottom: "30px" } },
                         changelist
+                    ),
+                    React.createElement(
+                        "h3",
+                        null,
+                        "Upcoming Features"
+                    ),
+                    React.createElement(
+                        "ul",
+                        { className: "changelog-list", style: { marginTop: "30px" } },
+                        upcoming
                     )
                 )
             );

@@ -12,6 +12,14 @@ class Changelog extends React.Component {
             </li>
         );
 
+        const upcoming = this.props.upcoming.map((change, index) =>
+            <li className={"changelog-list-item"}
+                key={index.toString()}
+            >
+                {change}
+            </li>
+        );
+
         return (
             <div className="changelog"
                  onClick={() => {
@@ -30,8 +38,12 @@ class Changelog extends React.Component {
                 >
                     <h2>Version {this.props.version}</h2>
                     <h3>{this.props.headline}</h3>
-                    <ul className="changelog-list">
+                    <ul className="changelog-list" style={{marginTop: "30px", marginBottom: "30px"}}>
                         {changelist}
+                    </ul>
+                    <h3>Upcoming Features</h3>
+                    <ul className="changelog-list" style={{marginTop: "30px"}}>
+                        {upcoming}
                     </ul>
                 </div>
             </div>
