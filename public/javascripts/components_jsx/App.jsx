@@ -79,7 +79,6 @@ class App extends React.Component {
 
     updateHoverFlag(value) {
         if (this.state.uiHover !== value) {
-            console.trace(value);
             this.setState({uiHover: value});
         }
     }
@@ -105,7 +104,6 @@ class App extends React.Component {
 
     loadArtistFromSearch(searchTerm) {
         loadArtistFromSearch(this.state.p5, searchTerm, false, this.state.quadHead, this.state.nodeLookup).then(artist => {
-            console.trace(artist);
             if (artist) {
                 this.updateClickedArtist(artist);
                 this.state.camera.setCameraMove(artist.x, artist.y, this.state.camera.getZoomFromWidth(artist.size * 50), 45);

@@ -71,11 +71,10 @@ class ReactSearchBox extends React.Component {
             <li className={"suggestion"}
                 key={artist.id.toString()}
             >
-                <div className={"suggestedArtist"}>
-                    <p onClick={() => {this.processSuggestionClick(artist)}}>
-                        {artist.name.toString()}
-                    </p>
-                </div>
+                <p className={"suggestedArtist"}
+                    onClick={() => {this.processSuggestionClick(artist)}}>
+                    {artist.name.toString()}
+                </p>
             </li>
         );
 
@@ -84,11 +83,9 @@ class ReactSearchBox extends React.Component {
                 <li className={"suggestion"}
                     key={"noResults"}
                 >
-                    <div className={"suggestedArtist"}>
-                        <p>
+                        <p className={"suggestedArtist"}>
                             No Results Found.
                         </p>
-                    </div>
                 </li>
             )
         }
