@@ -33,7 +33,13 @@ var App = function (_React$Component) {
             timingEvents: {},
             lastTime: 0,
 
-            uiHover: false
+            uiHover: false,
+
+            showChangelog: !_this.checkVersion("0.5.2"),
+            version: "0.5.2",
+            headline: "The React Overhaul",
+            changes: ["Restructured the entire app to use React instead of vanilla JavaScript. This shouldn't cause any " + "visible changes, let me know if it does.", "Updated genre fence to be properly offset along the corner nodes.", "Revised camera move on genre click to be more representative of genre clusters.", "Added a hover system for the sidebar, allowing you to see where a sidebar artist is on the map.", "Added genre info and coloring to the sidebar", "Resized UI elements to work better on smaller displays", "Updated changelog behavior"],
+            upcomingFeatures: ["Improved search: partial term (i.e. \"Cold\" for Coldplay) searching, searching for diacritics, etc.", "Genre search and improved genre statistics/info"]
         };
 
         _this.setCanvas = _this.setCanvas.bind(_this);
@@ -52,13 +58,33 @@ var App = function (_React$Component) {
 
         _this.loadGenreFromSearch = _this.loadGenreFromSearch.bind(_this);
         _this.setQuadHead = _this.setQuadHead.bind(_this);
+
+        _this.tryRemoveChangelog = _this.tryRemoveChangelog.bind(_this);
+        _this.checkVersion = _this.checkVersion.bind(_this);
         return _this;
     }
 
     _createClass(App, [{
-        key: 'updateHoverFlag',
+        key: "checkVersion",
+        value: function checkVersion(versionNumber) {
+            var clientVersion = localStorage.getItem('mapify-version');
+            if (clientVersion !== versionNumber) {
+                localStorage.setItem('mapify-version', versionNumber);
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }, {
+        key: "tryRemoveChangelog",
+        value: function tryRemoveChangelog() {
+            this.setState({ showChangelog: false });
+        }
+    }, {
+        key: "updateHoverFlag",
         value: function updateHoverFlag(value) {
             if (this.state.uiHover !== value) {
+                console.trace(value);
                 this.setState({ uiHover: value });
             }
         }
@@ -66,7 +92,7 @@ var App = function (_React$Component) {
         //<editor-fold desc="Clicked Artist Handling">
 
     }, {
-        key: 'updateClickedArtist',
+        key: "updateClickedArtist",
         value: function updateClickedArtist(artist) {
             var _this2 = this;
 
@@ -82,13 +108,13 @@ var App = function (_React$Component) {
             }
         }
     }, {
-        key: 'loadArtistFromUI',
+        key: "loadArtistFromUI",
         value: function loadArtistFromUI(artist) {
             this.updateClickedArtist(artist);
             this.state.camera.setCameraMove(artist.x, artist.y, this.state.camera.getZoomFromWidth(artist.size * 50), 45);
         }
     }, {
-        key: 'loadArtistFromSearch',
+        key: "loadArtistFromSearch",
         value: function (_loadArtistFromSearch) {
             function loadArtistFromSearch(_x) {
                 return _loadArtistFromSearch.apply(this, arguments);
@@ -113,11 +139,11 @@ var App = function (_React$Component) {
         //</editor-fold>
 
     }, {
-        key: 'loadGenreFromSearch',
+        key: "loadGenreFromSearch",
         value: function loadGenreFromSearch(genreName) {
             var _this4 = this;
 
-            fetch('genre/' + genreName).then(function (response) {
+            fetch("genre/" + genreName).then(function (response) {
                 return response.json();
             }).then(function (data) {
                 console.log(data);
@@ -181,7 +207,7 @@ var App = function (_React$Component) {
          */
 
     }, {
-        key: 'handleEmptyClick',
+        key: "handleEmptyClick",
         value: function handleEmptyClick() {
             if (!(this.state.activeGenre && this.state.clickedArtist)) {
                 this.setState({ activeGenre: null });
@@ -189,7 +215,7 @@ var App = function (_React$Component) {
             this.setState({ clickedArtist: null });
         }
     }, {
-        key: 'updateHoveredArtist',
+        key: "updateHoveredArtist",
         value: function updateHoveredArtist(artist) {
             if (this.state.hoveredArtist !== artist) {
                 this.setState({ hoveredArtist: artist });
@@ -199,7 +225,7 @@ var App = function (_React$Component) {
             }
         }
     }, {
-        key: 'updateHoverPoint',
+        key: "updateHoverPoint",
         value: function updateHoverPoint(artist) {
             var point = this.state.camera.virtual2screen({ x: artist.x, y: artist.y });
             if (this.state.hoverPoint !== point) {
@@ -207,7 +233,7 @@ var App = function (_React$Component) {
             }
         }
     }, {
-        key: 'setCanvas',
+        key: "setCanvas",
         value: function setCanvas(p5) {
             this.setState({ p5: p5 }, function () {
                 console.log('P5 Set state callback');
@@ -216,7 +242,7 @@ var App = function (_React$Component) {
             this.initializeResizeObserver();
         }
     }, {
-        key: 'setCamera',
+        key: "setCamera",
         value: function setCamera(camera) {
             var _this5 = this;
 
@@ -227,12 +253,12 @@ var App = function (_React$Component) {
             });
         }
     }, {
-        key: 'setQuadHead',
+        key: "setQuadHead",
         value: function setQuadHead(quadHead) {
             this.setState({ quadHead: quadHead });
         }
     }, {
-        key: 'initializeResizeObserver',
+        key: "initializeResizeObserver",
         value: function initializeResizeObserver() {
             var _this6 = this;
 
@@ -254,12 +280,25 @@ var App = function (_React$Component) {
             this.ro.observe(document.getElementById("root"));
         }
     }, {
-        key: 'render',
+        key: "render",
         value: function render() {
-            console.log("Rendering!");
+            var changelog = null;
+            if (this.state.showChangelog) {
+                changelog = React.createElement(Changelog, {
+                    version: this.state.version,
+                    headline: this.state.headline,
+                    changes: this.state.changes,
+                    upcoming: this.state.upcomingFeatures,
+
+                    updateHoverFlag: this.updateHoverFlag,
+                    tryRemoveChangelog: this.tryRemoveChangelog
+                });
+            }
+
             return React.createElement(
-                'div',
+                "div",
                 { className: "fullScreen" },
+                changelog,
                 React.createElement(ReactInfobox, {
                     artist: this.state.hoveredArtist,
                     point: this.state.hoverPoint

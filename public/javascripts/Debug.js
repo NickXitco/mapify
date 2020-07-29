@@ -115,15 +115,6 @@ const Debug = {
         p.pop();
     },
 
-    versionNumber: function(p) {
-        p.push();
-        p.fill("white");
-        p.noStroke();
-        p.textAlign(p.RIGHT);
-        p.text(`Version ${VersionHelper.versionNumber}`, p.width - 10, p.height - 10);
-        p.pop();
-    },
-
     createTimingEvent: function(name) {
         this.timingEvents[name] = performance.now() - this.lastTime;
         this.lastTime = performance.now();
@@ -148,7 +139,6 @@ const Debug = {
         this.printFPS(p);
         this.printMouseCoordinates(p, camera);
         this.loadingStats(p, unloadedQuads, loadingQuads, unprocessedResponses);
-        this.timingGraph(p)
-        this.versionNumber(p);
+        this.timingGraph(p);
     }
 }

@@ -21,7 +21,25 @@ class App extends React.Component {
             timingEvents: {},
             lastTime: 0,
 
-            uiHover: false
+            uiHover: false,
+
+            showChangelog: !this.checkVersion("0.5.2"),
+            version: "0.5.2",
+            headline: "The React Overhaul",
+            changes: [
+                "Restructured the entire app to use React instead of vanilla JavaScript. This shouldn't cause any " +
+                "visible changes, let me know if it does.",
+                "Updated genre fence to be properly offset along the corner nodes.",
+                "Revised camera move on genre click to be more representative of genre clusters.",
+                "Added a hover system for the sidebar, allowing you to see where a sidebar artist is on the map.",
+                "Added genre info and coloring to the sidebar",
+                "Resized UI elements to work better on smaller displays",
+                "Updated changelog behavior"
+            ],
+            upcomingFeatures: [
+                "Improved search: partial term (i.e. \"Cold\" for Coldplay) searching, searching for diacritics, etc.",
+                "Genre search and improved genre statistics/info",
+            ]
         }
 
         this.setCanvas = this.setCanvas.bind(this);
@@ -40,14 +58,31 @@ class App extends React.Component {
 
         this.loadGenreFromSearch = this.loadGenreFromSearch.bind(this);
         this.setQuadHead = this.setQuadHead.bind(this);
+
+        this.tryRemoveChangelog = this.tryRemoveChangelog.bind(this);
+        this.checkVersion = this.checkVersion.bind(this);
+    }
+
+    checkVersion(versionNumber) {
+        const clientVersion = localStorage.getItem('mapify-version');
+        if (clientVersion !== versionNumber) {
+            localStorage.setItem('mapify-version', versionNumber);
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    tryRemoveChangelog() {
+        this.setState({showChangelog: false});
     }
 
     updateHoverFlag(value) {
         if (this.state.uiHover !== value) {
+            console.trace(value);
             this.setState({uiHover: value});
         }
     }
-
 
     //<editor-fold desc="Clicked Artist Handling">
     updateClickedArtist(artist) {
@@ -185,9 +220,25 @@ class App extends React.Component {
     }
 
     render() {
-        console.log("Rendering!");
+        let changelog = null;
+        if (this.state.showChangelog) {
+            changelog = (
+                <Changelog
+                    version={this.state.version}
+                    headline={this.state.headline}
+                    changes={this.state.changes}
+                    upcoming={this.state.upcomingFeatures}
+
+                    updateHoverFlag={this.updateHoverFlag}
+                    tryRemoveChangelog={this.tryRemoveChangelog}
+                />
+            );
+        }
+
         return (
             <div className={"fullScreen"}>
+                {changelog}
+
                 <ReactInfobox
                     artist={this.state.hoveredArtist}
                     point={this.state.hoverPoint}

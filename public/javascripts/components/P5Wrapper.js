@@ -36,10 +36,6 @@ var P5Wrapper = function (_React$Component) {
 
                 p.angleMode(p.DEGREES);
                 p.rectMode(p.RADIUS);
-
-                if (!VersionHelper.checkVersion()) {
-                    VersionHelper.drawChangelog();
-                }
             };
 
             p.draw = function () {
