@@ -180,6 +180,7 @@ class App extends React.Component {
     }
 
     setCanvas(p5) {
+        this.setState({p5: p5});
         this.initializeResizeObserver();
     }
 

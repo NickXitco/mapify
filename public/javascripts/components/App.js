@@ -234,6 +234,7 @@ var App = function (_React$Component) {
     }, {
         key: "setCanvas",
         value: function setCanvas(p5) {
+            this.setState({ p5: p5 });
             this.initializeResizeObserver();
         }
     }, {
