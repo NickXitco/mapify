@@ -37,7 +37,7 @@ var App = function (_React$Component) {
 
             version: "0.5.2",
             headline: "The React Overhaul",
-            changes: ["Restructured the entire app to use React instead of vanilla JavaScript. This shouldn't cause any " + "visible changes, let me know if it does.", ""]
+            changes: ["Restructured the entire app to use React instead of vanilla JavaScript. This shouldn't cause any " + "visible changes, let me know if it does.", "Updated genre fence to be properly offset along the corner nodes.", "Revised camera move on genre click to be more representative of genre clusters.", "Added a hover system for the sidebar, allowing you to see where a sidebar artist is on the map.", "Added genre info and coloring to the sidebar", "Resized UI elements to work better on smaller displays", "Updated changelog behavior"]
         };
 
         _this.setCanvas = _this.setCanvas.bind(_this);
