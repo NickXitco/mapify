@@ -51,11 +51,9 @@ var Changelog = function (_React$Component) {
                     "div",
                     { className: "changelog-inner",
                         onMouseEnter: function onMouseEnter() {
-                            console.log("enter!");
                             _this2.props.updateHoverFlag(true);
                         },
                         onMouseLeave: function onMouseLeave() {
-                            console.log("leave!");
                             _this2.props.updateHoverFlag(false);
                         }
                     },

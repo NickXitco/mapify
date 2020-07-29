@@ -16,8 +16,6 @@ var P5Wrapper = function (_React$Component) {
 
         _this.Sketch = function (p) {
             p.setup = function () {
-                console.log('P5 Setup');
-                console.log(window.innerWidth);
                 var canvas = p.createCanvas(window.innerWidth, window.innerHeight);
                 canvas.mouseOver(function () {
                     _this.props.updateHoverFlag(false);
@@ -40,8 +38,6 @@ var P5Wrapper = function (_React$Component) {
 
             p.draw = function () {
                 if (_this.loading) {
-                    console.log('P5 Draw');
-                    console.log(window.innerWidth);
                     drawLoading();
                     return;
                 }
@@ -201,10 +197,8 @@ var P5Wrapper = function (_React$Component) {
     }
 
     _createClass(P5Wrapper, [{
-        key: 'componentDidMount',
+        key: "componentDidMount",
         value: function componentDidMount() {
-            console.log('P5 Component Mount');
-            console.log(window.innerWidth);
             this.props.setCanvas(new p5(this.Sketch, this.myRef.current));
 
             this.clickedLoading = false;
@@ -215,9 +209,9 @@ var P5Wrapper = function (_React$Component) {
             this.loadingQuads = new Set();
         }
     }, {
-        key: 'render',
+        key: "render",
         value: function render() {
-            return React.createElement('div', { ref: this.myRef });
+            return React.createElement("div", { ref: this.myRef });
         }
     }]);
 

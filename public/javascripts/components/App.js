@@ -146,7 +146,6 @@ var App = function (_React$Component) {
             fetch("genre/" + genreName).then(function (response) {
                 return response.json();
             }).then(function (data) {
-                console.log(data);
                 if (!data.artists || data.artists.length === 0) {
                     return;
                 }
@@ -235,10 +234,6 @@ var App = function (_React$Component) {
     }, {
         key: "setCanvas",
         value: function setCanvas(p5) {
-            this.setState({ p5: p5 }, function () {
-                console.log('P5 Set state callback');
-                console.log(window.innerWidth);
-            });
             this.initializeResizeObserver();
         }
     }, {
@@ -247,8 +242,6 @@ var App = function (_React$Component) {
             var _this5 = this;
 
             this.setState({ camera: camera }, function () {
-                console.log('Camera Set state callback');
-                console.log(window.innerWidth);
                 _this5.state.camera.zoomCamera({ x: 0, y: 0 });
             });
         }
