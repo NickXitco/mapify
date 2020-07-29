@@ -23,7 +23,7 @@ class App extends React.Component {
 
             uiHover: false,
 
-            showChangelog: true,
+            showChangelog: !this.checkVersion("0.5.2"),
             version: "0.5.2",
             headline: "The React Overhaul",
             changes: [
@@ -51,10 +51,22 @@ class App extends React.Component {
         this.updateHoverPoint = this.updateHoverPoint.bind(this);
 
         this.updateHoverFlag = this.updateHoverFlag.bind(this);
-        this.tryRemoveChangelog = this.tryRemoveChangelog.bind(this);
 
         this.loadGenreFromSearch = this.loadGenreFromSearch.bind(this);
         this.setQuadHead = this.setQuadHead.bind(this);
+
+        this.tryRemoveChangelog = this.tryRemoveChangelog.bind(this);
+        this.checkVersion = this.checkVersion.bind(this);
+    }
+
+    checkVersion(versionNumber) {
+        const clientVersion = localStorage.getItem('mapify-version');
+        if (clientVersion !== versionNumber) {
+            localStorage.setItem('mapify-version', versionNumber);
+            return false;
+        } else {
+            return true;
+        }
     }
 
     tryRemoveChangelog() {

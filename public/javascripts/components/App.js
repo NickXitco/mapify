@@ -35,7 +35,7 @@ var App = function (_React$Component) {
 
             uiHover: false,
 
-            showChangelog: true,
+            showChangelog: !_this.checkVersion("0.5.2"),
             version: "0.5.2",
             headline: "The React Overhaul",
             changes: ["Restructured the entire app to use React instead of vanilla JavaScript. This shouldn't cause any " + "visible changes, let me know if it does.", "Updated genre fence to be properly offset along the corner nodes.", "Revised camera move on genre click to be more representative of genre clusters.", "Added a hover system for the sidebar, allowing you to see where a sidebar artist is on the map.", "Added genre info and coloring to the sidebar", "Resized UI elements to work better on smaller displays", "Updated changelog behavior"]
@@ -54,14 +54,27 @@ var App = function (_React$Component) {
         _this.updateHoverPoint = _this.updateHoverPoint.bind(_this);
 
         _this.updateHoverFlag = _this.updateHoverFlag.bind(_this);
-        _this.tryRemoveChangelog = _this.tryRemoveChangelog.bind(_this);
 
         _this.loadGenreFromSearch = _this.loadGenreFromSearch.bind(_this);
         _this.setQuadHead = _this.setQuadHead.bind(_this);
+
+        _this.tryRemoveChangelog = _this.tryRemoveChangelog.bind(_this);
+        _this.checkVersion = _this.checkVersion.bind(_this);
         return _this;
     }
 
     _createClass(App, [{
+        key: "checkVersion",
+        value: function checkVersion(versionNumber) {
+            var clientVersion = localStorage.getItem('mapify-version');
+            if (clientVersion !== versionNumber) {
+                localStorage.setItem('mapify-version', versionNumber);
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }, {
         key: "tryRemoveChangelog",
         value: function tryRemoveChangelog() {
             this.setState({ showChangelog: false });
