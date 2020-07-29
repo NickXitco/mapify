@@ -7,8 +7,6 @@ class P5Wrapper extends React.Component {
 
     Sketch = (p) => {
         p.setup = () => {
-            console.log('P5 Setup');
-            console.log(window.innerWidth);
             const canvas = p.createCanvas(window.innerWidth, window.innerHeight);
             canvas.mouseOver(() => {this.props.updateHoverFlag(false)});
 
@@ -28,8 +26,6 @@ class P5Wrapper extends React.Component {
 
         p.draw = () => {
             if (this.loading) {
-                console.log('P5 Draw');
-                console.log(window.innerWidth);
                 drawLoading();
                 return;
             }
@@ -182,8 +178,6 @@ class P5Wrapper extends React.Component {
     }
 
     componentDidMount() {
-        console.log('P5 Component Mount');
-        console.log(window.innerWidth);
         this.props.setCanvas(new p5(this.Sketch, this.myRef.current));
 
         this.clickedLoading = false;

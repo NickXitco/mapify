@@ -118,7 +118,6 @@ class App extends React.Component {
         fetch(`genre/${genreName}`)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
                 if (!data.artists || data.artists.length === 0) {
                     return;
                 }
@@ -181,17 +180,11 @@ class App extends React.Component {
     }
 
     setCanvas(p5) {
-        this.setState({p5: p5}, () => {
-            console.log('P5 Set state callback');
-            console.log(window.innerWidth);
-        });
         this.initializeResizeObserver();
     }
 
     setCamera(camera) {
         this.setState({camera: camera}, () => {
-            console.log('Camera Set state callback');
-            console.log(window.innerWidth);
             this.state.camera.zoomCamera({x: 0, y: 0});
         })
     }

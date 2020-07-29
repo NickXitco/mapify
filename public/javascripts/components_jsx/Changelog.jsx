@@ -28,11 +28,9 @@ class Changelog extends React.Component {
             >
                 <div className="changelog-inner"
                      onMouseEnter={() => {
-                         console.log("enter!");
                          this.props.updateHoverFlag(true)}
                      }
                      onMouseLeave={() => {
-                         console.log("leave!");
                          this.props.updateHoverFlag(false)}
                      }
                 >
