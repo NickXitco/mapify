@@ -40,7 +40,7 @@ class ReactSearchBox extends React.Component {
     }
 
     processSuggestions(data) {
-        this.setState({suggestions: data});
+        this.setState({suggestions: this.props.createNodesFromSuggestions(data)});
     }
 
     processSuggestionClick(artist) {
@@ -72,7 +72,10 @@ class ReactSearchBox extends React.Component {
                 key={artist.id.toString()}
             >
                 <p className={"suggestedArtist"}
-                    onClick={() => {this.processSuggestionClick(artist)}}>
+                   onClick={() => {this.processSuggestionClick(artist)}}
+                   onMouseEnter={() => {this.props.updateHoveredArtist(artist)}}
+                   onMouseLeave={() => {this.props.updateHoveredArtist(null)}}
+                >
                     {artist.name.toString()}
                 </p>
             </li>

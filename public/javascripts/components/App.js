@@ -50,6 +50,7 @@ var App = function (_React$Component) {
 
         _this.loadArtistFromUI = _this.loadArtistFromUI.bind(_this);
         _this.loadArtistFromSearch = _this.loadArtistFromSearch.bind(_this);
+        _this.createNodesFromSuggestions = _this.createNodesFromSuggestions.bind(_this);
 
         _this.updateHoveredArtist = _this.updateHoveredArtist.bind(_this);
         _this.updateHoverPoint = _this.updateHoverPoint.bind(_this);
@@ -134,6 +135,37 @@ var App = function (_React$Component) {
                 }
             });
         })
+    }, {
+        key: "createNodesFromSuggestions",
+        value: function createNodesFromSuggestions(data) {
+            var newData = [];
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = data[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var node = _step.value;
+
+                    newData.push(createNewNode(node, this.state.quadHead, this.state.nodeLookup));
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            return newData;
+        }
         //</editor-fold>
 
     }, {
@@ -154,28 +186,28 @@ var App = function (_React$Component) {
                 var b = data.b;
 
                 var nodesList = [];
-                var _iteratorNormalCompletion = true;
-                var _didIteratorError = false;
-                var _iteratorError = undefined;
+                var _iteratorNormalCompletion2 = true;
+                var _didIteratorError2 = false;
+                var _iteratorError2 = undefined;
 
                 try {
-                    for (var _iterator = data.artists[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                        var node = _step.value;
+                    for (var _iterator2 = data.artists[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                        var node = _step2.value;
 
                         createNewNode(node, _this4.state.quadHead, _this4.state.nodeLookup);
                         nodesList.push(_this4.state.nodeLookup[node.id]);
                     }
                 } catch (err) {
-                    _didIteratorError = true;
-                    _iteratorError = err;
+                    _didIteratorError2 = true;
+                    _iteratorError2 = err;
                 } finally {
                     try {
-                        if (!_iteratorNormalCompletion && _iterator.return) {
-                            _iterator.return();
+                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                            _iterator2.return();
                         }
                     } finally {
-                        if (_didIteratorError) {
-                            throw _iteratorError;
+                        if (_didIteratorError2) {
+                            throw _iteratorError2;
                         }
                     }
                 }
@@ -215,6 +247,7 @@ var App = function (_React$Component) {
         key: "updateHoveredArtist",
         value: function updateHoveredArtist(artist) {
             if (this.state.hoveredArtist !== artist) {
+                console.log(artist);
                 this.setState({ hoveredArtist: artist });
             }
             if (artist) {
@@ -302,14 +335,15 @@ var App = function (_React$Component) {
                     loadArtistFromUI: this.loadArtistFromUI,
                     loadGenreFromSearch: this.loadGenreFromSearch,
                     updateHoveredArtist: this.updateHoveredArtist,
-
                     updateHoverFlag: this.updateHoverFlag
                 }),
                 React.createElement(ReactSearchBox, {
                     artist: this.state.clickedArtist,
                     loadArtistFromUI: this.loadArtistFromUI,
                     loadArtistFromSearch: this.loadArtistFromSearch,
-                    updateHoverFlag: this.updateHoverFlag
+                    updateHoverFlag: this.updateHoverFlag,
+                    updateHoveredArtist: this.updateHoveredArtist,
+                    createNodesFromSuggestions: this.createNodesFromSuggestions
                 }),
                 React.createElement(P5Wrapper, {
                     hoveredArtist: this.state.hoveredArtist,

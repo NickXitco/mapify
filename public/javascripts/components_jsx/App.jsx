@@ -50,6 +50,7 @@ class App extends React.Component {
 
         this.loadArtistFromUI = this.loadArtistFromUI.bind(this);
         this.loadArtistFromSearch = this.loadArtistFromSearch.bind(this);
+        this.createNodesFromSuggestions = this.createNodesFromSuggestions.bind(this);
 
         this.updateHoveredArtist = this.updateHoveredArtist.bind(this);
         this.updateHoverPoint = this.updateHoverPoint.bind(this);
@@ -110,6 +111,14 @@ class App extends React.Component {
             }
         });
     }
+
+    createNodesFromSuggestions(data) {
+        let newData = [];
+        for (const node of data) {
+            newData.push(createNewNode(node,  this.state.quadHead, this.state.nodeLookup));
+        }
+        return newData;
+    }
     //</editor-fold>
 
     loadGenreFromSearch(genreName) {
@@ -163,6 +172,7 @@ class App extends React.Component {
 
     updateHoveredArtist(artist) {
         if (this.state.hoveredArtist !== artist) {
+            console.log(artist);
             this.setState({hoveredArtist: artist});
         }
         if (artist) {
@@ -243,7 +253,6 @@ class App extends React.Component {
                     loadArtistFromUI={this.loadArtistFromUI}
                     loadGenreFromSearch={this.loadGenreFromSearch}
                     updateHoveredArtist={this.updateHoveredArtist}
-
                     updateHoverFlag={this.updateHoverFlag}
                 />
 
@@ -252,6 +261,8 @@ class App extends React.Component {
                     loadArtistFromUI={this.loadArtistFromUI}
                     loadArtistFromSearch={this.loadArtistFromSearch}
                     updateHoverFlag={this.updateHoverFlag}
+                    updateHoveredArtist={this.updateHoveredArtist}
+                    createNodesFromSuggestions={this.createNodesFromSuggestions}
                 />
 
                 <P5Wrapper

@@ -15,9 +15,6 @@ class ArtistsList extends React.Component {
             <li className={"sidebarListItem"}
                 key={artist.id.toString()}
                 onClick={() => {this.props.loadArtistFromUI(artist)}}
-
-                //TODO When you check this in the draw loop, just see if UI hover is on, if so, turn off all edges
-                //except this one
                 onMouseEnter={() => {this.props.updateHoveredArtist(artist)}}
                 onMouseLeave={() => {this.props.updateHoveredArtist(null)}}
             >

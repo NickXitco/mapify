@@ -35,11 +35,8 @@ var ArtistsList = function (_React$Component) {
                         key: artist.id.toString(),
                         onClick: function onClick() {
                             _this2.props.loadArtistFromUI(artist);
-                        }
-
-                        //TODO When you check this in the draw loop, just see if UI hover is on, if so, turn off all edges
-                        //except this one
-                        , onMouseEnter: function onMouseEnter() {
+                        },
+                        onMouseEnter: function onMouseEnter() {
                             _this2.props.updateHoveredArtist(artist);
                         },
                         onMouseLeave: function onMouseLeave() {

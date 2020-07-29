@@ -58,7 +58,7 @@ var ReactSearchBox = function (_React$Component) {
     }, {
         key: "processSuggestions",
         value: function processSuggestions(data) {
-            this.setState({ suggestions: data });
+            this.setState({ suggestions: this.props.createNodesFromSuggestions(data) });
         }
     }, {
         key: "processSuggestionClick",
@@ -102,7 +102,14 @@ var ReactSearchBox = function (_React$Component) {
                         { className: "suggestedArtist",
                             onClick: function onClick() {
                                 _this3.processSuggestionClick(artist);
-                            } },
+                            },
+                            onMouseEnter: function onMouseEnter() {
+                                _this3.props.updateHoveredArtist(artist);
+                            },
+                            onMouseLeave: function onMouseLeave() {
+                                _this3.props.updateHoveredArtist(null);
+                            }
+                        },
                         artist.name.toString()
                     )
                 );
