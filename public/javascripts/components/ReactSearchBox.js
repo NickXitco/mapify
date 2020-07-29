@@ -98,15 +98,12 @@ var ReactSearchBox = function (_React$Component) {
                         key: artist.id.toString()
                     },
                     React.createElement(
-                        "div",
-                        { className: "suggestedArtist" },
-                        React.createElement(
-                            "p",
-                            { onClick: function onClick() {
-                                    _this3.processSuggestionClick(artist);
-                                } },
-                            artist.name.toString()
-                        )
+                        "p",
+                        { className: "suggestedArtist",
+                            onClick: function onClick() {
+                                _this3.processSuggestionClick(artist);
+                            } },
+                        artist.name.toString()
                     )
                 );
             });
@@ -118,13 +115,9 @@ var ReactSearchBox = function (_React$Component) {
                         key: "noResults"
                     },
                     React.createElement(
-                        "div",
+                        "p",
                         { className: "suggestedArtist" },
-                        React.createElement(
-                            "p",
-                            null,
-                            "No Results Found."
-                        )
+                        "No Results Found."
                     )
                 ));
             }
