@@ -47,7 +47,7 @@ const MouseEvents = {
     }
 }
 
-function handlePointClick(quadHead, hoveredArtist, clickedArtist, nodeLookup, p) {
+function handlePointClick(quadHead, hoveredArtist) {
     if (hoveredArtist) {
         return hoveredArtist;
     }
