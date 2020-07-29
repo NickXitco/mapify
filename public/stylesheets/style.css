@@ -94,17 +94,17 @@ canvas {
 }
 
 .changelog-inner {
-  padding: 15px;
-  background: rgba(0, 0, 0, 0.8);
+  padding: 30px;
+  background: rgba(0, 0, 0, 0.9);
   overflow: auto;
   border: #ffffff solid;
   box-shadow: 0 0 10px 3px #ffffff;
   display: block;
-  min-width: 400px;
+  width: 600px;
 }
 
 .changelog-list {
-  margin: 20px;
+  margin: 30px 20px 0 20px;
   display: block;
   position: static;
 }
@@ -112,6 +112,7 @@ canvas {
 .changelog-list-item {
   position: static;
   margin: 0 0 20px 0;
+  line-height: 1.5em;
 }
 /*</editor-fold>*/
 
