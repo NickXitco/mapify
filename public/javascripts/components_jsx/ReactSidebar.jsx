@@ -5,8 +5,9 @@ class ReactSidebar extends React.Component {
 
     render() {
         if (!this.props.artist && !this.props.genre) {
-            this.props.updateHoverFlag(false);
-            return (<div className="sidebar sidebar-closed">
+            return (<div className="sidebar sidebar-closed"
+                         onMouseEnter={() => {this.props.updateHoverFlag(true)}}
+                         onMouseLeave={() => {this.props.updateHoverFlag(false)}}>
                     <SidebarStroke color={"white"}/>
                 </div>);
         }

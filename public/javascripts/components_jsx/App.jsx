@@ -23,6 +23,7 @@ class App extends React.Component {
 
             uiHover: false,
 
+            showChangelog: true,
             version: "0.5.2",
             headline: "The React Overhaul",
             changes: [
@@ -50,17 +51,22 @@ class App extends React.Component {
         this.updateHoverPoint = this.updateHoverPoint.bind(this);
 
         this.updateHoverFlag = this.updateHoverFlag.bind(this);
+        this.tryRemoveChangelog = this.tryRemoveChangelog.bind(this);
 
         this.loadGenreFromSearch = this.loadGenreFromSearch.bind(this);
         this.setQuadHead = this.setQuadHead.bind(this);
     }
 
+    tryRemoveChangelog() {
+        this.setState({showChangelog: false});
+    }
+
     updateHoverFlag(value) {
         if (this.state.uiHover !== value) {
+            console.trace(value);
             this.setState({uiHover: value});
         }
     }
-
 
     //<editor-fold desc="Clicked Artist Handling">
     updateClickedArtist(artist) {
@@ -198,14 +204,23 @@ class App extends React.Component {
     }
 
     render() {
-        console.log("Rendering!");
-        return (
-            <div className={"fullScreen"}>
+        let changelog = null;
+        if (this.state.showChangelog) {
+            changelog = (
                 <Changelog
                     version={this.state.version}
                     headline={this.state.headline}
                     changes={this.state.changes}
+
+                    updateHoverFlag={this.updateHoverFlag}
+                    tryRemoveChangelog={this.tryRemoveChangelog}
                 />
+            );
+        }
+
+        return (
+            <div className={"fullScreen"}>
+                {changelog}
 
                 <ReactInfobox
                     artist={this.state.hoveredArtist}

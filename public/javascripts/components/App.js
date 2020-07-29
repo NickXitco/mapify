@@ -35,6 +35,7 @@ var App = function (_React$Component) {
 
             uiHover: false,
 
+            showChangelog: true,
             version: "0.5.2",
             headline: "The React Overhaul",
             changes: ["Restructured the entire app to use React instead of vanilla JavaScript. This shouldn't cause any " + "visible changes, let me know if it does.", "Updated genre fence to be properly offset along the corner nodes.", "Revised camera move on genre click to be more representative of genre clusters.", "Added a hover system for the sidebar, allowing you to see where a sidebar artist is on the map.", "Added genre info and coloring to the sidebar", "Resized UI elements to work better on smaller displays", "Updated changelog behavior"]
@@ -53,6 +54,7 @@ var App = function (_React$Component) {
         _this.updateHoverPoint = _this.updateHoverPoint.bind(_this);
 
         _this.updateHoverFlag = _this.updateHoverFlag.bind(_this);
+        _this.tryRemoveChangelog = _this.tryRemoveChangelog.bind(_this);
 
         _this.loadGenreFromSearch = _this.loadGenreFromSearch.bind(_this);
         _this.setQuadHead = _this.setQuadHead.bind(_this);
@@ -60,9 +62,15 @@ var App = function (_React$Component) {
     }
 
     _createClass(App, [{
+        key: "tryRemoveChangelog",
+        value: function tryRemoveChangelog() {
+            this.setState({ showChangelog: false });
+        }
+    }, {
         key: "updateHoverFlag",
         value: function updateHoverFlag(value) {
             if (this.state.uiHover !== value) {
+                console.trace(value);
                 this.setState({ uiHover: value });
             }
         }
@@ -260,15 +268,22 @@ var App = function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            console.log("Rendering!");
+            var changelog = null;
+            if (this.state.showChangelog) {
+                changelog = React.createElement(Changelog, {
+                    version: this.state.version,
+                    headline: this.state.headline,
+                    changes: this.state.changes,
+
+                    updateHoverFlag: this.updateHoverFlag,
+                    tryRemoveChangelog: this.tryRemoveChangelog
+                });
+            }
+
             return React.createElement(
                 "div",
                 { className: "fullScreen" },
-                React.createElement(Changelog, {
-                    version: this.state.version,
-                    headline: this.state.headline,
-                    changes: this.state.changes
-                }),
+                changelog,
                 React.createElement(ReactInfobox, {
                     artist: this.state.hoveredArtist,
                     point: this.state.hoverPoint

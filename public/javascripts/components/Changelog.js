@@ -18,6 +18,7 @@ var Changelog = function (_React$Component) {
     _createClass(Changelog, [{
         key: "render",
         value: function render() {
+            var _this2 = this;
 
             var changelist = this.props.changes.map(function (change, index) {
                 return React.createElement(
@@ -31,10 +32,23 @@ var Changelog = function (_React$Component) {
 
             return React.createElement(
                 "div",
-                { className: "changelog" },
+                { className: "changelog",
+                    onClick: function onClick() {
+                        _this2.props.tryRemoveChangelog();
+                    }
+                },
                 React.createElement(
                     "div",
-                    { className: "changelog-inner" },
+                    { className: "changelog-inner",
+                        onMouseEnter: function onMouseEnter() {
+                            console.log("enter!");
+                            _this2.props.updateHoverFlag(true);
+                        },
+                        onMouseLeave: function onMouseLeave() {
+                            console.log("leave!");
+                            _this2.props.updateHoverFlag(false);
+                        }
+                    },
                     React.createElement(
                         "h2",
                         null,

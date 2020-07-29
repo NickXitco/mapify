@@ -21,10 +21,15 @@ var ReactSidebar = function (_React$Component) {
             var _this2 = this;
 
             if (!this.props.artist && !this.props.genre) {
-                this.props.updateHoverFlag(false);
                 return React.createElement(
                     "div",
-                    { className: "sidebar sidebar-closed" },
+                    { className: "sidebar sidebar-closed",
+                        onMouseEnter: function onMouseEnter() {
+                            _this2.props.updateHoverFlag(true);
+                        },
+                        onMouseLeave: function onMouseLeave() {
+                            _this2.props.updateHoverFlag(false);
+                        } },
                     React.createElement(SidebarStroke, { color: "white" })
                 );
             }
