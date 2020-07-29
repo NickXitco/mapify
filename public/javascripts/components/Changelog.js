@@ -18,6 +18,17 @@ var Changelog = function (_React$Component) {
     _createClass(Changelog, [{
         key: "render",
         value: function render() {
+
+            var changelist = this.props.changes.map(function (change, index) {
+                return React.createElement(
+                    "li",
+                    { className: "changelog-list-item",
+                        key: index.toString()
+                    },
+                    change
+                );
+            });
+
             return React.createElement(
                 "div",
                 { className: "changelog" },
@@ -27,16 +38,18 @@ var Changelog = function (_React$Component) {
                     React.createElement(
                         "h2",
                         null,
-                        "Version 0.5.2"
+                        "Version ",
+                        this.props.version
+                    ),
+                    React.createElement(
+                        "h3",
+                        null,
+                        this.props.headline
                     ),
                     React.createElement(
                         "ul",
                         { className: "changelog-list" },
-                        React.createElement(
-                            "li",
-                            { className: "changelog-list-item" },
-                            "Cameronnnnnnn"
-                        )
+                        changelist
                     )
                 )
             );

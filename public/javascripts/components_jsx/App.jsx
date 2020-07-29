@@ -21,7 +21,15 @@ class App extends React.Component {
             timingEvents: {},
             lastTime: 0,
 
-            uiHover: false
+            uiHover: false,
+
+            version: "0.5.2",
+            headline: "The React Overhaul",
+            changes: [
+                "Restructured the entire app to use React instead of vanilla JavaScript. This shouldn't cause any " +
+                "visible changes, let me know if it does.",
+                ""
+            ],
         }
 
         this.setCanvas = this.setCanvas.bind(this);
@@ -188,7 +196,11 @@ class App extends React.Component {
         console.log("Rendering!");
         return (
             <div className={"fullScreen"}>
-                <Changelog/>
+                <Changelog
+                    version={this.state.version}
+                    headline={this.state.headline}
+                    changes={this.state.changes}
+                />
 
                 <ReactInfobox
                     artist={this.state.hoveredArtist}

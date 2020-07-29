@@ -33,7 +33,11 @@ var App = function (_React$Component) {
             timingEvents: {},
             lastTime: 0,
 
-            uiHover: false
+            uiHover: false,
+
+            version: "0.5.2",
+            headline: "The React Overhaul",
+            changes: ["Restructured the entire app to use React instead of vanilla JavaScript. This shouldn't cause any " + "visible changes, let me know if it does.", ""]
         };
 
         _this.setCanvas = _this.setCanvas.bind(_this);
@@ -56,7 +60,7 @@ var App = function (_React$Component) {
     }
 
     _createClass(App, [{
-        key: 'updateHoverFlag',
+        key: "updateHoverFlag",
         value: function updateHoverFlag(value) {
             if (this.state.uiHover !== value) {
                 this.setState({ uiHover: value });
@@ -66,7 +70,7 @@ var App = function (_React$Component) {
         //<editor-fold desc="Clicked Artist Handling">
 
     }, {
-        key: 'updateClickedArtist',
+        key: "updateClickedArtist",
         value: function updateClickedArtist(artist) {
             var _this2 = this;
 
@@ -82,13 +86,13 @@ var App = function (_React$Component) {
             }
         }
     }, {
-        key: 'loadArtistFromUI',
+        key: "loadArtistFromUI",
         value: function loadArtistFromUI(artist) {
             this.updateClickedArtist(artist);
             this.state.camera.setCameraMove(artist.x, artist.y, this.state.camera.getZoomFromWidth(artist.size * 50), 45);
         }
     }, {
-        key: 'loadArtistFromSearch',
+        key: "loadArtistFromSearch",
         value: function (_loadArtistFromSearch) {
             function loadArtistFromSearch(_x) {
                 return _loadArtistFromSearch.apply(this, arguments);
@@ -113,11 +117,11 @@ var App = function (_React$Component) {
         //</editor-fold>
 
     }, {
-        key: 'loadGenreFromSearch',
+        key: "loadGenreFromSearch",
         value: function loadGenreFromSearch(genreName) {
             var _this4 = this;
 
-            fetch('genre/' + genreName).then(function (response) {
+            fetch("genre/" + genreName).then(function (response) {
                 return response.json();
             }).then(function (data) {
                 console.log(data);
@@ -181,7 +185,7 @@ var App = function (_React$Component) {
          */
 
     }, {
-        key: 'handleEmptyClick',
+        key: "handleEmptyClick",
         value: function handleEmptyClick() {
             if (!(this.state.activeGenre && this.state.clickedArtist)) {
                 this.setState({ activeGenre: null });
@@ -189,7 +193,7 @@ var App = function (_React$Component) {
             this.setState({ clickedArtist: null });
         }
     }, {
-        key: 'updateHoveredArtist',
+        key: "updateHoveredArtist",
         value: function updateHoveredArtist(artist) {
             if (this.state.hoveredArtist !== artist) {
                 this.setState({ hoveredArtist: artist });
@@ -199,7 +203,7 @@ var App = function (_React$Component) {
             }
         }
     }, {
-        key: 'updateHoverPoint',
+        key: "updateHoverPoint",
         value: function updateHoverPoint(artist) {
             var point = this.state.camera.virtual2screen({ x: artist.x, y: artist.y });
             if (this.state.hoverPoint !== point) {
@@ -207,7 +211,7 @@ var App = function (_React$Component) {
             }
         }
     }, {
-        key: 'setCanvas',
+        key: "setCanvas",
         value: function setCanvas(p5) {
             this.setState({ p5: p5 }, function () {
                 console.log('P5 Set state callback');
@@ -216,7 +220,7 @@ var App = function (_React$Component) {
             this.initializeResizeObserver();
         }
     }, {
-        key: 'setCamera',
+        key: "setCamera",
         value: function setCamera(camera) {
             var _this5 = this;
 
@@ -227,12 +231,12 @@ var App = function (_React$Component) {
             });
         }
     }, {
-        key: 'setQuadHead',
+        key: "setQuadHead",
         value: function setQuadHead(quadHead) {
             this.setState({ quadHead: quadHead });
         }
     }, {
-        key: 'initializeResizeObserver',
+        key: "initializeResizeObserver",
         value: function initializeResizeObserver() {
             var _this6 = this;
 
@@ -254,13 +258,17 @@ var App = function (_React$Component) {
             this.ro.observe(document.getElementById("root"));
         }
     }, {
-        key: 'render',
+        key: "render",
         value: function render() {
             console.log("Rendering!");
             return React.createElement(
-                'div',
+                "div",
                 { className: "fullScreen" },
-                React.createElement(Changelog, null),
+                React.createElement(Changelog, {
+                    version: this.state.version,
+                    headline: this.state.headline,
+                    changes: this.state.changes
+                }),
                 React.createElement(ReactInfobox, {
                     artist: this.state.hoveredArtist,
                     point: this.state.hoverPoint
