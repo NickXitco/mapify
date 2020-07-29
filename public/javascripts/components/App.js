@@ -84,7 +84,6 @@ var App = function (_React$Component) {
         key: "updateHoverFlag",
         value: function updateHoverFlag(value) {
             if (this.state.uiHover !== value) {
-                console.trace(value);
                 this.setState({ uiHover: value });
             }
         }
@@ -129,7 +128,6 @@ var App = function (_React$Component) {
             var _this3 = this;
 
             loadArtistFromSearch(this.state.p5, searchTerm, false, this.state.quadHead, this.state.nodeLookup).then(function (artist) {
-                console.trace(artist);
                 if (artist) {
                     _this3.updateClickedArtist(artist);
                     _this3.state.camera.setCameraMove(artist.x, artist.y, _this3.state.camera.getZoomFromWidth(artist.size * 50), 45);
