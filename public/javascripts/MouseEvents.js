@@ -48,12 +48,6 @@ const MouseEvents = {
 }
 
 function handlePointClick(quadHead, hoveredArtist, clickedArtist, nodeLookup, p) {
-    if (VersionHelper.showingChangelog) {
-        VersionHelper.removeChangelog();
-    } else if (Utils.dist(p.width - 10, p.height - 10, p.mouseX, p.mouseY) < 75) {
-        VersionHelper.drawChangelog();
-    }
-
     if (hoveredArtist) {
         return hoveredArtist;
     }
