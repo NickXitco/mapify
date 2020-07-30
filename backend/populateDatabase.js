@@ -73,7 +73,7 @@ async function populateQuads() {
             }
             count++;
             if (count % 10000 === 0) {
-                console.log(count + " quads populated.");
+                console.log(`${count} quads populated. (${((count / 3338225) * 100).toFixed(2)}%)`);
                 console.log(`Current longest line: ${longestLine}`);
             }
         });
@@ -133,7 +133,7 @@ async function populateArtists() {
             }
             count++;
             if (count % 10000 === 0) {
-                console.log(count + " artists populated.");
+                console.log(`${count} artists populated. (${((count / 1327696) * 100).toFixed(2)}%)`);
             }
         });
     }
