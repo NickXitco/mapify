@@ -34,7 +34,9 @@ class ArtistProfile extends React.Component {
         const height = this.nameElement.clientHeight;
         const width = this.nameElement.clientWidth;
 
-        if (height > 113 || width > 275) {
+        console.log(height, width);
+
+        if (height > 113 || width > 265) {
             this.setState((prevState, props) => ({
                 fontSize: prevState.fontSize - props.fontDecrement
             }));
