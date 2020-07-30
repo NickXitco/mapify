@@ -172,7 +172,6 @@ class App extends React.Component {
 
     updateHoveredArtist(artist) {
         if (this.state.hoveredArtist !== artist) {
-            console.log(artist);
             this.setState({hoveredArtist: artist});
         }
         if (artist) {

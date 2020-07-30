@@ -247,7 +247,6 @@ var App = function (_React$Component) {
         key: "updateHoveredArtist",
         value: function updateHoveredArtist(artist) {
             if (this.state.hoveredArtist !== artist) {
-                console.log(artist);
                 this.setState({ hoveredArtist: artist });
             }
             if (artist) {
