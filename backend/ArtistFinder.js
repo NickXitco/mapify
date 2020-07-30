@@ -1,4 +1,36 @@
 const mongoose = require('mongoose');
+const SpotifyWebApi = require('spotify-web-api-node');
+const clientID = "ed5d131653384c60aa71bb39150c4e50" //TODO hide with google secret manager
+const clientSecret = "9b8841b2b91c4c82a6247b2d49d0fbd9" //TODO hide with google secret manager
+
+// credentials are optional
+const spotifyApi = new SpotifyWebApi({
+    clientId: clientID,
+    clientSecret: clientSecret,
+});
+
+setAccessToken();
+setInterval(setAccessToken, 1000 * 60 * 60);
+
+function setAccessToken() {
+    // Retrieve an access token
+    spotifyApi.clientCredentialsGrant().then(
+        function (data) {
+            console.log('The access token expires in ' + data.body['expires_in']);
+            console.log('The access token is ' + data.body['access_token']);
+
+            // Save the access token so that it's used in future calls
+            spotifyApi.setAccessToken(data.body['access_token']);
+        },
+        function (err) {
+            console.log(
+                'Something went wrong when retrieving an access token',
+                err.message
+            );
+        }
+    );
+}
+
 
 async function findArtist(query, isQueryID) {
     const Artist = mongoose.model('Artist');
@@ -6,37 +38,7 @@ async function findArtist(query, isQueryID) {
     if (isQueryID) {
         artist = await Artist.findOne({id: query}).exec();
     } else {
-        artist = await Artist.aggregate([
-            {
-                '$match': {
-                    '$text': {
-                        '$search': query
-                    }
-                }
-            }, {
-                '$addFields': {
-                    'score': {
-                        '$meta': 'textScore'
-                    }
-                }
-            }, {
-                '$sort': {
-                    'score': -1
-                }
-            }, {
-                '$unset': [
-                    'score'
-                ]
-            }, {
-                '$match': {
-                    'name': {
-                        '$regex': new RegExp(`^${query}$`, 'i')
-                    }
-                }
-            }, {
-                '$limit': 1
-            }
-        ]).exec();
+        artist = await runSearch(query, Artist, 1);
         if (artist.length === 1) {
             artist = artist[0];
         } else {
@@ -64,42 +66,32 @@ async function findArtist(query, isQueryID) {
     };
 }
 
+function runSearch(searchTerm, Artist, limit) {
+    return spotifyApi.searchArtists(searchTerm, {limit: limit, offset: 0})
+        .then(function (data) {
+            let promises = []
+            for (const item of data.body.artists.items) {
+                promises.push(Artist.findOne({id: item.id}).exec());
+            }
+            return Promise.all(promises).then((values) => {
+                let realValues = []
+                for (const value of values) {
+                    if (value) {
+                        realValues.push(value);
+                    }
+                }
+                return realValues;
+            })
+        }, function (err) {
+            console.error(err);
+            return [];
+        });
+}
+
 async function findArtistSearch(searchTerm) {
     const Artist = mongoose.model('Artist');
-    const SUGGESTIONS_LIMIT = 5;
-    return Artist.aggregate([
-        {
-            '$match': {
-                '$text': {
-                    '$search': searchTerm
-                }
-            }
-        }, {
-            '$addFields': {
-                'score': {
-                    '$meta': 'textScore'
-                }
-            }
-        }, {
-            '$addFields': {
-                'sortScore': {
-                    '$multiply': [
-                        '$score', '$followers'
-                    ]
-                }
-            }
-        }, {
-            '$sort': {
-                'sortScore': -1
-            }
-        }, {
-            '$unset': [
-                'score', 'sortScore'
-            ]
-        }, {
-            '$limit': SUGGESTIONS_LIMIT
-        }
-    ]).exec();
+    const NUM_RESULTS = 5;
+    return runSearch(searchTerm, Artist, NUM_RESULTS);
 }
 
 module.exports = {findArtist, findArtistSearch};
