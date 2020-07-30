@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const SpotifyWebApi = require('spotify-web-api-node');
-const clientID = "ed5d131653384c60aa71bb39150c4e50" //TODO hide with google secret manager
-const clientSecret = "9b8841b2b91c4c82a6247b2d49d0fbd9" //TODO hide with google secret manager
+const clientID = `${process.env.clientID}` //TODO hide with google secret manager
+const clientSecret = `${process.env.clientSecret}`  //TODO hide with google secret manager
 
 // credentials are optional
 const spotifyApi = new SpotifyWebApi({
@@ -30,7 +30,6 @@ function setAccessToken() {
         }
     );
 }
-
 
 async function findArtist(query, isQueryID) {
     const Artist = mongoose.model('Artist');
