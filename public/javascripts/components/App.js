@@ -35,11 +35,11 @@ var App = function (_React$Component) {
 
             uiHover: false,
 
-            showChangelog: !_this.checkVersion("0.5.2"),
-            version: "0.5.2",
-            headline: "The React Overhaul",
-            changes: ["Restructured the entire app to use React instead of vanilla JavaScript. This shouldn't cause any " + "visible changes, let me know if it does.", "Updated genre fence to be properly offset along the corner nodes.", "Revised camera move on genre click to be more representative of genre clusters.", "Added a hover system for the sidebar, allowing you to see where a sidebar artist is on the map.", "Added genre info and coloring to the sidebar", "Resized UI elements to work better on smaller displays", "Updated changelog behavior"],
-            upcomingFeatures: ["Improved search: partial term (i.e. \"Cold\" for Coldplay) searching, searching for diacritics, etc.", "Genre search and improved genre statistics/info"]
+            showChangelog: !_this.checkVersion("0.5.3"),
+            version: "0.5.3",
+            headline: "Searching, revamped",
+            changes: ["Search suggestions now look better when longer names come up", "You can now hover over an artist from search suggestions", "Searching algorithm completely overhauled to use Spotify's own search. This should give you more natural results in some cases, as well as cleaning up some edge cases that would come up when you searching things with stopwords (the, a, an, etc.). You can now search for the band \"The The\" and it will actually work!", "Fixed some buggy artist name sizes on the sidebar (Madeon, for example)", "Added every artist's picture to the sidebar!", "Fixed the hover infobox to load with the right size every time.", "Hover infobox now has a max width, and will wrap text if an artists' name is too long (The World is a Beautiful Place and I Am No Longer Afraid to Die, for example)", "Removed from debug shapes from the genre fence", "Made sidebar/color easing much nicer"],
+            upcomingFeatures: ["Play artists' songs from inside the sidebar", "Add actual UI to the app", "Add previous versions to this changelog!"]
         };
 
         _this.setCanvas = _this.setCanvas.bind(_this);
