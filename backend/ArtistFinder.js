@@ -1,15 +1,36 @@
 const mongoose = require('mongoose');
 const SpotifyWebApi = require('spotify-web-api-node');
-const clientID = `${process.env.clientID}` //TODO hide with google secret manager
-const clientSecret = `${process.env.clientSecret}`  //TODO hide with google secret manager
+const {SecretManagerServiceClient} = require('@google-cloud/secret-manager');
+const client = new SecretManagerServiceClient();
+let spotifyApi = null;
 
-// credentials are optional
-const spotifyApi = new SpotifyWebApi({
-    clientId: clientID,
-    clientSecret: clientSecret,
-});
+async function getAPICredentials() {
+    /*
+    const [secret] = await client.accessSecretVersion({
+        name: 'projects/785245481415/secrets/clientSecret/versions/1'
+    })
 
-setAccessToken();
+    const [id] = await client.accessSecretVersion({
+        name: 'projects/785245481415/secrets/clientID/versions/1'
+    })
+
+    return {secret: secret.payload.data.toString(), id: id.payload.data.toString()};
+     */
+    return {secret: process.env.clientSecret, id: process.env.clientID};
+}
+
+getAPICredentials().then((res) => {
+    const clientID = res.id;
+    const clientSecret = res.secret;
+
+    spotifyApi = new SpotifyWebApi({
+        clientId: clientID,
+        clientSecret: clientSecret,
+    });
+
+    setAccessToken();
+})
+
 setInterval(setAccessToken, 1000 * 60 * 60);
 
 function setAccessToken() {
