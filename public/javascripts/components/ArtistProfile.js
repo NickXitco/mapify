@@ -55,8 +55,6 @@ var ArtistProfile = function (_React$Component) {
             var height = this.nameElement.clientHeight;
             var width = this.nameElement.clientWidth;
 
-            console.log(height, width);
-
             if (height > 113 || width > 265) {
                 this.setState(function (prevState, props) {
                     return {
@@ -74,17 +72,27 @@ var ArtistProfile = function (_React$Component) {
             var _this4 = this;
 
             var pictureStyle = {
-                boxShadow: "0 0 13px 1px " + this.props.artist.colorToString()
+                boxShadow: "0 0 13px 1px " + this.props.artist.colorToString() + ", inset 0 0 1px 2px " + this.props.artist.colorToString()
             };
 
             var nameStyle = {
                 fontSize: this.state.fontSize
-            };
+
+                //TODO default picture
+            };var picture = null;
+
+            if (this.props.artist.images.length > 0) {
+                picture = React.createElement("img", { src: this.props.artist.images[0].url, alt: this.props.artist.name });
+            }
 
             return React.createElement(
                 "div",
                 { className: "nameAndPicture" },
-                React.createElement("div", { className: "sidebarPicture", style: pictureStyle }),
+                React.createElement(
+                    "div",
+                    { className: "sidebarPicture", style: pictureStyle },
+                    picture
+                ),
                 React.createElement(
                     "div",
                     { className: "name" },

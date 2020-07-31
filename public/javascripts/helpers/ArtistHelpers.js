@@ -124,8 +124,9 @@ async function loadArtistFromSearch(p, query, isQueryID, quadHead, nodeLookup) {
         createNewNode(r, quadHead, nodeLookup);
         node.relatedVertices.add(nodeLookup[r.id]);
     }
-    node.loaded = true;
 
+    node.images = data.images;
+    node.loaded = true;
     return node
 }
 
@@ -158,5 +159,7 @@ async function loadArtist(p, artist, quadHead, nodeLookup) {
         createNewNode(r, quadHead, nodeLookup);
         node.relatedVertices.add(nodeLookup[r.id]);
     }
+
+    node.images = data.images;
     node.loaded = true;
 }

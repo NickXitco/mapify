@@ -309,6 +309,14 @@ canvas {
   position: static;
 }
 
+.sidebarPicture img {
+  object-fit: cover;
+  width: 113px;
+  height: 113px;
+  border-radius: 50%;
+  z-index: -1;
+}
+
 .name {
   display: flex;
   align-items: center;
