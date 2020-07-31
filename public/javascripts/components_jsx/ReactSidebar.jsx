@@ -35,6 +35,8 @@ class ReactSidebar extends React.Component {
 
                             <FollowersStats artist={this.state.artist}/>
 
+                            <Player uri={"spotify:track:37iFlmC2ZbLcRtyZYPLSYA"}/>
+
                             <GenresList genres={this.state.artist.genres}
                                         loadGenreFromSearch={this.props.loadGenreFromSearch}
                                         header={"Genres"}
@@ -94,6 +96,8 @@ class ReactSidebar extends React.Component {
                     <ArtistProfile artist={this.props.artist} fontDecrement={3}/>
 
                     <FollowersStats artist={this.props.artist}/>
+
+                    <Player uri={"spotify:track:37iFlmC2ZbLcRtyZYPLSYA"}/>
 
                     <GenresList genres={this.props.artist.genres}
                                 loadGenreFromSearch={this.props.loadGenreFromSearch}
