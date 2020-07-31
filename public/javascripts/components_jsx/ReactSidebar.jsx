@@ -58,7 +58,7 @@ class ReactSidebar extends React.Component {
 
                     <SidebarStroke color={this.props.genre.colorToString()}/>
 
-                    <ArtistProfile artist={this.props.genre} fontDecrement={3}/>
+                    <GenreProfile genre={this.props.genre} fontDecrement={3}/>
 
                     <ArtistsList artists={this.props.genre.nodes}
                                  loadArtistFromUI={this.props.loadArtistFromUI}
