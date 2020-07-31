@@ -24,6 +24,8 @@ class Artist {
 
     edges;
 
+    images;
+
     constructor(doc) {
         this.name = doc.name;
         this.id = doc.id;
@@ -48,6 +50,8 @@ class Artist {
         this.loaded = false;
 
         this.edges = [];
+
+        this.images = [];
     }
 
     colorToString() {

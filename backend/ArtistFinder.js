@@ -49,6 +49,10 @@ async function findArtist(query, isQueryID) {
         return {};
     }
 
+    const images = await spotifyApi.getArtist(artist.id).then(data => {
+        return data.body.images;
+    })
+
     return {
         name: artist.name,
         id: artist.id,
@@ -61,7 +65,8 @@ async function findArtist(query, isQueryID) {
         g: artist.g,
         b: artist.b,
         genres: artist.genres,
-        related: await Artist.find().where('id').in(artist.related).exec()
+        related: await Artist.find().where('id').in(artist.related).exec(),
+        images: images
     };
 }
 
