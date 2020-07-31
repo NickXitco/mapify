@@ -31,7 +31,8 @@ var Player = function (_React$Component) {
 
             return React.createElement("iframe", {
                 src: src,
-                width: "300",
+                className: "player",
+                width: "406",
                 height: "80",
                 frameBorder: "0",
                 allowTransparency: "true",

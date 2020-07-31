@@ -336,6 +336,14 @@ canvas {
   position: static;
 }
 /*</editor-fold>*/
+
+.player {
+  position: static;
+  margin: 10px 22px;
+  opacity: 0.9;
+}
+
+
 /*<editor-fold desc="FOLLOWERS">*/
 .followersSection {
   position: static;

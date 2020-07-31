@@ -18,7 +18,8 @@ class Player extends React.Component {
         return (
             <iframe
                 src={src}
-                width="300"
+                className="player"
+                width="406"
                 height="80"
                 frameBorder="0"
                 allowTransparency="true"
