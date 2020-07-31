@@ -84,12 +84,16 @@ var ReactSearchBox = function (_React$Component) {
         value: function render() {
             var _this3 = this;
 
-            var color = this.props.artist ? this.props.artist.colorToString() : "white";
-
-            var colorStyle = {
-                borderColor: color,
-                boxShadow: "0 0 6px 0.5px " + color
-            };
+            var colorStyle = {};
+            var borderClassName = "";
+            if (this.props.colorant) {
+                colorStyle = {
+                    borderColor: this.props.colorant.colorToString(),
+                    boxShadow: "0 0 6px 0.5px " + this.props.colorant.colorToString()
+                };
+            } else {
+                borderClassName = "searchBox-white";
+            }
 
             var suggestions = this.state.suggestions.map(function (artist) {
                 return React.createElement(
@@ -142,7 +146,7 @@ var ReactSearchBox = function (_React$Component) {
                 React.createElement(
                     "div",
                     { className: "searchBar" },
-                    React.createElement("input", { className: "searchInput",
+                    React.createElement("input", { className: "searchInput " + borderClassName,
                         style: colorStyle,
                         type: "text",
                         placeholder: "search for an artist...",

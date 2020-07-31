@@ -1,16 +1,81 @@
 class ReactSidebar extends React.Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            artist: null,
+            genre: null
+        }
+
+        this.updateSidebarContent = this.updateSidebarContent.bind(this);
+    }
+
+    updateSidebarContent(artist, genre) {
+        if (this.state.artist !== artist || this.state.genre !== genre) {
+            this.setState({artist: artist, genre: genre});
+        }
     }
 
     render() {
         if (!this.props.artist && !this.props.genre) {
-            return (<div className="sidebar sidebar-closed"
+            if (this.state.artist) {
+                return (<div className="sidebar sidebar-closed"
+                             onMouseEnter={() => {this.props.updateHoverFlag(true)}}
+                             onMouseLeave={() => {this.props.updateHoverFlag(false)}}
+                        >
+
+                            <style>
+                                {`::-webkit-scrollbar-track {box-shadow: 0 0 5px ${this.state.artist.colorToString()};}  \n` +
+                                `::-webkit-scrollbar-thumb {background: ${this.state.artist.colorToString()};`}
+                            </style>
+
+                            <SidebarStroke color={this.state.artist.colorToString()}/>
+
+                            <ArtistProfile artist={this.state.artist} fontDecrement={3}/>
+
+                            <FollowersStats artist={this.state.artist}/>
+
+                            <GenresList genres={this.state.artist.genres}
+                                        loadGenreFromSearch={this.props.loadGenreFromSearch}
+                                        header={"Genres"}
+                            />
+
+                            <ArtistsList artists={this.state.artist.relatedVertices}
+                                         loadArtistFromUI={this.props.loadArtistFromUI}
+                                         updateHoveredArtist={this.props.updateHoveredArtist}
+                                         header={"Related Artists"}
+                            />
+                        </div>
+                );
+            } else if (this.state.genre) {
+                return (
+                    <div className="sidebar sidebar-closed"
                          onMouseEnter={() => {this.props.updateHoverFlag(true)}}
-                         onMouseLeave={() => {this.props.updateHoverFlag(false)}}>
-                    <SidebarStroke color={"white"}/>
-                </div>);
+                         onMouseLeave={() => {this.props.updateHoverFlag(false)}}
+                    >
+
+                        <style>
+                            {`::-webkit-scrollbar-track {box-shadow: 0 0 5px ${this.state.genre.colorToString()};}  \n` +
+                            `::-webkit-scrollbar-thumb {background: ${this.state.genre.colorToString()};`}
+                        </style>
+
+                        <SidebarStroke color={this.state.genre.colorToString()}/>
+
+                        <GenreProfile genre={this.state.genre} fontDecrement={3}/>
+
+                        <ArtistsList artists={this.state.genre.nodes}
+                                     loadArtistFromUI={this.props.loadArtistFromUI}
+                                     updateHoveredArtist={this.props.updateHoveredArtist}
+                                     header={"Artists in Genre"}
+                        />
+
+                    </div>
+                );
+            }
+            return null;
         }
+
+        this.updateSidebarContent(this.props.artist, this.props.genre);
 
         if (this.props.artist) {
             return (

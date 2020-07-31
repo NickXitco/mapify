@@ -60,11 +60,15 @@ class ReactSearchBox extends React.Component {
     }
 
     render() {
-        const color = this.props.artist ? this.props.artist.colorToString() : "white"
-
-        const colorStyle = {
-            borderColor: color,
-            boxShadow: "0 0 6px 0.5px " + color
+        let colorStyle = {};
+        let borderClassName = "";
+        if (this.props.colorant) {
+            colorStyle = {
+                borderColor: this.props.colorant.colorToString(),
+                boxShadow: "0 0 6px 0.5px " + this.props.colorant.colorToString()
+            }
+        } else {
+            borderClassName = "searchBox-white";
         }
 
         let suggestions = this.state.suggestions.map(artist =>
@@ -99,7 +103,7 @@ class ReactSearchBox extends React.Component {
                  onMouseLeave={() => {this.props.updateHoverFlag(false)}}
             >
                 <div className={"searchBar"}>
-                    <input className={"searchInput"}
+                    <input className={`searchInput ${borderClassName}`}
                            style={colorStyle}
                            type="text"
                            placeholder="search for an artist..."

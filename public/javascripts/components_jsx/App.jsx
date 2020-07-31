@@ -256,7 +256,7 @@ class App extends React.Component {
                 />
 
                 <ReactSearchBox
-                    artist={this.state.clickedArtist}
+                    colorant={this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre}
                     loadArtistFromUI={this.loadArtistFromUI}
                     loadArtistFromSearch={this.loadArtistFromSearch}
                     updateHoverFlag={this.updateHoverFlag}

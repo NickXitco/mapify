@@ -12,27 +12,88 @@ var ReactSidebar = function (_React$Component) {
     function ReactSidebar(props) {
         _classCallCheck(this, ReactSidebar);
 
-        return _possibleConstructorReturn(this, (ReactSidebar.__proto__ || Object.getPrototypeOf(ReactSidebar)).call(this, props));
+        var _this = _possibleConstructorReturn(this, (ReactSidebar.__proto__ || Object.getPrototypeOf(ReactSidebar)).call(this, props));
+
+        _this.state = {
+            artist: null,
+            genre: null
+        };
+
+        _this.updateSidebarContent = _this.updateSidebarContent.bind(_this);
+        return _this;
     }
 
     _createClass(ReactSidebar, [{
+        key: "updateSidebarContent",
+        value: function updateSidebarContent(artist, genre) {
+            if (this.state.artist !== artist || this.state.genre !== genre) {
+                this.setState({ artist: artist, genre: genre });
+            }
+        }
+    }, {
         key: "render",
         value: function render() {
             var _this2 = this;
 
             if (!this.props.artist && !this.props.genre) {
-                return React.createElement(
-                    "div",
-                    { className: "sidebar sidebar-closed",
-                        onMouseEnter: function onMouseEnter() {
-                            _this2.props.updateHoverFlag(true);
+                if (this.state.artist) {
+                    return React.createElement(
+                        "div",
+                        { className: "sidebar sidebar-closed",
+                            onMouseEnter: function onMouseEnter() {
+                                _this2.props.updateHoverFlag(true);
+                            },
+                            onMouseLeave: function onMouseLeave() {
+                                _this2.props.updateHoverFlag(false);
+                            }
                         },
-                        onMouseLeave: function onMouseLeave() {
-                            _this2.props.updateHoverFlag(false);
-                        } },
-                    React.createElement(SidebarStroke, { color: "white" })
-                );
+                        React.createElement(
+                            "style",
+                            null,
+                            "::-webkit-scrollbar-track {box-shadow: 0 0 5px " + this.state.artist.colorToString() + ";}  \n" + ("::-webkit-scrollbar-thumb {background: " + this.state.artist.colorToString() + ";")
+                        ),
+                        React.createElement(SidebarStroke, { color: this.state.artist.colorToString() }),
+                        React.createElement(ArtistProfile, { artist: this.state.artist, fontDecrement: 3 }),
+                        React.createElement(FollowersStats, { artist: this.state.artist }),
+                        React.createElement(GenresList, { genres: this.state.artist.genres,
+                            loadGenreFromSearch: this.props.loadGenreFromSearch,
+                            header: "Genres"
+                        }),
+                        React.createElement(ArtistsList, { artists: this.state.artist.relatedVertices,
+                            loadArtistFromUI: this.props.loadArtistFromUI,
+                            updateHoveredArtist: this.props.updateHoveredArtist,
+                            header: "Related Artists"
+                        })
+                    );
+                } else if (this.state.genre) {
+                    return React.createElement(
+                        "div",
+                        { className: "sidebar sidebar-closed",
+                            onMouseEnter: function onMouseEnter() {
+                                _this2.props.updateHoverFlag(true);
+                            },
+                            onMouseLeave: function onMouseLeave() {
+                                _this2.props.updateHoverFlag(false);
+                            }
+                        },
+                        React.createElement(
+                            "style",
+                            null,
+                            "::-webkit-scrollbar-track {box-shadow: 0 0 5px " + this.state.genre.colorToString() + ";}  \n" + ("::-webkit-scrollbar-thumb {background: " + this.state.genre.colorToString() + ";")
+                        ),
+                        React.createElement(SidebarStroke, { color: this.state.genre.colorToString() }),
+                        React.createElement(GenreProfile, { genre: this.state.genre, fontDecrement: 3 }),
+                        React.createElement(ArtistsList, { artists: this.state.genre.nodes,
+                            loadArtistFromUI: this.props.loadArtistFromUI,
+                            updateHoveredArtist: this.props.updateHoveredArtist,
+                            header: "Artists in Genre"
+                        })
+                    );
+                }
+                return null;
             }
+
+            this.updateSidebarContent(this.props.artist, this.props.genre);
 
             if (this.props.artist) {
                 return React.createElement(

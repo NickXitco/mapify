@@ -337,7 +337,7 @@ var App = function (_React$Component) {
                     updateHoverFlag: this.updateHoverFlag
                 }),
                 React.createElement(ReactSearchBox, {
-                    artist: this.state.clickedArtist,
+                    colorant: this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre,
                     loadArtistFromUI: this.loadArtistFromUI,
                     loadArtistFromSearch: this.loadArtistFromSearch,
                     updateHoverFlag: this.updateHoverFlag,

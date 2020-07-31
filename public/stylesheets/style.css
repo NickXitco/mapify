@@ -232,7 +232,14 @@ canvas {
 
   padding: 5px;
   grid-row: 1;
-  user-select: none
+  user-select: none;
+
+  transition: border 0.6s cubic-bezier(0.5, 1, 0.89, 1), box-shadow 0.6s cubic-bezier(0.5, 1, 0.89, 1);
+}
+
+.searchBox-white {
+  border: white 2px solid;
+  box-shadow: 0 0 6px 1px white;
 }
 
 .suggestions {
