@@ -44,9 +44,9 @@ var ReactInfobox = function (_React$Component) {
                 return null;
             }
 
+            console.trace(this.state.height, this.state.width);
+
             var infoBoxDynamicStyles = {
-                height: this.state.height,
-                width: this.state.width,
                 borderColor: this.props.artist.colorToString(),
                 boxShadow: "0 0 3px 1px " + this.props.artist.colorToString(),
 
