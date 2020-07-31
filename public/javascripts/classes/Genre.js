@@ -182,11 +182,12 @@ class Genre {
         p.vertex(this.offsetHull[0].x, -this.offsetHull[0].y);
         p.endShape();
 
+        /*
         p.rect(this.centroid.x, -this.centroid.y, this.getWidth() / 2, this.getHeight() / 2);
 
         p.noFill();
         p.circle(this.bubble.center.x, -this.bubble.center.y, this.bubble.radius * 2);
-
+        */
         p.pop();
     }
 
