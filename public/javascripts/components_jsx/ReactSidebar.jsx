@@ -17,8 +17,16 @@ class ReactSidebar extends React.Component {
     }
 
     render() {
+        let player = null;
+
         if (!this.props.artist && !this.props.genre) {
             if (this.state.artist) {
+                if (this.state.artist.track) {
+                    player = (
+                        <Player uri={`spotify:track:${this.state.artist.track.id}`}/>
+                    )
+                }
+
                 return (<div className="sidebar sidebar-closed"
                              onMouseEnter={() => {this.props.updateHoverFlag(true)}}
                              onMouseLeave={() => {this.props.updateHoverFlag(false)}}
@@ -35,7 +43,7 @@ class ReactSidebar extends React.Component {
 
                             <FollowersStats artist={this.state.artist}/>
 
-                            <Player uri={"spotify:track:37iFlmC2ZbLcRtyZYPLSYA"}/>
+                            {player}
 
                             <GenresList genres={this.state.artist.genres}
                                         loadGenreFromSearch={this.props.loadGenreFromSearch}
@@ -80,6 +88,12 @@ class ReactSidebar extends React.Component {
         this.updateSidebarContent(this.props.artist, this.props.genre);
 
         if (this.props.artist) {
+            if (this.props.artist.track) {
+                player = (
+                    <Player uri={`spotify:track:${this.props.artist.track.id}`}/>
+                )
+            }
+
             return (
                 <div className="sidebar sidebar-open"
                      onMouseEnter={() => {this.props.updateHoverFlag(true)}}
@@ -97,7 +111,7 @@ class ReactSidebar extends React.Component {
 
                     <FollowersStats artist={this.props.artist}/>
 
-                    <Player uri={`spotify:track:${this.props.artist.track.id}`}/>
+                    {player}
 
                     <GenresList genres={this.props.artist.genres}
                                 loadGenreFromSearch={this.props.loadGenreFromSearch}
