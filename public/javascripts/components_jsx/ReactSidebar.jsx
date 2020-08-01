@@ -21,6 +21,8 @@ class ReactSidebar extends React.Component {
 
         if (!this.props.artist && !this.props.genre) {
             if (this.state.artist) {
+                setTimeout(() => this.setState({artist: null}), 600);
+
                 if (this.state.artist.track) {
                     player = (
                         <Player uri={`spotify:track:${this.state.artist.track.id}`}/>

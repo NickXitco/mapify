@@ -39,6 +39,10 @@ var ReactSidebar = function (_React$Component) {
 
             if (!this.props.artist && !this.props.genre) {
                 if (this.state.artist) {
+                    setTimeout(function () {
+                        return _this2.setState({ artist: null });
+                    }, 600);
+
                     if (this.state.artist.track) {
                         player = React.createElement(Player, { uri: "spotify:track:" + this.state.artist.track.id });
                     }
