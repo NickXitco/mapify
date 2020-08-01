@@ -46,6 +46,8 @@ class ReactSidebar extends React.Component {
                             <FollowersStats artist={this.state.artist}/>
 
                             {player}
+                            <p style={{padding: "10px 22px", fontSize: "12px"}}>Headphone warning, this can be pretty loud</p>
+
 
                             <GenresList genres={this.state.artist.genres}
                                         loadGenreFromSearch={this.props.loadGenreFromSearch}
@@ -114,6 +116,7 @@ class ReactSidebar extends React.Component {
                     <FollowersStats artist={this.props.artist}/>
 
                     {player}
+                    <p style={{padding: "10px 22px", fontSize: "12px"}}>Headphone warning, this can be pretty loud</p>
 
                     <GenresList genres={this.props.artist.genres}
                                 loadGenreFromSearch={this.props.loadGenreFromSearch}

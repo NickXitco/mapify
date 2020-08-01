@@ -66,6 +66,11 @@ var ReactSidebar = function (_React$Component) {
                         React.createElement(ArtistProfile, { artist: this.state.artist, fontDecrement: 3 }),
                         React.createElement(FollowersStats, { artist: this.state.artist }),
                         player,
+                        React.createElement(
+                            "p",
+                            { style: { padding: "10px 22px", fontSize: "12px" } },
+                            "Headphone warning, this can be pretty loud"
+                        ),
                         React.createElement(GenresList, { genres: this.state.artist.genres,
                             loadGenreFromSearch: this.props.loadGenreFromSearch,
                             header: "Genres"
@@ -130,6 +135,11 @@ var ReactSidebar = function (_React$Component) {
                     React.createElement(ArtistProfile, { artist: this.props.artist, fontDecrement: 3 }),
                     React.createElement(FollowersStats, { artist: this.props.artist }),
                     player,
+                    React.createElement(
+                        "p",
+                        { style: { padding: "10px 22px", fontSize: "12px" } },
+                        "Headphone warning, this can be pretty loud"
+                    ),
                     React.createElement(GenresList, { genres: this.props.artist.genres,
                         loadGenreFromSearch: this.props.loadGenreFromSearch,
                         header: "Genres"
