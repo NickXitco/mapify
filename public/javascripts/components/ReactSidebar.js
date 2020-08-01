@@ -35,8 +35,18 @@ var ReactSidebar = function (_React$Component) {
         value: function render() {
             var _this2 = this;
 
+            var player = null;
+
             if (!this.props.artist && !this.props.genre) {
                 if (this.state.artist) {
+                    setTimeout(function () {
+                        return _this2.setState({ artist: null });
+                    }, 600);
+
+                    if (this.state.artist.track) {
+                        player = React.createElement(Player, { uri: "spotify:track:" + this.state.artist.track.id });
+                    }
+
                     return React.createElement(
                         "div",
                         { className: "sidebar sidebar-closed",
@@ -55,6 +65,12 @@ var ReactSidebar = function (_React$Component) {
                         React.createElement(SidebarStroke, { color: this.state.artist.colorToString() }),
                         React.createElement(ArtistProfile, { artist: this.state.artist, fontDecrement: 3 }),
                         React.createElement(FollowersStats, { artist: this.state.artist }),
+                        player,
+                        React.createElement(
+                            "p",
+                            { style: { padding: "10px 22px", fontSize: "12px" } },
+                            "Headphone warning, this can be pretty loud"
+                        ),
                         React.createElement(GenresList, { genres: this.state.artist.genres,
                             loadGenreFromSearch: this.props.loadGenreFromSearch,
                             header: "Genres"
@@ -96,6 +112,10 @@ var ReactSidebar = function (_React$Component) {
             this.updateSidebarContent(this.props.artist, this.props.genre);
 
             if (this.props.artist) {
+                if (this.props.artist.track) {
+                    player = React.createElement(Player, { uri: "spotify:track:" + this.props.artist.track.id });
+                }
+
                 return React.createElement(
                     "div",
                     { className: "sidebar sidebar-open",
@@ -114,6 +134,12 @@ var ReactSidebar = function (_React$Component) {
                     React.createElement(SidebarStroke, { color: this.props.artist.colorToString() }),
                     React.createElement(ArtistProfile, { artist: this.props.artist, fontDecrement: 3 }),
                     React.createElement(FollowersStats, { artist: this.props.artist }),
+                    player,
+                    React.createElement(
+                        "p",
+                        { style: { padding: "10px 22px", fontSize: "12px" } },
+                        "Headphone warning, this can be pretty loud"
+                    ),
                     React.createElement(GenresList, { genres: this.props.artist.genres,
                         loadGenreFromSearch: this.props.loadGenreFromSearch,
                         header: "Genres"

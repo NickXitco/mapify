@@ -126,6 +126,7 @@ async function loadArtistFromSearch(p, query, isQueryID, quadHead, nodeLookup) {
     }
 
     node.images = data.images;
+    node.track = data.track;
     node.loaded = true;
     return node
 }
@@ -161,5 +162,6 @@ async function loadArtist(p, artist, quadHead, nodeLookup) {
     }
 
     node.images = data.images;
+    node.track = data.track;
     node.loaded = true;
 }

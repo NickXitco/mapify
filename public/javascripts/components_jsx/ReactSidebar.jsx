@@ -17,8 +17,18 @@ class ReactSidebar extends React.Component {
     }
 
     render() {
+        let player = null;
+
         if (!this.props.artist && !this.props.genre) {
             if (this.state.artist) {
+                setTimeout(() => this.setState({artist: null}), 600);
+
+                if (this.state.artist.track) {
+                    player = (
+                        <Player uri={`spotify:track:${this.state.artist.track.id}`}/>
+                    )
+                }
+
                 return (<div className="sidebar sidebar-closed"
                              onMouseEnter={() => {this.props.updateHoverFlag(true)}}
                              onMouseLeave={() => {this.props.updateHoverFlag(false)}}
@@ -34,6 +44,10 @@ class ReactSidebar extends React.Component {
                             <ArtistProfile artist={this.state.artist} fontDecrement={3}/>
 
                             <FollowersStats artist={this.state.artist}/>
+
+                            {player}
+                            <p style={{padding: "10px 22px", fontSize: "12px"}}>Headphone warning, this can be pretty loud</p>
+
 
                             <GenresList genres={this.state.artist.genres}
                                         loadGenreFromSearch={this.props.loadGenreFromSearch}
@@ -78,6 +92,12 @@ class ReactSidebar extends React.Component {
         this.updateSidebarContent(this.props.artist, this.props.genre);
 
         if (this.props.artist) {
+            if (this.props.artist.track) {
+                player = (
+                    <Player uri={`spotify:track:${this.props.artist.track.id}`}/>
+                )
+            }
+
             return (
                 <div className="sidebar sidebar-open"
                      onMouseEnter={() => {this.props.updateHoverFlag(true)}}
@@ -94,6 +114,9 @@ class ReactSidebar extends React.Component {
                     <ArtistProfile artist={this.props.artist} fontDecrement={3}/>
 
                     <FollowersStats artist={this.props.artist}/>
+
+                    {player}
+                    <p style={{padding: "10px 22px", fontSize: "12px"}}>Headphone warning, this can be pretty loud</p>
 
                     <GenresList genres={this.props.artist.genres}
                                 loadGenreFromSearch={this.props.loadGenreFromSearch}
