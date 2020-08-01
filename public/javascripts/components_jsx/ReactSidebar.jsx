@@ -86,7 +86,18 @@ class ReactSidebar extends React.Component {
                     </div>
                 );
             }
-            return null;
+            return (<div className="sidebar sidebar-closed"
+                         onMouseEnter={() => {this.props.updateHoverFlag(true)}}
+                         onMouseLeave={() => {this.props.updateHoverFlag(false)}}
+            >
+
+                <style>
+                    {`::-webkit-scrollbar-track {box-shadow: 0 0 5px white;}  \n` +
+                    `::-webkit-scrollbar-thumb {background: white};`}
+                </style>
+
+                <SidebarStroke color={'white'}/>
+            </div>);
         }
 
         this.updateSidebarContent(this.props.artist, this.props.genre);
