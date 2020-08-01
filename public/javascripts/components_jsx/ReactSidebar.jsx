@@ -97,7 +97,7 @@ class ReactSidebar extends React.Component {
 
                     <FollowersStats artist={this.props.artist}/>
 
-                    <Player uri={"spotify:track:37iFlmC2ZbLcRtyZYPLSYA"}/>
+                    <Player uri={`spotify:track:${this.props.artist.track.id}`}/>
 
                     <GenresList genres={this.props.artist.genres}
                                 loadGenreFromSearch={this.props.loadGenreFromSearch}

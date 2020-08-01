@@ -52,6 +52,8 @@ class Artist {
         this.edges = [];
 
         this.images = [];
+
+        this.track = {};
     }
 
     colorToString() {

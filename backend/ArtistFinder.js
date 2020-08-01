@@ -74,6 +74,10 @@ async function findArtist(query, isQueryID) {
         return data.body.images;
     })
 
+    const track = await spotifyApi.getArtistTopTracks(artist.id, 'US').then(data => {
+        return data.body.tracks.length > 0 ? data.body.tracks[0] : null;
+    })
+
     return {
         name: artist.name,
         id: artist.id,
@@ -87,7 +91,8 @@ async function findArtist(query, isQueryID) {
         b: artist.b,
         genres: artist.genres,
         related: await Artist.find().where('id').in(artist.related).exec(),
-        images: images
+        images: images,
+        track: track
     };
 }
 

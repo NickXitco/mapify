@@ -115,7 +115,7 @@ var ReactSidebar = function (_React$Component) {
                     React.createElement(SidebarStroke, { color: this.props.artist.colorToString() }),
                     React.createElement(ArtistProfile, { artist: this.props.artist, fontDecrement: 3 }),
                     React.createElement(FollowersStats, { artist: this.props.artist }),
-                    React.createElement(Player, { uri: "spotify:track:37iFlmC2ZbLcRtyZYPLSYA" }),
+                    React.createElement(Player, { uri: "spotify:track:" + this.props.artist.track.id }),
                     React.createElement(GenresList, { genres: this.props.artist.genres,
                         loadGenreFromSearch: this.props.loadGenreFromSearch,
                         header: "Genres"
