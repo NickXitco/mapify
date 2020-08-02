@@ -23,6 +23,8 @@ class App extends React.Component {
 
             uiHover: false,
 
+            sidebarHistory: [],
+
             showChangelog: !this.checkVersion("0.5.3"),
             version: "0.5.3",
             headline: "Searching, revamped",
