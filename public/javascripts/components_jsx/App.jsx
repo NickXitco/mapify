@@ -51,6 +51,8 @@ class App extends React.Component {
 
         this.updateClickedArtist = this.updateClickedArtist.bind(this);
         this.setSidebarState = this.setSidebarState.bind(this);
+        this.undoSidebarState = this.undoSidebarState.bind(this);
+        this.redoSidebarState = this.redoSidebarState.bind(this);
         this.handleEmptyClick = this.handleEmptyClick.bind(this);
 
         this.loadArtistFromUI = this.loadArtistFromUI.bind(this);
@@ -108,6 +110,14 @@ class App extends React.Component {
             console.log(this.state.currentSidebarState);
         })
         this.setState({clickedArtist: artist, activeGenre: genre});
+    }
+
+    undoSidebarState() {
+        this.setState({currentSidebarState: this.state.currentSidebarState.undo()});
+    }
+
+    redoSidebarState() {
+        this.setState({currentSidebarState: this.state.currentSidebarState.redo()});
     }
 
     loadArtistFromUI(artist) {

@@ -49,6 +49,8 @@ var App = function (_React$Component) {
 
         _this.updateClickedArtist = _this.updateClickedArtist.bind(_this);
         _this.setSidebarState = _this.setSidebarState.bind(_this);
+        _this.undoSidebarState = _this.undoSidebarState.bind(_this);
+        _this.redoSidebarState = _this.redoSidebarState.bind(_this);
         _this.handleEmptyClick = _this.handleEmptyClick.bind(_this);
 
         _this.loadArtistFromUI = _this.loadArtistFromUI.bind(_this);
@@ -119,6 +121,16 @@ var App = function (_React$Component) {
                 console.log(_this3.state.currentSidebarState);
             });
             this.setState({ clickedArtist: artist, activeGenre: genre });
+        }
+    }, {
+        key: "undoSidebarState",
+        value: function undoSidebarState() {
+            this.setState({ currentSidebarState: this.state.currentSidebarState.undo() });
+        }
+    }, {
+        key: "redoSidebarState",
+        value: function redoSidebarState() {
+            this.setState({ currentSidebarState: this.state.currentSidebarState.redo() });
         }
     }, {
         key: "loadArtistFromUI",
