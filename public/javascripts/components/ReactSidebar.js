@@ -106,7 +106,23 @@ var ReactSidebar = function (_React$Component) {
                         })
                     );
                 }
-                return null;
+                return React.createElement(
+                    "div",
+                    { className: "sidebar sidebar-closed",
+                        onMouseEnter: function onMouseEnter() {
+                            _this2.props.updateHoverFlag(true);
+                        },
+                        onMouseLeave: function onMouseLeave() {
+                            _this2.props.updateHoverFlag(false);
+                        }
+                    },
+                    React.createElement(
+                        "style",
+                        null,
+                        "::-webkit-scrollbar-track {box-shadow: 0 0 5px white;}  \n" + "::-webkit-scrollbar-thumb {background: white};"
+                    ),
+                    React.createElement(SidebarStroke, { color: 'white' })
+                );
             }
 
             this.updateSidebarContent(this.props.artist, this.props.genre);
