@@ -434,6 +434,17 @@ canvas {
 }
 /*</editor-fold>*/
 
+.undoRedo {
+  position: static;
+  margin: 10px 22px;
+}
+
+.undoRedoButton {
+  position: static;
+  margin: 10px 22px;
+}
+
+
 /*</editor-fold>*/
 
 /*<editor-fold desc="SCROLLBAR STYLINGS">*/

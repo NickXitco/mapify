@@ -5,9 +5,9 @@ class UndoRedoComponent extends React.Component {
 
     render() {
         return (
-            <div>
-                <button>Undo</button>
-                <button>Redo</button>
+            <div className={"undoRedo"}>
+                <button className={"undoRedoButton"}>Undo</button>
+                <button className={"undoRedoButton"}>Redo</button>
             </div>
         );
     }
