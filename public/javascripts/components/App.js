@@ -1,5 +1,7 @@
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -48,6 +50,7 @@ var App = function (_React$Component) {
         _this.setCamera = _this.setCamera.bind(_this);
 
         _this.updateClickedArtist = _this.updateClickedArtist.bind(_this);
+        _this.setSidebarState = _this.setSidebarState.bind(_this);
         _this.handleEmptyClick = _this.handleEmptyClick.bind(_this);
 
         _this.loadArtistFromUI = _this.loadArtistFromUI.bind(_this);
@@ -100,14 +103,26 @@ var App = function (_React$Component) {
 
             if (artist.loaded) {
                 artist.edges = makeEdges(artist);
-                this.setState({ clickedArtist: artist });
+                this.setSidebarState(artist, this.state.activeGenre);
             } else if (artist.id) {
                 loadArtist(this.state.p5, artist, this.state.quadHead, this.state.nodeLookup).then(function () {
                     artist = _this2.state.nodeLookup[artist.id];
                     artist.edges = makeEdges(artist);
-                    _this2.setState({ clickedArtist: artist });
+                    _this2.setSidebarState(artist, _this2.state.activeGenre);
                 });
             }
+        }
+    }, {
+        key: "setSidebarState",
+        value: function setSidebarState(artist, genre) {
+            var _this3 = this;
+
+            var copySidebarHistory = [].concat(_toConsumableArray(this.state.sidebarHistory));
+            copySidebarHistory.push({ artist: artist, genre: genre });
+            this.setState({ sidebarHistory: copySidebarHistory }, function () {
+                console.log(_this3.state.sidebarHistory);
+            });
+            this.setState({ clickedArtist: artist, activeGenre: genre });
         }
     }, {
         key: "loadArtistFromUI",
@@ -128,12 +143,12 @@ var App = function (_React$Component) {
 
             return loadArtistFromSearch;
         }(function (searchTerm) {
-            var _this3 = this;
+            var _this4 = this;
 
             loadArtistFromSearch(this.state.p5, searchTerm, false, this.state.quadHead, this.state.nodeLookup).then(function (artist) {
                 if (artist) {
-                    _this3.updateClickedArtist(artist);
-                    _this3.state.camera.setCameraMove(artist.x, artist.y, _this3.state.camera.getZoomFromWidth(artist.size * 50), 45);
+                    _this4.updateClickedArtist(artist);
+                    _this4.state.camera.setCameraMove(artist.x, artist.y, _this4.state.camera.getZoomFromWidth(artist.size * 50), 45);
                 }
             });
         })
@@ -173,7 +188,7 @@ var App = function (_React$Component) {
     }, {
         key: "loadGenreFromSearch",
         value: function loadGenreFromSearch(genreName) {
-            var _this4 = this;
+            var _this5 = this;
 
             fetch("genre/" + genreName).then(function (response) {
                 return response.json();
@@ -196,8 +211,8 @@ var App = function (_React$Component) {
                     for (var _iterator2 = data.artists[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                         var node = _step2.value;
 
-                        createNewNode(node, _this4.state.quadHead, _this4.state.nodeLookup);
-                        nodesList.push(_this4.state.nodeLookup[node.id]);
+                        createNewNode(node, _this5.state.quadHead, _this5.state.nodeLookup);
+                        nodesList.push(_this5.state.nodeLookup[node.id]);
                     }
                 } catch (err) {
                     _didIteratorError2 = true;
@@ -220,9 +235,9 @@ var App = function (_React$Component) {
                 var bubble = newGenre.bubble;
                 var camWidth = Math.min(5000, bubble.radius * 4);
 
-                _this4.state.camera.setCameraMove(bubble.center.x, bubble.center.y, _this4.state.camera.getZoomFromWidth(camWidth), 45);
+                _this5.state.camera.setCameraMove(bubble.center.x, bubble.center.y, _this5.state.camera.getZoomFromWidth(camWidth), 45);
 
-                _this4.setState({ clickedArtist: null, activeGenre: newGenre });
+                _this5.setSidebarState(null, newGenre);
             });
         }
 
@@ -240,10 +255,11 @@ var App = function (_React$Component) {
     }, {
         key: "handleEmptyClick",
         value: function handleEmptyClick() {
-            if (!(this.state.activeGenre && this.state.clickedArtist)) {
-                this.setState({ activeGenre: null });
+            if (this.state.activeGenre && this.state.clickedArtist) {
+                this.setSidebarState(null, this.state.activeGenre);
+            } else {
+                this.setSidebarState(null, null);
             }
-            this.setState({ clickedArtist: null });
         }
     }, {
         key: "updateHoveredArtist",
@@ -272,10 +288,10 @@ var App = function (_React$Component) {
     }, {
         key: "setCamera",
         value: function setCamera(camera) {
-            var _this5 = this;
+            var _this6 = this;
 
             this.setState({ camera: camera }, function () {
-                _this5.state.camera.zoomCamera({ x: 0, y: 0 });
+                _this6.state.camera.zoomCamera({ x: 0, y: 0 });
             });
         }
     }, {
@@ -286,7 +302,7 @@ var App = function (_React$Component) {
     }, {
         key: "initializeResizeObserver",
         value: function initializeResizeObserver() {
-            var _this6 = this;
+            var _this7 = this;
 
             this.ro = new ResizeObserver(function (entries) {
                 if (entries.length !== 1) {
@@ -295,11 +311,11 @@ var App = function (_React$Component) {
                     var cr = entries[0].contentRect;
                     var w = cr.width;
                     var h = cr.height;
-                    if (_this6.state.p5) {
-                        _this6.state.p5.resizeCanvas(w, h);
+                    if (_this7.state.p5) {
+                        _this7.state.p5.resizeCanvas(w, h);
                     }
-                    if (_this6.state.camera) {
-                        _this6.state.camera.zoomCamera({ x: _this6.state.camera.x, y: _this6.state.camera.y });
+                    if (_this7.state.camera) {
+                        _this7.state.camera.zoomCamera({ x: _this7.state.camera.x, y: _this7.state.camera.y });
                     }
                 }
             });

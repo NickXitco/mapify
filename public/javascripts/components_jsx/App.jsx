@@ -50,6 +50,7 @@ class App extends React.Component {
         this.setCamera = this.setCamera.bind(this);
 
         this.updateClickedArtist = this.updateClickedArtist.bind(this);
+        this.setSidebarState = this.setSidebarState.bind(this);
         this.handleEmptyClick = this.handleEmptyClick.bind(this);
 
         this.loadArtistFromUI = this.loadArtistFromUI.bind(this);
@@ -92,14 +93,23 @@ class App extends React.Component {
     updateClickedArtist(artist) {
         if (artist.loaded) {
             artist.edges = makeEdges(artist);
-            this.setState({clickedArtist: artist});
+            this.setSidebarState(artist, this.state.activeGenre);
         } else if (artist.id) {
             loadArtist(this.state.p5, artist, this.state.quadHead, this.state.nodeLookup).then(() =>{
                     artist = this.state.nodeLookup[artist.id];
                     artist.edges = makeEdges(artist);
-                    this.setState({clickedArtist: artist});
+                    this.setSidebarState(artist, this.state.activeGenre);
             });
         }
+    }
+
+    setSidebarState(artist, genre) {
+        const copySidebarHistory = [...this.state.sidebarHistory];
+        copySidebarHistory.push({artist: artist, genre: genre});
+        this.setState({sidebarHistory: copySidebarHistory}, () => {
+            console.log(this.state.sidebarHistory);
+        })
+        this.setState({clickedArtist: artist, activeGenre: genre});
     }
 
     loadArtistFromUI(artist) {
@@ -153,7 +163,7 @@ class App extends React.Component {
                 this.state.camera.setCameraMove(bubble.center.x, bubble.center.y,
                                                 this.state.camera.getZoomFromWidth(camWidth), 45);
 
-                this.setState({clickedArtist: null, activeGenre: newGenre});
+                this.setSidebarState(null, newGenre);
             })
     }
 
@@ -168,10 +178,11 @@ class App extends React.Component {
      *
      */
     handleEmptyClick() {
-        if (!(this.state.activeGenre && this.state.clickedArtist)) {
-            this.setState({activeGenre: null});
+        if (this.state.activeGenre && this.state.clickedArtist) {
+            this.setSidebarState(null, this.state.activeGenre);
+        } else {
+            this.setSidebarState(null, null);
         }
-        this.setState({clickedArtist: null});
     }
 
     updateHoveredArtist(artist) {
