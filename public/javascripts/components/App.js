@@ -35,6 +35,8 @@ var App = function (_React$Component) {
 
             uiHover: false,
 
+            sidebarHistory: [],
+
             showChangelog: !_this.checkVersion("0.5.3"),
             version: "0.5.3",
             headline: "Searching, revamped",

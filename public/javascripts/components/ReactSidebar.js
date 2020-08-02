@@ -81,7 +81,8 @@ var ReactSidebar = function (_React$Component) {
                             header: "Related Artists"
                         })
                     );
-                } else if (this.state.genre) {
+                }
+                if (this.state.genre) {
                     return React.createElement(
                         "div",
                         { className: "sidebar sidebar-closed",
@@ -164,7 +165,8 @@ var ReactSidebar = function (_React$Component) {
                         loadArtistFromUI: this.props.loadArtistFromUI,
                         updateHoveredArtist: this.props.updateHoveredArtist,
                         header: "Related Artists"
-                    })
+                    }),
+                    React.createElement(UndoRedoComponent, null)
                 );
             }
 

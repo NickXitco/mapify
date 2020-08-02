@@ -61,7 +61,8 @@ class ReactSidebar extends React.Component {
                             />
                         </div>
                 );
-            } else if (this.state.genre) {
+            }
+            if (this.state.genre) {
                 return (
                     <div className="sidebar sidebar-closed"
                          onMouseEnter={() => {this.props.updateHoverFlag(true)}}
@@ -139,6 +140,8 @@ class ReactSidebar extends React.Component {
                                  updateHoveredArtist={this.props.updateHoveredArtist}
                                  header={"Related Artists"}
                     />
+
+                    <UndoRedoComponent/>
                 </div>
             );
         }
