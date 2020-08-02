@@ -21,11 +21,12 @@ class UndoRedo {
     }
 
     canUndo() {
-        return false;
+        return this.current !== null && this.current.prev !== null;
+
     }
 
     canRedo() {
-        return false;
+        return this.current !== null && this.current.next !== null;
     }
 
     undo() {
