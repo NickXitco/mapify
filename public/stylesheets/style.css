@@ -408,6 +408,7 @@ canvas {
   display: flex;
   overflow-y: auto;
   flex-direction: column;
+  flex-grow: 1;
 }
 
 .sidebarListItem {
