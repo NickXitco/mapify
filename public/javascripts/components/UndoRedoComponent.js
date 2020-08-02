@@ -18,17 +18,23 @@ var UndoRedoComponent = function (_React$Component) {
     _createClass(UndoRedoComponent, [{
         key: "render",
         value: function render() {
+
+            console.log(this.props.sidebarState);
+
+            var undoClass = "undoRedoButton " + (this.props.sidebarState && this.props.sidebarState.canUndo() ? "undoRedoClickable" : "undoRedoUnclickable");
+            var redoClass = "undoRedoButton " + (this.props.sidebarState && this.props.sidebarState.canRedo() ? "undoRedoClickable" : "undoRedoUnclickable");
+
             return React.createElement(
                 "div",
                 { className: "undoRedo" },
                 React.createElement(
                     "button",
-                    { className: "undoRedoButton" },
+                    { className: undoClass, onClick: this.props.undoSidebarState },
                     "Undo"
                 ),
                 React.createElement(
                     "button",
-                    { className: "undoRedoButton" },
+                    { className: redoClass, onClick: this.props.redoSidebarState },
                     "Redo"
                 )
             );

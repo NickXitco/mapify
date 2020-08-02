@@ -17,11 +17,11 @@ class SidebarState {
     }
 
     canUndo() {
-        return this.current !== null && this.current.prev !== null;
+        return this.prev !== null;
     }
 
     canRedo() {
-        return this.current !== null && this.current.next !== null;
+        return this.next !== null;
     }
 
     undo() {

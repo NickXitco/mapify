@@ -141,7 +141,11 @@ class ReactSidebar extends React.Component {
                                  header={"Related Artists"}
                     />
 
-                    <UndoRedoComponent/>
+                    <UndoRedoComponent
+                        sidebarState={this.props.sidebarState}
+                        undoSidebarState={this.props.undoSidebarState}
+                        redoSidebarState={this.props.redoSidebarState}
+                    />
                 </div>
             );
         }

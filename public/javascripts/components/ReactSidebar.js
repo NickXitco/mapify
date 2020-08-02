@@ -166,7 +166,11 @@ var ReactSidebar = function (_React$Component) {
                         updateHoveredArtist: this.props.updateHoveredArtist,
                         header: "Related Artists"
                     }),
-                    React.createElement(UndoRedoComponent, null)
+                    React.createElement(UndoRedoComponent, {
+                        sidebarState: this.props.sidebarState,
+                        undoSidebarState: this.props.undoSidebarState,
+                        redoSidebarState: this.props.redoSidebarState
+                    })
                 );
             }
 

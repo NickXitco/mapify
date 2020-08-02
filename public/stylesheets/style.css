@@ -442,6 +442,15 @@ canvas {
 .undoRedoButton {
   position: static;
   margin: 10px 22px;
+  padding: 10px;
+}
+
+.undoRedoClickable {
+  opacity: 1
+}
+
+.undoRedoUnclickable {
+  opacity: 0.25
 }
 
 

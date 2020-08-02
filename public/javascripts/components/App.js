@@ -102,35 +102,42 @@ var App = function (_React$Component) {
             var _this2 = this;
 
             if (artist.loaded) {
-                artist.edges = makeEdges(artist);
-                this.setSidebarState(artist, this.state.activeGenre);
+                this.setSidebarState(artist, this.state.activeGenre, null);
             } else if (artist.id) {
                 loadArtist(this.state.p5, artist, this.state.quadHead, this.state.nodeLookup).then(function () {
                     artist = _this2.state.nodeLookup[artist.id];
-                    artist.edges = makeEdges(artist);
-                    _this2.setSidebarState(artist, _this2.state.activeGenre);
+                    _this2.setSidebarState(artist, _this2.state.activeGenre, null);
                 });
             }
         }
     }, {
         key: "setSidebarState",
-        value: function setSidebarState(artist, genre) {
-            var _this3 = this;
+        value: function setSidebarState(artist, genre, state) {
+            if (artist) {
+                artist.edges = makeEdges(artist);
+            }
 
-            this.setState({ currentSidebarState: new SidebarState({ artist: artist, genre: genre }, this.state.currentSidebarState) }, function () {
-                console.log(_this3.state.currentSidebarState);
-            });
-            this.setState({ clickedArtist: artist, activeGenre: genre });
+            if (!state && (artist || genre)) {
+                state = new SidebarState({ artist: artist, genre: genre }, this.state.currentSidebarState);
+            }
+
+            this.setState({ clickedArtist: artist, activeGenre: genre, currentSidebarState: state });
         }
     }, {
         key: "undoSidebarState",
         value: function undoSidebarState() {
-            this.setState({ currentSidebarState: this.state.currentSidebarState.undo() });
+            if (this.state.currentSidebarState && this.state.currentSidebarState.canUndo()) {
+                var newSidebarState = this.state.currentSidebarState.undo();
+                this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState);
+            }
         }
     }, {
         key: "redoSidebarState",
         value: function redoSidebarState() {
-            this.setState({ currentSidebarState: this.state.currentSidebarState.redo() });
+            if (this.state.currentSidebarState && this.state.currentSidebarState.canRedo()) {
+                var newSidebarState = this.state.currentSidebarState.redo();
+                this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState);
+            }
         }
     }, {
         key: "loadArtistFromUI",
@@ -151,12 +158,12 @@ var App = function (_React$Component) {
 
             return loadArtistFromSearch;
         }(function (searchTerm) {
-            var _this4 = this;
+            var _this3 = this;
 
             loadArtistFromSearch(this.state.p5, searchTerm, false, this.state.quadHead, this.state.nodeLookup).then(function (artist) {
                 if (artist) {
-                    _this4.updateClickedArtist(artist);
-                    _this4.state.camera.setCameraMove(artist.x, artist.y, _this4.state.camera.getZoomFromWidth(artist.size * 50), 45);
+                    _this3.updateClickedArtist(artist);
+                    _this3.state.camera.setCameraMove(artist.x, artist.y, _this3.state.camera.getZoomFromWidth(artist.size * 50), 45);
                 }
             });
         })
@@ -196,7 +203,7 @@ var App = function (_React$Component) {
     }, {
         key: "loadGenreFromSearch",
         value: function loadGenreFromSearch(genreName) {
-            var _this5 = this;
+            var _this4 = this;
 
             fetch("genre/" + genreName).then(function (response) {
                 return response.json();
@@ -219,8 +226,8 @@ var App = function (_React$Component) {
                     for (var _iterator2 = data.artists[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                         var node = _step2.value;
 
-                        createNewNode(node, _this5.state.quadHead, _this5.state.nodeLookup);
-                        nodesList.push(_this5.state.nodeLookup[node.id]);
+                        createNewNode(node, _this4.state.quadHead, _this4.state.nodeLookup);
+                        nodesList.push(_this4.state.nodeLookup[node.id]);
                     }
                 } catch (err) {
                     _didIteratorError2 = true;
@@ -243,9 +250,9 @@ var App = function (_React$Component) {
                 var bubble = newGenre.bubble;
                 var camWidth = Math.min(5000, bubble.radius * 4);
 
-                _this5.state.camera.setCameraMove(bubble.center.x, bubble.center.y, _this5.state.camera.getZoomFromWidth(camWidth), 45);
+                _this4.state.camera.setCameraMove(bubble.center.x, bubble.center.y, _this4.state.camera.getZoomFromWidth(camWidth), 45);
 
-                _this5.setSidebarState(null, newGenre);
+                _this4.setSidebarState(null, newGenre, null);
             });
         }
 
@@ -264,9 +271,9 @@ var App = function (_React$Component) {
         key: "handleEmptyClick",
         value: function handleEmptyClick() {
             if (this.state.activeGenre && this.state.clickedArtist) {
-                this.setSidebarState(null, this.state.activeGenre);
+                this.setSidebarState(null, this.state.activeGenre, null);
             } else {
-                this.setSidebarState(null, null);
+                this.setSidebarState(null, null, null);
             }
         }
     }, {
@@ -296,10 +303,10 @@ var App = function (_React$Component) {
     }, {
         key: "setCamera",
         value: function setCamera(camera) {
-            var _this6 = this;
+            var _this5 = this;
 
             this.setState({ camera: camera }, function () {
-                _this6.state.camera.zoomCamera({ x: 0, y: 0 });
+                _this5.state.camera.zoomCamera({ x: 0, y: 0 });
             });
         }
     }, {
@@ -310,7 +317,7 @@ var App = function (_React$Component) {
     }, {
         key: "initializeResizeObserver",
         value: function initializeResizeObserver() {
-            var _this7 = this;
+            var _this6 = this;
 
             this.ro = new ResizeObserver(function (entries) {
                 if (entries.length !== 1) {
@@ -319,11 +326,11 @@ var App = function (_React$Component) {
                     var cr = entries[0].contentRect;
                     var w = cr.width;
                     var h = cr.height;
-                    if (_this7.state.p5) {
-                        _this7.state.p5.resizeCanvas(w, h);
+                    if (_this6.state.p5) {
+                        _this6.state.p5.resizeCanvas(w, h);
                     }
-                    if (_this7.state.camera) {
-                        _this7.state.camera.zoomCamera({ x: _this7.state.camera.x, y: _this7.state.camera.y });
+                    if (_this6.state.camera) {
+                        _this6.state.camera.zoomCamera({ x: _this6.state.camera.x, y: _this6.state.camera.y });
                     }
                 }
             });
@@ -356,6 +363,10 @@ var App = function (_React$Component) {
                 React.createElement(ReactSidebar, {
                     artist: this.state.clickedArtist,
                     genre: this.state.activeGenre,
+
+                    sidebarState: this.state.currentSidebarState,
+                    undoSidebarState: this.undoSidebarState,
+                    redoSidebarState: this.redoSidebarState,
 
                     loadArtistFromUI: this.loadArtistFromUI,
                     loadGenreFromSearch: this.loadGenreFromSearch,

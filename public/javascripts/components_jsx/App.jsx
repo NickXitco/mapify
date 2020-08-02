@@ -94,30 +94,39 @@ class App extends React.Component {
     //<editor-fold desc="Clicked Artist Handling">
     updateClickedArtist(artist) {
         if (artist.loaded) {
-            artist.edges = makeEdges(artist);
-            this.setSidebarState(artist, this.state.activeGenre);
+            this.setSidebarState(artist, this.state.activeGenre, null);
         } else if (artist.id) {
             loadArtist(this.state.p5, artist, this.state.quadHead, this.state.nodeLookup).then(() =>{
                     artist = this.state.nodeLookup[artist.id];
-                    artist.edges = makeEdges(artist);
-                    this.setSidebarState(artist, this.state.activeGenre);
+                    this.setSidebarState(artist, this.state.activeGenre, null);
             });
         }
     }
 
-    setSidebarState(artist, genre) {
-        this.setState({currentSidebarState: new SidebarState({artist: artist, genre: genre}, this.state.currentSidebarState)}, () => {
-            console.log(this.state.currentSidebarState);
-        })
-        this.setState({clickedArtist: artist, activeGenre: genre});
+    setSidebarState(artist, genre, state) {
+        if (artist) {
+            artist.edges = makeEdges(artist);
+        }
+
+        if (!state && (artist || genre)) {
+            state = new SidebarState({artist: artist, genre: genre}, this.state.currentSidebarState);
+        }
+
+        this.setState({clickedArtist: artist, activeGenre: genre, currentSidebarState: state});
     }
 
     undoSidebarState() {
-        this.setState({currentSidebarState: this.state.currentSidebarState.undo()});
+        if (this.state.currentSidebarState && this.state.currentSidebarState.canUndo()) {
+            const newSidebarState = this.state.currentSidebarState.undo();
+            this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState);
+        }
     }
 
     redoSidebarState() {
-        this.setState({currentSidebarState: this.state.currentSidebarState.redo()});
+        if (this.state.currentSidebarState && this.state.currentSidebarState.canRedo()) {
+            const newSidebarState = this.state.currentSidebarState.redo();
+            this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState);
+        }
     }
 
     loadArtistFromUI(artist) {
@@ -171,7 +180,7 @@ class App extends React.Component {
                 this.state.camera.setCameraMove(bubble.center.x, bubble.center.y,
                                                 this.state.camera.getZoomFromWidth(camWidth), 45);
 
-                this.setSidebarState(null, newGenre);
+                this.setSidebarState(null, newGenre, null);
             })
     }
 
@@ -187,9 +196,9 @@ class App extends React.Component {
      */
     handleEmptyClick() {
         if (this.state.activeGenre && this.state.clickedArtist) {
-            this.setSidebarState(null, this.state.activeGenre);
+            this.setSidebarState(null, this.state.activeGenre, null);
         } else {
-            this.setSidebarState(null, null);
+            this.setSidebarState(null, null, null);
         }
     }
 
@@ -271,6 +280,10 @@ class App extends React.Component {
                 <ReactSidebar
                     artist={this.state.clickedArtist}
                     genre={this.state.activeGenre}
+
+                    sidebarState={this.state.currentSidebarState}
+                    undoSidebarState={this.undoSidebarState}
+                    redoSidebarState={this.redoSidebarState}
 
                     loadArtistFromUI={this.loadArtistFromUI}
                     loadGenreFromSearch={this.loadGenreFromSearch}
