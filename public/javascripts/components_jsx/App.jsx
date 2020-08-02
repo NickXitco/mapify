@@ -23,7 +23,7 @@ class App extends React.Component {
 
             uiHover: false,
 
-            sidebarHistory: [],
+            currentSidebarState: null,
 
             showChangelog: !this.checkVersion("0.5.3"),
             version: "0.5.3",
@@ -104,10 +104,8 @@ class App extends React.Component {
     }
 
     setSidebarState(artist, genre) {
-        const copySidebarHistory = [...this.state.sidebarHistory];
-        copySidebarHistory.push({artist: artist, genre: genre});
-        this.setState({sidebarHistory: copySidebarHistory}, () => {
-            console.log(this.state.sidebarHistory);
+        this.setState({currentSidebarState: new SidebarState({artist: artist, genre: genre}, this.state.currentSidebarState)}, () => {
+            console.log(this.state.currentSidebarState);
         })
         this.setState({clickedArtist: artist, activeGenre: genre});
     }
