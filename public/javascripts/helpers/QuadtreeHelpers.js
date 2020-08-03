@@ -9,7 +9,7 @@ function processOne(p, camera, quadHead, nodeLookup, loadingQuads, unprocessedRe
 
         if (camera.contains(q)) {
             process(p, response, q, quadHead, nodeLookup, loadingQuads);
-            unprocessedResponses.splice(i, 1); //TODO splice is slow!
+            unprocessedResponses.splice(i, 1);
             return;
         }
         i++;

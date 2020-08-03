@@ -18,9 +18,15 @@ function darkenScene(p, darkenOpacity, camera) {
     return Math.min(darkenOpacity + 0.05, 1);
 }
 
-function loadUnloaded(unprocessedResponses, unloadedQuadsPriorityQueue, loadingQuads, unloadedQuads) {
-    while (!unloadedQuadsPriorityQueue.isEmpty()) {
-        const quad = unloadedQuadsPriorityQueue.pop();
+function loadUnloaded(unprocessedResponses, unloadedQuadsPriorityQueue, loadingQuads, unloadedQuads, camera) {
+    let quad = unloadedQuadsPriorityQueue.pop();
+
+    while (quad && !camera.contains(quad)) {
+        unloadedQuads.delete(quad);
+        quad = unloadedQuadsPriorityQueue.pop();
+    }
+
+    if (quad) {
         loadingQuads.add(quad);
         unloadedQuads.delete(quad);
         quad.fetchQuad(unprocessedResponses).then();
