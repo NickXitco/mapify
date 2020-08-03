@@ -59,7 +59,7 @@ var P5Wrapper = function (_React$Component) {
 
                 drawOnscreenQuads(p, _this.props.quadHead, _this.props.camera, _this.props.hoveredArtist, _this.loadingQuads, _this.unloadedQuads, _this.unloadedPQ);
 
-                loadUnloaded(_this.unprocessedResponses, _this.unloadedPQ, _this.loadingQuads, _this.unloadedQuads);
+                loadUnloaded(_this.unprocessedResponses, _this.unloadedPQ, _this.loadingQuads, _this.unloadedQuads, _this.props.camera);
 
                 if (!_this.props.uiHover) {
                     _this.props.updateHoveredArtist(getHoveredArtist(p, _this.props.camera, _this.props.clickedArtist, _this.props.quadHead, _this.props.genre));
