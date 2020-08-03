@@ -92,7 +92,6 @@ class P5Wrapper extends React.Component {
                 Debug.createTimingEvent("Draw Related Nodes");
             }
 
-
             Debug.createTimingEvent("Sidebar");
 
             if (p.frameCount % 5 === 0) { //TODO adjust this until it feels right, or adjust it dynamically?
