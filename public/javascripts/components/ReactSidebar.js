@@ -79,9 +79,16 @@ var ReactSidebar = function (_React$Component) {
                             loadArtistFromUI: this.props.loadArtistFromUI,
                             updateHoveredArtist: this.props.updateHoveredArtist,
                             header: "Related Artists"
+                        }),
+                        React.createElement(UndoRedoComponent, {
+                            color: [this.state.artist.r, this.state.artist.g, this.state.artist.b],
+                            sidebarState: this.props.sidebarState,
+                            undoSidebarState: this.props.undoSidebarState,
+                            redoSidebarState: this.props.redoSidebarState
                         })
                     );
-                } else if (this.state.genre) {
+                }
+                if (this.state.genre) {
                     return React.createElement(
                         "div",
                         { className: "sidebar sidebar-closed",
@@ -103,6 +110,12 @@ var ReactSidebar = function (_React$Component) {
                             loadArtistFromUI: this.props.loadArtistFromUI,
                             updateHoveredArtist: this.props.updateHoveredArtist,
                             header: "Artists in Genre"
+                        }),
+                        React.createElement(UndoRedoComponent, {
+                            color: [this.state.genre.r, this.state.genre.g, this.state.genre.b],
+                            sidebarState: this.props.sidebarState,
+                            undoSidebarState: this.props.undoSidebarState,
+                            redoSidebarState: this.props.redoSidebarState
                         })
                     );
                 }
@@ -164,6 +177,12 @@ var ReactSidebar = function (_React$Component) {
                         loadArtistFromUI: this.props.loadArtistFromUI,
                         updateHoveredArtist: this.props.updateHoveredArtist,
                         header: "Related Artists"
+                    }),
+                    React.createElement(UndoRedoComponent, {
+                        color: [this.props.artist.r, this.props.artist.g, this.props.artist.b],
+                        sidebarState: this.props.sidebarState,
+                        undoSidebarState: this.props.undoSidebarState,
+                        redoSidebarState: this.props.redoSidebarState
                     })
                 );
             }
@@ -190,6 +209,12 @@ var ReactSidebar = function (_React$Component) {
                         loadArtistFromUI: this.props.loadArtistFromUI,
                         updateHoveredArtist: this.props.updateHoveredArtist,
                         header: "Artists in Genre"
+                    }),
+                    React.createElement(UndoRedoComponent, {
+                        color: [this.props.genre.r, this.props.genre.g, this.props.genre.b],
+                        sidebarState: this.props.sidebarState,
+                        undoSidebarState: this.props.undoSidebarState,
+                        redoSidebarState: this.props.redoSidebarState
                     })
                 );
             }

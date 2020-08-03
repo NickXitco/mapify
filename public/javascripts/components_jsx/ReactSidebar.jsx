@@ -59,9 +59,17 @@ class ReactSidebar extends React.Component {
                                          updateHoveredArtist={this.props.updateHoveredArtist}
                                          header={"Related Artists"}
                             />
+
+                            <UndoRedoComponent
+                                color={[this.state.artist.r, this.state.artist.g, this.state.artist.b]}
+                                sidebarState={this.props.sidebarState}
+                                undoSidebarState={this.props.undoSidebarState}
+                                redoSidebarState={this.props.redoSidebarState}
+                            />
                         </div>
                 );
-            } else if (this.state.genre) {
+            }
+            if (this.state.genre) {
                 return (
                     <div className="sidebar sidebar-closed"
                          onMouseEnter={() => {this.props.updateHoverFlag(true)}}
@@ -81,6 +89,13 @@ class ReactSidebar extends React.Component {
                                      loadArtistFromUI={this.props.loadArtistFromUI}
                                      updateHoveredArtist={this.props.updateHoveredArtist}
                                      header={"Artists in Genre"}
+                        />
+
+                        <UndoRedoComponent
+                            color={[this.state.genre.r, this.state.genre.g, this.state.genre.b]}
+                            sidebarState={this.props.sidebarState}
+                            undoSidebarState={this.props.undoSidebarState}
+                            redoSidebarState={this.props.redoSidebarState}
                         />
 
                     </div>
@@ -139,6 +154,13 @@ class ReactSidebar extends React.Component {
                                  updateHoveredArtist={this.props.updateHoveredArtist}
                                  header={"Related Artists"}
                     />
+
+                    <UndoRedoComponent
+                        color={[this.props.artist.r, this.props.artist.g, this.props.artist.b]}
+                        sidebarState={this.props.sidebarState}
+                        undoSidebarState={this.props.undoSidebarState}
+                        redoSidebarState={this.props.redoSidebarState}
+                    />
                 </div>
             );
         }
@@ -163,6 +185,13 @@ class ReactSidebar extends React.Component {
                                  loadArtistFromUI={this.props.loadArtistFromUI}
                                  updateHoveredArtist={this.props.updateHoveredArtist}
                                  header={"Artists in Genre"}
+                    />
+
+                    <UndoRedoComponent
+                        color={[this.props.genre.r, this.props.genre.g, this.props.genre.b]}
+                        sidebarState={this.props.sidebarState}
+                        undoSidebarState={this.props.undoSidebarState}
+                        redoSidebarState={this.props.redoSidebarState}
                     />
 
                 </div>

@@ -35,6 +35,8 @@ var App = function (_React$Component) {
 
             uiHover: false,
 
+            currentSidebarState: null,
+
             showChangelog: !_this.checkVersion("0.5.3"),
             version: "0.5.3",
             headline: "Searching, revamped",
@@ -46,6 +48,9 @@ var App = function (_React$Component) {
         _this.setCamera = _this.setCamera.bind(_this);
 
         _this.updateClickedArtist = _this.updateClickedArtist.bind(_this);
+        _this.setSidebarState = _this.setSidebarState.bind(_this);
+        _this.undoSidebarState = _this.undoSidebarState.bind(_this);
+        _this.redoSidebarState = _this.redoSidebarState.bind(_this);
         _this.handleEmptyClick = _this.handleEmptyClick.bind(_this);
 
         _this.loadArtistFromUI = _this.loadArtistFromUI.bind(_this);
@@ -97,14 +102,41 @@ var App = function (_React$Component) {
             var _this2 = this;
 
             if (artist.loaded) {
-                artist.edges = makeEdges(artist);
-                this.setState({ clickedArtist: artist });
+                this.setSidebarState(artist, this.state.activeGenre, null);
             } else if (artist.id) {
                 loadArtist(this.state.p5, artist, this.state.quadHead, this.state.nodeLookup).then(function () {
                     artist = _this2.state.nodeLookup[artist.id];
-                    artist.edges = makeEdges(artist);
-                    _this2.setState({ clickedArtist: artist });
+                    _this2.setSidebarState(artist, _this2.state.activeGenre, null);
                 });
+            }
+        }
+    }, {
+        key: "setSidebarState",
+        value: function setSidebarState(artist, genre, state) {
+            if (artist) {
+                artist.edges = makeEdges(artist);
+            }
+
+            if (!state && (artist || genre)) {
+                state = new SidebarState({ artist: artist, genre: genre }, this.state.currentSidebarState);
+            }
+
+            this.setState({ clickedArtist: artist, activeGenre: genre, currentSidebarState: state });
+        }
+    }, {
+        key: "undoSidebarState",
+        value: function undoSidebarState() {
+            if (this.state.currentSidebarState && this.state.currentSidebarState.canUndo()) {
+                var newSidebarState = this.state.currentSidebarState.undo();
+                this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState);
+            }
+        }
+    }, {
+        key: "redoSidebarState",
+        value: function redoSidebarState() {
+            if (this.state.currentSidebarState && this.state.currentSidebarState.canRedo()) {
+                var newSidebarState = this.state.currentSidebarState.redo();
+                this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState);
             }
         }
     }, {
@@ -220,7 +252,7 @@ var App = function (_React$Component) {
 
                 _this4.state.camera.setCameraMove(bubble.center.x, bubble.center.y, _this4.state.camera.getZoomFromWidth(camWidth), 45);
 
-                _this4.setState({ clickedArtist: null, activeGenre: newGenre });
+                _this4.setSidebarState(null, newGenre, null);
             });
         }
 
@@ -238,10 +270,11 @@ var App = function (_React$Component) {
     }, {
         key: "handleEmptyClick",
         value: function handleEmptyClick() {
-            if (!(this.state.activeGenre && this.state.clickedArtist)) {
-                this.setState({ activeGenre: null });
+            if (this.state.activeGenre && this.state.clickedArtist) {
+                this.setSidebarState(null, this.state.activeGenre, null);
+            } else {
+                this.setSidebarState(null, null, null);
             }
-            this.setState({ clickedArtist: null });
         }
     }, {
         key: "updateHoveredArtist",
@@ -330,6 +363,10 @@ var App = function (_React$Component) {
                 React.createElement(ReactSidebar, {
                     artist: this.state.clickedArtist,
                     genre: this.state.activeGenre,
+
+                    sidebarState: this.state.currentSidebarState,
+                    undoSidebarState: this.undoSidebarState,
+                    redoSidebarState: this.redoSidebarState,
 
                     loadArtistFromUI: this.loadArtistFromUI,
                     loadGenreFromSearch: this.loadGenreFromSearch,

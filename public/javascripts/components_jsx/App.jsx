@@ -23,6 +23,8 @@ class App extends React.Component {
 
             uiHover: false,
 
+            currentSidebarState: null,
+
             showChangelog: !this.checkVersion("0.5.3"),
             version: "0.5.3",
             headline: "Searching, revamped",
@@ -48,6 +50,9 @@ class App extends React.Component {
         this.setCamera = this.setCamera.bind(this);
 
         this.updateClickedArtist = this.updateClickedArtist.bind(this);
+        this.setSidebarState = this.setSidebarState.bind(this);
+        this.undoSidebarState = this.undoSidebarState.bind(this);
+        this.redoSidebarState = this.redoSidebarState.bind(this);
         this.handleEmptyClick = this.handleEmptyClick.bind(this);
 
         this.loadArtistFromUI = this.loadArtistFromUI.bind(this);
@@ -89,14 +94,38 @@ class App extends React.Component {
     //<editor-fold desc="Clicked Artist Handling">
     updateClickedArtist(artist) {
         if (artist.loaded) {
-            artist.edges = makeEdges(artist);
-            this.setState({clickedArtist: artist});
+            this.setSidebarState(artist, this.state.activeGenre, null);
         } else if (artist.id) {
             loadArtist(this.state.p5, artist, this.state.quadHead, this.state.nodeLookup).then(() =>{
                     artist = this.state.nodeLookup[artist.id];
-                    artist.edges = makeEdges(artist);
-                    this.setState({clickedArtist: artist});
+                    this.setSidebarState(artist, this.state.activeGenre, null);
             });
+        }
+    }
+
+    setSidebarState(artist, genre, state) {
+        if (artist) {
+            artist.edges = makeEdges(artist);
+        }
+
+        if (!state && (artist || genre)) {
+            state = new SidebarState({artist: artist, genre: genre}, this.state.currentSidebarState);
+        }
+
+        this.setState({clickedArtist: artist, activeGenre: genre, currentSidebarState: state});
+    }
+
+    undoSidebarState() {
+        if (this.state.currentSidebarState && this.state.currentSidebarState.canUndo()) {
+            const newSidebarState = this.state.currentSidebarState.undo();
+            this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState);
+        }
+    }
+
+    redoSidebarState() {
+        if (this.state.currentSidebarState && this.state.currentSidebarState.canRedo()) {
+            const newSidebarState = this.state.currentSidebarState.redo();
+            this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState);
         }
     }
 
@@ -151,7 +180,7 @@ class App extends React.Component {
                 this.state.camera.setCameraMove(bubble.center.x, bubble.center.y,
                                                 this.state.camera.getZoomFromWidth(camWidth), 45);
 
-                this.setState({clickedArtist: null, activeGenre: newGenre});
+                this.setSidebarState(null, newGenre, null);
             })
     }
 
@@ -166,10 +195,11 @@ class App extends React.Component {
      *
      */
     handleEmptyClick() {
-        if (!(this.state.activeGenre && this.state.clickedArtist)) {
-            this.setState({activeGenre: null});
+        if (this.state.activeGenre && this.state.clickedArtist) {
+            this.setSidebarState(null, this.state.activeGenre, null);
+        } else {
+            this.setSidebarState(null, null, null);
         }
-        this.setState({clickedArtist: null});
     }
 
     updateHoveredArtist(artist) {
@@ -250,6 +280,10 @@ class App extends React.Component {
                 <ReactSidebar
                     artist={this.state.clickedArtist}
                     genre={this.state.activeGenre}
+
+                    sidebarState={this.state.currentSidebarState}
+                    undoSidebarState={this.undoSidebarState}
+                    redoSidebarState={this.redoSidebarState}
 
                     loadArtistFromUI={this.loadArtistFromUI}
                     loadGenreFromSearch={this.loadGenreFromSearch}
