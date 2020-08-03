@@ -142,6 +142,7 @@ class ReactSidebar extends React.Component {
                     />
 
                     <UndoRedoComponent
+                        color={[this.props.artist.r, this.props.artist.g, this.props.artist.b]}
                         sidebarState={this.props.sidebarState}
                         undoSidebarState={this.props.undoSidebarState}
                         redoSidebarState={this.props.redoSidebarState}

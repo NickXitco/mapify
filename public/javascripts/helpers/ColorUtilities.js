@@ -64,5 +64,9 @@ const ColorUtilities = {
             s: percentRoundFn(s * 100),
             v: percentRoundFn(v * 100)
         };
+    },
+
+    rgbToString: function (r, g, b) {
+        return `rgb(${r}, ${g}, ${b})`
     }
 }
