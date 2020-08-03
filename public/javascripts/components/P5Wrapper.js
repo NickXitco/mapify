@@ -105,13 +105,6 @@ var P5Wrapper = function (_React$Component) {
                     Debug.createTimingEvent("Draw Related Nodes");
                 }
 
-                //TODO reimplement
-                /*
-                if (clickedArtist && Sidebar.openAmount < 1) {
-                    Sidebar.openSidebar();
-                }
-                 */
-
                 Debug.createTimingEvent("Sidebar");
 
                 if (p.frameCount % 5 === 0) {

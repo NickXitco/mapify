@@ -4,7 +4,7 @@ let p;
 
 
 async function loadInitialQuads(loadingQuads, unprocessedResponses) {
-    const response = await fetch('quad/A'); //TODO validation on this response
+    const response = await fetch('quad/A');
     const data = await response.json();
     let quadHead = new Quad(data.x, data.y, data.r, null, null, "A", null);
     loadingQuads.add(quadHead);
