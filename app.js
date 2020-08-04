@@ -13,6 +13,7 @@ const quadRouter = require('./routes/quadRouter');
 const artistRouter = require('./routes/artistRouter');
 const artistSearchRouter = require('./routes/artistSearchRouter');
 const genreRouter = require('./routes/genresRouter');
+const shortestPathRouter = require('./routes/shortestPathRouter');
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use('/quad', quadRouter);
 app.use('/artist', artistRouter);
 app.use('/artistSearch', artistSearchRouter);
 app.use('/genre', genreRouter);
+app.use('/path', shortestPathRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
