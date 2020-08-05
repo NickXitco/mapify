@@ -1,3 +1,7 @@
+fetch('path/378dH6EszOLFShpRzAQkVM/4QkSD9TRUnMtI8Fq1jXJJe')
+    .then(res => res.json())
+    .then(path => console.log(path))
+
 async function loadInitialQuads(loadingQuads, unprocessedResponses) {
     const response = await fetch('quad/A');
     const data = await response.json();
