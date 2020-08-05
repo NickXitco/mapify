@@ -34,6 +34,7 @@ var App = function (_React$Component) {
             lastTime: 0,
 
             uiHover: false,
+            clearSearch: false,
 
             currentSidebarState: null,
 
@@ -51,7 +52,9 @@ var App = function (_React$Component) {
         _this.setSidebarState = _this.setSidebarState.bind(_this);
         _this.undoSidebarState = _this.undoSidebarState.bind(_this);
         _this.redoSidebarState = _this.redoSidebarState.bind(_this);
+
         _this.handleEmptyClick = _this.handleEmptyClick.bind(_this);
+        _this.flipClearSearch = _this.flipClearSearch.bind(_this);
 
         _this.loadArtistFromUI = _this.loadArtistFromUI.bind(_this);
         _this.loadArtistFromSearch = _this.loadArtistFromSearch.bind(_this);
@@ -275,6 +278,13 @@ var App = function (_React$Component) {
             } else {
                 this.setSidebarState(null, null, null);
             }
+
+            this.setState({ clearSearch: true });
+        }
+    }, {
+        key: "flipClearSearch",
+        value: function flipClearSearch() {
+            this.setState({ clearSearch: false });
         }
     }, {
         key: "updateHoveredArtist",
@@ -375,8 +385,14 @@ var App = function (_React$Component) {
                 }),
                 React.createElement(ReactSearchBox, {
                     colorant: this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre,
+
                     loadArtistFromUI: this.loadArtistFromUI,
                     loadArtistFromSearch: this.loadArtistFromSearch,
+                    loadGenreFromSearch: this.loadGenreFromSearch,
+
+                    flipClearSearch: this.flipClearSearch,
+                    clearSearch: this.state.clearSearch,
+
                     updateHoverFlag: this.updateHoverFlag,
                     updateHoveredArtist: this.updateHoveredArtist,
                     createNodesFromSuggestions: this.createNodesFromSuggestions

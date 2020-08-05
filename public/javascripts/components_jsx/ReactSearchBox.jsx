@@ -4,7 +4,7 @@ class ReactSearchBox extends React.Component {
 
         this.state = {
             value: "",
-            suggestions: [],
+            artistSuggestions: [],
             genreSuggestions: [],
         }
 
@@ -35,19 +35,22 @@ class ReactSearchBox extends React.Component {
                 //Only accept a response if it's the latest request we've gotten back
                 if (currentCount > this.highestReceivedResponse) {
                     this.highestReceivedResponse = currentCount;
-                    console.log(data);
                     this.processSuggestions(data);
                 }
             });
     }
 
     processSuggestions(data) {
-        this.setState({suggestions: this.props.createNodesFromSuggestions(data.artists)});
-        this.setState({genreSuggestions: data.genres});
+        this.setState({artistSuggestions: this.props.createNodesFromSuggestions(data.artists), genreSuggestions: data.genres});
     }
 
     processSuggestionClick(artist) {
         this.props.loadArtistFromUI(artist);
+        this.resetState();
+    }
+
+    processGenreSuggestionClick(genre) {
+        this.props.loadGenreFromSearch(genre.name);
         this.resetState();
     }
 
@@ -59,11 +62,16 @@ class ReactSearchBox extends React.Component {
     }
 
     resetState() {
-        this.setState({value: "", suggestions: [], genreSuggestions: []});
+        this.setState({value: "", artistSuggestions: [], genreSuggestions: []});
     }
 
     render() {
-        if (this.state.value.length === 0 && (this.state.suggestions.length > 0 || this.state.genreSuggestions.length > 0)) {
+        if (this.props.clearSearch) {
+            this.resetState();
+            this.props.flipClearSearch();
+        }
+
+        if (this.state.value.length === 0 && (this.state.artistSuggestions.length > 0 || this.state.genreSuggestions.length > 0)) {
             this.resetState();
         }
 
@@ -78,12 +86,25 @@ class ReactSearchBox extends React.Component {
             borderClassName = "searchBox-white";
         }
 
-        let artistHeader = this.state.suggestions.length > 0 ? (<p className="searchHeader">Artists</p>) : null;
+        let artistHeader = this.state.artistSuggestions.length > 0 ? (<p className="searchHeader">Artists</p>) : null;
         let genreHeader = this.state.genreSuggestions.length > 0 ? (<p className="searchHeader">Genres</p>) : null;
         let artistsList = null;
         let genresList = null;
 
-        if (this.state.suggestions.length === 0 && this.state.genreSuggestions.length === 0 && this.state.value.length > 0) {
+        /**
+         *
+         *                  Artist Suggestions
+         *                    0    |   > 0
+         *               |-------------------|
+         * Genre       0 | no     | no genre |
+         * Suggestions   |results | header   |
+         *              -|--------+----------|
+         *           > 0 |no artist| normal  |
+         *               |header   |         |
+         *               |-------------------|
+         */
+
+        if (this.state.artistSuggestions.length === 0 && this.state.genreSuggestions.length === 0 && this.state.value.length > 0) {
             artistsList = (
                 <ul className={"suggestions"}>
                     <li className={"suggestion"}
@@ -96,10 +117,10 @@ class ReactSearchBox extends React.Component {
                 </ul>
             )
         } else {
-            if (this.state.suggestions.length > 0) {
+            if (this.state.artistSuggestions.length > 0) {
                 artistsList = (
                     <ul className={"suggestions"}>
-                        {this.state.suggestions.map(artist =>
+                        {this.state.artistSuggestions.map(artist =>
                             <li className={"suggestion"}
                                 key={artist.id.toString()}
                             >
@@ -123,8 +144,10 @@ class ReactSearchBox extends React.Component {
                             <li className={"suggestion"}
                                 key={genre.name.toString()}
                             >
-                                <p className={"suggestedArtist"}>
-                                    {genre.name.toString().toUpperCase()}
+                                <p className={"suggestedArtist"}
+                                   onClick={() => {this.processGenreSuggestionClick(genre)}}
+                                >
+                                    {genre.name.toString().replace(/\b\w+/g,function(s){return s.charAt(0).toUpperCase() + s.substr(1).toLowerCase();})}
                                 </p>
                             </li>
                         )}
@@ -132,19 +155,6 @@ class ReactSearchBox extends React.Component {
                 )
             }
         }
-
-        /**
-         *
-         *                  Artist Suggestions
-         *                    0    |   > 0
-         *               |-------------------|
-         * Genre       0 | no     | no genre |
-         * Suggestions   |results | header   |
-         *              -|--------+----------|
-         *           > 0 |no artist| normal  |
-         *               |header   |         |
-         *               |-------------------|
-         */
 
         return (
             <div className={"searchBox"}

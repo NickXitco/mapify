@@ -16,7 +16,7 @@ var ReactSearchBox = function (_React$Component) {
 
         _this.state = {
             value: "",
-            suggestions: [],
+            artistSuggestions: [],
             genreSuggestions: []
         };
 
@@ -52,7 +52,6 @@ var ReactSearchBox = function (_React$Component) {
                 //Only accept a response if it's the latest request we've gotten back
                 if (currentCount > _this2.highestReceivedResponse) {
                     _this2.highestReceivedResponse = currentCount;
-                    console.log(data);
                     _this2.processSuggestions(data);
                 }
             });
@@ -60,13 +59,18 @@ var ReactSearchBox = function (_React$Component) {
     }, {
         key: "processSuggestions",
         value: function processSuggestions(data) {
-            this.setState({ suggestions: this.props.createNodesFromSuggestions(data.artists) });
-            this.setState({ genreSuggestions: data.genres });
+            this.setState({ artistSuggestions: this.props.createNodesFromSuggestions(data.artists), genreSuggestions: data.genres });
         }
     }, {
         key: "processSuggestionClick",
         value: function processSuggestionClick(artist) {
             this.props.loadArtistFromUI(artist);
+            this.resetState();
+        }
+    }, {
+        key: "processGenreSuggestionClick",
+        value: function processGenreSuggestionClick(genre) {
+            this.props.loadGenreFromSearch(genre.name);
             this.resetState();
         }
     }, {
@@ -80,14 +84,19 @@ var ReactSearchBox = function (_React$Component) {
     }, {
         key: "resetState",
         value: function resetState() {
-            this.setState({ value: "", suggestions: [], genreSuggestions: [] });
+            this.setState({ value: "", artistSuggestions: [], genreSuggestions: [] });
         }
     }, {
         key: "render",
         value: function render() {
             var _this3 = this;
 
-            if (this.state.value.length === 0 && (this.state.suggestions.length > 0 || this.state.genreSuggestions.length > 0)) {
+            if (this.props.clearSearch) {
+                this.resetState();
+                this.props.flipClearSearch();
+            }
+
+            if (this.state.value.length === 0 && (this.state.artistSuggestions.length > 0 || this.state.genreSuggestions.length > 0)) {
                 this.resetState();
             }
 
@@ -102,7 +111,7 @@ var ReactSearchBox = function (_React$Component) {
                 borderClassName = "searchBox-white";
             }
 
-            var artistHeader = this.state.suggestions.length > 0 ? React.createElement(
+            var artistHeader = this.state.artistSuggestions.length > 0 ? React.createElement(
                 "p",
                 { className: "searchHeader" },
                 "Artists"
@@ -115,7 +124,20 @@ var ReactSearchBox = function (_React$Component) {
             var artistsList = null;
             var genresList = null;
 
-            if (this.state.suggestions.length === 0 && this.state.genreSuggestions.length === 0 && this.state.value.length > 0) {
+            /**
+             *
+             *                  Artist Suggestions
+             *                    0    |   > 0
+             *               |-------------------|
+             * Genre       0 | no     | no genre |
+             * Suggestions   |results | header   |
+             *              -|--------+----------|
+             *           > 0 |no artist| normal  |
+             *               |header   |         |
+             *               |-------------------|
+             */
+
+            if (this.state.artistSuggestions.length === 0 && this.state.genreSuggestions.length === 0 && this.state.value.length > 0) {
                 artistsList = React.createElement(
                     "ul",
                     { className: "suggestions" },
@@ -132,11 +154,11 @@ var ReactSearchBox = function (_React$Component) {
                     )
                 );
             } else {
-                if (this.state.suggestions.length > 0) {
+                if (this.state.artistSuggestions.length > 0) {
                     artistsList = React.createElement(
                         "ul",
                         { className: "suggestions" },
-                        this.state.suggestions.map(function (artist) {
+                        this.state.artistSuggestions.map(function (artist) {
                             return React.createElement(
                                 "li",
                                 { className: "suggestion",
@@ -174,27 +196,20 @@ var ReactSearchBox = function (_React$Component) {
                                 },
                                 React.createElement(
                                     "p",
-                                    { className: "suggestedArtist" },
-                                    genre.name.toString().toUpperCase()
+                                    { className: "suggestedArtist",
+                                        onClick: function onClick() {
+                                            _this3.processGenreSuggestionClick(genre);
+                                        }
+                                    },
+                                    genre.name.toString().replace(/\b\w+/g, function (s) {
+                                        return s.charAt(0).toUpperCase() + s.substr(1).toLowerCase();
+                                    })
                                 )
                             );
                         })
                     );
                 }
             }
-
-            /**
-             *
-             *                  Artist Suggestions
-             *                    0    |   > 0
-             *               |-------------------|
-             * Genre       0 | no     | no genre |
-             * Suggestions   |results | header   |
-             *              -|--------+----------|
-             *           > 0 |no artist| normal  |
-             *               |header   |         |
-             *               |-------------------|
-             */
 
             return React.createElement(
                 "div",
