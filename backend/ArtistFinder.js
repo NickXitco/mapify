@@ -71,10 +71,69 @@ function runSearch(searchTerm, Artist, limit) {
         });
 }
 
+function genreSearch(searchTerm, Genre, limit) {
+    let query = ''
+    searchTerm = searchTerm.replace(/\s/g, '');
+    for (let i = 0; i < searchTerm.length - 1; i++) {
+        query += searchTerm.substring(i, i + 2);
+        query += ' '
+    }
+
+    return Genre.aggregate([
+        {
+            '$match': {
+                '$text': {
+                    '$search': query
+                }
+            }
+        }, {
+            '$addFields': {
+                'score': {
+                    '$meta': 'textScore'
+                }
+            }
+        }, {
+            '$addFields': {
+                'length': {
+                    '$strLenCP': '$name'
+                }
+            }
+        }, {
+            '$addFields': {
+                'normalizedScore': {
+                    '$divide': [
+                        '$score', '$length'
+                    ]
+                }
+            }
+        }, {
+            '$match': {
+                'normalizedScore': {
+                    '$gt': 0.4
+                }
+            }
+        }, {
+            '$sort': {
+                'size': -1
+            }
+        }, {
+            '$limit': limit
+        }, {
+            '$unset': [
+                'score', 'length', 'normalizedScore'
+            ]
+        }
+    ]).exec();
+}
+
 async function findArtistSearch(searchTerm) {
     const Artist = mongoose.model('Artist');
+    const Genre = mongoose.model('Genre');
     const NUM_RESULTS = 5;
-    return runSearch(searchTerm, Artist, NUM_RESULTS);
+    return Promise.all([genreSearch(searchTerm, Genre, NUM_RESULTS), runSearch(searchTerm, Artist, NUM_RESULTS)])
+        .then(values => {
+            return {genres: values[0], artists: values[1]};
+        })
 }
 
 module.exports = {findArtist, findArtistSearch};

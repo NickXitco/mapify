@@ -22,6 +22,7 @@ class App extends React.Component {
             lastTime: 0,
 
             uiHover: false,
+            clearSearch: false,
 
             currentSidebarState: null,
 
@@ -53,7 +54,9 @@ class App extends React.Component {
         this.setSidebarState = this.setSidebarState.bind(this);
         this.undoSidebarState = this.undoSidebarState.bind(this);
         this.redoSidebarState = this.redoSidebarState.bind(this);
+
         this.handleEmptyClick = this.handleEmptyClick.bind(this);
+        this.flipClearSearch = this.flipClearSearch.bind(this);
 
         this.loadArtistFromUI = this.loadArtistFromUI.bind(this);
         this.loadArtistFromSearch = this.loadArtistFromSearch.bind(this);
@@ -200,6 +203,12 @@ class App extends React.Component {
         } else {
             this.setSidebarState(null, null, null);
         }
+
+        this.setState({clearSearch: true});
+    }
+
+    flipClearSearch() {
+        this.setState({clearSearch: false});
     }
 
     updateHoveredArtist(artist) {
@@ -293,8 +302,14 @@ class App extends React.Component {
 
                 <ReactSearchBox
                     colorant={this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre}
+
                     loadArtistFromUI={this.loadArtistFromUI}
                     loadArtistFromSearch={this.loadArtistFromSearch}
+                    loadGenreFromSearch={this.loadGenreFromSearch}
+
+                    flipClearSearch={this.flipClearSearch}
+                    clearSearch={this.state.clearSearch}
+
                     updateHoverFlag={this.updateHoverFlag}
                     updateHoveredArtist={this.updateHoveredArtist}
                     createNodesFromSuggestions={this.createNodesFromSuggestions}

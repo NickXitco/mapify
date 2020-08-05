@@ -197,23 +197,26 @@ canvas {
 
 /*<editor-fold desc="SEARCH BOX STYLINGS">*/
 .searchBox {
-  width: 200px;
-  height: 34px;
-  position: relative;
   z-index: 2000;
-  float: right;
+
   top: 20px;
   right: 20px;
+  width: 214px;
 
-  display: grid;
-  grid-template-rows: 34px 200px;
+  position: relative;
+  float: right;
+
+  display: flex;
+  flex-direction: column;
 
   user-select: none;
 }
 
 .searchBar {
-  width: 200px;
+  width: 214px;
   height: 34px;
+  position: static;
+  display: block;
 }
 
 .searchInput {
@@ -222,7 +225,7 @@ canvas {
   color: white;
   display: flex;
   align-items: center;
-  width: 186px;
+  width: 200px;
   height: 20px;
 
   background: rgba(0,0,0,0.6);
@@ -242,10 +245,16 @@ canvas {
   box-shadow: 0 0 6px 1px white;
 }
 
+.searchHeader {
+  padding: 10px 0 2px;
+  text-transform: uppercase;
+  width: 50%;
+  border-bottom: solid white thin;
+}
+
 .suggestions {
   width: 100%;
-  grid-row: 2;
-  position: relative;
+  position: static;
   display: block;
   z-index: -1;
 }

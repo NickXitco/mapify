@@ -4,7 +4,8 @@ class ReactSearchBox extends React.Component {
 
         this.state = {
             value: "",
-            suggestions: []
+            artistSuggestions: [],
+            genreSuggestions: [],
         }
 
         this.requestCounter = 0;
@@ -40,11 +41,16 @@ class ReactSearchBox extends React.Component {
     }
 
     processSuggestions(data) {
-        this.setState({suggestions: this.props.createNodesFromSuggestions(data)});
+        this.setState({artistSuggestions: this.props.createNodesFromSuggestions(data.artists), genreSuggestions: data.genres});
     }
 
     processSuggestionClick(artist) {
         this.props.loadArtistFromUI(artist);
+        this.resetState();
+    }
+
+    processGenreSuggestionClick(genre) {
+        this.props.loadGenreFromSearch(genre.name);
         this.resetState();
     }
 
@@ -56,10 +62,19 @@ class ReactSearchBox extends React.Component {
     }
 
     resetState() {
-        this.setState({value: "", suggestions: []});
+        this.setState({value: "", artistSuggestions: [], genreSuggestions: []});
     }
 
     render() {
+        if (this.props.clearSearch) {
+            this.resetState();
+            this.props.flipClearSearch();
+        }
+
+        if (this.state.value.length === 0 && (this.state.artistSuggestions.length > 0 || this.state.genreSuggestions.length > 0)) {
+            this.resetState();
+        }
+
         let colorStyle = {};
         let borderClassName = "";
         if (this.props.colorant) {
@@ -71,30 +86,74 @@ class ReactSearchBox extends React.Component {
             borderClassName = "searchBox-white";
         }
 
-        let suggestions = this.state.suggestions.map(artist =>
-            <li className={"suggestion"}
-                key={artist.id.toString()}
-            >
-                <p className={"suggestedArtist"}
-                   onClick={() => {this.processSuggestionClick(artist)}}
-                   onMouseEnter={() => {this.props.updateHoveredArtist(artist)}}
-                   onMouseLeave={() => {this.props.updateHoveredArtist(null)}}
-                >
-                    {artist.name.toString()}
-                </p>
-            </li>
-        );
+        let artistHeader = this.state.artistSuggestions.length > 0 ? (<p className="searchHeader">Artists</p>) : null;
+        let genreHeader = this.state.genreSuggestions.length > 0 ? (<p className="searchHeader">Genres</p>) : null;
+        let artistsList = null;
+        let genresList = null;
 
-        if (suggestions.length === 0 && this.state.value.length > 0) {
-            suggestions.push(
-                <li className={"suggestion"}
-                    key={"noResults"}
-                >
+        /**
+         *
+         *                  Artist Suggestions
+         *                    0    |   > 0
+         *               |-------------------|
+         * Genre       0 | no     | no genre |
+         * Suggestions   |results | header   |
+         *              -|--------+----------|
+         *           > 0 |no artist| normal  |
+         *               |header   |         |
+         *               |-------------------|
+         */
+
+        if (this.state.artistSuggestions.length === 0 && this.state.genreSuggestions.length === 0 && this.state.value.length > 0) {
+            artistsList = (
+                <ul className={"suggestions"}>
+                    <li className={"suggestion"}
+                        key={"noResults"}
+                    >
                         <p className={"suggestedArtist"}>
                             No Results Found.
                         </p>
-                </li>
+                    </li>
+                </ul>
             )
+        } else {
+            if (this.state.artistSuggestions.length > 0) {
+                artistsList = (
+                    <ul className={"suggestions"}>
+                        {this.state.artistSuggestions.map(artist =>
+                            <li className={"suggestion"}
+                                key={artist.id.toString()}
+                            >
+                                <p className={"suggestedArtist"}
+                                   onClick={() => {this.processSuggestionClick(artist)}}
+                                   onMouseEnter={() => {this.props.updateHoveredArtist(artist)}}
+                                   onMouseLeave={() => {this.props.updateHoveredArtist(null)}}
+                                >
+                                    {artist.name.toString()}
+                                </p>
+                            </li>
+                        )}
+                    </ul>
+                );
+            }
+
+            if (this.state.genreSuggestions.length > 0) {
+                genresList = (
+                    <ul className={"suggestions"}>
+                        {this.state.genreSuggestions.map(genre =>
+                            <li className={"suggestion"}
+                                key={genre.name.toString()}
+                            >
+                                <p className={"suggestedArtist"}
+                                   onClick={() => {this.processGenreSuggestionClick(genre)}}
+                                >
+                                    {genre.name.toString().replace(/\b\w+/g,function(s){return s.charAt(0).toUpperCase() + s.substr(1).toLowerCase();})}
+                                </p>
+                            </li>
+                        )}
+                    </ul>
+                )
+            }
         }
 
         return (
@@ -106,15 +165,16 @@ class ReactSearchBox extends React.Component {
                     <input className={`searchInput ${borderClassName}`}
                            style={colorStyle}
                            type="text"
-                           placeholder="search for an artist..."
+                           placeholder="search for an artist/genre..."
                            onInput={this.processInput}
                            onKeyDown={this.sendSubmitIfEnter}
                            value={this.state.value}
                     />
                 </div>
-                <ul className={"suggestions"}>
-                    {suggestions}
-                </ul>
+                {artistHeader}
+                {artistsList}
+                {genreHeader}
+                {genresList}
             </div>
         )
     }
