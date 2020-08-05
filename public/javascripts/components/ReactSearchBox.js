@@ -16,7 +16,8 @@ var ReactSearchBox = function (_React$Component) {
 
         _this.state = {
             value: "",
-            suggestions: []
+            suggestions: [],
+            genreSuggestions: []
         };
 
         _this.requestCounter = 0;
@@ -51,6 +52,7 @@ var ReactSearchBox = function (_React$Component) {
                 //Only accept a response if it's the latest request we've gotten back
                 if (currentCount > _this2.highestReceivedResponse) {
                     _this2.highestReceivedResponse = currentCount;
+                    console.log(data);
                     _this2.processSuggestions(data);
                 }
             });
@@ -58,7 +60,8 @@ var ReactSearchBox = function (_React$Component) {
     }, {
         key: "processSuggestions",
         value: function processSuggestions(data) {
-            this.setState({ suggestions: this.props.createNodesFromSuggestions(data) });
+            this.setState({ suggestions: this.props.createNodesFromSuggestions(data.artists) });
+            this.setState({ genreSuggestions: data.genres });
         }
     }, {
         key: "processSuggestionClick",
@@ -77,12 +80,16 @@ var ReactSearchBox = function (_React$Component) {
     }, {
         key: "resetState",
         value: function resetState() {
-            this.setState({ value: "", suggestions: [] });
+            this.setState({ value: "", suggestions: [], genreSuggestions: [] });
         }
     }, {
         key: "render",
         value: function render() {
             var _this3 = this;
+
+            if (this.state.value.length === 0 && (this.state.suggestions.length > 0 || this.state.genreSuggestions.length > 0)) {
+                this.resetState();
+            }
 
             var colorStyle = {};
             var borderClassName = "";
@@ -95,43 +102,99 @@ var ReactSearchBox = function (_React$Component) {
                 borderClassName = "searchBox-white";
             }
 
-            var suggestions = this.state.suggestions.map(function (artist) {
-                return React.createElement(
-                    "li",
-                    { className: "suggestion",
-                        key: artist.id.toString()
-                    },
+            var artistHeader = this.state.suggestions.length > 0 ? React.createElement(
+                "p",
+                { className: "searchHeader" },
+                "Artists"
+            ) : null;
+            var genreHeader = this.state.genreSuggestions.length > 0 ? React.createElement(
+                "p",
+                { className: "searchHeader" },
+                "Genres"
+            ) : null;
+            var artistsList = null;
+            var genresList = null;
+
+            if (this.state.suggestions.length === 0 && this.state.genreSuggestions.length === 0 && this.state.value.length > 0) {
+                artistsList = React.createElement(
+                    "ul",
+                    { className: "suggestions" },
                     React.createElement(
-                        "p",
-                        { className: "suggestedArtist",
-                            onClick: function onClick() {
-                                _this3.processSuggestionClick(artist);
-                            },
-                            onMouseEnter: function onMouseEnter() {
-                                _this3.props.updateHoveredArtist(artist);
-                            },
-                            onMouseLeave: function onMouseLeave() {
-                                _this3.props.updateHoveredArtist(null);
-                            }
+                        "li",
+                        { className: "suggestion",
+                            key: "noResults"
                         },
-                        artist.name.toString()
+                        React.createElement(
+                            "p",
+                            { className: "suggestedArtist" },
+                            "No Results Found."
+                        )
                     )
                 );
-            });
+            } else {
+                if (this.state.suggestions.length > 0) {
+                    artistsList = React.createElement(
+                        "ul",
+                        { className: "suggestions" },
+                        this.state.suggestions.map(function (artist) {
+                            return React.createElement(
+                                "li",
+                                { className: "suggestion",
+                                    key: artist.id.toString()
+                                },
+                                React.createElement(
+                                    "p",
+                                    { className: "suggestedArtist",
+                                        onClick: function onClick() {
+                                            _this3.processSuggestionClick(artist);
+                                        },
+                                        onMouseEnter: function onMouseEnter() {
+                                            _this3.props.updateHoveredArtist(artist);
+                                        },
+                                        onMouseLeave: function onMouseLeave() {
+                                            _this3.props.updateHoveredArtist(null);
+                                        }
+                                    },
+                                    artist.name.toString()
+                                )
+                            );
+                        })
+                    );
+                }
 
-            if (suggestions.length === 0 && this.state.value.length > 0) {
-                suggestions.push(React.createElement(
-                    "li",
-                    { className: "suggestion",
-                        key: "noResults"
-                    },
-                    React.createElement(
-                        "p",
-                        { className: "suggestedArtist" },
-                        "No Results Found."
-                    )
-                ));
+                if (this.state.genreSuggestions.length > 0) {
+                    genresList = React.createElement(
+                        "ul",
+                        { className: "suggestions" },
+                        this.state.genreSuggestions.map(function (genre) {
+                            return React.createElement(
+                                "li",
+                                { className: "suggestion",
+                                    key: genre.name.toString()
+                                },
+                                React.createElement(
+                                    "p",
+                                    { className: "suggestedArtist" },
+                                    genre.name.toString().toUpperCase()
+                                )
+                            );
+                        })
+                    );
+                }
             }
+
+            /**
+             *
+             *                  Artist Suggestions
+             *                    0    |   > 0
+             *               |-------------------|
+             * Genre       0 | no     | no genre |
+             * Suggestions   |results | header   |
+             *              -|--------+----------|
+             *           > 0 |no artist| normal  |
+             *               |header   |         |
+             *               |-------------------|
+             */
 
             return React.createElement(
                 "div",
@@ -149,17 +212,16 @@ var ReactSearchBox = function (_React$Component) {
                     React.createElement("input", { className: "searchInput " + borderClassName,
                         style: colorStyle,
                         type: "text",
-                        placeholder: "search for an artist...",
+                        placeholder: "search for an artist/genre...",
                         onInput: this.processInput,
                         onKeyDown: this.sendSubmitIfEnter,
                         value: this.state.value
                     })
                 ),
-                React.createElement(
-                    "ul",
-                    { className: "suggestions" },
-                    suggestions
-                )
+                artistHeader,
+                artistsList,
+                genreHeader,
+                genresList
             );
         }
     }]);

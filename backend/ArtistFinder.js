@@ -130,9 +130,10 @@ async function findArtistSearch(searchTerm) {
     const Artist = mongoose.model('Artist');
     const Genre = mongoose.model('Genre');
     const NUM_RESULTS = 5;
-    const genres = await genreSearch(searchTerm, Genre, NUM_RESULTS);
-    console.log(genres);
-    return runSearch(searchTerm, Artist, NUM_RESULTS);
+    return Promise.all([genreSearch(searchTerm, Genre, NUM_RESULTS), runSearch(searchTerm, Artist, NUM_RESULTS)])
+        .then(values => {
+            return {genres: values[0], artists: values[1]};
+        })
 }
 
 module.exports = {findArtist, findArtistSearch};
