@@ -201,7 +201,10 @@ canvas {
 
   top: 20px;
   right: 20px;
-  width: 200px;
+  width: 214px;
+
+  position: relative;
+  float: right;
 
   display: flex;
   flex-direction: column;
@@ -210,7 +213,7 @@ canvas {
 }
 
 .searchBar {
-  width: 200px;
+  width: 214px;
   height: 34px;
   position: static;
   display: block;
@@ -222,7 +225,7 @@ canvas {
   color: white;
   display: flex;
   align-items: center;
-  width: 186px;
+  width: 200px;
   height: 20px;
 
   background: rgba(0,0,0,0.6);
