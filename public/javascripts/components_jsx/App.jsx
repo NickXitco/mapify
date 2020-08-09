@@ -281,6 +281,10 @@ class App extends React.Component {
             <div className={"fullScreen"}>
                 {changelog}
 
+                <ShortestPathDialog
+                    colorant={this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre}
+                />
+
                 <ReactInfobox
                     artist={this.state.hoveredArtist}
                     point={this.state.hoverPoint}

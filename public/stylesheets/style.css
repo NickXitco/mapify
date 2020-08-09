@@ -507,3 +507,59 @@ canvas {
 
 
 /*</editor-fold>*/
+
+
+.uiButtonOuter {
+  height: 40px;
+  width: 40px;
+
+  overflow: hidden;
+
+  background: rgba(0, 0, 0, 0.90);
+
+  border: solid white;
+  border-radius: 25px;
+
+  box-shadow: 0 0 10px 0 white, inset 0 0 5px 0 white;
+
+  margin: 500px;
+
+  transition: border 0.6s cubic-bezier(0.5, 1, 0.89, 1),
+              box-shadow 0.6s cubic-bezier(0.5, 1, 0.89, 1),
+              width 0.6s cubic-bezier(0.5, 1, 0.89, 1),
+              height 0.6s cubic-bezier(0.5, 1, 0.89, 1);
+}
+
+.uiButtonOuterExpand {
+  height: 200px;
+  width: 400px;
+}
+
+.uiButtonOuter-white {
+  box-shadow: 0 0 10px 0 white, inset 0 0 5px 0 white;
+}
+
+.uiButton {
+  width: 32px;
+  height: 32px;
+  padding: 4px;
+}
+
+.uiButtonPath {
+  fill: white;
+}
+
+.uiButtonTitle {
+  width: 384px;
+  height: 32px;
+  padding: 4px;
+  display: inline-block;
+  white-space: nowrap;
+  text-align: right;
+  float: right;
+}
+
+h4 {
+  font-size: 24px;
+  font-weight: 600;
+}
