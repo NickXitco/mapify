@@ -37,6 +37,40 @@ var ReactSidebar = function (_React$Component) {
 
             var player = null;
 
+            if (this.props.path.length > 0) {
+                var start = this.props.path[0];
+                var end = this.props.path[this.props.path.length - 1];
+
+                var color = ColorUtilities.rgbToString(start.r, start.g, start.b);
+                var darkerColor = ColorUtilities.rgbToString(start.r / 4, start.g / 4, start.b / 4);
+
+                return React.createElement(
+                    "div",
+                    { className: "sidebar sidebar-open",
+                        onMouseEnter: function onMouseEnter() {
+                            _this2.props.updateHoverFlag(true);
+                        },
+                        onMouseLeave: function onMouseLeave() {
+                            _this2.props.updateHoverFlag(false);
+                        }
+                    },
+                    React.createElement(
+                        "style",
+                        null,
+                        "::-webkit-scrollbar-track {box-shadow: 0 0 5px " + start.colorToString() + ";}  \n" + ("::-webkit-scrollbar-thumb {background: " + start.colorToString() + ";")
+                    ),
+                    React.createElement(SidebarStroke, { color: start.colorToString() }),
+                    React.createElement(ArtistProfile, { artist: start, fontDecrement: 3 }),
+                    React.createElement(
+                        "svg",
+                        { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 32 32",
+                            style: { position: 'static', height: '50px', filter: "drop-shadow(0 0  5px " + color + ")" } },
+                        React.createElement("path", { fill: darkerColor, stroke: "white", d: "M16.5 28.75l10-13H21V3.25h-9v12.5H6.5l10 13z" })
+                    ),
+                    React.createElement(ArtistProfile, { artist: end, fontDecrement: 3 })
+                );
+            }
+
             if (!this.props.artist && !this.props.genre) {
                 if (this.state.artist) {
                     setTimeout(function () {

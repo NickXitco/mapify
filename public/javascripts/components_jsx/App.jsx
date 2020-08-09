@@ -27,6 +27,7 @@ class App extends React.Component {
             currentSidebarState: null,
 
             spButtonExpanded: false,
+            activePath: [],
 
             showChangelog: !this.checkVersion("0.5.3"),
             version: "0.5.3",
@@ -59,6 +60,8 @@ class App extends React.Component {
 
         this.handleEmptyClick = this.handleEmptyClick.bind(this);
         this.expandSP = this.expandSP.bind(this);
+        this.updatePath = this.updatePath.bind(this);
+
         this.flipClearSearch = this.flipClearSearch.bind(this);
 
         this.loadArtistFromUI = this.loadArtistFromUI.bind(this);
@@ -152,7 +155,7 @@ class App extends React.Component {
     createNodesFromSuggestions(data) {
         let newData = [];
         for (const node of data) {
-            newData.push(createNewNode(node,  this.state.quadHead, this.state.nodeLookup));
+            newData.push(createNewNode(node, this.state.quadHead, this.state.nodeLookup));
         }
         return newData;
     }
@@ -207,11 +210,19 @@ class App extends React.Component {
             this.setSidebarState(null, null, null);
         }
 
-        this.setState({clearSearch: true, spButtonExpanded: false});
+        this.setState({clearSearch: true, spButtonExpanded: false, activePath: []});
     }
 
     expandSP() {
         this.setState({spButtonExpanded: true});
+    }
+
+    updatePath(path) {
+        const newPath = [];
+        for (const hop of path) {
+            newPath.push(createNewNode(hop, this.state.quadHead, this.state.nodeLookup));
+        }
+        this.setState({activePath: newPath});
     }
 
     flipClearSearch() {
@@ -296,6 +307,7 @@ class App extends React.Component {
                     createNodesFromSuggestions={this.createNodesFromSuggestions}
                     updateHoveredArtist={this.updateHoveredArtist}
                     getArtistFromSearch={this.getArtistFromSearch}
+                    updatePath={this.updatePath}
                 />
 
                 <ReactInfobox
@@ -306,6 +318,7 @@ class App extends React.Component {
                 <ReactSidebar
                     artist={this.state.clickedArtist}
                     genre={this.state.activeGenre}
+                    path={this.state.activePath}
 
                     sidebarState={this.state.currentSidebarState}
                     undoSidebarState={this.undoSidebarState}

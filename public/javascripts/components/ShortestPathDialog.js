@@ -97,13 +97,15 @@ var ShortestPathDialog = function (_React$Component) {
     }, {
         key: "getPath",
         value: function getPath() {
+            var _this3 = this;
+
             var start = this.state.startArtist ? this.state.startArtist : this.state.startSuggestions.length > 0 ? this.state.startSuggestions[0] : null;
             var end = this.state.endArtist ? this.state.endArtist : this.state.endSuggestions.length > 0 ? this.state.endSuggestions[0] : null;
             if (start && end) {
                 fetch("path/" + start.id + "/" + end.id).then(function (res) {
                     return res.json();
                 }).then(function (path) {
-                    return console.log(path);
+                    return _this3.props.updatePath(path);
                 });
             }
         }
@@ -119,7 +121,7 @@ var ShortestPathDialog = function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            var _this3 = this;
+            var _this4 = this;
 
             if (this.state.startValue.length === 0 && this.state.startSuggestions.length > 0) {
                 this.resetState(true);
@@ -167,13 +169,13 @@ var ShortestPathDialog = function (_React$Component) {
                                 "p",
                                 { className: "suggestedArtist",
                                     onClick: function onClick() {
-                                        _this3.processSuggestionClick(artist, true);
+                                        _this4.processSuggestionClick(artist, true);
                                     },
                                     onMouseEnter: function onMouseEnter() {
-                                        _this3.props.updateHoveredArtist(artist);
+                                        _this4.props.updateHoveredArtist(artist);
                                     },
                                     onMouseLeave: function onMouseLeave() {
-                                        _this3.props.updateHoveredArtist(null);
+                                        _this4.props.updateHoveredArtist(null);
                                     }
                                 },
                                 artist.name.toString()
@@ -197,13 +199,13 @@ var ShortestPathDialog = function (_React$Component) {
                                 "p",
                                 { className: "suggestedArtist",
                                     onClick: function onClick() {
-                                        _this3.processSuggestionClick(artist, false);
+                                        _this4.processSuggestionClick(artist, false);
                                     },
                                     onMouseEnter: function onMouseEnter() {
-                                        _this3.props.updateHoveredArtist(artist);
+                                        _this4.props.updateHoveredArtist(artist);
                                     },
                                     onMouseLeave: function onMouseLeave() {
-                                        _this3.props.updateHoveredArtist(null);
+                                        _this4.props.updateHoveredArtist(null);
                                     }
                                 },
                                 artist.name.toString()
@@ -222,20 +224,20 @@ var ShortestPathDialog = function (_React$Component) {
                         style: colorStyle,
 
                         onMouseEnter: function onMouseEnter() {
-                            if (!_this3.props.expanded) {
-                                _this3.setState({ hoverState: 1 });
+                            if (!_this4.props.expanded) {
+                                _this4.setState({ hoverState: 1 });
                             }
-                            _this3.props.updateHoverFlag(true);
+                            _this4.props.updateHoverFlag(true);
                         },
 
                         onMouseLeave: function onMouseLeave() {
-                            _this3.setState({ hoverState: 0 });
-                            _this3.props.updateHoverFlag(false);
+                            _this4.setState({ hoverState: 0 });
+                            _this4.props.updateHoverFlag(false);
                         },
 
                         onClick: function onClick() {
-                            _this3.props.clickHandler();
-                            _this3.setState({ hoverState: 0 });
+                            _this4.props.clickHandler();
+                            _this4.setState({ hoverState: 0 });
                         }
                     },
                     React.createElement(
@@ -266,10 +268,10 @@ var ShortestPathDialog = function (_React$Component) {
                                 type: "text",
                                 placeholder: "search for an artist",
                                 onInput: function onInput(e) {
-                                    _this3.processInput(e, true);
+                                    _this4.processInput(e, true);
                                 },
                                 onKeyDown: function onKeyDown(e) {
-                                    _this3.sendSubmitIfEnter(e, true);
+                                    _this4.sendSubmitIfEnter(e, true);
                                 },
                                 value: this.state.startValue
                             })
@@ -288,10 +290,10 @@ var ShortestPathDialog = function (_React$Component) {
                                 type: "text",
                                 placeholder: "search for an artist",
                                 onInput: function onInput(e) {
-                                    _this3.processInput(e, false);
+                                    _this4.processInput(e, false);
                                 },
                                 onKeyDown: function onKeyDown(e) {
-                                    _this3.sendSubmitIfEnter(e, false);
+                                    _this4.sendSubmitIfEnter(e, false);
                                 },
                                 value: this.state.endValue
                             })

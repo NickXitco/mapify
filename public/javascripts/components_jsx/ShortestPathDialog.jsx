@@ -83,7 +83,7 @@ class ShortestPathDialog extends React.Component {
         if (start && end) {
             fetch(`path/${start.id}/${end.id}`)
                 .then(res => res.json())
-                .then(path => console.log(path))
+                .then(path => this.props.updatePath(path));
         }
     }
 

@@ -39,6 +39,7 @@ var App = function (_React$Component) {
             currentSidebarState: null,
 
             spButtonExpanded: false,
+            activePath: [],
 
             showChangelog: !_this.checkVersion("0.5.3"),
             version: "0.5.3",
@@ -57,6 +58,8 @@ var App = function (_React$Component) {
 
         _this.handleEmptyClick = _this.handleEmptyClick.bind(_this);
         _this.expandSP = _this.expandSP.bind(_this);
+        _this.updatePath = _this.updatePath.bind(_this);
+
         _this.flipClearSearch = _this.flipClearSearch.bind(_this);
 
         _this.loadArtistFromUI = _this.loadArtistFromUI.bind(_this);
@@ -282,12 +285,43 @@ var App = function (_React$Component) {
                 this.setSidebarState(null, null, null);
             }
 
-            this.setState({ clearSearch: true, spButtonExpanded: false });
+            this.setState({ clearSearch: true, spButtonExpanded: false, activePath: [] });
         }
     }, {
         key: "expandSP",
         value: function expandSP() {
             this.setState({ spButtonExpanded: true });
+        }
+    }, {
+        key: "updatePath",
+        value: function updatePath(path) {
+            var newPath = [];
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
+
+            try {
+                for (var _iterator3 = path[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    var hop = _step3.value;
+
+                    newPath.push(createNewNode(hop, this.state.quadHead, this.state.nodeLookup));
+                }
+            } catch (err) {
+                _didIteratorError3 = true;
+                _iteratorError3 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                        _iterator3.return();
+                    }
+                } finally {
+                    if (_didIteratorError3) {
+                        throw _iteratorError3;
+                    }
+                }
+            }
+
+            this.setState({ activePath: newPath });
         }
     }, {
         key: "flipClearSearch",
@@ -381,7 +415,8 @@ var App = function (_React$Component) {
                     clickHandler: this.expandSP,
                     createNodesFromSuggestions: this.createNodesFromSuggestions,
                     updateHoveredArtist: this.updateHoveredArtist,
-                    getArtistFromSearch: this.getArtistFromSearch
+                    getArtistFromSearch: this.getArtistFromSearch,
+                    updatePath: this.updatePath
                 }),
                 React.createElement(ReactInfobox, {
                     artist: this.state.hoveredArtist,
@@ -390,6 +425,7 @@ var App = function (_React$Component) {
                 React.createElement(ReactSidebar, {
                     artist: this.state.clickedArtist,
                     genre: this.state.activeGenre,
+                    path: this.state.activePath,
 
                     sidebarState: this.state.currentSidebarState,
                     undoSidebarState: this.undoSidebarState,
