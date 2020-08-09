@@ -15,7 +15,6 @@ var ShortestPathDialog = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (ShortestPathDialog.__proto__ || Object.getPrototypeOf(ShortestPathDialog)).call(this, props));
 
         _this.state = {
-            expanded: false,
             tooltip: false,
             hoverState: 0
         };
@@ -29,7 +28,7 @@ var ShortestPathDialog = function (_React$Component) {
 
             var colorStyle = {};
             var borderClassName = "";
-            var expandClass = this.state.expanded ? "uiButtonOuterExpand" : "";
+            var expandClass = this.props.expanded ? "uiButtonOuterExpand" : "";
 
             var color = this.props.colorant ? this.props.colorant.colorToString() : 'white';
 
@@ -56,7 +55,7 @@ var ShortestPathDialog = function (_React$Component) {
                     style: colorStyle,
 
                     onMouseEnter: function onMouseEnter() {
-                        if (!_this2.state.expanded) {
+                        if (!_this2.props.expanded) {
                             _this2.setState({ hoverState: 1 });
                         }
                         _this2.props.updateHoverFlag(true);
@@ -68,7 +67,8 @@ var ShortestPathDialog = function (_React$Component) {
                     },
 
                     onClick: function onClick() {
-                        _this2.setState({ expanded: true, hoverState: 0 });
+                        _this2.props.clickHandler();
+                        _this2.setState({ hoverState: 0 });
                     }
                 },
                 React.createElement(

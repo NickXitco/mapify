@@ -3,7 +3,6 @@ class ShortestPathDialog extends React.Component {
         super(props);
 
         this.state = {
-            expanded: false,
             tooltip: false,
             hoverState: 0,
         }
@@ -12,7 +11,7 @@ class ShortestPathDialog extends React.Component {
     render() {
         let colorStyle = {};
         let borderClassName = "";
-        let expandClass = this.state.expanded ? "uiButtonOuterExpand" : "";
+        let expandClass = this.props.expanded ? "uiButtonOuterExpand" : "";
 
         const color = this.props.colorant ? this.props.colorant.colorToString() : 'white';
 
@@ -38,7 +37,7 @@ class ShortestPathDialog extends React.Component {
                  style={colorStyle}
 
                  onMouseEnter={() => {
-                     if (!this.state.expanded) {
+                     if (!this.props.expanded) {
                          this.setState({hoverState: 1});
                      }
                      this.props.updateHoverFlag(true);
@@ -50,7 +49,8 @@ class ShortestPathDialog extends React.Component {
                  }}
 
                  onClick={() => {
-                     this.setState({expanded: true, hoverState: 0});
+                     this.props.clickHandler();
+                     this.setState({hoverState: 0});
                  }}
             >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" className="uiButton">

@@ -26,6 +26,8 @@ class App extends React.Component {
 
             currentSidebarState: null,
 
+            spButtonExpanded: false,
+
             showChangelog: !this.checkVersion("0.5.3"),
             version: "0.5.3",
             headline: "Searching, revamped",
@@ -56,6 +58,7 @@ class App extends React.Component {
         this.redoSidebarState = this.redoSidebarState.bind(this);
 
         this.handleEmptyClick = this.handleEmptyClick.bind(this);
+        this.expandSP = this.expandSP.bind(this);
         this.flipClearSearch = this.flipClearSearch.bind(this);
 
         this.loadArtistFromUI = this.loadArtistFromUI.bind(this);
@@ -204,7 +207,11 @@ class App extends React.Component {
             this.setSidebarState(null, null, null);
         }
 
-        this.setState({clearSearch: true});
+        this.setState({clearSearch: true, spButtonExpanded: false});
+    }
+
+    expandSP() {
+        this.setState({spButtonExpanded: true});
     }
 
     flipClearSearch() {
@@ -283,7 +290,9 @@ class App extends React.Component {
 
                 <ShortestPathDialog
                     colorant={this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre}
+                    expanded={this.state.spButtonExpanded}
                     updateHoverFlag={this.updateHoverFlag}
+                    clickHandler={this.expandSP}
                 />
 
                 <ReactInfobox

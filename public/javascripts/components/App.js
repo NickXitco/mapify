@@ -38,6 +38,8 @@ var App = function (_React$Component) {
 
             currentSidebarState: null,
 
+            spButtonExpanded: false,
+
             showChangelog: !_this.checkVersion("0.5.3"),
             version: "0.5.3",
             headline: "Searching, revamped",
@@ -54,6 +56,7 @@ var App = function (_React$Component) {
         _this.redoSidebarState = _this.redoSidebarState.bind(_this);
 
         _this.handleEmptyClick = _this.handleEmptyClick.bind(_this);
+        _this.expandSP = _this.expandSP.bind(_this);
         _this.flipClearSearch = _this.flipClearSearch.bind(_this);
 
         _this.loadArtistFromUI = _this.loadArtistFromUI.bind(_this);
@@ -279,7 +282,12 @@ var App = function (_React$Component) {
                 this.setSidebarState(null, null, null);
             }
 
-            this.setState({ clearSearch: true });
+            this.setState({ clearSearch: true, spButtonExpanded: false });
+        }
+    }, {
+        key: "expandSP",
+        value: function expandSP() {
+            this.setState({ spButtonExpanded: true });
         }
     }, {
         key: "flipClearSearch",
@@ -368,7 +376,9 @@ var App = function (_React$Component) {
                 changelog,
                 React.createElement(ShortestPathDialog, {
                     colorant: this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre,
-                    updateHoverFlag: this.updateHoverFlag
+                    expanded: this.state.spButtonExpanded,
+                    updateHoverFlag: this.updateHoverFlag,
+                    clickHandler: this.expandSP
                 }),
                 React.createElement(ReactInfobox, {
                     artist: this.state.hoveredArtist,
