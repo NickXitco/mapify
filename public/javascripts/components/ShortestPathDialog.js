@@ -45,9 +45,12 @@ var ShortestPathDialog = function (_React$Component) {
                     style: colorStyle,
                     onMouseEnter: function onMouseEnter() {
                         _this2.setState({ expanded: true });
+                        _this2.props.updateHoverFlag(true);
                     },
+
                     onMouseLeave: function onMouseLeave() {
                         _this2.setState({ expanded: false });
+                        _this2.props.updateHoverFlag(false);
                     }
                 },
                 React.createElement(

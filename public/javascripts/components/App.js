@@ -367,7 +367,8 @@ var App = function (_React$Component) {
                 { className: "fullScreen" },
                 changelog,
                 React.createElement(ShortestPathDialog, {
-                    colorant: this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre
+                    colorant: this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre,
+                    updateHoverFlag: this.updateHoverFlag
                 }),
                 React.createElement(ReactInfobox, {
                     artist: this.state.hoveredArtist,

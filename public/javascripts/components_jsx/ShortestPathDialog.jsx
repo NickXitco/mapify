@@ -25,8 +25,15 @@ class ShortestPathDialog extends React.Component {
         return (
             <div className={`uiButtonOuter ${borderClassName} ${expandClass}`}
                  style={colorStyle}
-                 onMouseEnter={() => {this.setState({expanded: true})}}
-                 onMouseLeave={() => {this.setState({expanded: false})}}
+                 onMouseEnter={() => {
+                     this.setState({expanded: true});
+                     this.props.updateHoverFlag(true);
+                 }}
+
+                 onMouseLeave={() => {
+                     this.setState({expanded: false});
+                     this.props.updateHoverFlag(false);
+                 }}
             >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" className="uiButton">
                     <path d="M16 3.5L3.5 16 16 28.5 28.5 16zm2.25 15.3v-2.32H14.5a.41.41 0 00-.42.41v5a.41.41 0 01-.41.42h-2.92v-8.75a.42.42 0 01.42-.42h6.66a.41.41 0 00.42-.41v-1.92a.42.42 0 01.71-.29l4.29 4.29L19 19.1a.42.42 0 01-.75-.3z"

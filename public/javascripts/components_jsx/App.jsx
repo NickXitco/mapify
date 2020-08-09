@@ -283,6 +283,7 @@ class App extends React.Component {
 
                 <ShortestPathDialog
                     colorant={this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre}
+                    updateHoverFlag={this.updateHoverFlag}
                 />
 
                 <ReactInfobox
