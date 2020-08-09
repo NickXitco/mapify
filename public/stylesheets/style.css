@@ -522,7 +522,7 @@ canvas {
 
   box-shadow: 0 0 10px 0 white, inset 0 0 5px 0 white;
 
-  margin: 500px;
+  margin: 350px 10px;
 
   transition: border 0.2s cubic-bezier(0.5, 1, 0.89, 1),
               box-shadow 0.2s cubic-bezier(0.5, 1, 0.89, 1),
