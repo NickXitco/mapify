@@ -531,7 +531,7 @@ canvas {
 }
 
 .uiButtonOuterExpand {
-  height: 250px;
+  height: 242px;
   width: 400px;
 }
 
@@ -570,7 +570,7 @@ h4 {
   position: static;
   display: block;
 
-  padding: 10px;
+  padding: 0 10px;
 }
 
 label {
@@ -592,6 +592,8 @@ input {
 
   position: static;
   display: block;
+
+  margin-bottom: 20px;
 }
 
 .shortestPathSearch input {
@@ -600,6 +602,22 @@ input {
 
 
 .shortestPathForm label {
-  margin-top: 20px;
   font-weight: 500;
+}
+
+.mapifyButton {
+  padding: 10px;
+  background: none;
+  color: white;
+  border-top: solid white thin;
+  width: 100%;
+  white-space: nowrap;
+}
+
+.mapifyButton:hover {
+  box-shadow: inset 0 0 5px 0 white;
+}
+
+.mapifyButton:active {
+  box-shadow: inset 0 0 15px 0 white;
 }

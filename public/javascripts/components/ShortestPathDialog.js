@@ -51,80 +51,84 @@ var ShortestPathDialog = function (_React$Component) {
 
             return React.createElement(
                 "div",
-                { className: "uiButtonOuter " + borderClassName + " " + expandClass,
-                    style: colorStyle,
-
-                    onMouseEnter: function onMouseEnter() {
-                        if (!_this2.props.expanded) {
-                            _this2.setState({ hoverState: 1 });
-                        }
-                        _this2.props.updateHoverFlag(true);
-                    },
-
-                    onMouseLeave: function onMouseLeave() {
-                        _this2.setState({ hoverState: 0 });
-                        _this2.props.updateHoverFlag(false);
-                    },
-
-                    onClick: function onClick() {
-                        _this2.props.clickHandler();
-                        _this2.setState({ hoverState: 0 });
-                    }
-                },
-                React.createElement(
-                    "svg",
-                    { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 32 32", className: "uiButton" },
-                    React.createElement("path", { d: "M16 3.5L3.5 16 16 28.5 28.5 16zm2.25 15.3v-2.32H14.5a.41.41 0 00-.42.41v5a.41.41 0 01-.41.42h-2.92v-8.75a.42.42 0 01.42-.42h6.66a.41.41 0 00.42-.41v-1.92a.42.42 0 01.71-.29l4.29 4.29L19 19.1a.42.42 0 01-.75-.3z",
-                        className: "uiButtonPath"
-                    })
-                ),
-                React.createElement(
-                    "h4",
-                    { className: "uiButtonTitle" },
-                    "SHORTEST PATH"
-                ),
+                null,
                 React.createElement(
                     "div",
-                    { className: "shortestPathForm" },
+                    { className: "uiButtonOuter " + borderClassName + " " + expandClass,
+                        style: colorStyle,
+
+                        onMouseEnter: function onMouseEnter() {
+                            if (!_this2.props.expanded) {
+                                _this2.setState({ hoverState: 1 });
+                            }
+                            _this2.props.updateHoverFlag(true);
+                        },
+
+                        onMouseLeave: function onMouseLeave() {
+                            _this2.setState({ hoverState: 0 });
+                            _this2.props.updateHoverFlag(false);
+                        },
+
+                        onClick: function onClick() {
+                            _this2.props.clickHandler();
+                            _this2.setState({ hoverState: 0 });
+                        }
+                    },
                     React.createElement(
-                        "label",
-                        null,
-                        "START"
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "shortestPathSearch" },
-                        React.createElement("input", { className: "searchInput " + borderClassName,
-                            style: colorStyle,
-                            type: "text",
-                            placeholder: "search for an artist",
-                            onInput: this.processInput,
-                            onKeyDown: this.sendSubmitIfEnter,
-                            value: this.state.value
+                        "svg",
+                        { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 32 32", className: "uiButton" },
+                        React.createElement("path", { d: "M16 3.5L3.5 16 16 28.5 28.5 16zm2.25 15.3v-2.32H14.5a.41.41 0 00-.42.41v5a.41.41 0 01-.41.42h-2.92v-8.75a.42.42 0 01.42-.42h6.66a.41.41 0 00.42-.41v-1.92a.42.42 0 01.71-.29l4.29 4.29L19 19.1a.42.42 0 01-.75-.3z",
+                            className: "uiButtonPath"
                         })
                     ),
                     React.createElement(
-                        "label",
-                        null,
-                        "FINISH"
+                        "h4",
+                        { className: "uiButtonTitle" },
+                        "SHORTEST PATH"
                     ),
                     React.createElement(
                         "div",
-                        { className: "shortestPathSearch" },
-                        React.createElement("input", { className: "searchInput " + borderClassName,
-                            style: colorStyle,
-                            type: "text",
-                            placeholder: "search for an artist",
-                            onInput: this.processInput,
-                            onKeyDown: this.sendSubmitIfEnter,
-                            value: this.state.value
-                        })
+                        { className: "shortestPathForm" },
+                        React.createElement(
+                            "label",
+                            null,
+                            "START"
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "shortestPathSearch" },
+                            React.createElement("input", { className: "searchInput " + borderClassName,
+                                style: colorStyle,
+                                type: "text",
+                                placeholder: "search for an artist",
+                                onInput: this.processInput,
+                                onKeyDown: this.sendSubmitIfEnter,
+                                value: this.state.value
+                            })
+                        ),
+                        React.createElement(
+                            "label",
+                            null,
+                            "FINISH"
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "shortestPathSearch" },
+                            React.createElement("input", { className: "searchInput " + borderClassName,
+                                style: colorStyle,
+                                type: "text",
+                                placeholder: "search for an artist",
+                                onInput: this.processInput,
+                                onKeyDown: this.sendSubmitIfEnter,
+                                value: this.state.value
+                            })
+                        )
+                    ),
+                    React.createElement(
+                        "button",
+                        { className: "mapifyButton" },
+                        "GO"
                     )
-                ),
-                React.createElement(
-                    "button",
-                    null,
-                    "Go"
                 )
             );
         }
