@@ -531,7 +531,7 @@ canvas {
 }
 
 .uiButtonOuterExpand {
-  height: 200px;
+  height: 250px;
   width: 400px;
 }
 
@@ -543,6 +543,8 @@ canvas {
   width: 32px;
   height: 32px;
   padding: 4px;
+
+  position: static;
 }
 
 .uiButtonPath {
@@ -550,7 +552,7 @@ canvas {
 }
 
 .uiButtonTitle {
-  width: 384px;
+  width: 344px;
   height: 32px;
   padding: 4px;
   display: inline-block;
@@ -562,4 +564,42 @@ canvas {
 h4 {
   font-size: 24px;
   font-weight: 600;
+}
+
+.shortestPathForm {
+  position: static;
+  display: block;
+
+  padding: 10px;
+}
+
+label {
+  position: static;
+  display: block;
+}
+
+input {
+  position: static;
+  display: block;
+}
+
+
+.shortestPathSearch {
+  width: 300px;
+  height: 34px;
+
+  padding: 4px;
+
+  position: static;
+  display: block;
+}
+
+.shortestPathSearch input {
+  width: 300px;
+}
+
+
+.shortestPathForm label {
+  margin-top: 20px;
+  font-weight: 500;
 }

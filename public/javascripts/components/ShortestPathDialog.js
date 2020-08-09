@@ -15,7 +15,8 @@ var ShortestPathDialog = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (ShortestPathDialog.__proto__ || Object.getPrototypeOf(ShortestPathDialog)).call(this, props));
 
         _this.state = {
-            expanded: false
+            expanded: false,
+            tooltip: false
         };
         return _this;
     }
@@ -60,6 +61,49 @@ var ShortestPathDialog = function (_React$Component) {
                     "h4",
                     { className: "uiButtonTitle" },
                     "SHORTEST PATH"
+                ),
+                React.createElement(
+                    "div",
+                    { className: "shortestPathForm" },
+                    React.createElement(
+                        "label",
+                        null,
+                        "START"
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "shortestPathSearch" },
+                        React.createElement("input", { className: "searchInput " + borderClassName,
+                            style: colorStyle,
+                            type: "text",
+                            placeholder: "search for an artist",
+                            onInput: this.processInput,
+                            onKeyDown: this.sendSubmitIfEnter,
+                            value: this.state.value
+                        })
+                    ),
+                    React.createElement(
+                        "label",
+                        null,
+                        "FINISH"
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "shortestPathSearch" },
+                        React.createElement("input", { className: "searchInput " + borderClassName,
+                            style: colorStyle,
+                            type: "text",
+                            placeholder: "search for an artist",
+                            onInput: this.processInput,
+                            onKeyDown: this.sendSubmitIfEnter,
+                            value: this.state.value
+                        })
+                    )
+                ),
+                React.createElement(
+                    "button",
+                    null,
+                    "Go"
                 )
             );
         }

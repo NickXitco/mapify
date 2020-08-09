@@ -3,7 +3,8 @@ class ShortestPathDialog extends React.Component {
         super(props);
 
         this.state = {
-            expanded: false
+            expanded: false,
+            tooltip: false
         }
     }
 
@@ -36,6 +37,33 @@ class ShortestPathDialog extends React.Component {
                 <h4 className="uiButtonTitle">
                     SHORTEST PATH
                 </h4>
+
+                <div className="shortestPathForm">
+                    <label>START</label>
+                    <div className={"shortestPathSearch"}>
+                        <input className={`searchInput ${borderClassName}`}
+                               style={colorStyle}
+                               type="text"
+                               placeholder="search for an artist"
+                               onInput={this.processInput}
+                               onKeyDown={this.sendSubmitIfEnter}
+                               value={this.state.value}
+                        />
+                    </div>
+                    <label>FINISH</label>
+                    <div className={"shortestPathSearch"}>
+                        <input className={`searchInput ${borderClassName}`}
+                               style={colorStyle}
+                               type="text"
+                               placeholder="search for an artist"
+                               onInput={this.processInput}
+                               onKeyDown={this.sendSubmitIfEnter}
+                               value={this.state.value}
+                        />
+                    </div>
+                </div>
+
+                <button>Go</button>
             </div>
         )
     }
