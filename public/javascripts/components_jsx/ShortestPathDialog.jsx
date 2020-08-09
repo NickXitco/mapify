@@ -4,7 +4,8 @@ class ShortestPathDialog extends React.Component {
 
         this.state = {
             expanded: false,
-            tooltip: false
+            tooltip: false,
+            hoverState: 0,
         }
     }
 
@@ -13,26 +14,43 @@ class ShortestPathDialog extends React.Component {
         let borderClassName = "";
         let expandClass = this.state.expanded ? "uiButtonOuterExpand" : "";
 
-        if (this.props.colorant) {
-            colorStyle = {
-                borderColor: this.props.colorant.colorToString(),
-                boxShadow: `0 0 10px 0 ${this.props.colorant.colorToString()}, inset 0 0 5px 0 ${this.props.colorant.colorToString()}`
-            }
-        } else {
-            borderClassName = "searchBox-white";
+        const color = this.props.colorant ? this.props.colorant.colorToString() : 'white';
+
+        switch (this.state.hoverState) {
+            case 0:
+                colorStyle = {
+                    borderColor: color,
+                    boxShadow: `0 0 10px 0 ${color}, inset 0 0 5px 0 ${color}`
+                }
+                break;
+            case 1:
+                colorStyle = {
+                    borderColor: color,
+                    boxShadow: `0 0 15px 0 ${color}, inset 0 0 10px 0 ${color}`
+                }
+                break;
         }
+
+        console.log(this.state.hoverState);
 
         return (
             <div className={`uiButtonOuter ${borderClassName} ${expandClass}`}
                  style={colorStyle}
+
                  onMouseEnter={() => {
-                     this.setState({expanded: true});
+                     if (!this.state.expanded) {
+                         this.setState({hoverState: 1});
+                     }
                      this.props.updateHoverFlag(true);
                  }}
 
                  onMouseLeave={() => {
-                     this.setState({expanded: false});
+                     this.setState({hoverState: 0});
                      this.props.updateHoverFlag(false);
+                 }}
+
+                 onClick={() => {
+                     this.setState({expanded: true, hoverState: 0});
                  }}
             >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" className="uiButton">

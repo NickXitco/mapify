@@ -524,8 +524,8 @@ canvas {
 
   margin: 500px;
 
-  transition: border 0.6s cubic-bezier(0.5, 1, 0.89, 1),
-              box-shadow 0.6s cubic-bezier(0.5, 1, 0.89, 1),
+  transition: border 0.2s cubic-bezier(0.5, 1, 0.89, 1),
+              box-shadow 0.2s cubic-bezier(0.5, 1, 0.89, 1),
               width 0.6s cubic-bezier(0.5, 1, 0.89, 1),
               height 0.6s cubic-bezier(0.5, 1, 0.89, 1);
 }

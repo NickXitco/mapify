@@ -16,7 +16,8 @@ var ShortestPathDialog = function (_React$Component) {
 
         _this.state = {
             expanded: false,
-            tooltip: false
+            tooltip: false,
+            hoverState: 0
         };
         return _this;
     }
@@ -30,27 +31,44 @@ var ShortestPathDialog = function (_React$Component) {
             var borderClassName = "";
             var expandClass = this.state.expanded ? "uiButtonOuterExpand" : "";
 
-            if (this.props.colorant) {
-                colorStyle = {
-                    borderColor: this.props.colorant.colorToString(),
-                    boxShadow: "0 0 10px 0 " + this.props.colorant.colorToString() + ", inset 0 0 5px 0 " + this.props.colorant.colorToString()
-                };
-            } else {
-                borderClassName = "searchBox-white";
+            var color = this.props.colorant ? this.props.colorant.colorToString() : 'white';
+
+            switch (this.state.hoverState) {
+                case 0:
+                    colorStyle = {
+                        borderColor: color,
+                        boxShadow: "0 0 10px 0 " + color + ", inset 0 0 5px 0 " + color
+                    };
+                    break;
+                case 1:
+                    colorStyle = {
+                        borderColor: color,
+                        boxShadow: "0 0 15px 0 " + color + ", inset 0 0 10px 0 " + color
+                    };
+                    break;
             }
+
+            console.log(this.state.hoverState);
 
             return React.createElement(
                 "div",
                 { className: "uiButtonOuter " + borderClassName + " " + expandClass,
                     style: colorStyle,
+
                     onMouseEnter: function onMouseEnter() {
-                        _this2.setState({ expanded: true });
+                        if (!_this2.state.expanded) {
+                            _this2.setState({ hoverState: 1 });
+                        }
                         _this2.props.updateHoverFlag(true);
                     },
 
                     onMouseLeave: function onMouseLeave() {
-                        _this2.setState({ expanded: false });
+                        _this2.setState({ hoverState: 0 });
                         _this2.props.updateHoverFlag(false);
+                    },
+
+                    onClick: function onClick() {
+                        _this2.setState({ expanded: true, hoverState: 0 });
                     }
                 },
                 React.createElement(
