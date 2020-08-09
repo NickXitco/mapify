@@ -5,10 +5,106 @@ class ShortestPathDialog extends React.Component {
         this.state = {
             tooltip: false,
             hoverState: 0,
+
+            startValue: "",
+            endValue: "",
+            startSuggestions: [],
+            endSuggestions: [],
+
+            startArtist: null,
+            endArtist: null,
+        }
+
+        this.requestCounter = 0;
+        this.highestReceivedResponse = 0;
+
+        this.processInput = this.processInput.bind(this);
+        this.processSuggestions = this.processSuggestions.bind(this);
+        this.processSuggestionClick = this.processSuggestionClick.bind(this);
+
+        this.sendSubmitIfEnter = this.sendSubmitIfEnter.bind(this);
+        this.getPath = this.getPath.bind(this);
+    }
+
+    processInput(e, start) {
+        const currentInput = e.target.value.valueOf().toString();
+
+        if (start) {
+            this.setState({startValue: currentInput, startArtist: null});
+        } else {
+            this.setState({endValue: currentInput, endArtist: null});
+        }
+
+        const url = "artistSearch/" + encodeURIComponent(currentInput);
+
+        const currentCount = this.requestCounter.valueOf();
+
+        this.requestCounter++;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                //Only accept a response if it's the latest request we've gotten back
+                if (currentCount > this.highestReceivedResponse) {
+                    this.highestReceivedResponse = currentCount;
+                    this.processSuggestions(data, start);
+                }
+            });
+    }
+
+    processSuggestions(data, start) {
+        if (start) {
+            this.setState({startSuggestions: this.props.createNodesFromSuggestions(data.artists)});
+        } else {
+            this.setState({endSuggestions: this.props.createNodesFromSuggestions(data.artists)});
+        }
+    }
+
+    processSuggestionClick(artist, start) {
+        if (start) {
+            this.setState({startValue: artist.name, startArtist: artist, startSuggestions: []});
+        } else {
+            this.setState({endValue: artist.name, endArtist: artist, endSuggestions: []});
+        }
+        this.props.updateHoveredArtist(null);
+    }
+
+
+
+    sendSubmitIfEnter(e) {
+        if (e.key === "Enter") {
+            this.getPath();
+        }
+    }
+
+    getPath() {
+        const start = this.state.startArtist ? this.state.startArtist : this.state.startSuggestions.length > 0 ? this.state.startSuggestions[0] : null;
+        const end = this.state.endArtist ? this.state.endArtist : this.state.endSuggestions.length > 0 ? this.state.endSuggestions[0] : null;
+        if (start && end) {
+            fetch(`path/${start.id}/${end.id}`)
+                .then(res => res.json())
+                .then(path => console.log(path))
+        }
+    }
+
+    resetState(start) {
+        if (start) {
+            this.setState({startValue: "", startSuggestions: []});
+        } else {
+            this.setState({endValue: "", endSuggestions: []});
         }
     }
 
     render() {
+        if (this.state.startValue.length === 0 && this.state.startSuggestions.length > 0) {
+            this.resetState(true);
+        }
+
+        if (this.state.endValue.length === 0 && this.state.endSuggestions.length > 0) {
+            this.resetState(false);
+        }
+
+
         let colorStyle = {};
         let borderClassName = "";
         let expandClass = this.props.expanded ? "uiButtonOuterExpand" : "";
@@ -30,7 +126,47 @@ class ShortestPathDialog extends React.Component {
                 break;
         }
 
-        console.log(this.state.hoverState);
+        let startArtistsList, endArtistsList;
+
+        if (this.state.startSuggestions.length > 0) {
+            startArtistsList = (
+                <ul className={"suggestions"}>
+                    {this.state.startSuggestions.map(artist =>
+                        <li className={"suggestion"}
+                            key={artist.id.toString()}
+                        >
+                            <p className={"suggestedArtist"}
+                               onClick={() => {this.processSuggestionClick(artist, true)}}
+                               onMouseEnter={() => {this.props.updateHoveredArtist(artist)}}
+                               onMouseLeave={() => {this.props.updateHoveredArtist(null)}}
+                            >
+                                {artist.name.toString()}
+                            </p>
+                        </li>
+                    )}
+                </ul>
+            );
+        }
+
+        if (this.state.endSuggestions.length > 0) {
+            endArtistsList = (
+                <ul className={"suggestions"}>
+                    {this.state.endSuggestions.map(artist =>
+                        <li className={"suggestion"}
+                            key={artist.id.toString()}
+                        >
+                            <p className={"suggestedArtist"}
+                               onClick={() => {this.processSuggestionClick(artist, false)}}
+                               onMouseEnter={() => {this.props.updateHoveredArtist(artist)}}
+                               onMouseLeave={() => {this.props.updateHoveredArtist(null)}}
+                            >
+                                {artist.name.toString()}
+                            </p>
+                        </li>
+                    )}
+                </ul>
+            );
+        }
 
         return (
             <div>
@@ -71,25 +207,31 @@ class ShortestPathDialog extends React.Component {
                                    style={colorStyle}
                                    type="text"
                                    placeholder="search for an artist"
-                                   onInput={this.processInput}
-                                   onKeyDown={this.sendSubmitIfEnter}
-                                   value={this.state.value}
+                                   onInput={(e) => {this.processInput(e, true)}}
+                                   onKeyDown={(e) => {this.sendSubmitIfEnter(e, true)}}
+                                   value={this.state.startValue}
                             />
                         </div>
-                        <label>FINISH</label>
+                        {startArtistsList}
+                        <label>END</label>
                         <div className={"shortestPathSearch"}>
                             <input className={`searchInput ${borderClassName}`}
                                    style={colorStyle}
                                    type="text"
                                    placeholder="search for an artist"
-                                   onInput={this.processInput}
-                                   onKeyDown={this.sendSubmitIfEnter}
-                                   value={this.state.value}
+                                   onInput={(e) => {this.processInput(e, false)}}
+                                   onKeyDown={(e) => {this.sendSubmitIfEnter(e, false)}}
+                                   value={this.state.endValue}
                             />
                         </div>
+                        {endArtistsList}
                     </div>
 
-                    <button className="mapifyButton">GO</button>
+                    <button className="mapifyButton"
+                            onClick={this.getPath}
+                    >
+                        GO
+                    </button>
                 </div>
             </div>
         )

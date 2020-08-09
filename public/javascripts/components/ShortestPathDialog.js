@@ -16,15 +16,118 @@ var ShortestPathDialog = function (_React$Component) {
 
         _this.state = {
             tooltip: false,
-            hoverState: 0
+            hoverState: 0,
+
+            startValue: "",
+            endValue: "",
+            startSuggestions: [],
+            endSuggestions: [],
+
+            startArtist: null,
+            endArtist: null
         };
+
+        _this.requestCounter = 0;
+        _this.highestReceivedResponse = 0;
+
+        _this.processInput = _this.processInput.bind(_this);
+        _this.processSuggestions = _this.processSuggestions.bind(_this);
+        _this.processSuggestionClick = _this.processSuggestionClick.bind(_this);
+
+        _this.sendSubmitIfEnter = _this.sendSubmitIfEnter.bind(_this);
+        _this.getPath = _this.getPath.bind(_this);
         return _this;
     }
 
     _createClass(ShortestPathDialog, [{
+        key: "processInput",
+        value: function processInput(e, start) {
+            var _this2 = this;
+
+            var currentInput = e.target.value.valueOf().toString();
+
+            if (start) {
+                this.setState({ startValue: currentInput, startArtist: null });
+            } else {
+                this.setState({ endValue: currentInput, endArtist: null });
+            }
+
+            var url = "artistSearch/" + encodeURIComponent(currentInput);
+
+            var currentCount = this.requestCounter.valueOf();
+
+            this.requestCounter++;
+
+            fetch(url).then(function (response) {
+                return response.json();
+            }).then(function (data) {
+                //Only accept a response if it's the latest request we've gotten back
+                if (currentCount > _this2.highestReceivedResponse) {
+                    _this2.highestReceivedResponse = currentCount;
+                    _this2.processSuggestions(data, start);
+                }
+            });
+        }
+    }, {
+        key: "processSuggestions",
+        value: function processSuggestions(data, start) {
+            if (start) {
+                this.setState({ startSuggestions: this.props.createNodesFromSuggestions(data.artists) });
+            } else {
+                this.setState({ endSuggestions: this.props.createNodesFromSuggestions(data.artists) });
+            }
+        }
+    }, {
+        key: "processSuggestionClick",
+        value: function processSuggestionClick(artist, start) {
+            if (start) {
+                this.setState({ startValue: artist.name, startArtist: artist, startSuggestions: [] });
+            } else {
+                this.setState({ endValue: artist.name, endArtist: artist, endSuggestions: [] });
+            }
+            this.props.updateHoveredArtist(null);
+        }
+    }, {
+        key: "sendSubmitIfEnter",
+        value: function sendSubmitIfEnter(e) {
+            if (e.key === "Enter") {
+                this.getPath();
+            }
+        }
+    }, {
+        key: "getPath",
+        value: function getPath() {
+            var start = this.state.startArtist ? this.state.startArtist : this.state.startSuggestions.length > 0 ? this.state.startSuggestions[0] : null;
+            var end = this.state.endArtist ? this.state.endArtist : this.state.endSuggestions.length > 0 ? this.state.endSuggestions[0] : null;
+            if (start && end) {
+                fetch("path/" + start.id + "/" + end.id).then(function (res) {
+                    return res.json();
+                }).then(function (path) {
+                    return console.log(path);
+                });
+            }
+        }
+    }, {
+        key: "resetState",
+        value: function resetState(start) {
+            if (start) {
+                this.setState({ startValue: "", startSuggestions: [] });
+            } else {
+                this.setState({ endValue: "", endSuggestions: [] });
+            }
+        }
+    }, {
         key: "render",
         value: function render() {
-            var _this2 = this;
+            var _this3 = this;
+
+            if (this.state.startValue.length === 0 && this.state.startSuggestions.length > 0) {
+                this.resetState(true);
+            }
+
+            if (this.state.endValue.length === 0 && this.state.endSuggestions.length > 0) {
+                this.resetState(false);
+            }
 
             var colorStyle = {};
             var borderClassName = "";
@@ -47,7 +150,68 @@ var ShortestPathDialog = function (_React$Component) {
                     break;
             }
 
-            console.log(this.state.hoverState);
+            var startArtistsList = void 0,
+                endArtistsList = void 0;
+
+            if (this.state.startSuggestions.length > 0) {
+                startArtistsList = React.createElement(
+                    "ul",
+                    { className: "suggestions" },
+                    this.state.startSuggestions.map(function (artist) {
+                        return React.createElement(
+                            "li",
+                            { className: "suggestion",
+                                key: artist.id.toString()
+                            },
+                            React.createElement(
+                                "p",
+                                { className: "suggestedArtist",
+                                    onClick: function onClick() {
+                                        _this3.processSuggestionClick(artist, true);
+                                    },
+                                    onMouseEnter: function onMouseEnter() {
+                                        _this3.props.updateHoveredArtist(artist);
+                                    },
+                                    onMouseLeave: function onMouseLeave() {
+                                        _this3.props.updateHoveredArtist(null);
+                                    }
+                                },
+                                artist.name.toString()
+                            )
+                        );
+                    })
+                );
+            }
+
+            if (this.state.endSuggestions.length > 0) {
+                endArtistsList = React.createElement(
+                    "ul",
+                    { className: "suggestions" },
+                    this.state.endSuggestions.map(function (artist) {
+                        return React.createElement(
+                            "li",
+                            { className: "suggestion",
+                                key: artist.id.toString()
+                            },
+                            React.createElement(
+                                "p",
+                                { className: "suggestedArtist",
+                                    onClick: function onClick() {
+                                        _this3.processSuggestionClick(artist, false);
+                                    },
+                                    onMouseEnter: function onMouseEnter() {
+                                        _this3.props.updateHoveredArtist(artist);
+                                    },
+                                    onMouseLeave: function onMouseLeave() {
+                                        _this3.props.updateHoveredArtist(null);
+                                    }
+                                },
+                                artist.name.toString()
+                            )
+                        );
+                    })
+                );
+            }
 
             return React.createElement(
                 "div",
@@ -58,20 +222,20 @@ var ShortestPathDialog = function (_React$Component) {
                         style: colorStyle,
 
                         onMouseEnter: function onMouseEnter() {
-                            if (!_this2.props.expanded) {
-                                _this2.setState({ hoverState: 1 });
+                            if (!_this3.props.expanded) {
+                                _this3.setState({ hoverState: 1 });
                             }
-                            _this2.props.updateHoverFlag(true);
+                            _this3.props.updateHoverFlag(true);
                         },
 
                         onMouseLeave: function onMouseLeave() {
-                            _this2.setState({ hoverState: 0 });
-                            _this2.props.updateHoverFlag(false);
+                            _this3.setState({ hoverState: 0 });
+                            _this3.props.updateHoverFlag(false);
                         },
 
                         onClick: function onClick() {
-                            _this2.props.clickHandler();
-                            _this2.setState({ hoverState: 0 });
+                            _this3.props.clickHandler();
+                            _this3.setState({ hoverState: 0 });
                         }
                     },
                     React.createElement(
@@ -101,15 +265,20 @@ var ShortestPathDialog = function (_React$Component) {
                                 style: colorStyle,
                                 type: "text",
                                 placeholder: "search for an artist",
-                                onInput: this.processInput,
-                                onKeyDown: this.sendSubmitIfEnter,
-                                value: this.state.value
+                                onInput: function onInput(e) {
+                                    _this3.processInput(e, true);
+                                },
+                                onKeyDown: function onKeyDown(e) {
+                                    _this3.sendSubmitIfEnter(e, true);
+                                },
+                                value: this.state.startValue
                             })
                         ),
+                        startArtistsList,
                         React.createElement(
                             "label",
                             null,
-                            "FINISH"
+                            "END"
                         ),
                         React.createElement(
                             "div",
@@ -118,15 +287,22 @@ var ShortestPathDialog = function (_React$Component) {
                                 style: colorStyle,
                                 type: "text",
                                 placeholder: "search for an artist",
-                                onInput: this.processInput,
-                                onKeyDown: this.sendSubmitIfEnter,
-                                value: this.state.value
+                                onInput: function onInput(e) {
+                                    _this3.processInput(e, false);
+                                },
+                                onKeyDown: function onKeyDown(e) {
+                                    _this3.sendSubmitIfEnter(e, false);
+                                },
+                                value: this.state.endValue
                             })
-                        )
+                        ),
+                        endArtistsList
                     ),
                     React.createElement(
                         "button",
-                        { className: "mapifyButton" },
+                        { className: "mapifyButton",
+                            onClick: this.getPath
+                        },
                         "GO"
                     )
                 )

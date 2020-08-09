@@ -378,7 +378,10 @@ var App = function (_React$Component) {
                     colorant: this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre,
                     expanded: this.state.spButtonExpanded,
                     updateHoverFlag: this.updateHoverFlag,
-                    clickHandler: this.expandSP
+                    clickHandler: this.expandSP,
+                    createNodesFromSuggestions: this.createNodesFromSuggestions,
+                    updateHoveredArtist: this.updateHoveredArtist,
+                    getArtistFromSearch: this.getArtistFromSearch
                 }),
                 React.createElement(ReactInfobox, {
                     artist: this.state.hoveredArtist,

@@ -293,6 +293,9 @@ class App extends React.Component {
                     expanded={this.state.spButtonExpanded}
                     updateHoverFlag={this.updateHoverFlag}
                     clickHandler={this.expandSP}
+                    createNodesFromSuggestions={this.createNodesFromSuggestions}
+                    updateHoveredArtist={this.updateHoveredArtist}
+                    getArtistFromSearch={this.getArtistFromSearch}
                 />
 
                 <ReactInfobox
