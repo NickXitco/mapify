@@ -99,6 +99,20 @@ function makeEdges(artist) {
     return edges;
 }
 
+function makeEdge(u, v) {
+    Math.seedrandom(u.id + v.id);
+    return {
+        u: u,
+        v: v,
+        cURad: Math.random() / 2,
+        cUAng: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
+        cVRad: Math.random() / 2,
+        cVAng: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
+        tMax: 0
+    };
+}
+
+
 function drawEdges(p, camera, edges, clickedArtist, hoveredArtist, uiHover) {
     for (const e of edges) {
         if (hoveredArtist === null || !uiHover) {

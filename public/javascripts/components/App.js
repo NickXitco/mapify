@@ -40,6 +40,7 @@ var App = function (_React$Component) {
 
             spButtonExpanded: false,
             activePath: [],
+            pathEdges: [],
 
             showChangelog: !_this.checkVersion("0.5.3"),
             version: "0.5.3",
@@ -285,7 +286,7 @@ var App = function (_React$Component) {
                 this.setSidebarState(null, null, null);
             }
 
-            this.setState({ clearSearch: true, spButtonExpanded: false, activePath: [] });
+            this.setState({ clearSearch: true, spButtonExpanded: false, activePath: [], pathEdges: [] });
         }
     }, {
         key: "expandSP",
@@ -324,7 +325,13 @@ var App = function (_React$Component) {
                 }
             }
 
-            this.setState({ activePath: newPath });
+            var newPathEdges = [];
+
+            for (var i = 0; i < newPath.length - 1; i++) {
+                newPathEdges.push(makeEdge(newPath[i], newPath[i + 1]));
+            }
+
+            this.setState({ activePath: newPath, pathEdges: newPathEdges });
         }
     }, {
         key: "flipClearSearch",
@@ -456,6 +463,8 @@ var App = function (_React$Component) {
                 React.createElement(P5Wrapper, {
                     hoveredArtist: this.state.hoveredArtist,
                     clickedArtist: this.state.clickedArtist,
+                    path: this.state.activePath,
+                    pathEdges: this.state.pathEdges,
 
                     genre: this.state.activeGenre,
 

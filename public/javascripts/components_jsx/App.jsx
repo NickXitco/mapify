@@ -28,6 +28,7 @@ class App extends React.Component {
 
             spButtonExpanded: false,
             activePath: [],
+            pathEdges: [],
 
             showChangelog: !this.checkVersion("0.5.3"),
             version: "0.5.3",
@@ -210,7 +211,7 @@ class App extends React.Component {
             this.setSidebarState(null, null, null);
         }
 
-        this.setState({clearSearch: true, spButtonExpanded: false, activePath: []});
+        this.setState({clearSearch: true, spButtonExpanded: false, activePath: [], pathEdges: []});
     }
 
     expandSP() {
@@ -225,7 +226,14 @@ class App extends React.Component {
             node.track = hop.track;
             newPath.push(node);
         }
-        this.setState({activePath: newPath});
+
+        const newPathEdges = [];
+
+        for (let i = 0; i < newPath.length - 1; i++) {
+            newPathEdges.push(makeEdge(newPath[i], newPath[i + 1]));
+        }
+
+        this.setState({activePath: newPath, pathEdges: newPathEdges});
     }
 
     flipClearSearch() {
@@ -351,6 +359,8 @@ class App extends React.Component {
                 <P5Wrapper
                     hoveredArtist={this.state.hoveredArtist}
                     clickedArtist={this.state.clickedArtist}
+                    path={this.state.activePath}
+                    pathEdges={this.state.pathEdges}
 
                     genre={this.state.activeGenre}
 
