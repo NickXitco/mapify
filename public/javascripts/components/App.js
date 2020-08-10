@@ -304,7 +304,10 @@ var App = function (_React$Component) {
                 for (var _iterator3 = path[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
                     var hop = _step3.value;
 
-                    newPath.push(createNewNode(hop, this.state.quadHead, this.state.nodeLookup));
+                    var node = createNewNode(hop, this.state.quadHead, this.state.nodeLookup);
+                    node.images = hop.images;
+                    node.track = hop.track;
+                    newPath.push(node);
                 }
             } catch (err) {
                 _didIteratorError3 = true;

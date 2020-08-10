@@ -220,7 +220,10 @@ class App extends React.Component {
     updatePath(path) {
         const newPath = [];
         for (const hop of path) {
-            newPath.push(createNewNode(hop, this.state.quadHead, this.state.nodeLookup));
+            const node = createNewNode(hop, this.state.quadHead, this.state.nodeLookup)
+            node.images = hop.images;
+            node.track = hop.track;
+            newPath.push(node);
         }
         this.setState({activePath: newPath});
     }

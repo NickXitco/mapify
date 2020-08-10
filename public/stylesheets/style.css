@@ -437,6 +437,23 @@ canvas {
   cursor: pointer;
 }
 
+.hopListItem {
+  font-family: montserrat, sans-serif;
+  font-size: 16px;
+  text-transform: uppercase;
+  font-weight: 200;
+  position: static;
+  padding: 5px;
+  display: inline-block;
+  width: 90%;
+}
+
+.hopListItem:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+
 .relatedArtistsSection p {
   font-size: 16px;
   text-transform: uppercase;

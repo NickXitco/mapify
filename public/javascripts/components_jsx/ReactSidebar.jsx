@@ -40,11 +40,26 @@ class ReactSidebar extends React.Component {
                     <SidebarStroke color={start.colorToString()}/>
 
                     <ArtistProfile artist={start} fontDecrement={3}/>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"
-                         style={{position: 'static', height: '50px', filter: `drop-shadow(0 0  5px ${color})`}}>
-                        <path fill={darkerColor} stroke="white" d="M16.5 28.75l10-13H21V3.25h-9v12.5H6.5l10 13z"/>
-                    </svg>
+                    <FollowersStats artist={start}/>
+                    <div style={{position: 'static',
+                        width: '100%',
+                        justifyContent: 'center',
+                        display: 'flex',
+                        height: '50px'}}>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"
+                             x="0px" y="0px"
+                             style={{position: 'static', height: '50px', filter: `drop-shadow(0 0  5px ${color})`}}>
+                            <path fill={darkerColor} stroke="white" d="M16.5 28.75l10-13H21V3.25h-9v12.5H6.5l10 13z"/>
+                        </svg>
+                    </div>
+
                     <ArtistProfile artist={end} fontDecrement={3}/>
+                    <FollowersStats artist={end} />
+
+                    <HopsList path={this.props.path}
+                              loadArtistFromUI={this.props.loadArtistFromUI}
+                              updateHoveredArtist={this.props.updateHoveredArtist}
+                              header={`Shortest Path`}/>
                 </div>
             )
         }
