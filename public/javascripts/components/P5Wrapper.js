@@ -108,7 +108,7 @@ var P5Wrapper = function (_React$Component) {
                 if (_this.props.path.length > 0) {
                     _this.darkenOpacity = darkenScene(p, _this.darkenOpacity, _this.props.camera);
                     drawNodes(p, _this.props.camera, _this.props.path);
-                    drawEdges(p, _this.props.camera, _this.props.pathEdges, _this.props.clickedArtist, _this.props.hoveredArtist, _this.props.uiHover);
+                    drawPathEdges(p, _this.props.camera, _this.props.pathEdges);
                 }
 
                 Debug.createTimingEvent("Sidebar");

@@ -123,6 +123,15 @@ function drawEdges(p, camera, edges, clickedArtist, hoveredArtist, uiHover) {
     }
 }
 
+function drawPathEdges(p, camera, edges) {
+    for (const e of edges) {
+        EdgeDrawer.drawEdge(p, camera, e);
+        if (e.tMax < 1) {
+            break;
+        }
+    }
+}
+
 async function loadArtistFromSearch(p, query, isQueryID, quadHead, nodeLookup) {
     const response = await fetch('artist/' + query + "/" + isQueryID);
     const data = await response.json();

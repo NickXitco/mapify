@@ -95,7 +95,7 @@ class P5Wrapper extends React.Component {
             if (this.props.path.length > 0) {
                 this.darkenOpacity = darkenScene(p, this.darkenOpacity, this.props.camera);
                 drawNodes(p, this.props.camera, this.props.path);
-                drawEdges(p, this.props.camera, this.props.pathEdges, this.props.clickedArtist, this.props.hoveredArtist, this.props.uiHover);
+                drawPathEdges(p, this.props.camera, this.props.pathEdges);
             }
 
             Debug.createTimingEvent("Sidebar");
