@@ -62,11 +62,15 @@ class P5Wrapper extends React.Component {
             Debug.createTimingEvent("Get Hovered Artist");
 
             if (!this.props.clickedArtist && !this.props.genre && this.props.path.length === 0) {
-                this.darkenOpacity = 0;
+                this.darken = {
+                    related: 0,
+                    genre: 0,
+                    sp: 0
+                }
             }
 
             if (this.props.genre) {
-                this.darkenOpacity = darkenScene(p, this.darkenOpacity, this.props.camera);
+                this.darken.genre = darkenScene(p, this.darken.genre, this.props.camera);
             }
 
             Debug.createTimingEvent("Darken Scene for Genre Nodes");
@@ -79,7 +83,7 @@ class P5Wrapper extends React.Component {
             Debug.createTimingEvent("Draw Genre Nodes");
 
             if (this.props.clickedArtist) {
-                this.darkenOpacity = darkenScene(p, this.darkenOpacity, this.props.camera);
+                this.darken.related = darkenScene(p, this.darken.related, this.props.camera);
             }
 
             Debug.createTimingEvent("Darken Scene for Related Nodes");
@@ -93,14 +97,14 @@ class P5Wrapper extends React.Component {
             }
 
             if (this.props.path.length > 0) {
-                this.darkenOpacity = darkenScene(p, this.darkenOpacity, this.props.camera);
+                this.darken.sp = darkenScene(p, this.darken.sp, this.props.camera);
                 drawNodes(p, this.props.camera, this.props.path);
                 drawPathEdges(p, this.props.camera, this.props.pathEdges);
             }
 
             Debug.createTimingEvent("Sidebar");
 
-            if (p.frameCount % 5 === 0) { //TODO adjust this until it feels right, or adjust it dynamically?
+            if (p.frameCount % 5 === 0) {
                 processOne(p, this.props.camera, this.props.quadHead, this.props.nodeLookup, this.loadingQuads, this.unprocessedResponses);
             }
 
@@ -180,7 +184,13 @@ class P5Wrapper extends React.Component {
         this.props.setCanvas(new p5(this.Sketch, this.myRef.current));
 
         this.clickedLoading = false;
-        this.darkenOpacity = 0;
+
+        this.darken = {
+            related: 0,
+            genre: 0,
+            sp: 0
+        }
+
 
         this.unprocessedResponses = [];
         this.unloadedQuads = new Set();

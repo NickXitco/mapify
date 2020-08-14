@@ -15,7 +15,7 @@ async function loadInitialQuads(loadingQuads, unprocessedResponses) {
 function darkenScene(p, darkenOpacity, camera) {
     p.push();
     p.noStroke();
-    p.fill(p.color(0, Eases.easeOutQuart(darkenOpacity) * 180));
+    p.fill(p.color(0, Eases.easeOutQuart(darkenOpacity) * 200));
     p.rectMode(p.RADIUS);
     p.rect(camera.x, -camera.y, camera.width / 2, camera.height / 2);
     p.pop();
