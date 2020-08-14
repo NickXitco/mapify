@@ -183,7 +183,7 @@ class App extends React.Component {
 
                 const nodes = new Set(nodesList);
 
-                const newGenre = new Genre(name, nodes, r, g, b);
+                const newGenre = new Genre(name, nodes, r, g, b, 0.75);
                 const bubble = newGenre.bubble;
                 const camWidth = Math.min(5000, bubble.radius * 4);
 
@@ -232,6 +232,12 @@ class App extends React.Component {
         for (let i = 0; i < newPath.length - 1; i++) {
             newPathEdges.push(makeEdge(newPath[i], newPath[i + 1]));
         }
+
+        const fakeGenre = new Genre('sp', new Set(newPath), 0, 0, 0, 1);
+        const bubble = fakeGenre.bubble;
+        const camWidth = Math.min(5000, bubble.radius * 4);
+        this.state.camera.setCameraMove(bubble.center.x, bubble.center.y,
+            this.state.camera.getZoomFromWidth(camWidth), 45);
 
         this.setState({activePath: newPath, pathEdges: newPathEdges});
     }

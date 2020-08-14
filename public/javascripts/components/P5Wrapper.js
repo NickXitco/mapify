@@ -75,11 +75,15 @@ var P5Wrapper = function (_React$Component) {
                 Debug.createTimingEvent("Get Hovered Artist");
 
                 if (!_this.props.clickedArtist && !_this.props.genre && _this.props.path.length === 0) {
-                    _this.darkenOpacity = 0;
+                    _this.darken = {
+                        related: 0,
+                        genre: 0,
+                        sp: 0
+                    };
                 }
 
                 if (_this.props.genre) {
-                    _this.darkenOpacity = darkenScene(p, _this.darkenOpacity, _this.props.camera);
+                    _this.darken.genre = darkenScene(p, _this.darken.genre, _this.props.camera);
                 }
 
                 Debug.createTimingEvent("Darken Scene for Genre Nodes");
@@ -92,7 +96,7 @@ var P5Wrapper = function (_React$Component) {
                 Debug.createTimingEvent("Draw Genre Nodes");
 
                 if (_this.props.clickedArtist) {
-                    _this.darkenOpacity = darkenScene(p, _this.darkenOpacity, _this.props.camera);
+                    _this.darken.related = darkenScene(p, _this.darken.related, _this.props.camera);
                 }
 
                 Debug.createTimingEvent("Darken Scene for Related Nodes");
@@ -106,7 +110,7 @@ var P5Wrapper = function (_React$Component) {
                 }
 
                 if (_this.props.path.length > 0) {
-                    _this.darkenOpacity = darkenScene(p, _this.darkenOpacity, _this.props.camera);
+                    _this.darken.sp = darkenScene(p, _this.darken.sp, _this.props.camera);
                     drawNodes(p, _this.props.camera, _this.props.path);
                     drawPathEdges(p, _this.props.camera, _this.props.pathEdges);
                 }
@@ -114,7 +118,6 @@ var P5Wrapper = function (_React$Component) {
                 Debug.createTimingEvent("Sidebar");
 
                 if (p.frameCount % 5 === 0) {
-                    //TODO adjust this until it feels right, or adjust it dynamically?
                     processOne(p, _this.props.camera, _this.props.quadHead, _this.props.nodeLookup, _this.loadingQuads, _this.unprocessedResponses);
                 }
 
@@ -201,7 +204,12 @@ var P5Wrapper = function (_React$Component) {
             this.props.setCanvas(new p5(this.Sketch, this.myRef.current));
 
             this.clickedLoading = false;
-            this.darkenOpacity = 0;
+
+            this.darken = {
+                related: 0,
+                genre: 0,
+                sp: 0
+            };
 
             this.unprocessedResponses = [];
             this.unloadedQuads = new Set();

@@ -256,7 +256,7 @@ var App = function (_React$Component) {
 
                 var nodes = new Set(nodesList);
 
-                var newGenre = new Genre(name, nodes, r, g, b);
+                var newGenre = new Genre(name, nodes, r, g, b, 0.75);
                 var bubble = newGenre.bubble;
                 var camWidth = Math.min(5000, bubble.radius * 4);
 
@@ -330,6 +330,11 @@ var App = function (_React$Component) {
             for (var i = 0; i < newPath.length - 1; i++) {
                 newPathEdges.push(makeEdge(newPath[i], newPath[i + 1]));
             }
+
+            var fakeGenre = new Genre('sp', new Set(newPath), 0, 0, 0, 1);
+            var bubble = fakeGenre.bubble;
+            var camWidth = Math.min(5000, bubble.radius * 4);
+            this.state.camera.setCameraMove(bubble.center.x, bubble.center.y, this.state.camera.getZoomFromWidth(camWidth), 45);
 
             this.setState({ activePath: newPath, pathEdges: newPathEdges });
         }
