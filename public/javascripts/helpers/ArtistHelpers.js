@@ -30,7 +30,7 @@ function getHoveredArtist(p, camera, clickedArtist, quadHead, genre) {
     let closestDistance = Infinity;
     for (const node of foundQuad.renderableNodes) {
         let d = Utils.dist(mP.x, mP.y, node.x, node.y);
-        if (d < node.size / 2) {
+        if (d < node.size / (5 / 3)) {
             if (d < closestDistance) {
                 closest = node;
                 closestDistance = d;
