@@ -13,6 +13,11 @@ class ShortestPathDialog extends React.Component {
 
             startArtist: null,
             endArtist: null,
+
+            startFocus: false,
+            endFocus: false,
+
+            fullyExpanded: false,
         }
 
         this.requestCounter = 0;
@@ -21,6 +26,8 @@ class ShortestPathDialog extends React.Component {
         this.processInput = this.processInput.bind(this);
         this.processSuggestions = this.processSuggestions.bind(this);
         this.processSuggestionClick = this.processSuggestionClick.bind(this);
+
+        this.expandFully = this.expandFully.bind(this);
 
         this.sendSubmitIfEnter = this.sendSubmitIfEnter.bind(this);
         this.getPath = this.getPath.bind(this);
@@ -69,7 +76,11 @@ class ShortestPathDialog extends React.Component {
         this.props.updateHoveredArtist(null);
     }
 
-
+    expandFully() {
+        if (!this.state.fullyExpanded && this.props.expanded) {
+            this.setState({fullyExpanded: true});
+        }
+    }
 
     sendSubmitIfEnter(e) {
         if (e.key === "Enter") {
@@ -86,6 +97,8 @@ class ShortestPathDialog extends React.Component {
                 .then(path => this.props.updatePath(path));
         }
     }
+
+
 
     resetState(start) {
         if (start) {
@@ -108,6 +121,11 @@ class ShortestPathDialog extends React.Component {
         let colorStyle = {};
         let borderClassName = "";
         let expandClass = this.props.expanded ? "uiButtonOuterExpand" : this.state.hoverState === 1 ? "uiButtonOuterHover" : "";
+        let fullyExpanded = this.state.fullyExpanded && this.props.expanded ? "uiButtonOuterExpanded" : "";
+
+        if (this.state.fullyExpanded && !this.props.expanded) {
+            this.setState({fullyExpanded: false});
+        }
 
         const color = this.props.colorant ? this.props.colorant.colorToString() : 'white';
 
@@ -128,7 +146,7 @@ class ShortestPathDialog extends React.Component {
 
         let startArtistsList, endArtistsList;
 
-        if (this.state.startSuggestions.length > 0) {
+        if (this.state.startSuggestions.length > 0 && this.state.startFocus) {
             startArtistsList = (
                 <ul className={"suggestions"}>
                     {this.state.startSuggestions.map(artist =>
@@ -148,7 +166,7 @@ class ShortestPathDialog extends React.Component {
             );
         }
 
-        if (this.state.endSuggestions.length > 0) {
+        if (this.state.endSuggestions.length > 0 && this.state.endFocus) {
             endArtistsList = (
                 <ul className={"suggestions"}>
                     {this.state.endSuggestions.map(artist =>
@@ -170,7 +188,7 @@ class ShortestPathDialog extends React.Component {
 
         return (
             <div>
-                <div className={`uiButtonOuter ${borderClassName} ${expandClass}`}
+                <div className={`uiButtonOuter ${borderClassName} ${expandClass} ${fullyExpanded}`}
                      style={colorStyle}
 
                      onMouseEnter={() => {
@@ -187,6 +205,7 @@ class ShortestPathDialog extends React.Component {
 
                      onClick={() => {
                          this.props.clickHandler();
+                         setTimeout(this.expandFully, 400);
                          this.setState({hoverState: 0});
                      }}
                 >
@@ -208,20 +227,30 @@ class ShortestPathDialog extends React.Component {
                                    style={colorStyle}
                                    type="text"
                                    placeholder="search for an artist"
+
                                    onInput={(e) => {this.processInput(e, true)}}
                                    onKeyDown={(e) => {this.sendSubmitIfEnter(e, true)}}
+
+                                   onFocus={() => {this.setState({startFocus: true})}}
+                                   onBlur={() => {setTimeout(() => {this.setState({startFocus: false})}, 500)}}
+
                                    value={this.state.startValue}
                             />
                         </div>
                         {startArtistsList}
-                        <label>END</label>
+                        <label style={{marginTop: '20px'}}>END</label>
                         <div className={"shortestPathSearch"}>
                             <input className={`searchInput ${borderClassName}`}
                                    style={colorStyle}
                                    type="text"
                                    placeholder="search for an artist"
+
                                    onInput={(e) => {this.processInput(e, false)}}
                                    onKeyDown={(e) => {this.sendSubmitIfEnter(e, false)}}
+
+                                   onFocus={() => {this.setState({endFocus: true})}}
+                                   onBlur={() => {setTimeout(() => {this.setState({endFocus: false})}, 500)}}
+
                                    value={this.state.endValue}
                             />
                         </div>

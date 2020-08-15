@@ -24,7 +24,12 @@ var ShortestPathDialog = function (_React$Component) {
             endSuggestions: [],
 
             startArtist: null,
-            endArtist: null
+            endArtist: null,
+
+            startFocus: false,
+            endFocus: false,
+
+            fullyExpanded: false
         };
 
         _this.requestCounter = 0;
@@ -33,6 +38,8 @@ var ShortestPathDialog = function (_React$Component) {
         _this.processInput = _this.processInput.bind(_this);
         _this.processSuggestions = _this.processSuggestions.bind(_this);
         _this.processSuggestionClick = _this.processSuggestionClick.bind(_this);
+
+        _this.expandFully = _this.expandFully.bind(_this);
 
         _this.sendSubmitIfEnter = _this.sendSubmitIfEnter.bind(_this);
         _this.getPath = _this.getPath.bind(_this);
@@ -88,6 +95,13 @@ var ShortestPathDialog = function (_React$Component) {
             this.props.updateHoveredArtist(null);
         }
     }, {
+        key: "expandFully",
+        value: function expandFully() {
+            if (!this.state.fullyExpanded && this.props.expanded) {
+                this.setState({ fullyExpanded: true });
+            }
+        }
+    }, {
         key: "sendSubmitIfEnter",
         value: function sendSubmitIfEnter(e) {
             if (e.key === "Enter") {
@@ -134,6 +148,11 @@ var ShortestPathDialog = function (_React$Component) {
             var colorStyle = {};
             var borderClassName = "";
             var expandClass = this.props.expanded ? "uiButtonOuterExpand" : this.state.hoverState === 1 ? "uiButtonOuterHover" : "";
+            var fullyExpanded = this.state.fullyExpanded && this.props.expanded ? "uiButtonOuterExpanded" : "";
+
+            if (this.state.fullyExpanded && !this.props.expanded) {
+                this.setState({ fullyExpanded: false });
+            }
 
             var color = this.props.colorant ? this.props.colorant.colorToString() : 'white';
 
@@ -155,7 +174,7 @@ var ShortestPathDialog = function (_React$Component) {
             var startArtistsList = void 0,
                 endArtistsList = void 0;
 
-            if (this.state.startSuggestions.length > 0) {
+            if (this.state.startSuggestions.length > 0 && this.state.startFocus) {
                 startArtistsList = React.createElement(
                     "ul",
                     { className: "suggestions" },
@@ -185,7 +204,7 @@ var ShortestPathDialog = function (_React$Component) {
                 );
             }
 
-            if (this.state.endSuggestions.length > 0) {
+            if (this.state.endSuggestions.length > 0 && this.state.endFocus) {
                 endArtistsList = React.createElement(
                     "ul",
                     { className: "suggestions" },
@@ -220,7 +239,7 @@ var ShortestPathDialog = function (_React$Component) {
                 null,
                 React.createElement(
                     "div",
-                    { className: "uiButtonOuter " + borderClassName + " " + expandClass,
+                    { className: "uiButtonOuter " + borderClassName + " " + expandClass + " " + fullyExpanded,
                         style: colorStyle,
 
                         onMouseEnter: function onMouseEnter() {
@@ -237,6 +256,7 @@ var ShortestPathDialog = function (_React$Component) {
 
                         onClick: function onClick() {
                             _this4.props.clickHandler();
+                            setTimeout(_this4.expandFully, 400);
                             _this4.setState({ hoverState: 0 });
                         }
                     },
@@ -267,19 +287,30 @@ var ShortestPathDialog = function (_React$Component) {
                                 style: colorStyle,
                                 type: "text",
                                 placeholder: "search for an artist",
+
                                 onInput: function onInput(e) {
                                     _this4.processInput(e, true);
                                 },
                                 onKeyDown: function onKeyDown(e) {
                                     _this4.sendSubmitIfEnter(e, true);
                                 },
+
+                                onFocus: function onFocus() {
+                                    _this4.setState({ startFocus: true });
+                                },
+                                onBlur: function onBlur() {
+                                    setTimeout(function () {
+                                        _this4.setState({ startFocus: false });
+                                    }, 500);
+                                },
+
                                 value: this.state.startValue
                             })
                         ),
                         startArtistsList,
                         React.createElement(
                             "label",
-                            null,
+                            { style: { marginTop: '20px' } },
                             "END"
                         ),
                         React.createElement(
@@ -289,12 +320,23 @@ var ShortestPathDialog = function (_React$Component) {
                                 style: colorStyle,
                                 type: "text",
                                 placeholder: "search for an artist",
+
                                 onInput: function onInput(e) {
                                     _this4.processInput(e, false);
                                 },
                                 onKeyDown: function onKeyDown(e) {
                                     _this4.sendSubmitIfEnter(e, false);
                                 },
+
+                                onFocus: function onFocus() {
+                                    _this4.setState({ endFocus: true });
+                                },
+                                onBlur: function onBlur() {
+                                    setTimeout(function () {
+                                        _this4.setState({ endFocus: false });
+                                    }, 500);
+                                },
+
                                 value: this.state.endValue
                             })
                         ),
