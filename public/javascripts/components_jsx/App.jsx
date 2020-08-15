@@ -27,8 +27,11 @@ class App extends React.Component {
             currentSidebarState: null,
 
             spButtonExpanded: false,
-            activePath: [],
-            pathEdges: [],
+
+            activePath: {
+                nodes: [],
+                edges: []
+            },
 
             showChangelog: !this.checkVersion("0.5.3"),
             version: "0.5.3",
@@ -206,13 +209,23 @@ class App extends React.Component {
      *
      */
     handleEmptyClick() {
+
+        //IF ARTIST
+            //clear artist, set genre and path to their current state,
+        //ELSE IF GENRE
+            //clear genre, set path to its current state, artist must be null
+        //ELSE IF PATH
+            //set all to null
+
+
+
         if (this.state.activeGenre && this.state.clickedArtist) {
             this.setSidebarState(null, this.state.activeGenre, null);
         } else {
             this.setSidebarState(null, null, null);
         }
 
-        this.setState({clearSearch: true, spButtonExpanded: false, activePath: [], pathEdges: []});
+        this.setState({clearSearch: true, spButtonExpanded: false, activePath: {nodes: [], edges: []}});
     }
 
     expandSP() {
@@ -240,7 +253,7 @@ class App extends React.Component {
         this.state.camera.setCameraMove(bubble.center.x, bubble.center.y,
             this.state.camera.getZoomFromWidth(camWidth), 45);
 
-        this.setState({activePath: newPath, pathEdges: newPathEdges});
+        this.setState({activePath: {nodes: newPath, edges: newPathEdges}});
     }
 
     flipClearSearch() {
@@ -354,7 +367,7 @@ class App extends React.Component {
                 <ReactSidebar
                     artist={this.state.clickedArtist}
                     genre={this.state.activeGenre}
-                    path={this.state.activePath}
+                    path={this.state.activePath.nodes}
 
                     sidebarState={this.state.currentSidebarState}
                     undoSidebarState={this.undoSidebarState}
@@ -385,7 +398,6 @@ class App extends React.Component {
                     hoveredArtist={this.state.hoveredArtist}
                     clickedArtist={this.state.clickedArtist}
                     path={this.state.activePath}
-                    pathEdges={this.state.pathEdges}
 
                     genre={this.state.activeGenre}
 

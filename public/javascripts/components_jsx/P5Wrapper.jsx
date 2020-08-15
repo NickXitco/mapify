@@ -61,7 +61,7 @@ class P5Wrapper extends React.Component {
 
             Debug.createTimingEvent("Get Hovered Artist");
 
-            if (!this.props.clickedArtist && !this.props.genre && this.props.path.length === 0) {
+            if (!this.props.clickedArtist && !this.props.genre && this.props.path.nodes.length === 0) {
                 this.darken = {
                     related: 0,
                     genre: 0,
@@ -93,12 +93,12 @@ class P5Wrapper extends React.Component {
                 Debug.createTimingEvent("Draw Related Nodes");
             }
 
-            if (this.props.path.length > 0) {
+            if (this.props.path.nodes.length > 0) {
                 this.darken.sp = darkenScene(p, this.darken.sp, this.props.camera);
 
-                drawPathEdges(p, this.props.camera, this.props.pathEdges);
+                drawPathEdges(p, this.props.camera, this.props.path.edges);
                 Debug.createTimingEvent("Draw SP Edges");
-                drawNodes(p, this.props.camera, this.props.path);
+                drawNodes(p, this.props.camera, this.props.path.nodes);
                 Debug.createTimingEvent("Draw SP Nodes");
 
             }

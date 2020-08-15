@@ -74,7 +74,7 @@ var P5Wrapper = function (_React$Component) {
 
                 Debug.createTimingEvent("Get Hovered Artist");
 
-                if (!_this.props.clickedArtist && !_this.props.genre && _this.props.path.length === 0) {
+                if (!_this.props.clickedArtist && !_this.props.genre && _this.props.path.nodes.length === 0) {
                     _this.darken = {
                         related: 0,
                         genre: 0,
@@ -105,12 +105,12 @@ var P5Wrapper = function (_React$Component) {
                     Debug.createTimingEvent("Draw Related Nodes");
                 }
 
-                if (_this.props.path.length > 0) {
+                if (_this.props.path.nodes.length > 0) {
                     _this.darken.sp = darkenScene(p, _this.darken.sp, _this.props.camera);
 
-                    drawPathEdges(p, _this.props.camera, _this.props.pathEdges);
+                    drawPathEdges(p, _this.props.camera, _this.props.path.edges);
                     Debug.createTimingEvent("Draw SP Edges");
-                    drawNodes(p, _this.props.camera, _this.props.path);
+                    drawNodes(p, _this.props.camera, _this.props.path.nodes);
                     Debug.createTimingEvent("Draw SP Nodes");
                 }
 

@@ -39,8 +39,11 @@ var App = function (_React$Component) {
             currentSidebarState: null,
 
             spButtonExpanded: false,
-            activePath: [],
-            pathEdges: [],
+
+            activePath: {
+                nodes: [],
+                edges: []
+            },
 
             showChangelog: !_this.checkVersion("0.5.3"),
             version: "0.5.3",
@@ -281,13 +284,22 @@ var App = function (_React$Component) {
     }, {
         key: "handleEmptyClick",
         value: function handleEmptyClick() {
+
+            //IF ARTIST
+            //clear artist, set genre and path to their current state,
+            //ELSE IF GENRE
+            //clear genre, set path to its current state, artist must be null
+            //ELSE IF PATH
+            //set all to null
+
+
             if (this.state.activeGenre && this.state.clickedArtist) {
                 this.setSidebarState(null, this.state.activeGenre, null);
             } else {
                 this.setSidebarState(null, null, null);
             }
 
-            this.setState({ clearSearch: true, spButtonExpanded: false, activePath: [], pathEdges: [] });
+            this.setState({ clearSearch: true, spButtonExpanded: false, activePath: { nodes: [], edges: [] } });
         }
     }, {
         key: "expandSP",
@@ -337,7 +349,7 @@ var App = function (_React$Component) {
             var camWidth = Math.min(5000, bubble.radius * 4);
             this.state.camera.setCameraMove(bubble.center.x, bubble.center.y, this.state.camera.getZoomFromWidth(camWidth), 45);
 
-            this.setState({ activePath: newPath, pathEdges: newPathEdges });
+            this.setState({ activePath: { nodes: newPath, edges: newPathEdges } });
         }
     }, {
         key: "flipClearSearch",
@@ -462,7 +474,7 @@ var App = function (_React$Component) {
                 React.createElement(ReactSidebar, {
                     artist: this.state.clickedArtist,
                     genre: this.state.activeGenre,
-                    path: this.state.activePath,
+                    path: this.state.activePath.nodes,
 
                     sidebarState: this.state.currentSidebarState,
                     undoSidebarState: this.undoSidebarState,
@@ -491,7 +503,6 @@ var App = function (_React$Component) {
                     hoveredArtist: this.state.hoveredArtist,
                     clickedArtist: this.state.clickedArtist,
                     path: this.state.activePath,
-                    pathEdges: this.state.pathEdges,
 
                     genre: this.state.activeGenre,
 
