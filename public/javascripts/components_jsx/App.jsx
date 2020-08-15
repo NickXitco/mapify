@@ -26,6 +26,14 @@ class App extends React.Component {
 
             currentSidebarState: null,
 
+            spButtonExpanded: false,
+            randomButtonExpanded: false,
+
+            activePath: {
+                nodes: [],
+                edges: []
+            },
+
             showChangelog: !this.checkVersion("0.5.3"),
             version: "0.5.3",
             headline: "Searching, revamped",
@@ -56,11 +64,15 @@ class App extends React.Component {
         this.redoSidebarState = this.redoSidebarState.bind(this);
 
         this.handleEmptyClick = this.handleEmptyClick.bind(this);
+        this.expandSP = this.expandSP.bind(this);
+        this.updatePath = this.updatePath.bind(this);
+
         this.flipClearSearch = this.flipClearSearch.bind(this);
 
         this.loadArtistFromUI = this.loadArtistFromUI.bind(this);
         this.loadArtistFromSearch = this.loadArtistFromSearch.bind(this);
         this.createNodesFromSuggestions = this.createNodesFromSuggestions.bind(this);
+        this.fetchRandomArtist = this.fetchRandomArtist.bind(this);
 
         this.updateHoveredArtist = this.updateHoveredArtist.bind(this);
         this.updateHoverPoint = this.updateHoverPoint.bind(this);
@@ -97,38 +109,43 @@ class App extends React.Component {
     //<editor-fold desc="Clicked Artist Handling">
     updateClickedArtist(artist) {
         if (artist.loaded) {
-            this.setSidebarState(artist, this.state.activeGenre, null);
+            this.setSidebarState(artist, this.state.activeGenre, null, null);
         } else if (artist.id) {
             loadArtist(this.state.p5, artist, this.state.quadHead, this.state.nodeLookup).then(() =>{
                     artist = this.state.nodeLookup[artist.id];
-                    this.setSidebarState(artist, this.state.activeGenre, null);
+                    this.setSidebarState(artist, this.state.activeGenre, null, null);
             });
         }
     }
 
-    setSidebarState(artist, genre, state) {
+    setSidebarState(artist, genre, path, state) {
         if (artist) {
             artist.edges = makeEdges(artist);
         }
 
-        if (!state && (artist || genre)) {
-            state = new SidebarState({artist: artist, genre: genre}, this.state.currentSidebarState);
+        if (!state && (artist || genre || path)) {
+            state = new SidebarState({artist: artist, genre: genre, path: path}, this.state.currentSidebarState);
         }
 
-        this.setState({clickedArtist: artist, activeGenre: genre, currentSidebarState: state});
+        this.setState({
+            clickedArtist: artist,
+            activeGenre: genre,
+            activePath: {nodes: [], edges: []},
+            currentSidebarState: state
+        });
     }
 
     undoSidebarState() {
         if (this.state.currentSidebarState && this.state.currentSidebarState.canUndo()) {
             const newSidebarState = this.state.currentSidebarState.undo();
-            this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState);
+            this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState.payload.path, newSidebarState);
         }
     }
 
     redoSidebarState() {
         if (this.state.currentSidebarState && this.state.currentSidebarState.canRedo()) {
             const newSidebarState = this.state.currentSidebarState.redo();
-            this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState);
+            this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState.payload.path, newSidebarState);
         }
     }
 
@@ -149,7 +166,7 @@ class App extends React.Component {
     createNodesFromSuggestions(data) {
         let newData = [];
         for (const node of data) {
-            newData.push(createNewNode(node,  this.state.quadHead, this.state.nodeLookup));
+            newData.push(createNewNode(node, this.state.quadHead, this.state.nodeLookup));
         }
         return newData;
     }
@@ -176,35 +193,56 @@ class App extends React.Component {
 
                 const nodes = new Set(nodesList);
 
-                const newGenre = new Genre(name, nodes, r, g, b);
+                const newGenre = new Genre(name, nodes, r, g, b, 0.75);
                 const bubble = newGenre.bubble;
                 const camWidth = Math.min(5000, bubble.radius * 4);
 
                 this.state.camera.setCameraMove(bubble.center.x, bubble.center.y,
                                                 this.state.camera.getZoomFromWidth(camWidth), 45);
 
-                this.setSidebarState(null, newGenre, null);
+                this.setSidebarState(null, newGenre, null, null);
             })
     }
 
-    /**
-     *                 artist
-     *                0     |     1
-     *          |-------------------------
-     *        0 | both null | both null
-     * genre    |--------------------------
-     *        1 | both null | artist null,
-     *          |           | genre unchanged
-     *
-     */
     handleEmptyClick() {
-        if (this.state.activeGenre && this.state.clickedArtist) {
-            this.setSidebarState(null, this.state.activeGenre, null);
+
+        if (this.state.clickedArtist) {
+            this.setSidebarState(null, this.state.activeGenre, this.state.activePath, null);
+        } else if (this.state.activeGenre) {
+            this.setSidebarState(null, null, this.state.activePath, null);
         } else {
-            this.setSidebarState(null, null, null);
+            this.setSidebarState(null, null, null, null);
         }
 
-        this.setState({clearSearch: true});
+        this.setState({clearSearch: true, spButtonExpanded: false});
+    }
+
+    expandSP() {
+        this.setState({spButtonExpanded: true});
+    }
+
+    updatePath(path) {
+        const newPath = [];
+        for (const hop of path) {
+            const node = createNewNode(hop, this.state.quadHead, this.state.nodeLookup)
+            node.images = hop.images;
+            node.track = hop.track;
+            newPath.push(node);
+        }
+
+        const newPathEdges = [];
+
+        for (let i = 0; i < newPath.length - 1; i++) {
+            newPathEdges.push(makeEdge(newPath[i], newPath[i + 1]));
+        }
+
+        const fakeGenre = new Genre('sp', new Set(newPath), 0, 0, 0, 1);
+        const bubble = fakeGenre.bubble;
+        const camWidth = Math.min(5000, bubble.radius * 4);
+        this.state.camera.setCameraMove(bubble.center.x, bubble.center.y,
+            this.state.camera.getZoomFromWidth(camWidth), 45);
+
+        this.setState({activePath: {nodes: newPath, edges: newPathEdges}});
     }
 
     flipClearSearch() {
@@ -225,6 +263,17 @@ class App extends React.Component {
         if (this.state.hoverPoint !== point) {
             this.setState({hoverPoint: point});
         }
+    }
+
+    fetchRandomArtist() {
+        fetch(`random`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                loadArtist(this.state.p5, data, this.state.quadHead, this.state.nodeLookup).then(() =>{
+                    this.loadArtistFromUI(this.state.nodeLookup[data.id]);
+                });
+            });
     }
 
     setCanvas(p5) {
@@ -261,6 +310,7 @@ class App extends React.Component {
         this.ro.observe(document.getElementById("root"));
     }
 
+
     render() {
         let changelog = null;
         if (this.state.showChangelog) {
@@ -281,6 +331,24 @@ class App extends React.Component {
             <div className={"fullScreen"}>
                 {changelog}
 
+                <ShortestPathDialog
+                    colorant={this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre}
+                    expanded={this.state.spButtonExpanded}
+                    updateHoverFlag={this.updateHoverFlag}
+                    clickHandler={this.expandSP}
+                    createNodesFromSuggestions={this.createNodesFromSuggestions}
+                    updateHoveredArtist={this.updateHoveredArtist}
+                    getArtistFromSearch={this.getArtistFromSearch}
+                    updatePath={this.updatePath}
+                />
+
+                <RandomNodeButton
+                    colorant={this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre}
+                    expanded={this.state.randomButtonExpanded}
+                    updateHoverFlag={this.updateHoverFlag}
+                    clickHandler={this.fetchRandomArtist}
+                />
+
                 <ReactInfobox
                     artist={this.state.hoveredArtist}
                     point={this.state.hoverPoint}
@@ -289,6 +357,7 @@ class App extends React.Component {
                 <ReactSidebar
                     artist={this.state.clickedArtist}
                     genre={this.state.activeGenre}
+                    path={this.state.activePath.nodes}
 
                     sidebarState={this.state.currentSidebarState}
                     undoSidebarState={this.undoSidebarState}
@@ -318,6 +387,7 @@ class App extends React.Component {
                 <P5Wrapper
                     hoveredArtist={this.state.hoveredArtist}
                     clickedArtist={this.state.clickedArtist}
+                    path={this.state.activePath}
 
                     genre={this.state.activeGenre}
 

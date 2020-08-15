@@ -14,7 +14,7 @@ class Genre {
     g;
     b;
 
-    constructor(name, nodes, r, g, b) {
+    constructor(name, nodes, r, g, b, bubbleThreshold) {
         this.name = name;
         this.nodes = nodes;
         this.r = r;
@@ -24,7 +24,7 @@ class Genre {
         this.hull = QuickHull.getHull([...nodes]);
         this.offsetHull = this.getOffsetHull(20);
         this.centroid = Genre.centroid(this.hull);
-        this.bubble = this.getBubble(.75);
+        this.bubble = this.getBubble(bubbleThreshold);
     }
 
     getBubble(percentageThreshold) {

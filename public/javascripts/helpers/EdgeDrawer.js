@@ -42,11 +42,11 @@ class EdgeDrawer {
     static runEdgeDrawer(p, camera, e, u, v, uVec, vVec, uHue, vHue, uSat, vSat) {
         let edgePoints = this.getEdgePoints(p, u, uHue, uSat, e.tMax, v, uVec, vVec, vHue, vSat);
         let finalEdgePoints = this.reduceEdgePoints(p, camera, edgePoints);
-        this.drawEdgePoints(p, finalEdgePoints);
+        this.drawEdgePoints(p, camera, finalEdgePoints);
         return finalEdgePoints.length;
     }
 
-    static drawEdgePoints(p, points) {
+    static drawEdgePoints(p, camera, points) {
         p.textSize(15);
 
         for (let i = 0; i < points.length; i++) {
@@ -63,7 +63,10 @@ class EdgeDrawer {
                 p.vertex(points[i].x, points[i].y);
             }
             p.stroke(p.color(points[i].hue, points[i].sat, 100));
-            p.strokeWeight(points[i].weight);
+
+            //Prevents edges from appearing too thin. Increasing threshold will make small lines larger, vice versa.
+            const THRESHOLD = 0.5;
+            p.strokeWeight(Math.max(points[i].weight, THRESHOLD / camera.getZoomFactor().x));
         }
     }
 

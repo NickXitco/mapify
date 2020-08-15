@@ -1,7 +1,7 @@
 const MAX_CURVE_ANGLE = 180;
 
 
-function getHoveredArtist(p, camera, clickedArtist, quadHead, genre) {
+function getHoveredArtist(p, camera, clickedArtist, quadHead, genre, path) {
     let stack = [];
     const mP = MouseEvents.getVirtualMouseCoordinates(p, camera);
     stack.push(quadHead);
@@ -30,7 +30,7 @@ function getHoveredArtist(p, camera, clickedArtist, quadHead, genre) {
     let closestDistance = Infinity;
     for (const node of foundQuad.renderableNodes) {
         let d = Utils.dist(mP.x, mP.y, node.x, node.y);
-        if (d < node.size / 2) {
+        if (d < node.size / (5 / 3)) {
             if (d < closestDistance) {
                 closest = node;
                 closestDistance = d;
@@ -48,6 +48,14 @@ function getHoveredArtist(p, camera, clickedArtist, quadHead, genre) {
 
     if (genre) {
         if (genre.nodes.has(closest)) {
+            return closest;
+        } else {
+            return null;
+        }
+    }
+
+    if (path.nodes.length > 0) {
+        if (closest in path.nodes) {
             return closest;
         } else {
             return null;
@@ -99,12 +107,35 @@ function makeEdges(artist) {
     return edges;
 }
 
+function makeEdge(u, v) {
+    Math.seedrandom(u.id + v.id);
+    return {
+        u: u,
+        v: v,
+        cURad: Math.random() / 2,
+        cUAng: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
+        cVRad: Math.random() / 2,
+        cVAng: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
+        tMax: 0
+    };
+}
+
+
 function drawEdges(p, camera, edges, clickedArtist, hoveredArtist, uiHover) {
     for (const e of edges) {
         if (hoveredArtist === null || !uiHover) {
             EdgeDrawer.drawEdge(p, camera, e);
         } else if (hoveredArtist === e.v && uiHover) {
             EdgeDrawer.drawEdge(p, camera, e);
+        }
+    }
+}
+
+function drawPathEdges(p, camera, edges) {
+    for (const e of edges) {
+        EdgeDrawer.drawEdge(p, camera, e);
+        if (e.tMax < 1) {
+            break;
         }
     }
 }

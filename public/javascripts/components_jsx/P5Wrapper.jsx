@@ -51,7 +51,7 @@ class P5Wrapper extends React.Component {
             loadUnloaded(this.unprocessedResponses, this.unloadedPQ, this.loadingQuads, this.unloadedQuads, this.props.camera);
 
             if (!this.props.uiHover) {
-                this.props.updateHoveredArtist(getHoveredArtist(p, this.props.camera, this.props.clickedArtist, this.props.quadHead, this.props.genre));
+                this.props.updateHoveredArtist(getHoveredArtist(p, this.props.camera, this.props.clickedArtist, this.props.quadHead, this.props.genre, this.props.path));
             }
 
             if (this.props.clickedArtist && !this.props.clickedArtist.loaded && !this.clickedLoading) {
@@ -61,15 +61,18 @@ class P5Wrapper extends React.Component {
 
             Debug.createTimingEvent("Get Hovered Artist");
 
-            if (!this.props.clickedArtist && !this.props.genre) {
-                this.darkenOpacity = 0;
+            if (!this.props.clickedArtist && !this.props.genre && this.props.path.nodes.length === 0) {
+                this.darken = {
+                    related: 0,
+                    genre: 0,
+                    sp: 0
+                }
             }
 
             if (this.props.genre) {
-                this.darkenOpacity = darkenScene(p, this.darkenOpacity, this.props.camera);
+                this.darken.genre = darkenScene(p, this.darken.genre, this.props.camera);
             }
 
-            Debug.createTimingEvent("Darken Scene for Genre Nodes");
 
             if (this.props.genre) {
                 this.props.genre.drawGenreFence(p);
@@ -79,10 +82,8 @@ class P5Wrapper extends React.Component {
             Debug.createTimingEvent("Draw Genre Nodes");
 
             if (this.props.clickedArtist) {
-                this.darkenOpacity = darkenScene(p, this.darkenOpacity, this.props.camera);
+                this.darken.related = darkenScene(p, this.darken.related, this.props.camera);
             }
-
-            Debug.createTimingEvent("Darken Scene for Related Nodes");
 
             if (this.props.clickedArtist && this.props.clickedArtist.loaded) {
                 drawEdges(p, this.props.camera, this.props.clickedArtist.edges, this.props.clickedArtist, this.props.hoveredArtist, this.props.uiHover);
@@ -92,9 +93,19 @@ class P5Wrapper extends React.Component {
                 Debug.createTimingEvent("Draw Related Nodes");
             }
 
+            if (this.props.path.nodes.length > 0) {
+                this.darken.sp = darkenScene(p, this.darken.sp, this.props.camera);
+
+                drawPathEdges(p, this.props.camera, this.props.path.edges);
+                Debug.createTimingEvent("Draw SP Edges");
+                drawNodes(p, this.props.camera, this.props.path.nodes);
+                Debug.createTimingEvent("Draw SP Nodes");
+
+            }
+
             Debug.createTimingEvent("Sidebar");
 
-            if (p.frameCount % 5 === 0) { //TODO adjust this until it feels right, or adjust it dynamically?
+            if (p.frameCount % 5 === 0) {
                 processOne(p, this.props.camera, this.props.quadHead, this.props.nodeLookup, this.loadingQuads, this.unprocessedResponses);
             }
 
@@ -174,7 +185,13 @@ class P5Wrapper extends React.Component {
         this.props.setCanvas(new p5(this.Sketch, this.myRef.current));
 
         this.clickedLoading = false;
-        this.darkenOpacity = 0;
+
+        this.darken = {
+            related: 0,
+            genre: 0,
+            sp: 0
+        }
+
 
         this.unprocessedResponses = [];
         this.unloadedQuads = new Set();

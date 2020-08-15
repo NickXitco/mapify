@@ -38,6 +38,14 @@ var App = function (_React$Component) {
 
             currentSidebarState: null,
 
+            spButtonExpanded: false,
+            randomButtonExpanded: false,
+
+            activePath: {
+                nodes: [],
+                edges: []
+            },
+
             showChangelog: !_this.checkVersion("0.5.3"),
             version: "0.5.3",
             headline: "Searching, revamped",
@@ -54,11 +62,15 @@ var App = function (_React$Component) {
         _this.redoSidebarState = _this.redoSidebarState.bind(_this);
 
         _this.handleEmptyClick = _this.handleEmptyClick.bind(_this);
+        _this.expandSP = _this.expandSP.bind(_this);
+        _this.updatePath = _this.updatePath.bind(_this);
+
         _this.flipClearSearch = _this.flipClearSearch.bind(_this);
 
         _this.loadArtistFromUI = _this.loadArtistFromUI.bind(_this);
         _this.loadArtistFromSearch = _this.loadArtistFromSearch.bind(_this);
         _this.createNodesFromSuggestions = _this.createNodesFromSuggestions.bind(_this);
+        _this.fetchRandomArtist = _this.fetchRandomArtist.bind(_this);
 
         _this.updateHoveredArtist = _this.updateHoveredArtist.bind(_this);
         _this.updateHoverPoint = _this.updateHoverPoint.bind(_this);
@@ -105,33 +117,38 @@ var App = function (_React$Component) {
             var _this2 = this;
 
             if (artist.loaded) {
-                this.setSidebarState(artist, this.state.activeGenre, null);
+                this.setSidebarState(artist, this.state.activeGenre, null, null);
             } else if (artist.id) {
                 loadArtist(this.state.p5, artist, this.state.quadHead, this.state.nodeLookup).then(function () {
                     artist = _this2.state.nodeLookup[artist.id];
-                    _this2.setSidebarState(artist, _this2.state.activeGenre, null);
+                    _this2.setSidebarState(artist, _this2.state.activeGenre, null, null);
                 });
             }
         }
     }, {
         key: "setSidebarState",
-        value: function setSidebarState(artist, genre, state) {
+        value: function setSidebarState(artist, genre, path, state) {
             if (artist) {
                 artist.edges = makeEdges(artist);
             }
 
-            if (!state && (artist || genre)) {
-                state = new SidebarState({ artist: artist, genre: genre }, this.state.currentSidebarState);
+            if (!state && (artist || genre || path)) {
+                state = new SidebarState({ artist: artist, genre: genre, path: path }, this.state.currentSidebarState);
             }
 
-            this.setState({ clickedArtist: artist, activeGenre: genre, currentSidebarState: state });
+            this.setState({
+                clickedArtist: artist,
+                activeGenre: genre,
+                activePath: { nodes: [], edges: [] },
+                currentSidebarState: state
+            });
         }
     }, {
         key: "undoSidebarState",
         value: function undoSidebarState() {
             if (this.state.currentSidebarState && this.state.currentSidebarState.canUndo()) {
                 var newSidebarState = this.state.currentSidebarState.undo();
-                this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState);
+                this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState.payload.path, newSidebarState);
             }
         }
     }, {
@@ -139,7 +156,7 @@ var App = function (_React$Component) {
         value: function redoSidebarState() {
             if (this.state.currentSidebarState && this.state.currentSidebarState.canRedo()) {
                 var newSidebarState = this.state.currentSidebarState.redo();
-                this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState);
+                this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState.payload.path, newSidebarState);
             }
         }
     }, {
@@ -249,37 +266,78 @@ var App = function (_React$Component) {
 
                 var nodes = new Set(nodesList);
 
-                var newGenre = new Genre(name, nodes, r, g, b);
+                var newGenre = new Genre(name, nodes, r, g, b, 0.75);
                 var bubble = newGenre.bubble;
                 var camWidth = Math.min(5000, bubble.radius * 4);
 
                 _this4.state.camera.setCameraMove(bubble.center.x, bubble.center.y, _this4.state.camera.getZoomFromWidth(camWidth), 45);
 
-                _this4.setSidebarState(null, newGenre, null);
+                _this4.setSidebarState(null, newGenre, null, null);
             });
         }
-
-        /**
-         *                 artist
-         *                0     |     1
-         *          |-------------------------
-         *        0 | both null | both null
-         * genre    |--------------------------
-         *        1 | both null | artist null,
-         *          |           | genre unchanged
-         *
-         */
-
     }, {
         key: "handleEmptyClick",
         value: function handleEmptyClick() {
-            if (this.state.activeGenre && this.state.clickedArtist) {
-                this.setSidebarState(null, this.state.activeGenre, null);
+
+            if (this.state.clickedArtist) {
+                this.setSidebarState(null, this.state.activeGenre, this.state.activePath, null);
+            } else if (this.state.activeGenre) {
+                this.setSidebarState(null, null, this.state.activePath, null);
             } else {
-                this.setSidebarState(null, null, null);
+                this.setSidebarState(null, null, null, null);
             }
 
-            this.setState({ clearSearch: true });
+            this.setState({ clearSearch: true, spButtonExpanded: false });
+        }
+    }, {
+        key: "expandSP",
+        value: function expandSP() {
+            this.setState({ spButtonExpanded: true });
+        }
+    }, {
+        key: "updatePath",
+        value: function updatePath(path) {
+            var newPath = [];
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
+
+            try {
+                for (var _iterator3 = path[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    var hop = _step3.value;
+
+                    var node = createNewNode(hop, this.state.quadHead, this.state.nodeLookup);
+                    node.images = hop.images;
+                    node.track = hop.track;
+                    newPath.push(node);
+                }
+            } catch (err) {
+                _didIteratorError3 = true;
+                _iteratorError3 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                        _iterator3.return();
+                    }
+                } finally {
+                    if (_didIteratorError3) {
+                        throw _iteratorError3;
+                    }
+                }
+            }
+
+            var newPathEdges = [];
+
+            for (var i = 0; i < newPath.length - 1; i++) {
+                newPathEdges.push(makeEdge(newPath[i], newPath[i + 1]));
+            }
+
+            var fakeGenre = new Genre('sp', new Set(newPath), 0, 0, 0, 1);
+            var bubble = fakeGenre.bubble;
+            var camWidth = Math.min(5000, bubble.radius * 4);
+            this.state.camera.setCameraMove(bubble.center.x, bubble.center.y, this.state.camera.getZoomFromWidth(camWidth), 45);
+
+            this.setState({ activePath: { nodes: newPath, edges: newPathEdges } });
         }
     }, {
         key: "flipClearSearch",
@@ -305,6 +363,20 @@ var App = function (_React$Component) {
             }
         }
     }, {
+        key: "fetchRandomArtist",
+        value: function fetchRandomArtist() {
+            var _this5 = this;
+
+            fetch("random").then(function (response) {
+                return response.json();
+            }).then(function (data) {
+                console.log(data);
+                loadArtist(_this5.state.p5, data, _this5.state.quadHead, _this5.state.nodeLookup).then(function () {
+                    _this5.loadArtistFromUI(_this5.state.nodeLookup[data.id]);
+                });
+            });
+        }
+    }, {
         key: "setCanvas",
         value: function setCanvas(p5) {
             this.setState({ p5: p5 });
@@ -313,10 +385,10 @@ var App = function (_React$Component) {
     }, {
         key: "setCamera",
         value: function setCamera(camera) {
-            var _this5 = this;
+            var _this6 = this;
 
             this.setState({ camera: camera }, function () {
-                _this5.state.camera.zoomCamera({ x: 0, y: 0 });
+                _this6.state.camera.zoomCamera({ x: 0, y: 0 });
             });
         }
     }, {
@@ -327,7 +399,7 @@ var App = function (_React$Component) {
     }, {
         key: "initializeResizeObserver",
         value: function initializeResizeObserver() {
-            var _this6 = this;
+            var _this7 = this;
 
             this.ro = new ResizeObserver(function (entries) {
                 if (entries.length !== 1) {
@@ -336,11 +408,11 @@ var App = function (_React$Component) {
                     var cr = entries[0].contentRect;
                     var w = cr.width;
                     var h = cr.height;
-                    if (_this6.state.p5) {
-                        _this6.state.p5.resizeCanvas(w, h);
+                    if (_this7.state.p5) {
+                        _this7.state.p5.resizeCanvas(w, h);
                     }
-                    if (_this6.state.camera) {
-                        _this6.state.camera.zoomCamera({ x: _this6.state.camera.x, y: _this6.state.camera.y });
+                    if (_this7.state.camera) {
+                        _this7.state.camera.zoomCamera({ x: _this7.state.camera.x, y: _this7.state.camera.y });
                     }
                 }
             });
@@ -366,6 +438,22 @@ var App = function (_React$Component) {
                 "div",
                 { className: "fullScreen" },
                 changelog,
+                React.createElement(ShortestPathDialog, {
+                    colorant: this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre,
+                    expanded: this.state.spButtonExpanded,
+                    updateHoverFlag: this.updateHoverFlag,
+                    clickHandler: this.expandSP,
+                    createNodesFromSuggestions: this.createNodesFromSuggestions,
+                    updateHoveredArtist: this.updateHoveredArtist,
+                    getArtistFromSearch: this.getArtistFromSearch,
+                    updatePath: this.updatePath
+                }),
+                React.createElement(RandomNodeButton, {
+                    colorant: this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre,
+                    expanded: this.state.randomButtonExpanded,
+                    updateHoverFlag: this.updateHoverFlag,
+                    clickHandler: this.fetchRandomArtist
+                }),
                 React.createElement(ReactInfobox, {
                     artist: this.state.hoveredArtist,
                     point: this.state.hoverPoint
@@ -373,6 +461,7 @@ var App = function (_React$Component) {
                 React.createElement(ReactSidebar, {
                     artist: this.state.clickedArtist,
                     genre: this.state.activeGenre,
+                    path: this.state.activePath.nodes,
 
                     sidebarState: this.state.currentSidebarState,
                     undoSidebarState: this.undoSidebarState,
@@ -400,6 +489,7 @@ var App = function (_React$Component) {
                 React.createElement(P5Wrapper, {
                     hoveredArtist: this.state.hoveredArtist,
                     clickedArtist: this.state.clickedArtist,
+                    path: this.state.activePath,
 
                     genre: this.state.activeGenre,
 

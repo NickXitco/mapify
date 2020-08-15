@@ -1,7 +1,3 @@
-fetch('path/378dH6EszOLFShpRzAQkVM/4QkSD9TRUnMtI8Fq1jXJJe')
-    .then(res => res.json())
-    .then(path => console.log(path))
-
 async function loadInitialQuads(loadingQuads, unprocessedResponses) {
     const response = await fetch('quad/A');
     const data = await response.json();
@@ -15,7 +11,7 @@ async function loadInitialQuads(loadingQuads, unprocessedResponses) {
 function darkenScene(p, darkenOpacity, camera) {
     p.push();
     p.noStroke();
-    p.fill(p.color(0, Eases.easeOutQuart(darkenOpacity) * 180));
+    p.fill(p.color(0, Eases.easeOutQuart(darkenOpacity) * 215));
     p.rectMode(p.RADIUS);
     p.rect(camera.x, -camera.y, camera.width / 2, camera.height / 2);
     p.pop();

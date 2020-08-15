@@ -51,6 +51,7 @@ const Debug = {
         p.text("Camera Width: " + camera.width, 10, 100);
         p.text("Camera Height: " + camera.height, 10, 125);
         p.text("Camera Zoom: " + camera.zoom, 10, 150);
+        p.text("Camera Zoom Factor: " + camera.getZoomFactor().x, 10, 175);
         p.pop();
     },
 
@@ -61,7 +62,7 @@ const Debug = {
         p.fill("white");
         p.noStroke();
         let name = (hoveredArtist !== null) ? hoveredArtist.name : "None";
-        p.text("Hovered Artist: " + name, 10, 175);
+        p.text("Hovered Artist: " + name, 10, 200);
         p.pop();
     },
 
@@ -71,8 +72,8 @@ const Debug = {
         p.scale(1);
         p.fill("white");
         p.noStroke();
-        p.text("Canvas Width: " + p.width, 10, 200);
-        p.text("Canvas Height: " + p.height, 10, 225);
+        p.text("Canvas Width: " + p.width, 10, 225);
+        p.text("Canvas Height: " + p.height, 10, 250);
         p.pop();
     },
 
@@ -80,9 +81,9 @@ const Debug = {
         p.push();
         p.fill("white");
         p.noStroke();
-        p.text("Unloaded Quads " + unloadedQuads.size, 10, 250);
-        p.text("Loading Quads " + loadingQuads.size, 10, 275);
-        p.text("Unprocessed Requests " + unprocessedResponses.length, 10, 300);
+        p.text("Unloaded Quads " + unloadedQuads.size, 10, 275);
+        p.text("Loading Quads " + loadingQuads.size, 10, 300);
+        p.text("Unprocessed Requests " + unprocessedResponses.length, 10, 325);
         p.pop();
     },
 

@@ -57,7 +57,7 @@ class Quad {
         stack.push(this);
         while (stack.length > 0) {
             const q = stack.pop();
-            if (q.containsRect({x: n.x - n.size * 0.55, y: n.y + n.size * 0.55}, {x: n.x + n.size * 0.55, y: n.y - n.size * 0.55})) {
+            if (q.containsRect({x: n.x - n.size * 0.6, y: n.y + n.size * 0.6}, {x: n.x + n.size * 0.6, y: n.y - n.size * 0.6})) {
                 if (n.size / q.r > 0.011 || (q.image === "" && !q.loaded)) {
                     q.renderableNodes.add(n);
                 }
