@@ -116,33 +116,38 @@ var App = function (_React$Component) {
             var _this2 = this;
 
             if (artist.loaded) {
-                this.setSidebarState(artist, this.state.activeGenre, null);
+                this.setSidebarState(artist, this.state.activeGenre, null, null);
             } else if (artist.id) {
                 loadArtist(this.state.p5, artist, this.state.quadHead, this.state.nodeLookup).then(function () {
                     artist = _this2.state.nodeLookup[artist.id];
-                    _this2.setSidebarState(artist, _this2.state.activeGenre, null);
+                    _this2.setSidebarState(artist, _this2.state.activeGenre, null, null);
                 });
             }
         }
     }, {
         key: "setSidebarState",
-        value: function setSidebarState(artist, genre, state) {
+        value: function setSidebarState(artist, genre, path, state) {
             if (artist) {
                 artist.edges = makeEdges(artist);
             }
 
-            if (!state && (artist || genre)) {
-                state = new SidebarState({ artist: artist, genre: genre }, this.state.currentSidebarState);
+            if (!state && (artist || genre || path)) {
+                state = new SidebarState({ artist: artist, genre: genre, path: path }, this.state.currentSidebarState);
             }
 
-            this.setState({ clickedArtist: artist, activeGenre: genre, currentSidebarState: state });
+            this.setState({
+                clickedArtist: artist,
+                activeGenre: genre,
+                activePath: { nodes: [], edges: [] },
+                currentSidebarState: state
+            });
         }
     }, {
         key: "undoSidebarState",
         value: function undoSidebarState() {
             if (this.state.currentSidebarState && this.state.currentSidebarState.canUndo()) {
                 var newSidebarState = this.state.currentSidebarState.undo();
-                this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState);
+                this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState.payload.path, newSidebarState);
             }
         }
     }, {
@@ -150,7 +155,7 @@ var App = function (_React$Component) {
         value: function redoSidebarState() {
             if (this.state.currentSidebarState && this.state.currentSidebarState.canRedo()) {
                 var newSidebarState = this.state.currentSidebarState.redo();
-                this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState);
+                this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState.payload.path, newSidebarState);
             }
         }
     }, {
@@ -266,7 +271,7 @@ var App = function (_React$Component) {
 
                 _this4.state.camera.setCameraMove(bubble.center.x, bubble.center.y, _this4.state.camera.getZoomFromWidth(camWidth), 45);
 
-                _this4.setSidebarState(null, newGenre, null);
+                _this4.setSidebarState(null, newGenre, null, null);
             });
         }
 
@@ -285,21 +290,15 @@ var App = function (_React$Component) {
         key: "handleEmptyClick",
         value: function handleEmptyClick() {
 
-            //IF ARTIST
-            //clear artist, set genre and path to their current state,
-            //ELSE IF GENRE
-            //clear genre, set path to its current state, artist must be null
-            //ELSE IF PATH
-            //set all to null
-
-
-            if (this.state.activeGenre && this.state.clickedArtist) {
-                this.setSidebarState(null, this.state.activeGenre, null);
+            if (this.state.clickedArtist) {
+                this.setSidebarState(null, this.state.activeGenre, this.state.activePath, null);
+            } else if (this.state.activeGenre) {
+                this.setSidebarState(null, null, this.state.activePath, null);
             } else {
-                this.setSidebarState(null, null, null);
+                this.setSidebarState(null, null, null, null);
             }
 
-            this.setState({ clearSearch: true, spButtonExpanded: false, activePath: { nodes: [], edges: [] } });
+            this.setState({ clearSearch: true, spButtonExpanded: false });
         }
     }, {
         key: "expandSP",
