@@ -68,6 +68,7 @@ class App extends React.Component {
         this.loadArtistFromUI = this.loadArtistFromUI.bind(this);
         this.loadArtistFromSearch = this.loadArtistFromSearch.bind(this);
         this.createNodesFromSuggestions = this.createNodesFromSuggestions.bind(this);
+        this.fetchRandomArtist = this.fetchRandomArtist.bind(this);
 
         this.updateHoveredArtist = this.updateHoveredArtist.bind(this);
         this.updateHoverPoint = this.updateHoverPoint.bind(this);
@@ -262,6 +263,17 @@ class App extends React.Component {
         }
     }
 
+    fetchRandomArtist() {
+        fetch(`random`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                loadArtist(this.state.p5, data, this.state.quadHead, this.state.nodeLookup).then(() =>{
+                    this.loadArtistFromUI(this.state.nodeLookup[data.id]);
+                });
+            });
+    }
+
     setCanvas(p5) {
         this.setState({p5: p5});
         this.initializeResizeObserver();
@@ -296,6 +308,7 @@ class App extends React.Component {
         this.ro.observe(document.getElementById("root"));
     }
 
+
     render() {
         let changelog = null;
         if (this.state.showChangelog) {
@@ -326,6 +339,12 @@ class App extends React.Component {
                     getArtistFromSearch={this.getArtistFromSearch}
                     updatePath={this.updatePath}
                 />
+
+                <button
+                    onClick={this.fetchRandomArtist}
+                >
+                    Random!
+                </button>
 
                 <ReactInfobox
                     artist={this.state.hoveredArtist}

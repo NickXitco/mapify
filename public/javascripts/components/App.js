@@ -66,6 +66,7 @@ var App = function (_React$Component) {
         _this.loadArtistFromUI = _this.loadArtistFromUI.bind(_this);
         _this.loadArtistFromSearch = _this.loadArtistFromSearch.bind(_this);
         _this.createNodesFromSuggestions = _this.createNodesFromSuggestions.bind(_this);
+        _this.fetchRandomArtist = _this.fetchRandomArtist.bind(_this);
 
         _this.updateHoveredArtist = _this.updateHoveredArtist.bind(_this);
         _this.updateHoverPoint = _this.updateHoverPoint.bind(_this);
@@ -362,6 +363,20 @@ var App = function (_React$Component) {
             }
         }
     }, {
+        key: "fetchRandomArtist",
+        value: function fetchRandomArtist() {
+            var _this5 = this;
+
+            fetch("random").then(function (response) {
+                return response.json();
+            }).then(function (data) {
+                console.log(data);
+                loadArtist(_this5.state.p5, data, _this5.state.quadHead, _this5.state.nodeLookup).then(function () {
+                    _this5.loadArtistFromUI(_this5.state.nodeLookup[data.id]);
+                });
+            });
+        }
+    }, {
         key: "setCanvas",
         value: function setCanvas(p5) {
             this.setState({ p5: p5 });
@@ -370,10 +385,10 @@ var App = function (_React$Component) {
     }, {
         key: "setCamera",
         value: function setCamera(camera) {
-            var _this5 = this;
+            var _this6 = this;
 
             this.setState({ camera: camera }, function () {
-                _this5.state.camera.zoomCamera({ x: 0, y: 0 });
+                _this6.state.camera.zoomCamera({ x: 0, y: 0 });
             });
         }
     }, {
@@ -384,7 +399,7 @@ var App = function (_React$Component) {
     }, {
         key: "initializeResizeObserver",
         value: function initializeResizeObserver() {
-            var _this6 = this;
+            var _this7 = this;
 
             this.ro = new ResizeObserver(function (entries) {
                 if (entries.length !== 1) {
@@ -393,11 +408,11 @@ var App = function (_React$Component) {
                     var cr = entries[0].contentRect;
                     var w = cr.width;
                     var h = cr.height;
-                    if (_this6.state.p5) {
-                        _this6.state.p5.resizeCanvas(w, h);
+                    if (_this7.state.p5) {
+                        _this7.state.p5.resizeCanvas(w, h);
                     }
-                    if (_this6.state.camera) {
-                        _this6.state.camera.zoomCamera({ x: _this6.state.camera.x, y: _this6.state.camera.y });
+                    if (_this7.state.camera) {
+                        _this7.state.camera.zoomCamera({ x: _this7.state.camera.x, y: _this7.state.camera.y });
                     }
                 }
             });
@@ -433,6 +448,13 @@ var App = function (_React$Component) {
                     getArtistFromSearch: this.getArtistFromSearch,
                     updatePath: this.updatePath
                 }),
+                React.createElement(
+                    "button",
+                    {
+                        onClick: this.fetchRandomArtist
+                    },
+                    "Random!"
+                ),
                 React.createElement(ReactInfobox, {
                     artist: this.state.hoveredArtist,
                     point: this.state.hoverPoint
