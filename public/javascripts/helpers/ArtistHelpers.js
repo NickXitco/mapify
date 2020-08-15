@@ -1,7 +1,7 @@
 const MAX_CURVE_ANGLE = 180;
 
 
-function getHoveredArtist(p, camera, clickedArtist, quadHead, genre) {
+function getHoveredArtist(p, camera, clickedArtist, quadHead, genre, path) {
     let stack = [];
     const mP = MouseEvents.getVirtualMouseCoordinates(p, camera);
     stack.push(quadHead);
@@ -48,6 +48,14 @@ function getHoveredArtist(p, camera, clickedArtist, quadHead, genre) {
 
     if (genre) {
         if (genre.nodes.has(closest)) {
+            return closest;
+        } else {
+            return null;
+        }
+    }
+
+    if (path && path.length > 0) {
+        if (closest in path) {
             return closest;
         } else {
             return null;

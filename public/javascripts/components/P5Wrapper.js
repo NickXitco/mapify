@@ -62,7 +62,7 @@ var P5Wrapper = function (_React$Component) {
                 loadUnloaded(_this.unprocessedResponses, _this.unloadedPQ, _this.loadingQuads, _this.unloadedQuads, _this.props.camera);
 
                 if (!_this.props.uiHover) {
-                    _this.props.updateHoveredArtist(getHoveredArtist(p, _this.props.camera, _this.props.clickedArtist, _this.props.quadHead, _this.props.genre));
+                    _this.props.updateHoveredArtist(getHoveredArtist(p, _this.props.camera, _this.props.clickedArtist, _this.props.quadHead, _this.props.genre, _this.props.path));
                 }
 
                 if (_this.props.clickedArtist && !_this.props.clickedArtist.loaded && !_this.clickedLoading) {
@@ -86,8 +86,6 @@ var P5Wrapper = function (_React$Component) {
                     _this.darken.genre = darkenScene(p, _this.darken.genre, _this.props.camera);
                 }
 
-                Debug.createTimingEvent("Darken Scene for Genre Nodes");
-
                 if (_this.props.genre) {
                     _this.props.genre.drawGenreFence(p);
                     drawNodes(p, _this.props.camera, _this.props.genre.nodes);
@@ -99,8 +97,6 @@ var P5Wrapper = function (_React$Component) {
                     _this.darken.related = darkenScene(p, _this.darken.related, _this.props.camera);
                 }
 
-                Debug.createTimingEvent("Darken Scene for Related Nodes");
-
                 if (_this.props.clickedArtist && _this.props.clickedArtist.loaded) {
                     drawEdges(p, _this.props.camera, _this.props.clickedArtist.edges, _this.props.clickedArtist, _this.props.hoveredArtist, _this.props.uiHover);
 
@@ -111,8 +107,11 @@ var P5Wrapper = function (_React$Component) {
 
                 if (_this.props.path.length > 0) {
                     _this.darken.sp = darkenScene(p, _this.darken.sp, _this.props.camera);
-                    drawNodes(p, _this.props.camera, _this.props.path);
+
                     drawPathEdges(p, _this.props.camera, _this.props.pathEdges);
+                    Debug.createTimingEvent("Draw SP Edges");
+                    drawNodes(p, _this.props.camera, _this.props.path);
+                    Debug.createTimingEvent("Draw SP Nodes");
                 }
 
                 Debug.createTimingEvent("Sidebar");

@@ -51,7 +51,7 @@ class P5Wrapper extends React.Component {
             loadUnloaded(this.unprocessedResponses, this.unloadedPQ, this.loadingQuads, this.unloadedQuads, this.props.camera);
 
             if (!this.props.uiHover) {
-                this.props.updateHoveredArtist(getHoveredArtist(p, this.props.camera, this.props.clickedArtist, this.props.quadHead, this.props.genre));
+                this.props.updateHoveredArtist(getHoveredArtist(p, this.props.camera, this.props.clickedArtist, this.props.quadHead, this.props.genre, this.props.path));
             }
 
             if (this.props.clickedArtist && !this.props.clickedArtist.loaded && !this.clickedLoading) {
@@ -73,7 +73,6 @@ class P5Wrapper extends React.Component {
                 this.darken.genre = darkenScene(p, this.darken.genre, this.props.camera);
             }
 
-            Debug.createTimingEvent("Darken Scene for Genre Nodes");
 
             if (this.props.genre) {
                 this.props.genre.drawGenreFence(p);
@@ -86,8 +85,6 @@ class P5Wrapper extends React.Component {
                 this.darken.related = darkenScene(p, this.darken.related, this.props.camera);
             }
 
-            Debug.createTimingEvent("Darken Scene for Related Nodes");
-
             if (this.props.clickedArtist && this.props.clickedArtist.loaded) {
                 drawEdges(p, this.props.camera, this.props.clickedArtist.edges, this.props.clickedArtist, this.props.hoveredArtist, this.props.uiHover);
 
@@ -98,8 +95,12 @@ class P5Wrapper extends React.Component {
 
             if (this.props.path.length > 0) {
                 this.darken.sp = darkenScene(p, this.darken.sp, this.props.camera);
-                drawNodes(p, this.props.camera, this.props.path);
+
                 drawPathEdges(p, this.props.camera, this.props.pathEdges);
+                Debug.createTimingEvent("Draw SP Edges");
+                drawNodes(p, this.props.camera, this.props.path);
+                Debug.createTimingEvent("Draw SP Nodes");
+
             }
 
             Debug.createTimingEvent("Sidebar");
