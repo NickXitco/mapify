@@ -107,7 +107,7 @@ class ShortestPathDialog extends React.Component {
 
         let colorStyle = {};
         let borderClassName = "";
-        let expandClass = this.props.expanded ? "uiButtonOuterExpand" : "";
+        let expandClass = this.props.expanded ? "uiButtonOuterExpand" : this.state.hoverState === 1 ? "uiButtonOuterHover" : "";
 
         const color = this.props.colorant ? this.props.colorant.colorToString() : 'white';
 
@@ -196,6 +196,7 @@ class ShortestPathDialog extends React.Component {
                         />
                     </svg>
 
+
                     <h4 className="uiButtonTitle">
                         SHORTEST PATH
                     </h4>
@@ -232,6 +233,7 @@ class ShortestPathDialog extends React.Component {
                     >
                         GO
                     </button>
+
                 </div>
             </div>
         )

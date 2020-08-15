@@ -549,6 +549,10 @@ canvas {
               height 0.4s cubic-bezier(0.5, 1, 0.89, 1);
 }
 
+.uiButtonOuterHover {
+  width: 180px;
+}
+
 .uiButtonOuterExpand {
   height: 242px;
   width: 400px;
