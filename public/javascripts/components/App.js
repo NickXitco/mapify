@@ -39,6 +39,7 @@ var App = function (_React$Component) {
             currentSidebarState: null,
 
             spButtonExpanded: false,
+            randomButtonExpanded: false,
 
             activePath: {
                 nodes: [],
@@ -274,18 +275,6 @@ var App = function (_React$Component) {
                 _this4.setSidebarState(null, newGenre, null, null);
             });
         }
-
-        /**
-         *                 artist
-         *                0     |     1
-         *          |-------------------------
-         *        0 | both null | both null
-         * genre    |--------------------------
-         *        1 | both null | artist null,
-         *          |           | genre unchanged
-         *
-         */
-
     }, {
         key: "handleEmptyClick",
         value: function handleEmptyClick() {
@@ -459,13 +448,12 @@ var App = function (_React$Component) {
                     getArtistFromSearch: this.getArtistFromSearch,
                     updatePath: this.updatePath
                 }),
-                React.createElement(
-                    "button",
-                    {
-                        onClick: this.fetchRandomArtist
-                    },
-                    "Random!"
-                ),
+                React.createElement(RandomNodeButton, {
+                    colorant: this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre,
+                    expanded: this.state.randomButtonExpanded,
+                    updateHoverFlag: this.updateHoverFlag,
+                    clickHandler: this.fetchRandomArtist
+                }),
                 React.createElement(ReactInfobox, {
                     artist: this.state.hoveredArtist,
                     point: this.state.hoverPoint

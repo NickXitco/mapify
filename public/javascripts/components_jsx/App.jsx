@@ -27,6 +27,7 @@ class App extends React.Component {
             currentSidebarState: null,
 
             spButtonExpanded: false,
+            randomButtonExpanded: false,
 
             activePath: {
                 nodes: [],
@@ -203,16 +204,6 @@ class App extends React.Component {
             })
     }
 
-    /**
-     *                 artist
-     *                0     |     1
-     *          |-------------------------
-     *        0 | both null | both null
-     * genre    |--------------------------
-     *        1 | both null | artist null,
-     *          |           | genre unchanged
-     *
-     */
     handleEmptyClick() {
 
         if (this.state.clickedArtist) {
@@ -351,11 +342,12 @@ class App extends React.Component {
                     updatePath={this.updatePath}
                 />
 
-                <button
-                    onClick={this.fetchRandomArtist}
-                >
-                    Random!
-                </button>
+                <RandomNodeButton
+                    colorant={this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre}
+                    expanded={this.state.randomButtonExpanded}
+                    updateHoverFlag={this.updateHoverFlag}
+                    clickHandler={this.fetchRandomArtist}
+                />
 
                 <ReactInfobox
                     artist={this.state.hoveredArtist}

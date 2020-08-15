@@ -239,7 +239,7 @@ var ShortestPathDialog = function (_React$Component) {
                 null,
                 React.createElement(
                     "div",
-                    { className: "uiButtonOuter " + borderClassName + " " + expandClass + " " + fullyExpanded,
+                    { className: "spButtonOuter uiButtonOuter " + borderClassName + " " + expandClass + " " + fullyExpanded,
                         style: colorStyle,
 
                         onMouseEnter: function onMouseEnter() {

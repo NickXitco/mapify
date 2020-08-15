@@ -188,7 +188,7 @@ class ShortestPathDialog extends React.Component {
 
         return (
             <div>
-                <div className={`uiButtonOuter ${borderClassName} ${expandClass} ${fullyExpanded}`}
+                <div className={`spButtonOuter uiButtonOuter ${borderClassName} ${expandClass} ${fullyExpanded}`}
                      style={colorStyle}
 
                      onMouseEnter={() => {
