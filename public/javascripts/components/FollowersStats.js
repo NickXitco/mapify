@@ -18,9 +18,10 @@ var FollowersStats = function (_React$Component) {
     _createClass(FollowersStats, [{
         key: "render",
         value: function render() {
+
             return React.createElement(
                 "div",
-                { className: "followersSection" },
+                { className: this.props.size === "Small" ? "followersSectionSmall" : "followersSection" },
                 React.createElement(
                     "p",
                     { className: "followerCount" },

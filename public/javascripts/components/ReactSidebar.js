@@ -39,6 +39,7 @@ var ReactSidebar = function (_React$Component) {
 
             if (this.props.path.length > 0) {
                 var start = this.props.path[0];
+                var end = this.props.path[this.props.path.length - 1];
 
                 return React.createElement(
                     "div",
@@ -56,10 +57,26 @@ var ReactSidebar = function (_React$Component) {
                         "::-webkit-scrollbar-track {box-shadow: 0 0 5px " + start.colorToString() + ";}  \n" + ("::-webkit-scrollbar-thumb {background: " + start.colorToString() + ";")
                     ),
                     React.createElement(SidebarStroke, { color: start.colorToString() }),
+                    React.createElement(ArtistProfile, { artist: start, fontDecrement: 3, showPlayer: false, size: "Small", align: 'left' }),
+                    React.createElement(ArtistProfile, { artist: end, fontDecrement: 3, showPlayer: false, size: "Small", align: 'right' }),
+                    React.createElement("div", { style: {
+                            position: 'absolute',
+                            width: '440px',
+                            height: '200px',
+                            boxShadow: '0 10px 10px 0px black',
+                            zIndex: 4
+                        }
+                    }),
                     React.createElement(HopsList, { path: this.props.path,
                         loadArtistFromUI: this.props.loadArtistFromUI,
                         updateHoveredArtist: this.props.updateHoveredArtist,
-                        header: "Shortest Path" })
+                        header: "Shortest Path" }),
+                    React.createElement(UndoRedoComponent, {
+                        color: [start.r, start.g, start.b],
+                        sidebarState: this.props.sidebarState,
+                        undoSidebarState: this.props.undoSidebarState,
+                        redoSidebarState: this.props.redoSidebarState
+                    })
                 );
             }
 
@@ -85,7 +102,7 @@ var ReactSidebar = function (_React$Component) {
                             "::-webkit-scrollbar-track {box-shadow: 0 0 5px " + this.state.artist.colorToString() + ";}  \n" + ("::-webkit-scrollbar-thumb {background: " + this.state.artist.colorToString() + ";")
                         ),
                         React.createElement(SidebarStroke, { color: this.state.artist.colorToString() }),
-                        React.createElement(ArtistProfile, { artist: this.state.artist, fontDecrement: 3 }),
+                        React.createElement(ArtistProfile, { artist: this.state.artist, fontDecrement: 3, showPlayer: true, size: "Large", align: 'left' }),
                         React.createElement(GenresList, { genres: this.state.artist.genres,
                             loadGenreFromSearch: this.props.loadGenreFromSearch,
                             header: "Genres"
@@ -176,7 +193,7 @@ var ReactSidebar = function (_React$Component) {
                         "::-webkit-scrollbar-track {box-shadow: 0 0 5px " + this.props.artist.colorToString() + ";}  \n" + ("::-webkit-scrollbar-thumb {background: " + this.props.artist.colorToString() + ";")
                     ),
                     React.createElement(SidebarStroke, { color: this.props.artist.colorToString() }),
-                    React.createElement(ArtistProfile, { artist: this.props.artist, fontDecrement: 3 }),
+                    React.createElement(ArtistProfile, { artist: this.props.artist, fontDecrement: 3, showPlayer: true, size: "Large", align: 'left' }),
                     React.createElement(GenresList, { genres: this.props.artist.genres,
                         loadGenreFromSearch: this.props.loadGenreFromSearch,
                         header: "Genres"

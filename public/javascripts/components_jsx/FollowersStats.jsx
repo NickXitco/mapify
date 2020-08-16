@@ -4,8 +4,10 @@ class FollowersStats extends React.Component {
     }
 
     render() {
+
+
         return(
-            <div className={"followersSection"}>
+            <div className={this.props.size === "Small" ? "followersSectionSmall" : "followersSection"}>
                 <p className={"followerCount"}>
                     {this.props.artist.followers >= 1000000
                         ? (this.props.artist.followers * 1.0 / 1000000).toFixed(1).toString() + " Million"

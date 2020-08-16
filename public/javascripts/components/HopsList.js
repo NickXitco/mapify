@@ -39,7 +39,7 @@ var HopsList = function (_React$Component) {
                             _this2.props.updateHoveredArtist(null);
                         }
                     },
-                    React.createElement(ArtistProfile, { artist: artist, fontDecrement: 3 })
+                    React.createElement(ArtistProfile, { artist: artist, fontDecrement: 3, showPlayer: false, size: "Medium", align: 'left' })
                 );
             });
 

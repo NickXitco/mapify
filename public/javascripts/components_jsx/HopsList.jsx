@@ -15,7 +15,7 @@ class HopsList extends React.Component {
                 onMouseEnter={() => {this.props.updateHoveredArtist(artist)}}
                 onMouseLeave={() => {this.props.updateHoveredArtist(null)}}
             >
-                <ArtistProfile artist={artist} fontDecrement={3}/>
+                <ArtistProfile artist={artist} fontDecrement={3} showPlayer={false} size={"Medium"} align={'left'}/>
             </li>
         );
 

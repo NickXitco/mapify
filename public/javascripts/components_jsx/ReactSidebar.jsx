@@ -21,6 +21,7 @@ class ReactSidebar extends React.Component {
 
         if (this.props.path.length > 0) {
             const start = this.props.path[0];
+            const end = this.props.path[this.props.path.length - 1];
 
             return (
                 <div className="sidebar sidebar-open"
@@ -35,10 +36,29 @@ class ReactSidebar extends React.Component {
 
                     <SidebarStroke color={start.colorToString()}/>
 
+                    <ArtistProfile artist={start} fontDecrement={3} showPlayer={false} size={"Small"} align={'left'}/>
+                    <ArtistProfile artist={end} fontDecrement={3} showPlayer={false} size={"Small"}  align={'right'}/>
+
+                    <div style={{
+                        position: 'absolute',
+                        width: '440px',
+                        height: '200px',
+                        boxShadow: '0 10px 10px 0px black',
+                        zIndex: 4,
+                    }}
+                    />
+
                     <HopsList path={this.props.path}
                               loadArtistFromUI={this.props.loadArtistFromUI}
                               updateHoveredArtist={this.props.updateHoveredArtist}
                               header={`Shortest Path`}/>
+
+                    <UndoRedoComponent
+                        color={[start.r, start.g, start.b]}
+                        sidebarState={this.props.sidebarState}
+                        undoSidebarState={this.props.undoSidebarState}
+                        redoSidebarState={this.props.redoSidebarState}
+                    />
                 </div>
             )
         }
@@ -59,7 +79,7 @@ class ReactSidebar extends React.Component {
 
                             <SidebarStroke color={this.state.artist.colorToString()}/>
 
-                            <ArtistProfile artist={this.state.artist} fontDecrement={3}/>
+                            <ArtistProfile artist={this.state.artist} fontDecrement={3} showPlayer={true} size={"Large"} align={'left'}/>
 
 
                             <GenresList genres={this.state.artist.genres}
@@ -150,7 +170,7 @@ class ReactSidebar extends React.Component {
 
                     <SidebarStroke color={this.props.artist.colorToString()}/>
 
-                    <ArtistProfile artist={this.props.artist} fontDecrement={3}/>
+                    <ArtistProfile artist={this.props.artist} fontDecrement={3} showPlayer={true} size={"Large"} align={'left'}/>
 
                     <GenresList genres={this.props.artist.genres}
                                 loadGenreFromSearch={this.props.loadGenreFromSearch}

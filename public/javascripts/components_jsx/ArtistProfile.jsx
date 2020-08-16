@@ -13,7 +13,7 @@ class ArtistProfile extends React.Component {
     componentDidMount() {
         if (this.props.artist !== this.state.artist) {
             this.setState({fontSize: 60, artist: this.props.artist}, () => {
-                this.decrementFontSize();
+                this.decrementFontSize(this.props.size);
             })
         }
     }
@@ -21,20 +21,21 @@ class ArtistProfile extends React.Component {
     componentDidUpdate() {
         if (this.props.artist !== this.state.artist) {
             this.setState({fontSize: 60, artist: this.props.artist}, () => {
-                this.decrementFontSize();
+                this.decrementFontSize(this.props.size);
             })
         }
 
         if (this.fontSizeUpdating) {
-            this.decrementFontSize();
+            this.decrementFontSize(this.props.size);
         }
     }
 
-    decrementFontSize() {
+    decrementFontSize(size) {
+        const heightLimit = size === "Large" ? 113 : size === "Medium" ? 80 : 50;
         const height = this.nameElement.clientHeight;
         const width = this.nameElement.clientWidth;
 
-        if (height > 113 || width > 265) {
+        if (height > heightLimit || width > 265) {
             this.setState((prevState, props) => ({
                 fontSize: prevState.fontSize - props.fontDecrement
             }));
@@ -62,29 +63,90 @@ class ArtistProfile extends React.Component {
 
         let player = null
 
-        if (this.props.artist.track) {
+        if (this.props.artist.track && this.props.showPlayer) {
             player = (
                 <Player uri={`spotify:track:${this.props.artist.track.id}`}/>
             )
         }
 
-        return (
-            <div style={{position: 'static'}}>
-                <div className={"nameAndPicture"}>
-                    <div className={"sidebarPicture"} style={pictureStyle}>
-                        {picture}
-                    </div>
-                    <div className={"name"}>
-                        <h1 className={"sidebarArtistName"} style={nameStyle}
-                            ref={(nameElement) => {this.nameElement = nameElement}}>
-                            {this.props.artist.name}
-                        </h1>
-                    </div>
-                </div>
+        let nameSection;
 
-                <FollowersStats artist={this.props.artist}/>
-                {player}
-            </div>
-        );
+        if (this.props.size === "Large") {
+            return (
+                <div style={{position: 'static'}}>
+                    <div className={"nameAndPictureLarge"}>
+                        <div className={"sidebarPictureLarge"} style={pictureStyle}>
+                            {picture}
+                        </div>
+                        <div className={"nameLarge"}>
+                            <h1 className={"sidebarArtistNameLarge"} style={nameStyle}
+                                ref={(nameElement) => {this.nameElement = nameElement}}>
+                                {this.props.artist.name}
+                            </h1>
+                        </div>
+                    </div>
+
+                    <FollowersStats artist={this.props.artist}  size={"Large"}/>
+                    {player}
+                </div>
+            )
+        } else if (this.props.size === "Medium") {
+            return (
+                <div style={{position: 'static'}}>
+                    <div className={"nameAndPictureMedium"}>
+                        <div className={"sidebarPictureMedium"} style={pictureStyle}>
+                            {picture}
+                        </div>
+                        <div className={"nameMedium"}>
+                            <h1 className={"sidebarArtistNameMedium"} style={nameStyle}
+                                ref={(nameElement) => {this.nameElement = nameElement}}>
+                                {this.props.artist.name}
+                            </h1>
+                            <FollowersStats artist={this.props.artist} size={"Small"}/>
+                        </div>
+                    </div>
+                    {player}
+                </div>
+            );
+        } else {
+            if (this.props.align === "right") {
+                return (
+                    <div style={{position: 'static'}}>
+                        <div className={"nameAndPictureSmallRight"}>
+                            <div className={"nameSmallRight"}>
+                                <h1 className={"sidebarArtistNameSmall"} style={nameStyle}
+                                    ref={(nameElement) => {this.nameElement = nameElement}}>
+                                    {this.props.artist.name}
+                                </h1>
+                                <FollowersStats artist={this.props.artist}  size={"Small"}/>
+                            </div>
+                            <div className={"sidebarPictureSmall"} style={pictureStyle}>
+                                {picture}
+                            </div>
+                        </div>
+                        {player}
+                    </div>
+                )
+            }
+
+
+            return (
+                <div style={{position: 'static'}}>
+                    <div className={"nameAndPictureSmall"}>
+                        <div className={"sidebarPictureSmall"} style={pictureStyle}>
+                            {picture}
+                        </div>
+                        <div className={"nameSmall"}>
+                            <h1 className={"sidebarArtistNameSmall"} style={nameStyle}
+                                ref={(nameElement) => {this.nameElement = nameElement}}>
+                                {this.props.artist.name}
+                            </h1>
+                            <FollowersStats artist={this.props.artist}  size={"Small"}/>
+                        </div>
+                    </div>
+                    {player}
+                </div>
+            )
+        }
     }
 }
