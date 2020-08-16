@@ -388,6 +388,7 @@ canvas {
   width: 113px;
   height: 113px;
   border-radius: 50%;
+  position: static;
   z-index: -1;
 }
 
@@ -508,6 +509,23 @@ canvas {
   text-decoration: underline;
   cursor: pointer;
 }
+
+.hopList {
+  width: 100%;
+  position: static;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.hopListSection {
+  width: 100%;
+  position: static;
+  display: flex;
+  overflow-y: auto;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
 
 
 .relatedArtistsSection p {

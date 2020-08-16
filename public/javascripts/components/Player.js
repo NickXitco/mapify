@@ -29,15 +29,24 @@ var Player = function (_React$Component) {
 
             var src = "https://open.spotify.com/embed/" + playerType + "/" + id;
 
-            return React.createElement("iframe", {
-                src: src,
-                className: "player",
-                width: "406",
-                height: "80",
-                frameBorder: "0",
-                allowTransparency: "true",
-                allow: "encrypted-media"
-            });
+            return React.createElement(
+                "div",
+                { style: { position: 'static' } },
+                React.createElement("iframe", {
+                    src: src,
+                    className: "player",
+                    width: "406",
+                    height: "80",
+                    frameBorder: "0",
+                    allowTransparency: "true",
+                    allow: "encrypted-media"
+                }),
+                React.createElement(
+                    "p",
+                    { style: { padding: "10px 22px", fontSize: "12px" } },
+                    "Headphone warning, this can be pretty loud"
+                )
+            );
         }
     }]);
 

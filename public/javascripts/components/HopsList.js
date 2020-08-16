@@ -16,7 +16,7 @@ var HopsList = function (_React$Component) {
     }
 
     _createClass(HopsList, [{
-        key: 'render',
+        key: "render",
         value: function render() {
             var _this2 = this;
 
@@ -26,7 +26,7 @@ var HopsList = function (_React$Component) {
 
             var artists = this.props.path.map(function (artist, index) {
                 return React.createElement(
-                    'li',
+                    "li",
                     { className: "hopListItem",
                         key: artist.id.toString(),
                         onClick: function onClick() {
@@ -39,26 +39,16 @@ var HopsList = function (_React$Component) {
                             _this2.props.updateHoveredArtist(null);
                         }
                     },
-                    React.createElement(
-                        'span',
-                        { style: { position: 'static', fontWeight: 700, fontSize: '24px' } },
-                        index + 1 + '.'
-                    ),
-                    ' ' + artist.name.toString()
+                    React.createElement(ArtistProfile, { artist: artist, fontDecrement: 3 })
                 );
             });
 
             return React.createElement(
-                'div',
-                { className: "relatedArtistsSection" },
+                "div",
+                { className: "hopListSection" },
                 React.createElement(
-                    'h2',
-                    null,
-                    this.props.header
-                ),
-                React.createElement(
-                    'ol',
-                    { className: "relatedArtistsList" },
+                    "ol",
+                    { className: "hopList" },
                     artists
                 )
             );

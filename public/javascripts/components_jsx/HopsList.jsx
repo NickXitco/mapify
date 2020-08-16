@@ -15,18 +15,14 @@ class HopsList extends React.Component {
                 onMouseEnter={() => {this.props.updateHoveredArtist(artist)}}
                 onMouseLeave={() => {this.props.updateHoveredArtist(null)}}
             >
-                <span style={{position: 'static', fontWeight: 700, fontSize: '24px'}}>
-                    {`${index + 1}.`}
-                </span>
-                {` ${artist.name.toString()}`}
+                <ArtistProfile artist={artist} fontDecrement={3}/>
             </li>
         );
 
 
         return (
-            <div className={"relatedArtistsSection"}>
-                <h2>{this.props.header}</h2>
-                <ol className={"relatedArtistsList"}>
+            <div className={"hopListSection"}>
+                <ol className={"hopList"}>
                     {artists}
                 </ol>
             </div>

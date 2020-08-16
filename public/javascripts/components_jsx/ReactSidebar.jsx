@@ -21,10 +21,6 @@ class ReactSidebar extends React.Component {
 
         if (this.props.path.length > 0) {
             const start = this.props.path[0];
-            const end = this.props.path[this.props.path.length - 1];
-
-            const color = ColorUtilities.rgbToString(start.r, start.g, start.b);
-            const darkerColor = ColorUtilities.rgbToString(start.r / 4, start.g / 4, start.b / 4);
 
             return (
                 <div className="sidebar sidebar-open"
@@ -39,23 +35,6 @@ class ReactSidebar extends React.Component {
 
                     <SidebarStroke color={start.colorToString()}/>
 
-                    <ArtistProfile artist={start} fontDecrement={3}/>
-                    <FollowersStats artist={start}/>
-                    <div style={{position: 'static',
-                        width: '100%',
-                        justifyContent: 'center',
-                        display: 'flex',
-                        height: '50px'}}>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"
-                             x="0px" y="0px"
-                             style={{position: 'static', height: '50px', filter: `drop-shadow(0 0  5px ${color})`}}>
-                            <path fill={darkerColor} stroke="white" d="M16.5 28.75l10-13H21V3.25h-9v12.5H6.5l10 13z"/>
-                        </svg>
-                    </div>
-
-                    <ArtistProfile artist={end} fontDecrement={3}/>
-                    <FollowersStats artist={end} />
-
                     <HopsList path={this.props.path}
                               loadArtistFromUI={this.props.loadArtistFromUI}
                               updateHoveredArtist={this.props.updateHoveredArtist}
@@ -67,12 +46,6 @@ class ReactSidebar extends React.Component {
         if (!this.props.artist && !this.props.genre) {
             if (this.state.artist) {
                 setTimeout(() => this.setState({artist: null}), 600);
-
-                if (this.state.artist.track) {
-                    player = (
-                        <Player uri={`spotify:track:${this.state.artist.track.id}`}/>
-                    )
-                }
 
                 return (<div className="sidebar sidebar-closed"
                              onMouseEnter={() => {this.props.updateHoverFlag(true)}}
@@ -87,11 +60,6 @@ class ReactSidebar extends React.Component {
                             <SidebarStroke color={this.state.artist.colorToString()}/>
 
                             <ArtistProfile artist={this.state.artist} fontDecrement={3}/>
-
-                            <FollowersStats artist={this.state.artist}/>
-
-                            {player}
-                            <p style={{padding: "10px 22px", fontSize: "12px"}}>Headphone warning, this can be pretty loud</p>
 
 
                             <GenresList genres={this.state.artist.genres}
@@ -183,11 +151,6 @@ class ReactSidebar extends React.Component {
                     <SidebarStroke color={this.props.artist.colorToString()}/>
 
                     <ArtistProfile artist={this.props.artist} fontDecrement={3}/>
-
-                    <FollowersStats artist={this.props.artist}/>
-
-                    {player}
-                    <p style={{padding: "10px 22px", fontSize: "12px"}}>Headphone warning, this can be pretty loud</p>
 
                     <GenresList genres={this.props.artist.genres}
                                 loadGenreFromSearch={this.props.loadGenreFromSearch}

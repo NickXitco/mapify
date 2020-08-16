@@ -85,26 +85,38 @@ var ArtistProfile = function (_React$Component) {
                 picture = React.createElement("img", { src: this.props.artist.images[0].url, alt: this.props.artist.name });
             }
 
+            var player = null;
+
+            if (this.props.artist.track) {
+                player = React.createElement(Player, { uri: "spotify:track:" + this.props.artist.track.id });
+            }
+
             return React.createElement(
                 "div",
-                { className: "nameAndPicture" },
+                { style: { position: 'static' } },
                 React.createElement(
                     "div",
-                    { className: "sidebarPicture", style: pictureStyle },
-                    picture
-                ),
-                React.createElement(
-                    "div",
-                    { className: "name" },
+                    { className: "nameAndPicture" },
                     React.createElement(
-                        "h1",
-                        { className: "sidebarArtistName", style: nameStyle,
-                            ref: function ref(nameElement) {
-                                _this4.nameElement = nameElement;
-                            } },
-                        this.props.artist.name
+                        "div",
+                        { className: "sidebarPicture", style: pictureStyle },
+                        picture
+                    ),
+                    React.createElement(
+                        "div",
+                        { className: "name" },
+                        React.createElement(
+                            "h1",
+                            { className: "sidebarArtistName", style: nameStyle,
+                                ref: function ref(nameElement) {
+                                    _this4.nameElement = nameElement;
+                                } },
+                            this.props.artist.name
+                        )
                     )
-                )
+                ),
+                React.createElement(FollowersStats, { artist: this.props.artist }),
+                player
             );
         }
     }]);

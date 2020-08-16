@@ -60,17 +60,30 @@ class ArtistProfile extends React.Component {
             picture = (<img src={this.props.artist.images[0].url} alt={this.props.artist.name}/>);
         }
 
+        let player = null
+
+        if (this.props.artist.track) {
+            player = (
+                <Player uri={`spotify:track:${this.props.artist.track.id}`}/>
+            )
+        }
+
         return (
-            <div className={"nameAndPicture"}>
-                <div className={"sidebarPicture"} style={pictureStyle}>
-                    {picture}
+            <div style={{position: 'static'}}>
+                <div className={"nameAndPicture"}>
+                    <div className={"sidebarPicture"} style={pictureStyle}>
+                        {picture}
+                    </div>
+                    <div className={"name"}>
+                        <h1 className={"sidebarArtistName"} style={nameStyle}
+                            ref={(nameElement) => {this.nameElement = nameElement}}>
+                            {this.props.artist.name}
+                        </h1>
+                    </div>
                 </div>
-                <div className={"name"}>
-                    <h1 className={"sidebarArtistName"} style={nameStyle}
-                        ref={(nameElement) => {this.nameElement = nameElement}}>
-                        {this.props.artist.name}
-                    </h1>
-                </div>
+
+                <FollowersStats artist={this.props.artist}/>
+                {player}
             </div>
         );
     }
