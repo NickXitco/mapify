@@ -58,6 +58,10 @@ class App extends React.Component {
         this.setCanvas = this.setCanvas.bind(this);
         this.setCamera = this.setCamera.bind(this);
 
+        this.resetCamera = this.resetCamera.bind(this);
+        this.zoomCameraOut = this.zoomCameraOut.bind(this);
+        this.zoomCameraIn = this.zoomCameraIn.bind(this);
+
         this.updateClickedArtist = this.updateClickedArtist.bind(this);
         this.setSidebarState = this.setSidebarState.bind(this);
         this.undoSidebarState = this.undoSidebarState.bind(this);
@@ -287,6 +291,24 @@ class App extends React.Component {
         })
     }
 
+    resetCamera() {
+        this.state.camera.setCameraMove(0, 0, 1, 30);
+    }
+
+    zoomCameraOut() {
+        MouseEvents.zooming = true;
+        MouseEvents.scrollStep = 0;
+        MouseEvents.zoomCoordinates = {x: this.state.camera.x, y: this.state.camera.y};
+        MouseEvents.scrollDelta = 1;
+    }
+
+    zoomCameraIn() {
+        MouseEvents.zooming = true;
+        MouseEvents.scrollStep = 0;
+        MouseEvents.zoomCoordinates = {x: this.state.camera.x, y: this.state.camera.y};
+        MouseEvents.scrollDelta = -1;
+    }
+
     setQuadHead(quadHead) {
         this.setState({quadHead: quadHead});
     }
@@ -369,20 +391,32 @@ class App extends React.Component {
                     updateHoverFlag={this.updateHoverFlag}
                 />
 
-                <ReactSearchBox
-                    colorant={this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre}
+                <div className="rightSideDiv">
+                    <ReactSearchBox
+                        colorant={this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre}
 
-                    loadArtistFromUI={this.loadArtistFromUI}
-                    loadArtistFromSearch={this.loadArtistFromSearch}
-                    loadGenreFromSearch={this.loadGenreFromSearch}
+                        loadArtistFromUI={this.loadArtistFromUI}
+                        loadArtistFromSearch={this.loadArtistFromSearch}
+                        loadGenreFromSearch={this.loadGenreFromSearch}
 
-                    flipClearSearch={this.flipClearSearch}
-                    clearSearch={this.state.clearSearch}
+                        flipClearSearch={this.flipClearSearch}
+                        clearSearch={this.state.clearSearch}
 
-                    updateHoverFlag={this.updateHoverFlag}
-                    updateHoveredArtist={this.updateHoveredArtist}
-                    createNodesFromSuggestions={this.createNodesFromSuggestions}
-                />
+                        updateHoverFlag={this.updateHoverFlag}
+                        updateHoveredArtist={this.updateHoveredArtist}
+                        createNodesFromSuggestions={this.createNodesFromSuggestions}
+                    />
+
+                    <ZoomModule
+                        colorant={this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre}
+
+                        updateHoverFlag={this.updateHoverFlag}
+
+                        resetCamera={this.resetCamera}
+                        zoomCameraOut={this.zoomCameraOut}
+                        zoomCameraIn={this.zoomCameraIn}
+                    />
+                </div>
 
                 <P5Wrapper
                     hoveredArtist={this.state.hoveredArtist}

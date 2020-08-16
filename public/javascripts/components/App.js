@@ -56,6 +56,10 @@ var App = function (_React$Component) {
         _this.setCanvas = _this.setCanvas.bind(_this);
         _this.setCamera = _this.setCamera.bind(_this);
 
+        _this.resetCamera = _this.resetCamera.bind(_this);
+        _this.zoomCameraOut = _this.zoomCameraOut.bind(_this);
+        _this.zoomCameraIn = _this.zoomCameraIn.bind(_this);
+
         _this.updateClickedArtist = _this.updateClickedArtist.bind(_this);
         _this.setSidebarState = _this.setSidebarState.bind(_this);
         _this.undoSidebarState = _this.undoSidebarState.bind(_this);
@@ -392,6 +396,27 @@ var App = function (_React$Component) {
             });
         }
     }, {
+        key: "resetCamera",
+        value: function resetCamera() {
+            this.state.camera.setCameraMove(0, 0, 1, 30);
+        }
+    }, {
+        key: "zoomCameraOut",
+        value: function zoomCameraOut() {
+            MouseEvents.zooming = true;
+            MouseEvents.scrollStep = 0;
+            MouseEvents.zoomCoordinates = { x: this.state.camera.x, y: this.state.camera.y };
+            MouseEvents.scrollDelta = 1;
+        }
+    }, {
+        key: "zoomCameraIn",
+        value: function zoomCameraIn() {
+            MouseEvents.zooming = true;
+            MouseEvents.scrollStep = 0;
+            MouseEvents.zoomCoordinates = { x: this.state.camera.x, y: this.state.camera.y };
+            MouseEvents.scrollDelta = -1;
+        }
+    }, {
         key: "setQuadHead",
         value: function setQuadHead(quadHead) {
             this.setState({ quadHead: quadHead });
@@ -472,20 +497,33 @@ var App = function (_React$Component) {
                     updateHoveredArtist: this.updateHoveredArtist,
                     updateHoverFlag: this.updateHoverFlag
                 }),
-                React.createElement(ReactSearchBox, {
-                    colorant: this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre,
+                React.createElement(
+                    "div",
+                    { className: "rightSideDiv" },
+                    React.createElement(ReactSearchBox, {
+                        colorant: this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre,
 
-                    loadArtistFromUI: this.loadArtistFromUI,
-                    loadArtistFromSearch: this.loadArtistFromSearch,
-                    loadGenreFromSearch: this.loadGenreFromSearch,
+                        loadArtistFromUI: this.loadArtistFromUI,
+                        loadArtistFromSearch: this.loadArtistFromSearch,
+                        loadGenreFromSearch: this.loadGenreFromSearch,
 
-                    flipClearSearch: this.flipClearSearch,
-                    clearSearch: this.state.clearSearch,
+                        flipClearSearch: this.flipClearSearch,
+                        clearSearch: this.state.clearSearch,
 
-                    updateHoverFlag: this.updateHoverFlag,
-                    updateHoveredArtist: this.updateHoveredArtist,
-                    createNodesFromSuggestions: this.createNodesFromSuggestions
-                }),
+                        updateHoverFlag: this.updateHoverFlag,
+                        updateHoveredArtist: this.updateHoveredArtist,
+                        createNodesFromSuggestions: this.createNodesFromSuggestions
+                    }),
+                    React.createElement(ZoomModule, {
+                        colorant: this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre,
+
+                        updateHoverFlag: this.updateHoverFlag,
+
+                        resetCamera: this.resetCamera,
+                        zoomCameraOut: this.zoomCameraOut,
+                        zoomCameraIn: this.zoomCameraIn
+                    })
+                ),
                 React.createElement(P5Wrapper, {
                     hoveredArtist: this.state.hoveredArtist,
                     clickedArtist: this.state.clickedArtist,

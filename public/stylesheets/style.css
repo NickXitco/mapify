@@ -210,6 +210,8 @@ canvas {
   flex-direction: column;
 
   user-select: none;
+
+  flex-grow: 1;
 }
 
 .searchBar {
@@ -279,6 +281,58 @@ canvas {
   z-index: 3000;
 }
 /*</editor-fold>*/
+
+.rightSideDiv {
+  position: relative;
+  display: flex;
+  float: right;
+  flex-direction: column;
+  height: 100%;
+  align-items: flex-end;
+}
+
+.zoomModuleDiv {
+  position: relative;
+  float: right;
+  margin: 20px;
+  right: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: center;
+
+  user-select: none;
+}
+
+.zoomModuleButton {
+  width: 24px;
+  height: 24px;
+
+  margin: 6px;
+
+  border-radius: 14px;
+
+  background: rgba(0, 0, 0, 0.90);
+  border: solid white 2px;
+
+  box-shadow: 0 0 10px 0 white, inset 0 0 5px 0 white;
+
+  font-weight: bolder;
+
+  display: flex;
+  position: static;
+
+  justify-content: center;
+  align-content: center;
+
+  transition: border 0.2s cubic-bezier(0.5, 1, 0.89, 1),
+          box-shadow 0.2s cubic-bezier(0.5, 1, 0.89, 1)
+}
+
+.zoomModuleButton p {
+  margin: auto;
+}
 
 /*<editor-fold desc="SIDEBAR STYLINGS">*/
 .sidebar {
