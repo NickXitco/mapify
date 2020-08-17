@@ -633,7 +633,11 @@ canvas {
 }
 
 .hopList {
-  width: 100%;
+  width: 448px;
+
+  margin-top: 2px;
+  margin-bottom: 2px;
+
   position: static;
   overflow-y: auto;
   overflow-x: hidden;
