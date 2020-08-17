@@ -63,7 +63,7 @@ var ReactSidebar = function (_React$Component) {
                             position: 'absolute',
                             width: '440px',
                             height: '200px',
-                            boxShadow: '0 10px 10px 0px black',
+                            boxShadow: '0 20px 10px -10px black',
                             zIndex: 4
                         }
                     }),
@@ -71,6 +71,15 @@ var ReactSidebar = function (_React$Component) {
                         loadArtistFromUI: this.props.loadArtistFromUI,
                         updateHoveredArtist: this.props.updateHoveredArtist,
                         header: "Shortest Path" }),
+                    React.createElement("div", { style: {
+                            position: 'absolute',
+                            width: '440px',
+                            height: '90px',
+                            boxShadow: '0 -20px 10px -10px black',
+                            bottom: 0,
+                            zIndex: 4
+                        }
+                    }),
                     React.createElement(UndoRedoComponent, {
                         color: [start.r, start.g, start.b],
                         sidebarState: this.props.sidebarState,

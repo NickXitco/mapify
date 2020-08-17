@@ -210,8 +210,6 @@ canvas {
   flex-direction: column;
 
   user-select: none;
-
-  flex-grow: 1;
 }
 
 .searchBar {
