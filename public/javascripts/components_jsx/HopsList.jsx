@@ -9,22 +9,24 @@ class HopsList extends React.Component {
         }
 
         const artists = this.props.path.map((artist, index) => {
-            let line = (
-                <div
-                    style={{
-                        position: 'static',
-                        background: `linear-gradient(180deg, rgb(176, 141, 255), rgb(181, 138, 255))`,
-                        height: '100px',
-                        width: '2px',
-                        marginLeft: '62px',
-                        marginTop: '-23px',
-                        marginBottom: '-33px',
-                    }}
-                />
-            )
+            let line;
 
             if (index === this.props.path.length - 1) {
                 line = null;
+            } else {
+                line = (
+                    <div
+                        style={{
+                            position: 'static',
+                            background: `linear-gradient(180deg, ${artist.colorToString()}, ${this.props.path[index + 1].colorToString()})`,
+                            height: '100px',
+                            width: '2px',
+                            marginLeft: '62px',
+                            marginTop: '-23px',
+                            marginBottom: '-33px',
+                        }}
+                    />
+                )
             }
 
             return (

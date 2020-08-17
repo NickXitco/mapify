@@ -25,20 +25,22 @@ var HopsList = function (_React$Component) {
             }
 
             var artists = this.props.path.map(function (artist, index) {
-                var line = React.createElement('div', {
-                    style: {
-                        position: 'static',
-                        background: 'linear-gradient(180deg, rgb(176, 141, 255), rgb(181, 138, 255))',
-                        height: '100px',
-                        width: '2px',
-                        marginLeft: '62px',
-                        marginTop: '-23px',
-                        marginBottom: '-33px'
-                    }
-                });
+                var line = void 0;
 
                 if (index === _this2.props.path.length - 1) {
                     line = null;
+                } else {
+                    line = React.createElement('div', {
+                        style: {
+                            position: 'static',
+                            background: 'linear-gradient(180deg, ' + artist.colorToString() + ', ' + _this2.props.path[index + 1].colorToString() + ')',
+                            height: '100px',
+                            width: '2px',
+                            marginLeft: '62px',
+                            marginTop: '-23px',
+                            marginBottom: '-33px'
+                        }
+                    });
                 }
 
                 return React.createElement(
