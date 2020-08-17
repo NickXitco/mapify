@@ -514,6 +514,10 @@ var App = function (_React$Component) {
                         updateHoveredArtist: this.updateHoveredArtist,
                         createNodesFromSuggestions: this.createNodesFromSuggestions
                     }),
+                    React.createElement("div", { style: {
+                            position: 'static',
+                            flexGrow: 1
+                        } }),
                     React.createElement(ZoomModule, {
                         colorant: this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre,
 

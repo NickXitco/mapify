@@ -407,6 +407,13 @@ class App extends React.Component {
                         createNodesFromSuggestions={this.createNodesFromSuggestions}
                     />
 
+                    <div style={{
+                        position: 'static',
+                        flexGrow: 1,
+                    }}>
+
+                    </div>
+
                     <ZoomModule
                         colorant={this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre}
 
