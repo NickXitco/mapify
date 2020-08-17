@@ -53,10 +53,11 @@ var ArtistProfile = function (_React$Component) {
         key: "decrementFontSize",
         value: function decrementFontSize(size) {
             var heightLimit = size === "Large" ? 113 : size === "Medium" ? 80 : 50;
+            var widthLimit = size === "Large" ? 265 : size === "Medium" ? 280 : 320;
             var height = this.nameElement.clientHeight;
             var width = this.nameElement.clientWidth;
 
-            if (height > heightLimit || width > 265) {
+            if (height > heightLimit || width > widthLimit) {
                 this.setState(function (prevState, props) {
                     return {
                         fontSize: prevState.fontSize - props.fontDecrement

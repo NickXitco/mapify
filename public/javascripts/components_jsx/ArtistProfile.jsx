@@ -32,10 +32,11 @@ class ArtistProfile extends React.Component {
 
     decrementFontSize(size) {
         const heightLimit = size === "Large" ? 113 : size === "Medium" ? 80 : 50;
+        const widthLimit = size === "Large" ? 265 : size === "Medium" ? 280 : 320;
         const height = this.nameElement.clientHeight;
         const width = this.nameElement.clientWidth;
 
-        if (height > heightLimit || width > 265) {
+        if (height > heightLimit || width > widthLimit) {
             this.setState((prevState, props) => ({
                 fontSize: prevState.fontSize - props.fontDecrement
             }));
