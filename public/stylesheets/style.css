@@ -849,6 +849,8 @@ input {
   white-space: nowrap;
   margin-top: 20px;
 
+  position: static;
+
   border-radius: 0 0 20px 20px;
 }
 
