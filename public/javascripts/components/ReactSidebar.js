@@ -35,8 +35,6 @@ var ReactSidebar = function (_React$Component) {
         value: function render() {
             var _this2 = this;
 
-            var player = null;
-
             if (this.props.path.length > 0) {
                 var start = this.props.path[0];
                 var end = this.props.path[this.props.path.length - 1];
@@ -71,6 +69,7 @@ var ReactSidebar = function (_React$Component) {
                         loadArtistFromUI: this.props.loadArtistFromUI,
                         updateHoveredArtist: this.props.updateHoveredArtist,
                         header: "Shortest Path" }),
+                    React.createElement("div", { className: "flexSpacer" }),
                     React.createElement("div", { style: {
                             position: 'absolute',
                             width: '440px',
@@ -121,6 +120,7 @@ var ReactSidebar = function (_React$Component) {
                             updateHoveredArtist: this.props.updateHoveredArtist,
                             header: "Related Artists"
                         }),
+                        React.createElement("div", { className: "flexSpacer" }),
                         React.createElement(UndoRedoComponent, {
                             color: [this.state.artist.r, this.state.artist.g, this.state.artist.b],
                             sidebarState: this.props.sidebarState,
@@ -152,6 +152,7 @@ var ReactSidebar = function (_React$Component) {
                             updateHoveredArtist: this.props.updateHoveredArtist,
                             header: "Artists in Genre"
                         }),
+                        React.createElement("div", { className: "flexSpacer" }),
                         React.createElement(UndoRedoComponent, {
                             color: [this.state.genre.r, this.state.genre.g, this.state.genre.b],
                             sidebarState: this.props.sidebarState,
@@ -182,10 +183,6 @@ var ReactSidebar = function (_React$Component) {
             this.updateSidebarContent(this.props.artist, this.props.genre);
 
             if (this.props.artist) {
-                if (this.props.artist.track) {
-                    player = React.createElement(Player, { uri: "spotify:track:" + this.props.artist.track.id });
-                }
-
                 return React.createElement(
                     "div",
                     { className: "sidebar sidebar-open",
@@ -212,6 +209,7 @@ var ReactSidebar = function (_React$Component) {
                         updateHoveredArtist: this.props.updateHoveredArtist,
                         header: "Related Artists"
                     }),
+                    React.createElement("div", { className: "flexSpacer" }),
                     React.createElement(UndoRedoComponent, {
                         color: [this.props.artist.r, this.props.artist.g, this.props.artist.b],
                         sidebarState: this.props.sidebarState,
@@ -244,6 +242,7 @@ var ReactSidebar = function (_React$Component) {
                         updateHoveredArtist: this.props.updateHoveredArtist,
                         header: "Artists in Genre"
                     }),
+                    React.createElement("div", { className: "flexSpacer" }),
                     React.createElement(UndoRedoComponent, {
                         color: [this.props.genre.r, this.props.genre.g, this.props.genre.b],
                         sidebarState: this.props.sidebarState,

@@ -17,8 +17,6 @@ class ReactSidebar extends React.Component {
     }
 
     render() {
-        let player = null;
-
         if (this.props.path.length > 0) {
             const start = this.props.path[0];
             const end = this.props.path[this.props.path.length - 1];
@@ -52,6 +50,8 @@ class ReactSidebar extends React.Component {
                               loadArtistFromUI={this.props.loadArtistFromUI}
                               updateHoveredArtist={this.props.updateHoveredArtist}
                               header={`Shortest Path`}/>
+
+                    <div className="flexSpacer"/>
 
                     <div style={{
                         position: 'absolute',
@@ -103,6 +103,7 @@ class ReactSidebar extends React.Component {
                                          header={"Related Artists"}
                             />
 
+                            <div className="flexSpacer"/>
                             <UndoRedoComponent
                                 color={[this.state.artist.r, this.state.artist.g, this.state.artist.b]}
                                 sidebarState={this.props.sidebarState}
@@ -134,6 +135,7 @@ class ReactSidebar extends React.Component {
                                      header={"Artists in Genre"}
                         />
 
+                        <div className="flexSpacer"/>
                         <UndoRedoComponent
                             color={[this.state.genre.r, this.state.genre.g, this.state.genre.b]}
                             sidebarState={this.props.sidebarState}
@@ -161,12 +163,6 @@ class ReactSidebar extends React.Component {
         this.updateSidebarContent(this.props.artist, this.props.genre);
 
         if (this.props.artist) {
-            if (this.props.artist.track) {
-                player = (
-                    <Player uri={`spotify:track:${this.props.artist.track.id}`}/>
-                )
-            }
-
             return (
                 <div className="sidebar sidebar-open"
                      onMouseEnter={() => {this.props.updateHoverFlag(true)}}
@@ -192,6 +188,8 @@ class ReactSidebar extends React.Component {
                                  updateHoveredArtist={this.props.updateHoveredArtist}
                                  header={"Related Artists"}
                     />
+
+                    <div className="flexSpacer"/>
 
                     <UndoRedoComponent
                         color={[this.props.artist.r, this.props.artist.g, this.props.artist.b]}
@@ -224,6 +222,8 @@ class ReactSidebar extends React.Component {
                                  updateHoveredArtist={this.props.updateHoveredArtist}
                                  header={"Artists in Genre"}
                     />
+
+                    <div className="flexSpacer"/>
 
                     <UndoRedoComponent
                         color={[this.props.genre.r, this.props.genre.g, this.props.genre.b]}
