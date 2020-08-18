@@ -83,18 +83,18 @@ var GenreProfile = function (_React$Component) {
 
             return React.createElement(
                 "div",
-                { className: "nameAndPicture" },
+                { className: "nameAndPictureLarge" },
                 React.createElement(
                     "div",
-                    { className: "sidebarPicture", style: pictureStyle },
+                    { className: "sidebarPictureLarge", style: pictureStyle },
                     picture
                 ),
                 React.createElement(
                     "div",
-                    { className: "name" },
+                    { className: "nameLarge" },
                     React.createElement(
                         "h1",
-                        { className: "sidebarArtistName", style: nameStyle,
+                        { className: "sidebarArtistNameLarge", style: nameStyle,
                             ref: function ref(nameElement) {
                                 _this4.nameElement = nameElement;
                             } },
