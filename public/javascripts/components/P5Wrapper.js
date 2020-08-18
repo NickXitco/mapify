@@ -125,7 +125,7 @@ var P5Wrapper = function (_React$Component) {
                 p.pop();
 
                 Debug.createTimingEvent("Info Box");
-                Debug.debugAll(p, _this.props.camera, _this.props.hoveredArtist, _this.unloadedQuads, _this.loadingQuads, _this.unprocessedResponses);
+                Debug.debugAll(p, _this.props.camera, _this.props.hoveredArtist, _this.unloadedQuads, _this.loadingQuads, _this.unprocessedResponses, Object.keys(_this.props.nodeLookup).length);
             };
 
             p.mouseWheel = function (e) {

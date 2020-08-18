@@ -77,13 +77,14 @@ const Debug = {
         p.pop();
     },
 
-    loadingStats: function (p, unloadedQuads, loadingQuads, unprocessedResponses) {
+    loadingStats: function (p, unloadedQuads, loadingQuads, unprocessedResponses, loadedNodes) {
         p.push();
         p.fill("white");
         p.noStroke();
         p.text("Unloaded Quads " + unloadedQuads.size, 10, 275);
         p.text("Loading Quads " + loadingQuads.size, 10, 300);
         p.text("Unprocessed Requests " + unprocessedResponses.length, 10, 325);
+        p.text("Loaded Nodes " + loadedNodes, 10, 350);
         p.pop();
     },
 
@@ -128,7 +129,7 @@ const Debug = {
         }
     },
 
-    debugAll: function (p, camera, hoveredArtist, unloadedQuads, loadingQuads, unprocessedResponses) {
+    debugAll: function (p, camera, hoveredArtist, unloadedQuads, loadingQuads, unprocessedResponses, numNodes) {
         p.push();
         camera.setView();
         //this.drawCrosshairs(p);
@@ -139,7 +140,7 @@ const Debug = {
         this.canvasSize(p);
         this.printFPS(p);
         this.printMouseCoordinates(p, camera);
-        this.loadingStats(p, unloadedQuads, loadingQuads, unprocessedResponses);
+        this.loadingStats(p, unloadedQuads, loadingQuads, unprocessedResponses, numNodes);
         this.timingGraph(p);
     }
 }
