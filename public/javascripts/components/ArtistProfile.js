@@ -93,8 +93,6 @@ var ArtistProfile = function (_React$Component) {
                 player = React.createElement(Player, { uri: "spotify:track:" + this.props.artist.track.id });
             }
 
-            var nameSection = void 0;
-
             if (this.props.size === "Large") {
                 return React.createElement(
                     "div",

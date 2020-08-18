@@ -62,6 +62,7 @@ var ReactSidebar = function (_React$Component) {
                             width: '440px',
                             height: '200px',
                             boxShadow: '0 20px 10px -10px black',
+                            pointerEvents: 'none',
                             zIndex: 4
                         }
                     }),
@@ -76,6 +77,7 @@ var ReactSidebar = function (_React$Component) {
                             height: '90px',
                             boxShadow: '0 -20px 10px -10px black',
                             bottom: 0,
+                            pointerEvents: 'none',
                             zIndex: 4
                         }
                     }),

@@ -70,8 +70,6 @@ class ArtistProfile extends React.Component {
             )
         }
 
-        let nameSection;
-
         if (this.props.size === "Large") {
             return (
                 <div style={{position: 'static'}}>

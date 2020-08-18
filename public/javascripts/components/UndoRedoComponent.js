@@ -18,6 +18,8 @@ var UndoRedoComponent = function (_React$Component) {
             undoState: 0,
             redoState: 0
         };
+
+        _this.lastState = null;
         return _this;
     }
 
@@ -68,6 +70,11 @@ var UndoRedoComponent = function (_React$Component) {
                 case 2:
                     redoStyle = this.props.sidebarState && this.props.sidebarState.canRedo() ? activeStyle : {};
                     break;
+            }
+
+            if (this.lastState !== this.props.sidebarState) {
+                this.lastState = this.props.sidebarState;
+                console.log(this.props.sidebarState);
             }
 
             return React.createElement(

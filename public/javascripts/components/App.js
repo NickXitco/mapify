@@ -121,11 +121,11 @@ var App = function (_React$Component) {
             var _this2 = this;
 
             if (artist.loaded) {
-                this.setSidebarState(artist, this.state.activeGenre, null, null);
+                this.setSidebarState(artist, this.state.activeGenre, { nodes: [], edges: [] }, null);
             } else if (artist.id) {
                 loadArtist(this.state.p5, artist, this.state.quadHead, this.state.nodeLookup).then(function () {
                     artist = _this2.state.nodeLookup[artist.id];
-                    _this2.setSidebarState(artist, _this2.state.activeGenre, null, null);
+                    _this2.setSidebarState(artist, _this2.state.activeGenre, { nodes: [], edges: [] }, null);
                 });
             }
         }
@@ -136,14 +136,14 @@ var App = function (_React$Component) {
                 artist.edges = makeEdges(artist);
             }
 
-            if (!state && (artist || genre || path)) {
+            if (!state && (artist || genre || path.nodes.length > 0)) {
                 state = new SidebarState({ artist: artist, genre: genre, path: path }, this.state.currentSidebarState);
             }
 
             this.setState({
                 clickedArtist: artist,
                 activeGenre: genre,
-                activePath: { nodes: [], edges: [] },
+                activePath: path,
                 currentSidebarState: state
             });
         }
@@ -276,7 +276,7 @@ var App = function (_React$Component) {
 
                 _this4.state.camera.setCameraMove(bubble.center.x, bubble.center.y, _this4.state.camera.getZoomFromWidth(camWidth), 45);
 
-                _this4.setSidebarState(null, newGenre, null, null);
+                _this4.setSidebarState(null, newGenre, { nodes: [], edges: [] }, null);
             });
         }
     }, {
@@ -288,7 +288,7 @@ var App = function (_React$Component) {
             } else if (this.state.activeGenre) {
                 this.setSidebarState(null, null, this.state.activePath, null);
             } else {
-                this.setSidebarState(null, null, null, null);
+                this.setSidebarState(null, null, { nodes: [], edges: [] }, null);
             }
 
             this.setState({ clearSearch: true, spButtonExpanded: false });
@@ -341,7 +341,7 @@ var App = function (_React$Component) {
             var camWidth = Math.min(5000, bubble.radius * 4);
             this.state.camera.setCameraMove(bubble.center.x, bubble.center.y, this.state.camera.getZoomFromWidth(camWidth), 45);
 
-            this.setState({ activePath: { nodes: newPath, edges: newPathEdges } });
+            this.setSidebarState(null, null, { nodes: newPath, edges: newPathEdges }, null);
         }
     }, {
         key: "flipClearSearch",
