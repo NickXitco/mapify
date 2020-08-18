@@ -35,10 +35,9 @@ var ReactSidebar = function (_React$Component) {
         value: function render() {
             var _this2 = this;
 
-            var player = null;
-
             if (this.props.path.length > 0) {
                 var start = this.props.path[0];
+                var end = this.props.path[this.props.path.length - 1];
 
                 return React.createElement(
                     "div",
@@ -56,10 +55,38 @@ var ReactSidebar = function (_React$Component) {
                         "::-webkit-scrollbar-track {box-shadow: 0 0 5px " + start.colorToString() + ";}  \n" + ("::-webkit-scrollbar-thumb {background: " + start.colorToString() + ";")
                     ),
                     React.createElement(SidebarStroke, { color: start.colorToString() }),
+                    React.createElement(ArtistProfile, { artist: start, fontDecrement: 3, showPlayer: false, size: "Small", align: 'left' }),
+                    React.createElement(ArtistProfile, { artist: end, fontDecrement: 3, showPlayer: false, size: "Small", align: 'right' }),
+                    React.createElement("div", { style: {
+                            position: 'absolute',
+                            width: '440px',
+                            height: '200px',
+                            boxShadow: '0 20px 10px -10px black',
+                            pointerEvents: 'none',
+                            zIndex: 4
+                        }
+                    }),
                     React.createElement(HopsList, { path: this.props.path,
                         loadArtistFromUI: this.props.loadArtistFromUI,
                         updateHoveredArtist: this.props.updateHoveredArtist,
-                        header: "Shortest Path" })
+                        header: "Shortest Path" }),
+                    React.createElement("div", { className: "flexSpacer" }),
+                    React.createElement("div", { style: {
+                            position: 'absolute',
+                            width: '440px',
+                            height: '90px',
+                            boxShadow: '0 -20px 10px -10px black',
+                            bottom: 0,
+                            pointerEvents: 'none',
+                            zIndex: 4
+                        }
+                    }),
+                    React.createElement(UndoRedoComponent, {
+                        color: [start.r, start.g, start.b],
+                        sidebarState: this.props.sidebarState,
+                        undoSidebarState: this.props.undoSidebarState,
+                        redoSidebarState: this.props.redoSidebarState
+                    })
                 );
             }
 
@@ -85,7 +112,7 @@ var ReactSidebar = function (_React$Component) {
                             "::-webkit-scrollbar-track {box-shadow: 0 0 5px " + this.state.artist.colorToString() + ";}  \n" + ("::-webkit-scrollbar-thumb {background: " + this.state.artist.colorToString() + ";")
                         ),
                         React.createElement(SidebarStroke, { color: this.state.artist.colorToString() }),
-                        React.createElement(ArtistProfile, { artist: this.state.artist, fontDecrement: 3 }),
+                        React.createElement(ArtistProfile, { artist: this.state.artist, fontDecrement: 3, showPlayer: true, size: "Large", align: 'left' }),
                         React.createElement(GenresList, { genres: this.state.artist.genres,
                             loadGenreFromSearch: this.props.loadGenreFromSearch,
                             header: "Genres"
@@ -95,6 +122,7 @@ var ReactSidebar = function (_React$Component) {
                             updateHoveredArtist: this.props.updateHoveredArtist,
                             header: "Related Artists"
                         }),
+                        React.createElement("div", { className: "flexSpacer" }),
                         React.createElement(UndoRedoComponent, {
                             color: [this.state.artist.r, this.state.artist.g, this.state.artist.b],
                             sidebarState: this.props.sidebarState,
@@ -126,6 +154,7 @@ var ReactSidebar = function (_React$Component) {
                             updateHoveredArtist: this.props.updateHoveredArtist,
                             header: "Artists in Genre"
                         }),
+                        React.createElement("div", { className: "flexSpacer" }),
                         React.createElement(UndoRedoComponent, {
                             color: [this.state.genre.r, this.state.genre.g, this.state.genre.b],
                             sidebarState: this.props.sidebarState,
@@ -156,10 +185,6 @@ var ReactSidebar = function (_React$Component) {
             this.updateSidebarContent(this.props.artist, this.props.genre);
 
             if (this.props.artist) {
-                if (this.props.artist.track) {
-                    player = React.createElement(Player, { uri: "spotify:track:" + this.props.artist.track.id });
-                }
-
                 return React.createElement(
                     "div",
                     { className: "sidebar sidebar-open",
@@ -176,7 +201,7 @@ var ReactSidebar = function (_React$Component) {
                         "::-webkit-scrollbar-track {box-shadow: 0 0 5px " + this.props.artist.colorToString() + ";}  \n" + ("::-webkit-scrollbar-thumb {background: " + this.props.artist.colorToString() + ";")
                     ),
                     React.createElement(SidebarStroke, { color: this.props.artist.colorToString() }),
-                    React.createElement(ArtistProfile, { artist: this.props.artist, fontDecrement: 3 }),
+                    React.createElement(ArtistProfile, { artist: this.props.artist, fontDecrement: 3, showPlayer: true, size: "Large", align: 'left' }),
                     React.createElement(GenresList, { genres: this.props.artist.genres,
                         loadGenreFromSearch: this.props.loadGenreFromSearch,
                         header: "Genres"
@@ -186,6 +211,7 @@ var ReactSidebar = function (_React$Component) {
                         updateHoveredArtist: this.props.updateHoveredArtist,
                         header: "Related Artists"
                     }),
+                    React.createElement("div", { className: "flexSpacer" }),
                     React.createElement(UndoRedoComponent, {
                         color: [this.props.artist.r, this.props.artist.g, this.props.artist.b],
                         sidebarState: this.props.sidebarState,
@@ -218,6 +244,7 @@ var ReactSidebar = function (_React$Component) {
                         updateHoveredArtist: this.props.updateHoveredArtist,
                         header: "Artists in Genre"
                     }),
+                    React.createElement("div", { className: "flexSpacer" }),
                     React.createElement(UndoRedoComponent, {
                         color: [this.props.genre.r, this.props.genre.g, this.props.genre.b],
                         sidebarState: this.props.sidebarState,

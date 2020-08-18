@@ -1,5 +1,5 @@
 {
-  "name": "spotifymaponline",
+  "name": "mapify",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -21,7 +21,7 @@
     "socket.io": "^2.3.0",
     "spotify-web-api-node": "^4.0.0"
   },
-  "description": "spotifymaponline",
+  "description": "mapify",
   "main": "app.js",
   "devDependencies": {},
   "keywords": [],

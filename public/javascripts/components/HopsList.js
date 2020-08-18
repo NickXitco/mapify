@@ -16,7 +16,7 @@ var HopsList = function (_React$Component) {
     }
 
     _createClass(HopsList, [{
-        key: "render",
+        key: 'render',
         value: function render() {
             var _this2 = this;
 
@@ -25,8 +25,26 @@ var HopsList = function (_React$Component) {
             }
 
             var artists = this.props.path.map(function (artist, index) {
+                var line = void 0;
+
+                if (index === _this2.props.path.length - 1) {
+                    line = null;
+                } else {
+                    line = React.createElement('div', {
+                        style: {
+                            position: 'static',
+                            background: 'linear-gradient(180deg, ' + artist.colorToString() + ', ' + _this2.props.path[index + 1].colorToString() + ')',
+                            height: '100px',
+                            width: '2px',
+                            marginLeft: '62px',
+                            marginTop: '-23px',
+                            marginBottom: '-33px'
+                        }
+                    });
+                }
+
                 return React.createElement(
-                    "li",
+                    'li',
                     { className: "hopListItem",
                         key: artist.id.toString(),
                         onClick: function onClick() {
@@ -39,15 +57,16 @@ var HopsList = function (_React$Component) {
                             _this2.props.updateHoveredArtist(null);
                         }
                     },
-                    React.createElement(ArtistProfile, { artist: artist, fontDecrement: 3 })
+                    React.createElement(ArtistProfile, { artist: artist, fontDecrement: 3, showPlayer: false, size: "Medium", align: 'left' }),
+                    line
                 );
             });
 
             return React.createElement(
-                "div",
+                'div',
                 { className: "hopListSection" },
                 React.createElement(
-                    "ol",
+                    'ol',
                     { className: "hopList" },
                     artists
                 )

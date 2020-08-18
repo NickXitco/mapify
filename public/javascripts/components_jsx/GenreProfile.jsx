@@ -56,12 +56,12 @@ class GenreProfile extends React.Component {
         let picture = null;
 
         return (
-            <div className={"nameAndPicture"}>
-                <div className={"sidebarPicture"} style={pictureStyle}>
+            <div className={"nameAndPictureLarge"}>
+                <div className={"sidebarPictureLarge"} style={pictureStyle}>
                     {picture}
                 </div>
-                <div className={"name"}>
-                    <h1 className={"sidebarArtistName"} style={nameStyle}
+                <div className={"nameLarge"}>
+                    <h1 className={"sidebarArtistNameLarge"} style={nameStyle}
                         ref={(nameElement) => {this.nameElement = nameElement}}>
                         {this.props.genre.name}
                     </h1>

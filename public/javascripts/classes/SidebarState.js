@@ -1,3 +1,5 @@
+SSID = 0
+
 class SidebarState {
 
     payload
@@ -14,6 +16,9 @@ class SidebarState {
             this.prev = oldCurrent;
             this.next = null;
         }
+
+        this.ssid = SSID;
+        SSID++;
     }
 
     canUndo() {

@@ -27,6 +27,9 @@ class ShortestPathDialog extends React.Component {
         this.processSuggestions = this.processSuggestions.bind(this);
         this.processSuggestionClick = this.processSuggestionClick.bind(this);
 
+        this.reverseState = this.reverseState.bind(this);
+        this.resetState = this.resetState.bind(this);
+
         this.expandFully = this.expandFully.bind(this);
 
         this.sendSubmitIfEnter = this.sendSubmitIfEnter.bind(this);
@@ -98,7 +101,23 @@ class ShortestPathDialog extends React.Component {
         }
     }
 
+    reverseState() {
+        const tempValue = this.state.endValue;
+        const tempSuggestions = this.state.endSuggestions;
+        const tempArtist = this.state.endArtist;
 
+        this.setState({
+            endValue: this.state.startValue,
+            endSuggestions: this.state.startSuggestions,
+            endArtist: this.state.startArtist,
+        });
+
+        this.setState({
+            startValue: tempValue,
+            startSuggestions: tempSuggestions,
+            startArtist: tempArtist,
+        });
+    }
 
     resetState(start) {
         if (start) {
@@ -220,42 +239,70 @@ class ShortestPathDialog extends React.Component {
                         SHORTEST PATH
                     </h4>
 
-                    <div className="shortestPathForm">
-                        <label>START</label>
-                        <div className={"shortestPathSearch"}>
-                            <input className={`searchInput ${borderClassName}`}
-                                   style={colorStyle}
-                                   type="text"
-                                   placeholder="search for an artist"
 
-                                   onInput={(e) => {this.processInput(e, true)}}
-                                   onKeyDown={(e) => {this.sendSubmitIfEnter(e, true)}}
+                    <div style={{
+                        position: 'static',
+                        display: 'flex',
+                    }}>
+                        <div className="shortestPathForm">
+                            <label>START</label>
+                            <div className={"shortestPathSearch"}>
+                                <input className={`searchInput ${borderClassName}`}
+                                       style={colorStyle}
+                                       type="text"
+                                       placeholder="search for an artist"
 
-                                   onFocus={() => {this.setState({startFocus: true})}}
-                                   onBlur={() => {setTimeout(() => {this.setState({startFocus: false})}, 500)}}
+                                       onInput={(e) => {this.processInput(e, true)}}
+                                       onKeyDown={(e) => {this.sendSubmitIfEnter(e, true)}}
 
-                                   value={this.state.startValue}
-                            />
+                                       onFocus={() => {this.setState({startFocus: true})}}
+                                       onBlur={() => {setTimeout(() => {this.setState({startFocus: false})}, 500)}}
+
+                                       value={this.state.startValue}
+                                />
+                            </div>
+                            {startArtistsList}
+                            <label style={{marginTop: '20px'}}>END</label>
+                            <div className={"shortestPathSearch"}>
+                                <input className={`searchInput ${borderClassName}`}
+                                       style={colorStyle}
+                                       type="text"
+                                       placeholder="search for an artist"
+
+                                       onInput={(e) => {this.processInput(e, false)}}
+                                       onKeyDown={(e) => {this.sendSubmitIfEnter(e, false)}}
+
+                                       onFocus={() => {this.setState({endFocus: true})}}
+                                       onBlur={() => {setTimeout(() => {this.setState({endFocus: false})}, 500)}}
+
+                                       value={this.state.endValue}
+                                />
+                            </div>
+                            {endArtistsList}
                         </div>
-                        {startArtistsList}
-                        <label style={{marginTop: '20px'}}>END</label>
-                        <div className={"shortestPathSearch"}>
-                            <input className={`searchInput ${borderClassName}`}
-                                   style={colorStyle}
-                                   type="text"
-                                   placeholder="search for an artist"
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             viewBox="0 0 32 32"
+                             onClick={this.reverseState}
 
-                                   onInput={(e) => {this.processInput(e, false)}}
-                                   onKeyDown={(e) => {this.sendSubmitIfEnter(e, false)}}
+                             style={{
+                                 width: '32px',
+                                 position: 'static',
+                                 flexGrow: 1,
+                                 padding: '16px',
+                             }}
 
-                                   onFocus={() => {this.setState({endFocus: true})}}
-                                   onBlur={() => {setTimeout(() => {this.setState({endFocus: false})}, 500)}}
-
-                                   value={this.state.endValue}
-                            />
-                        </div>
-                        {endArtistsList}
+                        >
+                            <path style={{
+                                fill: 'white'
+                            }}
+                                  d="M14.08 6.56h2.56L19.19 4h-7.66a1.28 1.28 0 00-1.28 1.28v17.89H7.69L11.53 27l3.83-3.83h-2.55V7.83a1.27 1.27 0 011.27-1.27z"/>
+                            <path  style={{
+                                fill: 'white'
+                            }}
+                                  d="M20.47 4l-3.83 3.83h2.55v15.34a1.27 1.27 0 01-1.27 1.27h-2.56L12.81 27h7.66a1.28 1.28 0 001.28-1.28V7.83h2.56z"/>
+                        </svg>
                     </div>
+
 
                     <button className="mapifyButton"
                             onClick={this.getPath}

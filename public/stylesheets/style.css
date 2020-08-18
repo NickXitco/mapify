@@ -36,7 +36,7 @@ h1 {
   text-transform: uppercase;
   font-size: 72px;
   position: static;
-  margin-right: 30px;
+
   display: block;
 }
 
@@ -210,8 +210,6 @@ canvas {
   flex-direction: column;
 
   user-select: none;
-
-  flex-grow: 1;
 }
 
 .searchBar {
@@ -363,10 +361,12 @@ canvas {
   height: 100%;
   display: block;
   float: left;
+
+  z-index: 5;
 }
 
 /*<editor-fold desc="NAME AND PICTURE">*/
-.nameAndPicture {
+.nameAndPictureLarge {
   position: static;
   width: 100%;
   height: 158px;
@@ -374,7 +374,7 @@ canvas {
   grid-template-columns: 158px auto;
 }
 
-.sidebarPicture {
+.sidebarPictureLarge {
   width: 113px;
   height: 113px;
   display: block;
@@ -383,7 +383,7 @@ canvas {
   position: static;
 }
 
-.sidebarPicture img {
+.sidebarPictureLarge img {
   object-fit: cover;
   width: 113px;
   height: 113px;
@@ -392,13 +392,128 @@ canvas {
   z-index: -1;
 }
 
-.name {
+.nameLarge {
   display: flex;
   align-items: center;
   height: 158px;
   width: 100%;
   position: static;
 }
+
+.nameLarge h1 {
+  margin-right: 30px;
+}
+
+.nameAndPictureMedium {
+  position: static;
+  width: 100%;
+  height: 125px;
+  display: grid;
+  grid-template-columns: 125px auto;
+}
+
+.sidebarPictureMedium {
+  width: 80px;
+  height: 80px;
+  display: block;
+  margin: 23px;
+  border-radius: 50%;
+  position: static;
+}
+
+.sidebarPictureMedium img {
+  object-fit: cover;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  position: static;
+  z-index: -1;
+}
+
+.nameMedium {
+  display: flex;
+
+  height: 125px;
+  width: 100%;
+  position: static;
+
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.nameMedium h1 {
+  margin-right: 30px;
+}
+
+.nameAndPictureSmall {
+  position: static;
+  width: 100%;
+  height: 100px;
+  display: grid;
+  grid-template-columns: 100px auto;
+}
+
+.nameAndPictureSmallRight {
+  position: static;
+  width: 100%;
+  height: 100px;
+  display: grid;
+  grid-template-columns: auto 100px;
+}
+
+.sidebarPictureSmall {
+  width: 55px;
+  height: 55px;
+  display: block;
+  margin: 23px;
+  border-radius: 50%;
+  position: static;
+}
+
+.sidebarPictureSmall img {
+  object-fit: cover;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  position: static;
+  z-index: -1;
+}
+
+.nameSmall {
+  display: flex;
+
+  height: 100px;
+  width: 100%;
+  position: static;
+
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.nameSmall h1 {
+  margin-right: 30px;
+}
+
+.nameSmallRight {
+  display: flex;
+
+  height: 100px;
+  width: 100%;
+  position: static;
+
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+
+  text-align: right;
+}
+
+.nameSmallRight h1 {
+  margin-left: 30px;
+}
+
 /*</editor-fold>*/
 
 .player {
@@ -413,7 +528,17 @@ canvas {
   position: static;
   width: 100%;
   padding: 10px 22px;
+
+  font-size: 22px;
 }
+
+.followersSectionSmall {
+  position: static;
+  width: 100%;
+
+  font-size: 15px;
+}
+
 
 .followerCount {
   font-family: montserrat, sans-serif;
@@ -421,7 +546,6 @@ canvas {
   font-style: normal;
   color: white;
   text-transform: uppercase;
-  font-size: 22px;
   margin-right: 0.15em;
 }
 
@@ -431,7 +555,6 @@ canvas {
   font-style: normal;
   color: white;
   text-transform: uppercase;
-  font-size: 22px;
   margin-left: 4px;
 
 }
@@ -442,7 +565,6 @@ canvas {
   font-style: italic;
   color: white;
   text-transform: uppercase;
-  font-size: 22px;
 }
 /*</editor-fold>*/
 /*<editor-fold desc="GENRES">*/
@@ -474,7 +596,6 @@ canvas {
   display: flex;
   overflow-y: auto;
   flex-direction: column;
-  flex-grow: 1;
 }
 
 .sidebarListItem {
@@ -511,7 +632,11 @@ canvas {
 }
 
 .hopList {
-  width: 100%;
+  width: 448px;
+
+  margin-top: 2px;
+  margin-bottom: 2px;
+
   position: static;
   overflow-y: auto;
   overflow-x: hidden;
@@ -523,7 +648,6 @@ canvas {
   display: flex;
   overflow-y: auto;
   flex-direction: column;
-  flex-grow: 1;
 }
 
 
@@ -725,6 +849,8 @@ input {
   white-space: nowrap;
   margin-top: 20px;
 
+  position: static;
+
   border-radius: 0 0 20px 20px;
 }
 
@@ -734,4 +860,9 @@ input {
 
 .mapifyButton:active {
   box-shadow: inset 0 0 15px 0 white;
+}
+
+.flexSpacer {
+  position: static;
+  flex-grow: 1;
 }

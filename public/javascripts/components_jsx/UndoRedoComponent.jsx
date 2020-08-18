@@ -6,6 +6,9 @@ class UndoRedoComponent extends React.Component {
             undoState: 0,
             redoState: 0
         }
+
+
+        this.lastState = null;
     }
 
     render() {
@@ -52,6 +55,12 @@ class UndoRedoComponent extends React.Component {
             case 2:
                 redoStyle = this.props.sidebarState && this.props.sidebarState.canRedo() ? activeStyle : {}
                 break;
+        }
+
+
+        if (this.lastState !== this.props.sidebarState) {
+            this.lastState = this.props.sidebarState;
+            console.log(this.props.sidebarState);
         }
 
 

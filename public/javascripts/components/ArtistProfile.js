@@ -30,7 +30,7 @@ var ArtistProfile = function (_React$Component) {
 
             if (this.props.artist !== this.state.artist) {
                 this.setState({ fontSize: 60, artist: this.props.artist }, function () {
-                    _this2.decrementFontSize();
+                    _this2.decrementFontSize(_this2.props.size);
                 });
             }
         }
@@ -41,21 +41,23 @@ var ArtistProfile = function (_React$Component) {
 
             if (this.props.artist !== this.state.artist) {
                 this.setState({ fontSize: 60, artist: this.props.artist }, function () {
-                    _this3.decrementFontSize();
+                    _this3.decrementFontSize(_this3.props.size);
                 });
             }
 
             if (this.fontSizeUpdating) {
-                this.decrementFontSize();
+                this.decrementFontSize(this.props.size);
             }
         }
     }, {
         key: "decrementFontSize",
-        value: function decrementFontSize() {
+        value: function decrementFontSize(size) {
+            var heightLimit = size === "Large" ? 113 : size === "Medium" ? 80 : 50;
+            var widthLimit = size === "Large" ? 265 : size === "Medium" ? 280 : 320;
             var height = this.nameElement.clientHeight;
             var width = this.nameElement.clientWidth;
 
-            if (height > 113 || width > 265) {
+            if (height > heightLimit || width > widthLimit) {
                 this.setState(function (prevState, props) {
                     return {
                         fontSize: prevState.fontSize - props.fontDecrement
@@ -87,37 +89,125 @@ var ArtistProfile = function (_React$Component) {
 
             var player = null;
 
-            if (this.props.artist.track) {
+            if (this.props.artist.track && this.props.showPlayer) {
                 player = React.createElement(Player, { uri: "spotify:track:" + this.props.artist.track.id });
             }
 
-            return React.createElement(
-                "div",
-                { style: { position: 'static' } },
-                React.createElement(
+            if (this.props.size === "Large") {
+                return React.createElement(
                     "div",
-                    { className: "nameAndPicture" },
+                    { style: { position: 'static' } },
                     React.createElement(
                         "div",
-                        { className: "sidebarPicture", style: pictureStyle },
-                        picture
-                    ),
-                    React.createElement(
-                        "div",
-                        { className: "name" },
+                        { className: "nameAndPictureLarge" },
                         React.createElement(
-                            "h1",
-                            { className: "sidebarArtistName", style: nameStyle,
-                                ref: function ref(nameElement) {
-                                    _this4.nameElement = nameElement;
-                                } },
-                            this.props.artist.name
+                            "div",
+                            { className: "sidebarPictureLarge", style: pictureStyle },
+                            picture
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "nameLarge" },
+                            React.createElement(
+                                "h1",
+                                { className: "sidebarArtistNameLarge", style: nameStyle,
+                                    ref: function ref(nameElement) {
+                                        _this4.nameElement = nameElement;
+                                    } },
+                                this.props.artist.name
+                            )
                         )
-                    )
-                ),
-                React.createElement(FollowersStats, { artist: this.props.artist }),
-                player
-            );
+                    ),
+                    React.createElement(FollowersStats, { artist: this.props.artist, size: "Large" }),
+                    player
+                );
+            } else if (this.props.size === "Medium") {
+                return React.createElement(
+                    "div",
+                    { style: { position: 'static' } },
+                    React.createElement(
+                        "div",
+                        { className: "nameAndPictureMedium" },
+                        React.createElement(
+                            "div",
+                            { className: "sidebarPictureMedium", style: pictureStyle },
+                            picture
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "nameMedium" },
+                            React.createElement(
+                                "h1",
+                                { className: "sidebarArtistNameMedium", style: nameStyle,
+                                    ref: function ref(nameElement) {
+                                        _this4.nameElement = nameElement;
+                                    } },
+                                this.props.artist.name
+                            ),
+                            React.createElement(FollowersStats, { artist: this.props.artist, size: "Small" })
+                        )
+                    ),
+                    player
+                );
+            } else {
+                if (this.props.align === "right") {
+                    return React.createElement(
+                        "div",
+                        { style: { position: 'static' } },
+                        React.createElement(
+                            "div",
+                            { className: "nameAndPictureSmallRight" },
+                            React.createElement(
+                                "div",
+                                { className: "nameSmallRight" },
+                                React.createElement(
+                                    "h1",
+                                    { className: "sidebarArtistNameSmall", style: nameStyle,
+                                        ref: function ref(nameElement) {
+                                            _this4.nameElement = nameElement;
+                                        } },
+                                    this.props.artist.name
+                                ),
+                                React.createElement(FollowersStats, { artist: this.props.artist, size: "Small" })
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "sidebarPictureSmall", style: pictureStyle },
+                                picture
+                            )
+                        ),
+                        player
+                    );
+                }
+
+                return React.createElement(
+                    "div",
+                    { style: { position: 'static' } },
+                    React.createElement(
+                        "div",
+                        { className: "nameAndPictureSmall" },
+                        React.createElement(
+                            "div",
+                            { className: "sidebarPictureSmall", style: pictureStyle },
+                            picture
+                        ),
+                        React.createElement(
+                            "div",
+                            { className: "nameSmall" },
+                            React.createElement(
+                                "h1",
+                                { className: "sidebarArtistNameSmall", style: nameStyle,
+                                    ref: function ref(nameElement) {
+                                        _this4.nameElement = nameElement;
+                                    } },
+                                this.props.artist.name
+                            ),
+                            React.createElement(FollowersStats, { artist: this.props.artist, size: "Small" })
+                        )
+                    ),
+                    player
+                );
+            }
         }
     }]);
 

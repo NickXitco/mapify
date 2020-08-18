@@ -55,7 +55,7 @@ function getHoveredArtist(p, camera, clickedArtist, quadHead, genre, path) {
     }
 
     if (path.nodes.length > 0) {
-        if (closest in path.nodes) {
+        if (path.nodes.includes(closest)) {
             return closest;
         } else {
             return null;

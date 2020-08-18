@@ -39,6 +39,9 @@ var ShortestPathDialog = function (_React$Component) {
         _this.processSuggestions = _this.processSuggestions.bind(_this);
         _this.processSuggestionClick = _this.processSuggestionClick.bind(_this);
 
+        _this.reverseState = _this.reverseState.bind(_this);
+        _this.resetState = _this.resetState.bind(_this);
+
         _this.expandFully = _this.expandFully.bind(_this);
 
         _this.sendSubmitIfEnter = _this.sendSubmitIfEnter.bind(_this);
@@ -122,6 +125,25 @@ var ShortestPathDialog = function (_React$Component) {
                     return _this3.props.updatePath(path);
                 });
             }
+        }
+    }, {
+        key: "reverseState",
+        value: function reverseState() {
+            var tempValue = this.state.endValue;
+            var tempSuggestions = this.state.endSuggestions;
+            var tempArtist = this.state.endArtist;
+
+            this.setState({
+                endValue: this.state.startValue,
+                endSuggestions: this.state.startSuggestions,
+                endArtist: this.state.startArtist
+            });
+
+            this.setState({
+                startValue: tempValue,
+                startSuggestions: tempSuggestions,
+                startArtist: tempArtist
+            });
         }
     }, {
         key: "resetState",
@@ -274,73 +296,103 @@ var ShortestPathDialog = function (_React$Component) {
                     ),
                     React.createElement(
                         "div",
-                        { className: "shortestPathForm" },
-                        React.createElement(
-                            "label",
-                            null,
-                            "START"
-                        ),
+                        { style: {
+                                position: 'static',
+                                display: 'flex'
+                            } },
                         React.createElement(
                             "div",
-                            { className: "shortestPathSearch" },
-                            React.createElement("input", { className: "searchInput " + borderClassName,
-                                style: colorStyle,
-                                type: "text",
-                                placeholder: "search for an artist",
+                            { className: "shortestPathForm" },
+                            React.createElement(
+                                "label",
+                                null,
+                                "START"
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "shortestPathSearch" },
+                                React.createElement("input", { className: "searchInput " + borderClassName,
+                                    style: colorStyle,
+                                    type: "text",
+                                    placeholder: "search for an artist",
 
-                                onInput: function onInput(e) {
-                                    _this4.processInput(e, true);
-                                },
-                                onKeyDown: function onKeyDown(e) {
-                                    _this4.sendSubmitIfEnter(e, true);
-                                },
+                                    onInput: function onInput(e) {
+                                        _this4.processInput(e, true);
+                                    },
+                                    onKeyDown: function onKeyDown(e) {
+                                        _this4.sendSubmitIfEnter(e, true);
+                                    },
 
-                                onFocus: function onFocus() {
-                                    _this4.setState({ startFocus: true });
-                                },
-                                onBlur: function onBlur() {
-                                    setTimeout(function () {
-                                        _this4.setState({ startFocus: false });
-                                    }, 500);
-                                },
+                                    onFocus: function onFocus() {
+                                        _this4.setState({ startFocus: true });
+                                    },
+                                    onBlur: function onBlur() {
+                                        setTimeout(function () {
+                                            _this4.setState({ startFocus: false });
+                                        }, 500);
+                                    },
 
-                                value: this.state.startValue
-                            })
+                                    value: this.state.startValue
+                                })
+                            ),
+                            startArtistsList,
+                            React.createElement(
+                                "label",
+                                { style: { marginTop: '20px' } },
+                                "END"
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "shortestPathSearch" },
+                                React.createElement("input", { className: "searchInput " + borderClassName,
+                                    style: colorStyle,
+                                    type: "text",
+                                    placeholder: "search for an artist",
+
+                                    onInput: function onInput(e) {
+                                        _this4.processInput(e, false);
+                                    },
+                                    onKeyDown: function onKeyDown(e) {
+                                        _this4.sendSubmitIfEnter(e, false);
+                                    },
+
+                                    onFocus: function onFocus() {
+                                        _this4.setState({ endFocus: true });
+                                    },
+                                    onBlur: function onBlur() {
+                                        setTimeout(function () {
+                                            _this4.setState({ endFocus: false });
+                                        }, 500);
+                                    },
+
+                                    value: this.state.endValue
+                                })
+                            ),
+                            endArtistsList
                         ),
-                        startArtistsList,
                         React.createElement(
-                            "label",
-                            { style: { marginTop: '20px' } },
-                            "END"
-                        ),
-                        React.createElement(
-                            "div",
-                            { className: "shortestPathSearch" },
-                            React.createElement("input", { className: "searchInput " + borderClassName,
-                                style: colorStyle,
-                                type: "text",
-                                placeholder: "search for an artist",
+                            "svg",
+                            { xmlns: "http://www.w3.org/2000/svg",
+                                viewBox: "0 0 32 32",
+                                onClick: this.reverseState,
 
-                                onInput: function onInput(e) {
-                                    _this4.processInput(e, false);
-                                },
-                                onKeyDown: function onKeyDown(e) {
-                                    _this4.sendSubmitIfEnter(e, false);
-                                },
+                                style: {
+                                    width: '32px',
+                                    position: 'static',
+                                    flexGrow: 1,
+                                    padding: '16px'
+                                }
 
-                                onFocus: function onFocus() {
-                                    _this4.setState({ endFocus: true });
+                            },
+                            React.createElement("path", { style: {
+                                    fill: 'white'
                                 },
-                                onBlur: function onBlur() {
-                                    setTimeout(function () {
-                                        _this4.setState({ endFocus: false });
-                                    }, 500);
+                                d: "M14.08 6.56h2.56L19.19 4h-7.66a1.28 1.28 0 00-1.28 1.28v17.89H7.69L11.53 27l3.83-3.83h-2.55V7.83a1.27 1.27 0 011.27-1.27z" }),
+                            React.createElement("path", { style: {
+                                    fill: 'white'
                                 },
-
-                                value: this.state.endValue
-                            })
-                        ),
-                        endArtistsList
+                                d: "M20.47 4l-3.83 3.83h2.55v15.34a1.27 1.27 0 01-1.27 1.27h-2.56L12.81 27h7.66a1.28 1.28 0 001.28-1.28V7.83h2.56z" })
+                        )
                     ),
                     React.createElement(
                         "button",
