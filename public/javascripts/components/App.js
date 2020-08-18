@@ -459,12 +459,14 @@ var App = function (_React$Component) {
                 });
             }
 
+            var colorant = this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre ? this.state.activeGenre : this.state.activePath.nodes.length > 0 ? this.state.activePath.nodes[0] : null;
+
             return React.createElement(
                 "div",
                 { className: "fullScreen" },
                 changelog,
                 React.createElement(ShortestPathDialog, {
-                    colorant: this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre,
+                    colorant: colorant,
                     expanded: this.state.spButtonExpanded,
                     updateHoverFlag: this.updateHoverFlag,
                     clickHandler: this.expandSP,
@@ -474,7 +476,7 @@ var App = function (_React$Component) {
                     updatePath: this.updatePath
                 }),
                 React.createElement(RandomNodeButton, {
-                    colorant: this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre,
+                    colorant: colorant,
                     expanded: this.state.randomButtonExpanded,
                     updateHoverFlag: this.updateHoverFlag,
                     clickHandler: this.fetchRandomArtist
@@ -501,7 +503,7 @@ var App = function (_React$Component) {
                     "div",
                     { className: "rightSideDiv" },
                     React.createElement(ReactSearchBox, {
-                        colorant: this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre,
+                        colorant: colorant,
 
                         loadArtistFromUI: this.loadArtistFromUI,
                         loadArtistFromSearch: this.loadArtistFromSearch,
@@ -516,7 +518,7 @@ var App = function (_React$Component) {
                     }),
                     React.createElement("div", { className: "flexSpacer" }),
                     React.createElement(ZoomModule, {
-                        colorant: this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre,
+                        colorant: colorant,
 
                         updateHoverFlag: this.updateHoverFlag,
 

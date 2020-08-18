@@ -349,12 +349,14 @@ class App extends React.Component {
             );
         }
 
+        let colorant = this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre ? this.state.activeGenre : this.state.activePath.nodes.length > 0 ? this.state.activePath.nodes[0] : null;
+
         return (
             <div className={"fullScreen"}>
                 {changelog}
 
                 <ShortestPathDialog
-                    colorant={this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre}
+                    colorant={colorant}
                     expanded={this.state.spButtonExpanded}
                     updateHoverFlag={this.updateHoverFlag}
                     clickHandler={this.expandSP}
@@ -365,7 +367,7 @@ class App extends React.Component {
                 />
 
                 <RandomNodeButton
-                    colorant={this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre}
+                    colorant={colorant}
                     expanded={this.state.randomButtonExpanded}
                     updateHoverFlag={this.updateHoverFlag}
                     clickHandler={this.fetchRandomArtist}
@@ -393,7 +395,7 @@ class App extends React.Component {
 
                 <div className="rightSideDiv">
                     <ReactSearchBox
-                        colorant={this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre}
+                        colorant={colorant}
 
                         loadArtistFromUI={this.loadArtistFromUI}
                         loadArtistFromSearch={this.loadArtistFromSearch}
@@ -410,7 +412,7 @@ class App extends React.Component {
                     <div className="flexSpacer"/>
 
                     <ZoomModule
-                        colorant={this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre}
+                        colorant={colorant}
 
                         updateHoverFlag={this.updateHoverFlag}
 
