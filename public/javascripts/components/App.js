@@ -109,6 +109,7 @@ var App = function (_React$Component) {
         key: "updateHoverFlag",
         value: function updateHoverFlag(value) {
             if (this.state.uiHover !== value) {
+                console.log(value);
                 this.setState({ uiHover: value });
             }
         }
@@ -128,6 +129,7 @@ var App = function (_React$Component) {
                     _this2.setSidebarState(artist, _this2.state.activeGenre, { nodes: [], edges: [] }, null);
                 });
             }
+            this.setState({ hoveredArtist: null });
         }
     }, {
         key: "setSidebarState",

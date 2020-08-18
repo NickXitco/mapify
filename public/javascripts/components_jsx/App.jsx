@@ -106,6 +106,7 @@ class App extends React.Component {
 
     updateHoverFlag(value) {
         if (this.state.uiHover !== value) {
+            console.log(value);
             this.setState({uiHover: value});
         }
     }
@@ -120,6 +121,7 @@ class App extends React.Component {
                     this.setSidebarState(artist, this.state.activeGenre, {nodes: [], edges: []}, null);
             });
         }
+        this.setState({hoveredArtist: null});
     }
 
     setSidebarState(artist, genre, path, state) {
