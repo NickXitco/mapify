@@ -106,7 +106,6 @@ class App extends React.Component {
 
     updateHoverFlag(value) {
         if (this.state.uiHover !== value) {
-            console.log(value);
             this.setState({uiHover: value});
         }
     }
@@ -114,23 +113,23 @@ class App extends React.Component {
     //<editor-fold desc="Clicked Artist Handling">
     updateClickedArtist(artist) {
         if (artist.loaded) {
-            this.setSidebarState(artist, this.state.activeGenre, {nodes: [], edges: []}, null);
+            this.setSidebarState(artist, this.state.activeGenre, {nodes: [], edges: []}, {x: artist.x, y: artist.y, zoom: this.state.camera.getZoomFromWidth(artist.size * 50)}, null);
         } else if (artist.id) {
             loadArtist(this.state.p5, artist, this.state.quadHead, this.state.nodeLookup).then(() =>{
                     artist = this.state.nodeLookup[artist.id];
-                    this.setSidebarState(artist, this.state.activeGenre, {nodes: [], edges: []}, null);
+                    this.setSidebarState(artist, this.state.activeGenre, {nodes: [], edges: []}, {x: artist.x, y: artist.y, zoom: this.state.camera.getZoomFromWidth(artist.size * 50)}, null);
             });
         }
         this.setState({hoveredArtist: null});
     }
 
-    setSidebarState(artist, genre, path, state) {
+    setSidebarState(artist, genre, path, camera, state) {
         if (artist) {
             artist.edges = makeEdges(artist);
         }
 
         if (!state && (artist || genre ||  path.nodes.length > 0)) {
-            state = new SidebarState({artist: artist, genre: genre, path: path}, this.state.currentSidebarState);
+            state = new SidebarState({artist: artist, genre: genre, path: path, camera: camera}, this.state.currentSidebarState);
         }
 
         this.setState({
@@ -144,14 +143,16 @@ class App extends React.Component {
     undoSidebarState() {
         if (this.state.currentSidebarState && this.state.currentSidebarState.canUndo()) {
             const newSidebarState = this.state.currentSidebarState.undo();
-            this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState.payload.path, newSidebarState);
+            this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState.payload.path, newSidebarState.payload.camera, newSidebarState);
+            this.state.camera.setCameraMove(newSidebarState.payload.camera.x, newSidebarState.payload.camera.y, newSidebarState.payload.camera.zoom, 45);
         }
     }
 
     redoSidebarState() {
         if (this.state.currentSidebarState && this.state.currentSidebarState.canRedo()) {
             const newSidebarState = this.state.currentSidebarState.redo();
-            this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState.payload.path, newSidebarState);
+            this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState.payload.path, newSidebarState.payload.camera, newSidebarState);
+            this.state.camera.setCameraMove(newSidebarState.payload.camera.x, newSidebarState.payload.camera.y, newSidebarState.payload.camera.zoom, 45);
         }
     }
 
@@ -206,18 +207,18 @@ class App extends React.Component {
                 this.state.camera.setCameraMove(bubble.center.x, bubble.center.y,
                                                 this.state.camera.getZoomFromWidth(camWidth), 45);
 
-                this.setSidebarState(null, newGenre, {nodes: [], edges: []}, null);
+                this.setSidebarState(null, newGenre, {nodes: [], edges: []}, {x: bubble.center.x, y: bubble.center.y, zoom: this.state.camera.getZoomFromWidth(camWidth)}, null);
             })
     }
 
     handleEmptyClick() {
 
         if (this.state.clickedArtist) {
-            this.setSidebarState(null, this.state.activeGenre, this.state.activePath, null);
+            this.setSidebarState(null, this.state.activeGenre, this.state.activePath, null, null);
         } else if (this.state.activeGenre) {
-            this.setSidebarState(null, null, this.state.activePath, null);
+            this.setSidebarState(null, null, this.state.activePath, null, null);
         } else {
-            this.setSidebarState(null, null, {nodes: [], edges: []}, null);
+            this.setSidebarState(null, null, {nodes: [], edges: []}, null, null);
         }
 
         this.setState({clearSearch: true, spButtonExpanded: false});
@@ -248,7 +249,7 @@ class App extends React.Component {
         this.state.camera.setCameraMove(bubble.center.x, bubble.center.y,
             this.state.camera.getZoomFromWidth(camWidth), 45);
 
-        this.setSidebarState(null, null, {nodes: newPath, edges: newPathEdges}, null);
+        this.setSidebarState(null, null, {nodes: newPath, edges: newPathEdges}, {x: bubble.center.x, y: bubble.center.y, zoom: this.state.camera.getZoomFromWidth(camWidth)}, null);
     }
 
     flipClearSearch() {
