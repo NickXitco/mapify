@@ -47,10 +47,10 @@ var App = function (_React$Component) {
             },
 
             showChangelog: !_this.checkVersion("0.5.3"),
-            version: "0.5.3",
-            headline: "Searching, revamped",
-            changes: ["Search suggestions now look better when longer names come up", "You can now hover over an artist from search suggestions", "Searching algorithm completely overhauled to use Spotify's own search. This should give you more natural results in some cases, as well as cleaning up some edge cases that would come up when you searching things with stopwords (the, a, an, etc.). You can now search for the band \"The The\" and it will actually work!", "Fixed some buggy artist name sizes on the sidebar (Madeon, for example)", "Added every artist's picture to the sidebar!", "Fixed the hover infobox to load with the right size every time.", "Hover infobox now has a max width, and will wrap text if an artists' name is too long (The World is a Beautiful Place and I Am No Longer Afraid to Die, for example)", "Removed from debug shapes from the genre fence", "Made sidebar/color easing much nicer"],
-            upcomingFeatures: ["Play artists' songs from inside the sidebar", "Add actual UI to the app", "Add previous versions to this changelog!"]
+            version: "0.6.0",
+            headline: "Shortest Path and More!",
+            changes: ["You can now play each artist's music from inside the browser! This can be very loud, be careful.", "Added a temporary favicon while we still figure out how to brand this thing.", "Streamlined a lot of the request pipeline so searching and clicking should feel faster.", "Added a back/forward button on the sidebar for artists, genres, and the shortest path.", "Added many performance improvements in how much data is loaded onto your device.", "Added genre searching. This happens in the same place as artist searching.", "Added a shortest path finder, you can use this by clicking on the arrow button on the left side.", "Added a random node button.", "Added a (to-be stylized) zoom module in the lower right for those who were struggling with the zooming.", "Fixed some bugs with hovering over artists."],
+            upcomingFeatures: ["Add previous versions to this changelog!", "Performance improvements", "Personal spotify integration", "Wider trackpad support"]
         };
 
         _this.setCanvas = _this.setCanvas.bind(_this);
