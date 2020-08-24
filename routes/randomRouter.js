@@ -5,7 +5,11 @@ const RandomHelper = require('../backend/RandomHelper');
 
 router.get('/', (req, res) => {
     RandomHelper.getRandomNode().then(response => {
-        res.send(response[0]);
+        if (response.length === 0) {
+            res.send({});
+        } else {
+            res.send(response[0]);
+        }
     });
 })
 

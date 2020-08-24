@@ -1,14 +1,17 @@
-const mongoose = require('mongoose');
+const arangoDB = require('./ArangoDB');
 
 async function getRandomNode() {
-    const Artist = mongoose.model('Artist');
-    return Artist.aggregate([
-        {
-            '$sample': {
-                'size': 1
-            }
-        }
-    ]).exec();
+    const db = arangoDB.getDB();
+    return await db.query(
+        `
+        FOR a IN artists
+          SORT RAND()
+          LIMIT 1
+          RETURN a
+        `
+    ).then(
+        cursor => cursor.all()
+    );
 }
 
 module.exports = {getRandomNode};
