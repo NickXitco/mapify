@@ -1,8 +1,12 @@
-const mongoose = require('mongoose');
+const arangoDB = require('./ArangoDB');
 
 async function findQuad(name) {
-    const Quad = mongoose.model('Quad');
-    return await Quad.findOne({name: name}).populate('nodes').exec();
+    const db = arangoDB.getDB();
+    return await db.query(
+        `FOR q in quads FILTER q.name == \"${name}\" RETURN q`
+    ).then(
+        cursor => cursor.all()
+    );
 }
 
 module.exports = {findQuad};
