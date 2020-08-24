@@ -1,13 +1,17 @@
-const mongoose = require('mongoose');
+const arangoDB = require('./ArangoDB');
 const spotifyApiHolder = require('./SpotifyAPI');
 
 async function findArtist(query, isQueryID) {
-    const Artist = mongoose.model('Artist');
     const spotifyApi = spotifyApiHolder.getAPI();
 
     let artist;
     if (isQueryID) {
-        artist = await Artist.findOne({id: query}).exec();
+        artist = await findOneArtistByID(query);
+        if (artist.length === 1) {
+            artist = artist[0];
+        } else {
+            artist = null;
+        }
     } else {
         artist = await runSearch(query, Artist, 1);
         if (artist.length === 1) {
@@ -41,26 +45,49 @@ async function findArtist(query, isQueryID) {
         g: artist.g,
         b: artist.b,
         genres: artist.genres,
-        related: await Artist.find().where('id').in(artist.related).exec(),
+        related: await getRelated(artist.id),
         images: images,
         track: track
     };
 }
 
-function runSearch(searchTerm, Artist, limit) {
+function findOneArtistByID(id) {
+    const db = arangoDB.getDB();
+    return db.query(
+        `FOR a in artists FILTER a.id == \"${id}\" LIMIT 1 RETURN a`
+    ).then(
+        cursor => cursor.all()
+    );
+}
+
+function getRelated(id) {
+    const db = arangoDB.getDB();
+    return db.query(
+        `FOR a IN artists
+            FILTER a.id == "${id}"
+            FOR r IN artists
+                FILTER r.id IN a.related
+                return r
+        `
+    ).then(
+        cursor => cursor.all()
+    );
+}
+
+function runSearch(searchTerm, limit) {
     const spotifyApi = spotifyApiHolder.getAPI();
 
     return spotifyApi.searchArtists(searchTerm, {limit: limit, offset: 0})
         .then(function (data) {
             let promises = []
             for (const item of data.body.artists.items) {
-                promises.push(Artist.findOne({id: item.id}).exec());
+                promises.push(findOneArtistByID(item.id));
             }
             return Promise.all(promises).then((values) => {
                 let realValues = []
                 for (const value of values) {
-                    if (value) {
-                        realValues.push(value);
+                    if (value.length > 0) {
+                        realValues.push(value[0]);
                     }
                 }
                 return realValues;
@@ -71,66 +98,27 @@ function runSearch(searchTerm, Artist, limit) {
         });
 }
 
-function genreSearch(searchTerm, Genre, limit) {
-    let query = ''
-    searchTerm = searchTerm.replace(/\s/g, '');
-    for (let i = 0; i < searchTerm.length - 1; i++) {
-        query += searchTerm.substring(i, i + 2);
-        query += ' '
-    }
-
-    return Genre.aggregate([
-        {
-            '$match': {
-                '$text': {
-                    '$search': query
-                }
-            }
-        }, {
-            '$addFields': {
-                'score': {
-                    '$meta': 'textScore'
-                }
-            }
-        }, {
-            '$addFields': {
-                'length': {
-                    '$strLenCP': '$name'
-                }
-            }
-        }, {
-            '$addFields': {
-                'normalizedScore': {
-                    '$divide': [
-                        '$score', '$length'
-                    ]
-                }
-            }
-        }, {
-            '$match': {
-                'normalizedScore': {
-                    '$gt': 0.4
-                }
-            }
-        }, {
-            '$sort': {
-                'size': -1
-            }
-        }, {
-            '$limit': limit
-        }, {
-            '$unset': [
-                'score', 'length', 'normalizedScore'
-            ]
-        }
-    ]).exec();
+function genreSearch(searchTerm, limit) {
+    const db = arangoDB.getDB();
+    return db.query(
+        `FOR doc IN genre_view
+          SEARCH NGRAM_MATCH(doc.name, "${searchTerm}", 0.75, "name_bigram")
+          LET length = LENGTH(doc.name)
+          LET score = BM25(doc)
+          LET normalized = score / length
+          FILTER normalized > 1
+          SORT normalized DESC, doc.size DESC
+          LIMIT ${limit}
+          RETURN doc
+        `
+    ).then(
+        cursor => cursor.all()
+    );
 }
 
 async function findArtistSearch(searchTerm) {
-    const Artist = mongoose.model('Artist');
-    const Genre = mongoose.model('Genre');
     const NUM_RESULTS = 5;
-    return Promise.all([genreSearch(searchTerm, Genre, NUM_RESULTS), runSearch(searchTerm, Artist, NUM_RESULTS)])
+    return Promise.all([genreSearch(searchTerm, NUM_RESULTS), runSearch(searchTerm, NUM_RESULTS)])
         .then(values => {
             return {genres: values[0], artists: values[1]};
         })

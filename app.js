@@ -5,7 +5,6 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
 const indexRouter = require('./routes/index');
-const quadsRouter = require('./routes/quadsRouter');
 const quadRouter = require('./routes/quadRouter');
 const artistRouter = require('./routes/artistRouter');
 const artistSearchRouter = require('./routes/artistSearchRouter');
@@ -23,7 +22,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/quads', quadsRouter);
 app.use('/quad', quadRouter);
 app.use('/artist', artistRouter);
 app.use('/artistSearch', artistSearchRouter);

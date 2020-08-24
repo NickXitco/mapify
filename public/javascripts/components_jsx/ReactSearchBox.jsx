@@ -9,7 +9,7 @@ class ReactSearchBox extends React.Component {
         }
 
         this.requestCounter = 0;
-        this.highestReceivedResponse = 0;
+        this.highestReceivedResponse = -1;
 
         this.processInput = this.processInput.bind(this);
         this.processSuggestions = this.processSuggestions.bind(this);
