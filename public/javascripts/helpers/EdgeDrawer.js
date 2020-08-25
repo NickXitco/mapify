@@ -1,10 +1,10 @@
 const STROKE_DIVIDER = 5;
 const EASE_SPEED = 25;
-const MAX_EDGE_SEGMENTS = 128;
-const ANGLE_THRESHOLD = 178;
+const MAX_EDGE_SEGMENTS = 512;
+const ANGLE_THRESHOLD = 179;
 const HUE_THRESHOLD = 4;
 const SAT_THRESHOLD = 2;
-const WEIGHT_THRESHOLD = 1.1;
+const WEIGHT_THRESHOLD = 1.05;
 
 
 class EdgeDrawer {
@@ -33,7 +33,20 @@ class EdgeDrawer {
         let uSat = uHSV.s;
         let vSat = vHSV.s;
 
+        p.noFill();
+        if (e.points.length === 0) {
+            e.points = this.flatten(p, this.getEdgePoints(p, u, uHue, uSat, 1, v, uVec, vVec, vHue, vSat));
+            console.log(e.points);
+        }
+
         this.runEdgeDrawer(p, camera, e, u, v, uVec, vVec, uHue, vHue, uSat, vSat);
+
+        for (const point of e.points) {
+            p.stroke(p.color(point.hue, point.sat, 100));
+            p.strokeWeight(point.weight);
+            p.circle(point.x, point.y, 10);
+        }
+
         p.pop();
 
         e.tMax = Math.min(1, e.tMax + (EASE_SPEED / Utils.dist(u.x, u.y, v.x, v.y)));

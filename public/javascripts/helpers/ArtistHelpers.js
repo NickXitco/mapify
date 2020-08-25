@@ -101,7 +101,8 @@ function makeEdges(artist) {
             cUAng: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
             cVRad: Math.random() / 2,
             cVAng: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
-            tMax: 0
+            tMax: 0,
+            points: [],
         });
     }
     return edges;
@@ -116,7 +117,8 @@ function makeEdge(u, v) {
         cUAng: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
         cVRad: Math.random() / 2,
         cVAng: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
-        tMax: 0
+        tMax: 0,
+        points: [],
     };
 }
 
