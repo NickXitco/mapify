@@ -67,27 +67,126 @@ var GenreProfile = function (_React$Component) {
             }
         }
     }, {
+        key: "shapeBoundingBox",
+        value: function shapeBoundingBox(points) {
+            var n = -Infinity;
+            var e = -Infinity;
+            var s = Infinity;
+            var w = Infinity;
+
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = points[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var p = _step.value;
+
+                    n = Math.max(p.y, n);
+                    e = Math.max(p.x, e);
+                    s = Math.min(p.y, s);
+                    w = Math.min(p.x, w);
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            var height = Math.abs(n - s);
+            var width = Math.abs(e - w);
+
+            if (height > width) {
+                e += (height - width) / 2;
+                w -= (height - width) / 2;
+            } else if (width > height) {
+                n += (width - height) / 2;
+                s -= (width - height) / 2;
+            }
+
+            return {
+                n: n,
+                e: e,
+                s: s,
+                w: w
+            };
+        }
+    }, {
         key: "render",
         value: function render() {
             var _this4 = this;
-
-            var pictureStyle = {
-                boxShadow: "0 0 13px 1px " + this.props.genre.colorToString() + ", inset 0 0 1px 2px " + this.props.genre.colorToString()
-            };
 
             var nameStyle = {
                 fontSize: this.state.fontSize
             };
 
-            var picture = null;
+            var bBox = this.shapeBoundingBox(this.props.genre.hull);
+
+            var polygonString = "";
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+                for (var _iterator2 = this.props.genre.hull[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var p = _step2.value;
+
+                    polygonString += Utils.map(p.x, bBox.w, bBox.e, 10, 103) + " ";
+                    polygonString += Utils.map(p.y, bBox.s, bBox.n, 103, 10) + " ";
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
+            }
 
             return React.createElement(
                 "div",
                 { className: "nameAndPictureLarge" },
                 React.createElement(
                     "div",
-                    { className: "sidebarPictureLarge", style: pictureStyle },
-                    picture
+                    { className: "genrePictureLarge" },
+                    React.createElement(
+                        "svg",
+                        { width: "113", height: "113" },
+                        React.createElement(
+                            "defs",
+                            null,
+                            React.createElement(
+                                "filter",
+                                { id: "sofGlow", height: "300%", width: "300%", x: "-75%", y: "-75%" },
+                                React.createElement("feMorphology", { operator: "dilate", radius: "1", "in": "SourceAlpha", result: "thicken" }),
+                                React.createElement("feGaussianBlur", { "in": "thicken", stdDeviation: "10", result: "blurred" }),
+                                React.createElement("feFlood", { floodColor: this.props.genre.colorToString(), result: "glowColor" }),
+                                React.createElement("feComposite", { "in": "glowColor", in2: "blurred", operator: "in", result: "softGlow_colored" }),
+                                React.createElement(
+                                    "feMerge",
+                                    null,
+                                    React.createElement("feMergeNode", { "in": "softGlow_colored" }),
+                                    React.createElement("feMergeNode", { "in": "SourceGraphic" })
+                                )
+                            )
+                        ),
+                        React.createElement("polygon", { points: polygonString, stroke: this.props.genre.colorToString(), fill: "transparent", filter: "url(#sofGlow)", strokeWidth: "2" })
+                    )
                 ),
                 React.createElement(
                     "div",
