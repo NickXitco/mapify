@@ -51,7 +51,7 @@ function setAccessToken() {
     );
 }
 
-function getAPI () {
+function getAPI() {
     return spotifyApi;
 }
 

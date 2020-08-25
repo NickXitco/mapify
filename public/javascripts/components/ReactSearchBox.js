@@ -21,7 +21,7 @@ var ReactSearchBox = function (_React$Component) {
         };
 
         _this.requestCounter = 0;
-        _this.highestReceivedResponse = 0;
+        _this.highestReceivedResponse = -1;
 
         _this.processInput = _this.processInput.bind(_this);
         _this.processSuggestions = _this.processSuggestions.bind(_this);
@@ -85,6 +85,7 @@ var ReactSearchBox = function (_React$Component) {
         key: "resetState",
         value: function resetState() {
             this.setState({ value: "", artistSuggestions: [], genreSuggestions: [] });
+            this.props.updateHoverFlag(false);
         }
     }, {
         key: "render",

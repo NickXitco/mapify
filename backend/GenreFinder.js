@@ -1,21 +1,29 @@
-const mongoose = require('mongoose');
+const arangoDB = require('./ArangoDB');
 
 async function findGenre(name) {
-    const Artist = mongoose.model('Artist');
-    const Genre = mongoose.model('Genre');
-    const artistPromise = Artist.find({genres: name}).exec();
-    const genrePromise = Genre.findOne({name: name}).exec();
-    return Promise.all([artistPromise, genrePromise]).then((values) => {
-        const artists = values[0];
-        const genreInfo = values[1];
-        return {
-            name: genreInfo.name,
-            artists: artists,
-            r: genreInfo.r,
-            g: genreInfo.g,
-            b: genreInfo.b
-        };
-    });
+    const db = arangoDB.getDB();
+    return await db.query(
+        `
+        FOR g IN genres
+          FILTER g.name == "${name}"
+          LIMIT 1
+          LET nodes = (
+              FOR a IN artists
+                FILTER g.name IN a.genres
+                SORT a.followers DESC
+                RETURN a
+          )
+          RETURN {
+                name: g.name,
+                artists: nodes,
+                r: g.r,
+                g: g.g,
+                b: g.b
+                }
+        `
+    ).then(
+        cursor => cursor.all()
+    );
 }
 
 module.exports = {findGenre};

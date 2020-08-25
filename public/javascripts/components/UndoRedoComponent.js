@@ -74,7 +74,6 @@ var UndoRedoComponent = function (_React$Component) {
 
             if (this.lastState !== this.props.sidebarState) {
                 this.lastState = this.props.sidebarState;
-                console.log(this.props.sidebarState);
             }
 
             return React.createElement(

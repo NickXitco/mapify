@@ -9,7 +9,7 @@ class ReactSearchBox extends React.Component {
         }
 
         this.requestCounter = 0;
-        this.highestReceivedResponse = 0;
+        this.highestReceivedResponse = -1;
 
         this.processInput = this.processInput.bind(this);
         this.processSuggestions = this.processSuggestions.bind(this);
@@ -63,6 +63,7 @@ class ReactSearchBox extends React.Component {
 
     resetState() {
         this.setState({value: "", artistSuggestions: [], genreSuggestions: []});
+        this.props.updateHoverFlag(false);
     }
 
     render() {

@@ -1,13 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const mongoose = require('mongoose');
-
-const mongoDB = "mongodb://127.0.0.1:27017/mapifyDB";
-mongoose.connect(mongoDB, {useNewUrlParser: true});
-mongoose.set('useUnifiedTopology', true);
-
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error: '));
 
 /* GET home page. */
 router.get('/', function (req, res) {
