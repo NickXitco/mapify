@@ -60,7 +60,6 @@ class UndoRedoComponent extends React.Component {
 
         if (this.lastState !== this.props.sidebarState) {
             this.lastState = this.props.sidebarState;
-            console.log(this.props.sidebarState);
         }
 
 

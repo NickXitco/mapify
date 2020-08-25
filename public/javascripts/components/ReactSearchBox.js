@@ -85,6 +85,7 @@ var ReactSearchBox = function (_React$Component) {
         key: "resetState",
         value: function resetState() {
             this.setState({ value: "", artistSuggestions: [], genreSuggestions: [] });
+            this.props.updateHoverFlag(false);
         }
     }, {
         key: "render",

@@ -278,7 +278,6 @@ class App extends React.Component {
         fetch(`random`)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
                 loadArtist(this.state.p5, data, this.state.quadHead, this.state.nodeLookup).then(() =>{
                     this.loadArtistFromUI(this.state.nodeLookup[data.id]);
                 });

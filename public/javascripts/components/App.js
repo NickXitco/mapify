@@ -377,7 +377,6 @@ var App = function (_React$Component) {
             fetch("random").then(function (response) {
                 return response.json();
             }).then(function (data) {
-                console.log(data);
                 loadArtist(_this5.state.p5, data, _this5.state.quadHead, _this5.state.nodeLookup).then(function () {
                     _this5.loadArtistFromUI(_this5.state.nodeLookup[data.id]);
                 });

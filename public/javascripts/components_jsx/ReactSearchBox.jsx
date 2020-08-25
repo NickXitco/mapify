@@ -63,6 +63,7 @@ class ReactSearchBox extends React.Component {
 
     resetState() {
         this.setState({value: "", artistSuggestions: [], genreSuggestions: []});
+        this.props.updateHoverFlag(false);
     }
 
     render() {
