@@ -34,16 +34,17 @@ class App extends React.Component {
                 edges: []
             },
 
-            showChangelog: !this.checkVersion("0.5.3"),
+            showChangelog: !this.checkVersion("0.6.0"),
             version: "0.6.0",
             headline: "Shortest Path and More!",
             changes: [
+                "Migrated to ArangoDB",
                 "You can now play each artist's music from inside the browser! This can be very loud, be careful.",
                 "Added a temporary favicon while we still figure out how to brand this thing.",
                 "Streamlined a lot of the request pipeline so searching and clicking should feel faster.",
                 "Added a back/forward button on the sidebar for artists, genres, and the shortest path.",
                 "Added many performance improvements in how much data is loaded onto your device.",
-                "Added genre searching. This happens in the same place as artist searching.",
+                "Added genre searching. This happens in the same place as artist searching. It's less than optimal right now because of some ArangoDB things, but it will be fixed by 0.7.0",
                 "Added a shortest path finder, you can use this by clicking on the arrow button on the left side.",
                 "Added a random node button.",
                 "Added a (to-be stylized) zoom module in the lower right for those who were struggling with the zooming.",
