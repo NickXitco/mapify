@@ -4,7 +4,7 @@ const MAX_EDGE_SEGMENTS = 512;
 const ANGLE_THRESHOLD = 179;
 const HUE_THRESHOLD = 4;
 const SAT_THRESHOLD = 2;
-const WEIGHT_THRESHOLD = 1.05;
+const WEIGHT_THRESHOLD = 1.025;
 
 
 class EdgeDrawer {
@@ -36,27 +36,23 @@ class EdgeDrawer {
         p.noFill();
         if (e.points.length === 0) {
             e.points = this.flatten(p, this.getEdgePoints(p, u, uHue, uSat, 1, v, uVec, vVec, vHue, vSat));
-            console.log(e.points);
         }
 
-        this.runEdgeDrawer(p, camera, e, u, v, uVec, vVec, uHue, vHue, uSat, vSat);
+        p.colorMode(p.HSB);
+        this.drawEdgePoints(p, camera, e.points);
 
+        /*
         for (const point of e.points) {
             p.stroke(p.color(point.hue, point.sat, 100));
             p.strokeWeight(point.weight);
             p.circle(point.x, point.y, 10);
         }
 
+         */
+
         p.pop();
 
         e.tMax = Math.min(1, e.tMax + (EASE_SPEED / Utils.dist(u.x, u.y, v.x, v.y)));
-    }
-
-    static runEdgeDrawer(p, camera, e, u, v, uVec, vVec, uHue, vHue, uSat, vSat) {
-        let edgePoints = this.getEdgePoints(p, u, uHue, uSat, e.tMax, v, uVec, vVec, vHue, vSat);
-        let finalEdgePoints = this.reduceEdgePoints(p, camera, edgePoints);
-        this.drawEdgePoints(p, camera, finalEdgePoints);
-        return finalEdgePoints.length;
     }
 
     static drawEdgePoints(p, camera, points) {
@@ -81,12 +77,6 @@ class EdgeDrawer {
             const THRESHOLD = 0.5;
             p.strokeWeight(Math.max(points[i].weight, THRESHOLD / camera.getZoomFactor().x));
         }
-    }
-
-    static reduceEdgePoints(p, camera, edgePoints) {
-        edgePoints = this.flatten(p, edgePoints);
-        edgePoints = this.removeOutOfView(camera, edgePoints);
-        return edgePoints;
     }
 
     static removeOutOfView(camera, edgePoints) {
