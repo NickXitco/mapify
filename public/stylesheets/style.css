@@ -514,6 +514,14 @@ canvas {
   margin-left: 30px;
 }
 
+.genrePictureLarge {
+  width: 113px;
+  height: 113px;
+  display: block;
+  margin: 23px;
+  position: static;
+}
+
 /*</editor-fold>*/
 
 .player {
