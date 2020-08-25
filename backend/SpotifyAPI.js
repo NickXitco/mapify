@@ -4,7 +4,6 @@ const client = new SecretManagerServiceClient();
 let spotifyApi = null;
 
 async function getAPICredentials() {
-    /*
     const [secret] = await client.accessSecretVersion({
         name: 'projects/785245481415/secrets/clientSecret/versions/1'
     })
@@ -14,8 +13,6 @@ async function getAPICredentials() {
     })
 
     return {secret: secret.payload.data.toString(), id: id.payload.data.toString()};
-     */
-    return {secret: process.env.clientSecret, id: process.env.clientID};
 }
 
 getAPICredentials().then((res) => {

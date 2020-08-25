@@ -6,7 +6,6 @@ const {SecretManagerServiceClient} = require('@google-cloud/secret-manager');
 const client = new SecretManagerServiceClient();
 
 async function getDBCredentials() {
-    /*
     const [ca] = await client.accessSecretVersion({
         name: 'projects/785245481415/secrets/arangoCA/versions/1'
     })
@@ -16,8 +15,6 @@ async function getDBCredentials() {
     })
 
     return {ca: ca.payload.data.toString(), pass: pass.payload.data.toString()};
-     */
-    return {ca: process.env.arangoCA, pass: process.env.arangoPass};
 }
 
 getDBCredentials().then((res) => {
