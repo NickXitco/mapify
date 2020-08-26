@@ -40,17 +40,20 @@ class EdgeDrawer {
 
         p.colorMode(p.HSB);
 
-        let points = e.points;
-        if (e.tMax !== 1) {
-            points = [];
-            points.push(e.points[0]);
-            for (let i = 1; i < e.points.length; i++) {
-                if (e.points[i].t < e.tMax) {
-                    points.push(e.points[i]);
-                }
+        let points = [];
+        points.push(e.points[0]);
+        for (let i = 1; i < e.points.length; i++) {
+            const bbox = {
+                x: (e.points[i - 1].x + e.points[i].x) / 2,
+                y: (e.points[i - 1].y + e.points[i].y) / 2,
+                r: Math.max(Math.abs(e.points[i - 1].x - e.points[i].x), Math.abs(e.points[i - 1].x - e.points[i].x))
             }
-            points.push(this.getPoint(p, e.tMax, u, v, uVec, vVec, uHue, vHue, uSat, vSat));
+
+            if (e.points[i].t < e.tMax && camera.containsRegion(bbox.x, -bbox.y, bbox.r)) {
+                points.push(e.points[i]);
+            }
         }
+        points.push(this.getPoint(p, e.tMax, u, v, uVec, vVec, uHue, vHue, uSat, vSat));
 
         this.drawEdgePoints(p, camera, points);
 

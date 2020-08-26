@@ -96,8 +96,8 @@ class Camera {
     }
 
     calculateZoomPos(toward, oldWidth, oldHeight) {
-        const x = ((this.x - toward.x)/ oldWidth) * this.width + toward.x;
-        const y = ((this.y - toward.y)/ oldHeight) * this.height + toward.y;
+        const x = ((this.x - toward.x) / oldWidth) * this.width + toward.x;
+        const y = ((this.y - toward.y) / oldHeight) * this.height + toward.y;
         return {x: x, y: y};
     }
 
@@ -118,7 +118,7 @@ class Camera {
     }
 
     getZoomFactor() {
-        return {x: this.canvas.width /  this.width, y: this.canvas.height / this.height};
+        return {x: this.canvas.width / this.width, y: this.canvas.height / this.height};
     }
 
     setView() {
@@ -137,8 +137,8 @@ class Camera {
     }
 
     containsPoint(x, y) {
-        return  x <= this.x + this.width / 2 && x >= this.x - this.width / 2 &&
-                y >= this.y - this.height / 2 && y <= this.y + this.height / 2;
+        return x <= this.x + this.width / 2 && x >= this.x - this.width / 2 &&
+            y >= this.y - this.height / 2 && y <= this.y + this.height / 2;
     }
 
     containsRegion(x, y, r) {
