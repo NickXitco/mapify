@@ -46,7 +46,7 @@ class Camera {
             return;
         }
 
-        const easeFrame = Eases.easeInSine(this.frameCount / this.frameDone);
+        const easeFrame = Eases.easeInOutSine(this.frameCount / this.frameDone);
 
         this.x = Utils.map(easeFrame, 0, 1, this.startX, this.destX);
         this.y = Utils.map(easeFrame, 0, 1, this.startY, this.destY);
