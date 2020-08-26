@@ -39,16 +39,26 @@ class EdgeDrawer {
         }
 
         p.colorMode(p.HSB);
-        this.drawEdgePoints(p, camera, e.points);
 
-        /*
-        for (const point of e.points) {
-            p.stroke(p.color(point.hue, point.sat, 100));
-            p.strokeWeight(point.weight);
-            p.circle(point.x, point.y, 10);
+        const points = [];
+        points.push(e.points[0]);
+        for (let i = 1; i < e.points.length; i++) {
+            if (e.points[i].t < e.tMax) {
+                points.push(e.points[i]);
+            }
         }
 
-         */
+        points.push(this.getPoint(p, e.tMax, u, v, uVec, vVec, uHue, vHue, uSat, vSat));
+
+        this.drawEdgePoints(p, camera, points);
+
+        p.noFill();
+
+        for (const point of e.points) {
+            p.stroke(p.color(point.hue, point.sat, 100));
+            p.strokeWeight(point.weight / 4);
+            p.circle(point.x, point.y, 10);
+        }
 
         p.pop();
 
@@ -147,7 +157,7 @@ class EdgeDrawer {
 
     static getEdgePoints(p, u, uHue, uSat, tMax, v, uVec, vVec, vHue, vSat) {
         let edgePoints = [];
-        edgePoints.push({x: u.x, y: -u.y, hue: uHue, sat: uSat, weight: u.size / STROKE_DIVIDER});
+        edgePoints.push({x: u.x, y: -u.y, hue: uHue, sat: uSat, weight: u.size / STROKE_DIVIDER, t: 0});
 
         let t = 0;
         while (t < tMax) {
