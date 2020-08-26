@@ -130,7 +130,6 @@ function drawEdges(p, camera, edges, clickedArtist, hoveredArtist, uiHover) {
         } else if (hoveredArtist === e.v && uiHover) {
             EdgeDrawer.drawEdge(p, camera, e);
         }
-        break;
     }
 }
 
