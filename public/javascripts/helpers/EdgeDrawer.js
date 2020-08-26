@@ -1,10 +1,11 @@
 const STROKE_DIVIDER = 5;
-const EASE_SPEED = 25;
-const MAX_EDGE_SEGMENTS = 128;
-const ANGLE_THRESHOLD = 178;
+const EASE_SPEED = 15;
+const MAX_EDGE_SEGMENTS = 1024;
+const ANGLE_THRESHOLD = 179;
 const HUE_THRESHOLD = 4;
 const SAT_THRESHOLD = 2;
-const WEIGHT_THRESHOLD = 1.1;
+const DISTANCE_THRESHOLD = 25;
+const WEIGHT_THRESHOLD = 1.025;
 
 
 class EdgeDrawer {
@@ -33,70 +34,118 @@ class EdgeDrawer {
         let uSat = uHSV.s;
         let vSat = vHSV.s;
 
-        this.runEdgeDrawer(p, camera, e, u, v, uVec, vVec, uHue, vHue, uSat, vSat);
+        p.noFill();
+        if (e.points.length === 0) {
+            e.points = this.flatten(p, this.getEdgePoints(p, u, uHue, uSat, 1, v, uVec, vVec, vHue, vSat));
+        }
+
+        p.colorMode(p.HSB);
+
+        let points = [];
+
+        points.push(e.points[0]);
+        for (let i = 1; i < e.points.length; i++) {
+            if (e.points[i].t < e.tMax) {
+                points.push(e.points[i]);
+            }
+        }
+        points.push(this.getPoint(p, e.tMax, u, v, uVec, vVec, uHue, vHue, uSat, vSat));
+
+        let segments = [];
+        for (let i = 0; i < points.length - 1; i++) {
+            segments.push({u: points[i], v: points[i + 1]});
+        }
+
+        let boundedSegments = [];
+        let uBoundarySegment = null;
+        let vBoundarySegment = null;
+        let vBoundary = false;
+        for (const segment of segments) {
+            const uUDist = Utils.dist(segment.u.x, segment.u.y, u.x, -u.y);
+            const uVDist = Utils.dist(segment.v.x, segment.v.y, u.x, -u.y);
+            const vDist = Utils.dist(segment.v.x, segment.v.y, v.x, -v.y);
+
+            if (uUDist > u.size * 0.6 && vDist > v.size * 0.6) {
+                if (boundedSegments.length === 0) {
+                    boundedSegments.push(JSON.parse(JSON.stringify(uBoundarySegment)));
+                }
+                boundedSegments.push(segment);
+            } else if (boundedSegments.length === 0) {
+                uBoundarySegment = segment;
+
+                //This line is super jank so I'll try to explain it while it's still in my head.
+                //In this current setup, if the last line of the segment has one endpoint in the circle and one endpoint
+                //out of the circle, it will not be drawn, since it will fail the first condition, and since there are no
+                //more segments to go through, it just doesn't draw a line.
+
+                //But we DO want to draw the line and then adjust the u-side endpoint
+
+                //TODO figure out a better way of doing this
+                if (segment === segments[segments.length - 1] && uVDist > u.size * 0.6) {
+                    boundedSegments.push(JSON.parse(JSON.stringify(uBoundarySegment)));
+                }
+            } else {
+                vBoundarySegment = segment;
+                boundedSegments.push(JSON.parse(JSON.stringify(vBoundarySegment)));
+                vBoundary = true;
+                break;
+            }
+        }
+
+        if (boundedSegments.length > 0) {
+            let uDPrime = u.size * 0.6 - Utils.dist(boundedSegments[0].u.x, boundedSegments[0].u.y, u.x, -u.y);
+            let vDPrime = v.size * 0.6 - Utils.dist(boundedSegments[boundedSegments.length - 1].v.x, boundedSegments[boundedSegments.length - 1].v.y, v.x, -v.y);
+            let uD = Utils.dist(boundedSegments[0].u.x, boundedSegments[0].u.y, boundedSegments[0].v.x, boundedSegments[0].v.y);
+            let vD = Utils.dist(boundedSegments[boundedSegments.length - 1].u.x, boundedSegments[boundedSegments.length - 1].u.y, boundedSegments[boundedSegments.length - 1].v.x, boundedSegments[boundedSegments.length - 1].v.y);
+            let uT = uDPrime / uD;
+            let vT = vDPrime / vD;
+
+            let uXPrime = (1 - uT) * boundedSegments[0].u.x + (uT) * boundedSegments[0].v.x;
+            let uYPrime = (1 - uT) * boundedSegments[0].u.y + (uT) * boundedSegments[0].v.y;
+            let vXPrime = (1 - vT) * boundedSegments[boundedSegments.length - 1].v.x + (vT) * boundedSegments[boundedSegments.length - 1].u.x;
+            let vYPrime = (1 - vT) * boundedSegments[boundedSegments.length - 1].v.y + (vT) * boundedSegments[boundedSegments.length - 1].u.y;
+
+            boundedSegments[0].u.x = uXPrime;
+            boundedSegments[0].u.y = uYPrime;
+
+            if (vBoundary) {
+                boundedSegments[boundedSegments.length - 1].v.x = vXPrime;
+                boundedSegments[boundedSegments.length - 1].v.y = vYPrime;
+            }
+        }
+
+        let segmentsInCamera = [];
+        for (const segment of boundedSegments) {
+            const bbox = {
+                x: (segment.u.x + segment.v.x) / 2,
+                y: (segment.u.y + segment.v.y) / 2,
+                r: Math.max(Math.abs(segment.u.x - segment.v.x), Math.abs(segment.u.y - segment.v.y)) + segment.u.weight
+            }
+
+            if (camera.containsRegion(bbox.x, -bbox.y, bbox.r) ||
+                camera.containsPoint(segment.u.x, segment.u.y) ||
+                camera.containsPoint(segment.v.x, segment.v.y)){
+                segmentsInCamera.push(segment);
+            }
+        }
+
+        this.drawSegments(p, camera, segmentsInCamera);
+
         p.pop();
 
         e.tMax = Math.min(1, e.tMax + (EASE_SPEED / Utils.dist(u.x, u.y, v.x, v.y)));
     }
 
-    static runEdgeDrawer(p, camera, e, u, v, uVec, vVec, uHue, vHue, uSat, vSat) {
-        let edgePoints = this.getEdgePoints(p, u, uHue, uSat, e.tMax, v, uVec, vVec, vHue, vSat);
-        let finalEdgePoints = this.reduceEdgePoints(p, camera, edgePoints);
-        this.drawEdgePoints(p, camera, finalEdgePoints);
-        return finalEdgePoints.length;
-    }
-
-    static drawEdgePoints(p, camera, points) {
-        p.textSize(15);
-
-        for (let i = 0; i < points.length; i++) {
-            if (i === 0) {
-                p.beginShape();
-                p.vertex(points[i].x, points[i].y);
-            } else if (i === points.length - 1) {
-                p.vertex(points[i].x, points[i].y);
-                p.endShape();
-            } else {
-                p.vertex(points[i].x, points[i].y);
-                p.endShape();
-                p.beginShape();
-                p.vertex(points[i].x, points[i].y);
-            }
-            p.stroke(p.color(points[i].hue, points[i].sat, 100));
+    static drawSegments(p, camera, segments) {
+        for (const segment of segments) {
+            p.stroke(p.color(segment.u.hue, segment.u.sat, 100));
 
             //Prevents edges from appearing too thin. Increasing threshold will make small lines larger, vice versa.
             const THRESHOLD = 0.5;
-            p.strokeWeight(Math.max(points[i].weight, THRESHOLD / camera.getZoomFactor().x));
+            p.strokeWeight(Math.max(segment.u.weight, THRESHOLD / camera.getZoomFactor().x));
+
+            p.line(segment.u.x, segment.u.y, segment.v.x, segment.v.y);
         }
-    }
-
-    static reduceEdgePoints(p, camera, edgePoints) {
-        edgePoints = this.flatten(p, edgePoints);
-        edgePoints = this.removeOutOfView(camera, edgePoints);
-        return edgePoints;
-    }
-
-    static removeOutOfView(camera, edgePoints) {
-        const pointsInView = []
-        let lastIn = camera.containsPoint(edgePoints[0].x, -edgePoints[0].y);
-        for (let i = 0; i < edgePoints.length; i++) {
-            const inView = camera.containsPoint(edgePoints[i].x, -edgePoints[i].y);
-            if (inView) {
-                if (!lastIn) {
-                    pointsInView.push(edgePoints[i - 1]);
-                }
-                pointsInView.push(edgePoints[i]);
-                lastIn = true;
-                continue;
-            }
-
-            if (lastIn) {
-                pointsInView.push(edgePoints[i]);
-                lastIn = false;
-            }
-        }
-
-        return pointsInView;
     }
 
     static flatten(p, edgePoints) {
@@ -116,10 +165,11 @@ class EdgeDrawer {
             let hueDif = this.getHueDif(edgePoints[a].hue, edgePoints[c].hue);
             let satDif = Math.abs(edgePoints[a].sat - edgePoints[c].sat);
             let weightRatio =  Math.max(edgePoints[a].weight, edgePoints[c].weight) / Math.min(edgePoints[a].weight, edgePoints[c].weight);
+            let distance = Utils.dist(edgePoints[a].x, edgePoints[a].y, edgePoints[c].x, edgePoints[c].y);
 
             edgePoints[c].angle = angle;
 
-            if (angle < ANGLE_THRESHOLD || hueDif > HUE_THRESHOLD || satDif > SAT_THRESHOLD || weightRatio > WEIGHT_THRESHOLD) {
+            if (angle < ANGLE_THRESHOLD || hueDif > HUE_THRESHOLD || satDif > SAT_THRESHOLD || weightRatio > WEIGHT_THRESHOLD || distance > DISTANCE_THRESHOLD) {
                 //Push point B, move A, B, and C along the line.
                 flattened.push(edgePoints[b]);
                 a = b;
@@ -144,7 +194,7 @@ class EdgeDrawer {
 
     static getEdgePoints(p, u, uHue, uSat, tMax, v, uVec, vVec, vHue, vSat) {
         let edgePoints = [];
-        edgePoints.push({x: u.x, y: -u.y, hue: uHue, sat: uSat, weight: u.size / STROKE_DIVIDER});
+        edgePoints.push({x: u.x, y: -u.y, hue: uHue, sat: uSat, weight: u.size / STROKE_DIVIDER, t: 0});
 
         let t = 0;
         while (t < tMax) {

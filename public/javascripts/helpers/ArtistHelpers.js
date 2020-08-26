@@ -81,7 +81,7 @@ function drawNodes(p, camera, nodeList) {
 function drawRelatedNodes(p, camera, clickedArtist) {
     drawNodes(p, camera, clickedArtist.relatedVertices);
     p.push();
-    p.fill(0, 255);
+    p.fill(p.color(clickedArtist.r, clickedArtist.g, clickedArtist.b, 127));
     p.stroke(clickedArtist.r, clickedArtist.g, clickedArtist.b);
     p.strokeWeight(clickedArtist.size / 5);
     p.circle(clickedArtist.x, -clickedArtist.y, clickedArtist.size);
@@ -101,7 +101,8 @@ function makeEdges(artist) {
             cUAng: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
             cVRad: Math.random() / 2,
             cVAng: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
-            tMax: 0
+            tMax: 0,
+            points: [],
         });
     }
     return edges;
@@ -116,7 +117,8 @@ function makeEdge(u, v) {
         cUAng: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
         cVRad: Math.random() / 2,
         cVAng: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
-        tMax: 0
+        tMax: 0,
+        points: [],
     };
 }
 
