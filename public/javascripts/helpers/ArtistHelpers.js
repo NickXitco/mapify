@@ -81,7 +81,7 @@ function drawNodes(p, camera, nodeList) {
 function drawRelatedNodes(p, camera, clickedArtist) {
     drawNodes(p, camera, clickedArtist.relatedVertices);
     p.push();
-    p.fill(0, 255);
+    p.fill(p.color(clickedArtist.r, clickedArtist.g, clickedArtist.b, 127));
     p.stroke(clickedArtist.r, clickedArtist.g, clickedArtist.b);
     p.strokeWeight(clickedArtist.size / 5);
     p.circle(clickedArtist.x, -clickedArtist.y, clickedArtist.size);
