@@ -102,13 +102,14 @@ function genreSearch(searchTerm, limit) {
     const db = arangoDB.getDB();
     return db.query(
         `FOR doc IN genre_view
-          SEARCH ANALYZER(doc.name == "${searchTerm}", "text_en")
-          LET length = LENGTH(doc.name)
-          LET score = BM25(doc)
-          LET normalized = score / length
-          SORT normalized DESC, doc.size DESC
-          LIMIT ${limit}
-          RETURN doc
+            SEARCH NGRAM_MATCH(doc.name, "${searchTerm}", 0.75, "name_bigram")
+            LET length = LENGTH(doc.name)
+            LET score = BM25(doc)
+            LET normalized = score / length
+            FILTER normalized > 1
+            SORT normalized DESC, doc.size DESC
+            LIMIT ${limit}
+            RETURN doc
         `
     ).then(
         cursor => cursor.all()
