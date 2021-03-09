@@ -8,13 +8,24 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var Order = {
+    DEFAULT: 0,
+    ALPHABETIC: 1,
+    RANDOM: 2
+};
+
 var ArtistsList = function (_React$Component) {
     _inherits(ArtistsList, _React$Component);
 
     function ArtistsList(props) {
         _classCallCheck(this, ArtistsList);
 
-        return _possibleConstructorReturn(this, (ArtistsList.__proto__ || Object.getPrototypeOf(ArtistsList)).call(this, props));
+        var _this = _possibleConstructorReturn(this, (ArtistsList.__proto__ || Object.getPrototypeOf(ArtistsList)).call(this, props));
+
+        _this.state = {
+            order: Order.RANDOM
+        };
+        return _this;
     }
 
     _createClass(ArtistsList, [{
@@ -27,6 +38,22 @@ var ArtistsList = function (_React$Component) {
             }
 
             var relatedArray = [].concat(_toConsumableArray(this.props.artists));
+
+            if (this.state.order === Order.ALPHABETIC) {
+                relatedArray = relatedArray.sort(function (a, b) {
+                    var nameA = a.name.toUpperCase();
+                    var nameB = b.name.toUpperCase();
+                    if (nameA < nameB) {
+                        return -1;
+                    }
+                    if (nameA > nameB) {
+                        return 1;
+                    }
+                    return 0;
+                });
+            } else if (this.state.order === Order.RANDOM) {
+                relatedArray = shuffle(relatedArray);
+            }
 
             var artists = relatedArray.map(function (artist) {
                 return React.createElement(
