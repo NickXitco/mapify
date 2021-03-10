@@ -45,7 +45,7 @@ h2 {
   font-style: normal;
   color: white;
   text-transform: uppercase;
-  font-size: 36px;
+  font-size: 22px;
   position: static;
   width: 100%;
 }
@@ -873,4 +873,32 @@ input {
 .flexSpacer {
   position: static;
   flex-grow: 1;
+}
+
+
+.artistListHeader {
+  display: flex;
+  position: static;
+}
+
+.switchContainer {
+  position: static;
+}
+
+.switchBox {
+  border-radius: 11px;
+  background: white;
+  width: 66px;
+  height: 22px;
+  position: static;
+}
+
+.switchBall {
+  border-radius: 50%;
+  background: black;
+  width: 22px;
+  height: 22px;
+  box-shadow: peachpuff 0 0 5px 3px;
+  transition: margin-left 0.1s ease-out;
+
 }

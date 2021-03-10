@@ -11,6 +11,12 @@ class ArtistsList extends React.Component {
         this.state = {
             order: Order.RANDOM
         }
+
+        this.changeOrder = this.changeOrder.bind(this);
+    }
+
+    changeOrder(state) {
+        this.setState({order: state});
     }
 
     render() {
@@ -50,7 +56,13 @@ class ArtistsList extends React.Component {
 
         return (
             <div className={"relatedArtistsSection"}>
-                <h2>{this.props.header}</h2>
+                <div className={"artistListHeader"}>
+                    <h2>{this.props.header}</h2>
+                    <MultiwaySwitch
+                        newPosition={this.changeOrder}
+                        states={3}
+                    />
+                </div>
                 <ul className={"relatedArtistsList"}>
                     {artists}
                 </ul>

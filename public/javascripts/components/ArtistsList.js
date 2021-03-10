@@ -25,10 +25,17 @@ var ArtistsList = function (_React$Component) {
         _this.state = {
             order: Order.RANDOM
         };
+
+        _this.changeOrder = _this.changeOrder.bind(_this);
         return _this;
     }
 
     _createClass(ArtistsList, [{
+        key: "changeOrder",
+        value: function changeOrder(state) {
+            this.setState({ order: state });
+        }
+    }, {
         key: "render",
         value: function render() {
             var _this2 = this;
@@ -78,9 +85,17 @@ var ArtistsList = function (_React$Component) {
                 "div",
                 { className: "relatedArtistsSection" },
                 React.createElement(
-                    "h2",
-                    null,
-                    this.props.header
+                    "div",
+                    { className: "artistListHeader" },
+                    React.createElement(
+                        "h2",
+                        null,
+                        this.props.header
+                    ),
+                    React.createElement(MultiwaySwitch, {
+                        newPosition: this.changeOrder,
+                        states: 3
+                    })
                 ),
                 React.createElement(
                     "ul",
