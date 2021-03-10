@@ -31,6 +31,11 @@ var ReactSidebar = function (_React$Component) {
             }
         }
     }, {
+        key: "shouldComponentUpdate",
+        value: function shouldComponentUpdate(nextProps) {
+            return this.props.artist !== nextProps.artist || this.props.genre !== nextProps.genre;
+        }
+    }, {
         key: "render",
         value: function render() {
             var _this2 = this;

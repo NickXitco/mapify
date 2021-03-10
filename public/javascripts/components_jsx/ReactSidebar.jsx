@@ -16,6 +16,10 @@ class ReactSidebar extends React.Component {
         }
     }
 
+    shouldComponentUpdate(nextProps) {
+        return (this.props.artist !== nextProps.artist || this.props.genre !== nextProps.genre);
+    }
+
     render() {
         if (this.props.path.length > 0) {
             const start = this.props.path[0];
