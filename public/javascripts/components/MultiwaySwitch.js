@@ -6,6 +6,21 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var SWITCH_STATES = {
+    FOLLOWERS: {
+        icon: 'images/bubbles.svg',
+        hoverText: 'Followers'
+    },
+    ALPHABETICAL: {
+        icon: 'images/az.svg',
+        hoverText: 'Alphabetical'
+    },
+    RANDOM: {
+        icon: 'images/dice.svg',
+        hoverText: 'Random'
+    }
+};
+
 var MultiwaySwitch = function (_React$Component) {
     _inherits(MultiwaySwitch, _React$Component);
 
@@ -20,36 +35,72 @@ var MultiwaySwitch = function (_React$Component) {
         };
 
         _this.advancePosition = _this.advancePosition.bind(_this);
+        _this.reportEvent = _this.reportEvent.bind(_this);
+        _this.showTooltip = _this.showTooltip.bind(_this);
+        _this.setPositionFromClick = _this.setPositionFromClick.bind(_this);
         return _this;
     }
 
     _createClass(MultiwaySwitch, [{
-        key: "advancePosition",
+        key: 'advancePosition',
         value: function advancePosition() {
-            var nextPos = (this.state.position + 1) % this.state.states;
+            var nextPos = (this.state.position + 1) % this.state.states.length;
             this.setState({
                 position: nextPos
             });
             this.props.newPosition(nextPos);
         }
     }, {
-        key: "render",
+        key: 'setPositionFromClick',
+        value: function setPositionFromClick(e) {}
+    }, {
+        key: 'showTooltip',
+        value: function showTooltip(e) {}
+    }, {
+        key: 'reportEvent',
+        value: function reportEvent(e) {
+            console.log(e.nativeEvent);
+        }
+    }, {
+        key: 'render',
         value: function render() {
             var ballStyle = {
-                marginLeft: this.state.position * 22 + "px"
+                marginLeft: Utils.lerp(0, this.state.states.length * 22 * 1.5 - 22, this.state.position / (this.state.states.length - 1)) + 'px'
             };
 
+            var boxStyle = {
+                width: this.state.states.length * 22 * 1.5 + 'px'
+            };
+
+            var stateLabels = this.state.states.map(function (state) {
+                return React.createElement(
+                    'li',
+                    { className: "stateLabel",
+                        key: state.hoverText
+                    },
+                    React.createElement('img', { className: "stateImage", src: state.icon, alt: state.hoverText, title: state.hoverText })
+                );
+            });
+
             return React.createElement(
-                "div",
-                { className: "switchContainer" },
+                'div',
+                { className: "switchContainer",
+                    onClick: this.setPositionFromClick,
+                    onMouseMove: this.showTooltip
+                },
                 React.createElement(
-                    "div",
-                    { className: "switchBox" },
-                    React.createElement("div", {
+                    'div',
+                    { className: "switchBox", style: boxStyle },
+                    React.createElement('div', {
                         className: "switchBall",
                         style: ballStyle,
                         onClick: this.advancePosition
-                    })
+                    }),
+                    React.createElement(
+                        'ul',
+                        { className: "stateLabels" },
+                        stateLabels
+                    )
                 )
             );
         }

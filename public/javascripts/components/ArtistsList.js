@@ -94,7 +94,7 @@ var ArtistsList = function (_React$Component) {
                     ),
                     React.createElement(MultiwaySwitch, {
                         newPosition: this.changeOrder,
-                        states: 3
+                        states: [SWITCH_STATES.FOLLOWERS, SWITCH_STATES.ALPHABETICAL, SWITCH_STATES.RANDOM]
                     })
                 ),
                 React.createElement(
