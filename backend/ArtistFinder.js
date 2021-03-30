@@ -102,7 +102,7 @@ function genreSearch(searchTerm, limit) {
     const db = arangoDB.getDB();
     return db.query(
         `FOR doc IN genre_view
-          SEARCH NGRAM_MATCH(doc.name, "${searchTerm}", 0.75, "name_bigram")
+          SEARCH NGRAM_MATCH(doc.name, "${searchTerm}", 0.75, "genre_bigram")
           LET length = LENGTH(doc.name)
           LET score = BM25(doc)
           LET normalized = score / length

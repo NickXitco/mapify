@@ -1,7 +1,7 @@
 const Database = require('arangojs').Database;
 const db = new Database();
-db.useDatabase('mapify');
-db.useBasicAuth("root", "arango");
+db.useDatabase('_system');
+db.useBasicAuth("root", "root");
 
 function getDB() {
     return db;
