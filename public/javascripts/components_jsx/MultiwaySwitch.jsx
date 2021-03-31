@@ -19,6 +19,7 @@ class MultiwaySwitch extends React.Component {
         this.state = {
             position: 0,
             states: this.props.states,
+            color: this.props.color
         }
 
         this.setPositionFromClick = this.setPositionFromClick.bind(this);
@@ -35,11 +36,9 @@ class MultiwaySwitch extends React.Component {
                 0, 
                 (this.state.states.length * 22 * 1.5) - 22, 
                 this.state.position / (this.state.states.length - 1)
-            )}px`
+            )}px`,
+            boxShadow: `${this.state.color} 0 0 5px 3px, inset black 0 0 5px 0`
         }
-
-        console.log('Rerender!');
-        console.log(this.state);
 
         const boxStyle = {
             width: `${this.state.states.length * 22 * 1.5}px`

@@ -9,7 +9,8 @@ class ArtistsList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            order: Order.DEFAULT
+            order: Order.DEFAULT,
+            color: this.props.color,
         }
 
         this.changeOrder = this.changeOrder.bind(this);
@@ -65,6 +66,7 @@ class ArtistsList extends React.Component {
                             SWITCH_STATES.ALPHABETICAL,
                             SWITCH_STATES.RANDOM
                         ]}
+                        color={this.state.color}
                     />
                 </div>
                 <ul className={"relatedArtistsList"}>

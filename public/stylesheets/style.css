@@ -894,7 +894,7 @@ input {
   border-radius: 50%;
   width: 22px;
   height: 22px;
-  box-shadow: peachpuff 0 0 5px 3px, inset black 0 0 5px 0;
+  box-shadow: white 0 0 5px 3px, inset black 0 0 5px 0;
   z-index: -1;
   transition: margin-left 0.15s ease-out;
 }
@@ -926,6 +926,11 @@ input {
 }
 
 .tooltip {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.15);
   margin-top: 60px;
+  padding: 5px;
+  border-radius: 5px;
+  text-transform: lowercase;
+  font-size: 12px;
+  white-space: nowrap;
 }

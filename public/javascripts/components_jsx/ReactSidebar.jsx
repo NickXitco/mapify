@@ -107,6 +107,7 @@ class ReactSidebar extends React.Component {
                                          loadArtistFromUI={this.props.loadArtistFromUI}
                                          updateHoveredArtist={this.props.updateHoveredArtist}
                                          header={"Related Artists"}
+                                         color={this.state.artist.colorToString()}
                             />
 
                             <div className="flexSpacer"/>
@@ -139,6 +140,7 @@ class ReactSidebar extends React.Component {
                                      loadArtistFromUI={this.props.loadArtistFromUI}
                                      updateHoveredArtist={this.props.updateHoveredArtist}
                                      header={"Artists in Genre"}
+                                     color={this.state.genre.colorToString()}
                         />
 
                         <div className="flexSpacer"/>
@@ -193,6 +195,7 @@ class ReactSidebar extends React.Component {
                                  loadArtistFromUI={this.props.loadArtistFromUI}
                                  updateHoveredArtist={this.props.updateHoveredArtist}
                                  header={"Related Artists"}
+                                 color={this.props.artist.colorToString()}
                     />
 
                     <div className="flexSpacer"/>
@@ -227,6 +230,7 @@ class ReactSidebar extends React.Component {
                                  loadArtistFromUI={this.props.loadArtistFromUI}
                                  updateHoveredArtist={this.props.updateHoveredArtist}
                                  header={"Artists in Genre"}
+                                 color={this.props.genre.colorToString()}
                     />
 
                     <div className="flexSpacer"/>
