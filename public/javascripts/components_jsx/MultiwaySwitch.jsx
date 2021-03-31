@@ -21,31 +21,12 @@ class MultiwaySwitch extends React.Component {
             states: this.props.states,
         }
 
-        this.advancePosition = this.advancePosition.bind(this);
-        this.reportEvent = this.reportEvent.bind(this);
-        this.showTooltip = this.showTooltip.bind(this);
         this.setPositionFromClick = this.setPositionFromClick.bind(this);
     }
 
-    advancePosition() {
-        const nextPos = (this.state.position + 1) % this.state.states.length;
-        this.setState({
-            position: nextPos
-        });
-        this.props.newPosition(nextPos);
-    }
-
-    setPositionFromClick(e) {
-
-
-    }
-
-    showTooltip(e) {
-
-    }
-
-    reportEvent(e) {
-        console.log(e.nativeEvent);
+    setPositionFromClick(pos) {
+        this.setState({position: pos});
+        this.props.newPosition(pos);
     }
 
     render() {
@@ -57,29 +38,34 @@ class MultiwaySwitch extends React.Component {
             )}px`
         }
 
+        console.log('Rerender!');
+        console.log(this.state);
+
         const boxStyle = {
             width: `${this.state.states.length * 22 * 1.5}px`
         }
 
-        const stateLabels = this.state.states.map(state =>
-            <li className={"stateLabel"}
-                key={state.hoverText}
-            >
-                <img className={"stateImage"} src={state.icon} alt={state.hoverText} title={state.hoverText}/>
+        const listItemStyle = {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '22px',
+            height: '22px'
+        }
+
+        const stateLabels = this.state.states.map((state, i) =>
+            <li key={i} style={listItemStyle}>
+                <MultiwaySwitchButton switchState={state} position={i} click={this.setPositionFromClick}/>
             </li>
         );
 
 
         return (
-            <div className={"switchContainer"}
-                 onClick={this.setPositionFromClick}
-                 onMouseMove={this.showTooltip}
-            >
+            <div className={"switchContainer"}>
                 <div className={"switchBox"} style={boxStyle}>
                     <div
                         className={"switchBall"}
                         style={ballStyle}
-                        onClick={this.advancePosition}
                     />
                     <ul className={"stateLabels"}>
                         {stateLabels}

@@ -9,7 +9,7 @@ class ArtistsList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            order: Order.RANDOM
+            order: Order.DEFAULT
         }
 
         this.changeOrder = this.changeOrder.bind(this);

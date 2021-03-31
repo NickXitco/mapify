@@ -23,7 +23,7 @@ var ArtistsList = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (ArtistsList.__proto__ || Object.getPrototypeOf(ArtistsList)).call(this, props));
 
         _this.state = {
-            order: Order.RANDOM
+            order: Order.DEFAULT
         };
 
         _this.changeOrder = _this.changeOrder.bind(_this);

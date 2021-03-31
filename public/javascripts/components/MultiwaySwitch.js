@@ -34,67 +34,57 @@ var MultiwaySwitch = function (_React$Component) {
             states: _this.props.states
         };
 
-        _this.advancePosition = _this.advancePosition.bind(_this);
-        _this.reportEvent = _this.reportEvent.bind(_this);
-        _this.showTooltip = _this.showTooltip.bind(_this);
         _this.setPositionFromClick = _this.setPositionFromClick.bind(_this);
         return _this;
     }
 
     _createClass(MultiwaySwitch, [{
-        key: 'advancePosition',
-        value: function advancePosition() {
-            var nextPos = (this.state.position + 1) % this.state.states.length;
-            this.setState({
-                position: nextPos
-            });
-            this.props.newPosition(nextPos);
-        }
-    }, {
         key: 'setPositionFromClick',
-        value: function setPositionFromClick(e) {}
-    }, {
-        key: 'showTooltip',
-        value: function showTooltip(e) {}
-    }, {
-        key: 'reportEvent',
-        value: function reportEvent(e) {
-            console.log(e.nativeEvent);
+        value: function setPositionFromClick(pos) {
+            this.setState({ position: pos });
+            this.props.newPosition(pos);
         }
     }, {
         key: 'render',
         value: function render() {
+            var _this2 = this;
+
             var ballStyle = {
                 marginLeft: Utils.lerp(0, this.state.states.length * 22 * 1.5 - 22, this.state.position / (this.state.states.length - 1)) + 'px'
             };
+
+            console.log('Rerender!');
+            console.log(this.state);
 
             var boxStyle = {
                 width: this.state.states.length * 22 * 1.5 + 'px'
             };
 
-            var stateLabels = this.state.states.map(function (state) {
+            var listItemStyle = {
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '22px',
+                height: '22px'
+            };
+
+            var stateLabels = this.state.states.map(function (state, i) {
                 return React.createElement(
                     'li',
-                    { className: "stateLabel",
-                        key: state.hoverText
-                    },
-                    React.createElement('img', { className: "stateImage", src: state.icon, alt: state.hoverText, title: state.hoverText })
+                    { key: i, style: listItemStyle },
+                    React.createElement(MultiwaySwitchButton, { switchState: state, position: i, click: _this2.setPositionFromClick })
                 );
             });
 
             return React.createElement(
                 'div',
-                { className: "switchContainer",
-                    onClick: this.setPositionFromClick,
-                    onMouseMove: this.showTooltip
-                },
+                { className: "switchContainer" },
                 React.createElement(
                     'div',
                     { className: "switchBox", style: boxStyle },
                     React.createElement('div', {
                         className: "switchBall",
-                        style: ballStyle,
-                        onClick: this.advancePosition
+                        style: ballStyle
                     }),
                     React.createElement(
                         'ul',

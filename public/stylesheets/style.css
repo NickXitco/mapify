@@ -895,7 +895,7 @@ input {
   width: 22px;
   height: 22px;
   box-shadow: peachpuff 0 0 5px 3px, inset black 0 0 5px 0;
-  z-index: 5;
+  z-index: -1;
   transition: margin-left 0.15s ease-out;
 }
 
@@ -923,4 +923,9 @@ input {
   justify-content: center;
   width: 22px;
   height: 22px;
+}
+
+.tooltip {
+  background: rgba(255, 255, 255, 0.25);
+  margin-top: 60px;
 }
