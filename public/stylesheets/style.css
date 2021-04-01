@@ -658,13 +658,6 @@ canvas {
   flex-direction: column;
 }
 
-
-
-.relatedArtistsSection p {
-  font-size: 16px;
-  text-transform: uppercase;
-  font-weight: 200;
-}
 /*</editor-fold>*/
 
 .undoRedo {
@@ -883,22 +876,61 @@ input {
 
 .switchContainer {
   position: static;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 0 10px;
 }
 
 .switchBox {
   border-radius: 11px;
-  background: white;
-  width: 66px;
+  background: rgba(255, 255, 255, 0.1);
   height: 22px;
   position: static;
+  box-shadow: white 0 0 7px 3px;
 }
 
 .switchBall {
   border-radius: 50%;
-  background: black;
   width: 22px;
   height: 22px;
-  box-shadow: peachpuff 0 0 5px 3px;
-  transition: margin-left 0.1s ease-out;
+  box-shadow: white 0 0 5px 3px, inset black 0 0 5px 0;
+  z-index: -1;
+  transition: margin-left 0.15s ease-out;
+}
 
+.stateLabels {
+  position: relative;
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  height: 22px;
+  justify-content: space-between;
+}
+
+.stateImage {
+  width: 15px;
+  height: 15px;
+}
+
+.stateText {
+  font-size: 6px;
+}
+
+.stateLabel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+}
+
+.tooltip {
+  background: rgba(255, 255, 255, 0.15);
+  margin-top: 60px;
+  padding: 5px;
+  border-radius: 5px;
+  text-transform: lowercase;
+  font-size: 12px;
+  white-space: nowrap;
 }
