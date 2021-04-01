@@ -10,13 +10,16 @@ class ArtistsList extends React.Component {
         super(props);
         this.state = {
             order: Order.DEFAULT,
-            color: this.props.color,
+            reversed: false
         }
 
         this.changeOrder = this.changeOrder.bind(this);
     }
 
     changeOrder(state) {
+        if (state === this.state.order) {
+            this.setState({reversed: !this.state.reversed});
+        }
         this.setState({order: state});
     }
 
@@ -43,6 +46,10 @@ class ArtistsList extends React.Component {
             relatedArray = shuffle(relatedArray);
         }
 
+        if (this.state.reversed) {
+            relatedArray = relatedArray.reverse();
+        }
+
         const artists = relatedArray.map(artist =>
             <li className={"sidebarListItem"}
                 key={artist.id.toString()}
@@ -53,7 +60,6 @@ class ArtistsList extends React.Component {
                 {artist.name.toString()}
             </li>
         );
-
 
         return (
             <div className={"relatedArtistsSection"}>
@@ -66,7 +72,8 @@ class ArtistsList extends React.Component {
                             SWITCH_STATES.ALPHABETICAL,
                             SWITCH_STATES.RANDOM
                         ]}
-                        color={this.state.color}
+                        color={this.props.color}
+                        reversed={this.state.reversed}
                     />
                 </div>
                 <ul className={"relatedArtistsList"}>

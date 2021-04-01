@@ -6,7 +6,6 @@ class MultiwaySwitchButton extends React.Component {
             switchState: this.props.switchState,
             position: this.props.position,
             showTooltip: false,
-            up: true
         }
 
         this.setHover = this.setHover.bind(this);
@@ -31,9 +30,9 @@ class MultiwaySwitchButton extends React.Component {
             visibility: this.state.showTooltip ? 'visible' : 'hidden'
         }
 
-        let arrow = this.state.up ? ' ▲' : ' ▼';
-        if (this.state.switchState === SWITCH_STATES.RANDOM) {
-            arrow = '';
+        let arrow = ''
+        if (this.state.position === this.props.currentPos && this.state.switchState !== SWITCH_STATES.RANDOM) {
+            arrow = this.props.reversed ? ' ▼' : ' ▲';
         }
 
         return (

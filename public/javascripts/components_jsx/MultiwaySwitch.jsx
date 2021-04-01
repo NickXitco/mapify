@@ -19,7 +19,6 @@ class MultiwaySwitch extends React.Component {
         this.state = {
             position: 0,
             states: this.props.states,
-            color: this.props.color
         }
 
         this.setPositionFromClick = this.setPositionFromClick.bind(this);
@@ -37,7 +36,7 @@ class MultiwaySwitch extends React.Component {
                 (this.state.states.length * 22 * 1.5) - 22, 
                 this.state.position / (this.state.states.length - 1)
             )}px`,
-            boxShadow: `${this.state.color} 0 0 5px 3px, inset black 0 0 5px 0`
+            boxShadow: `${this.props.color} 0 0 5px 3px, inset black 0 0 5px 0`
         }
 
         const boxStyle = {
@@ -54,7 +53,13 @@ class MultiwaySwitch extends React.Component {
 
         const stateLabels = this.state.states.map((state, i) =>
             <li key={i} style={listItemStyle}>
-                <MultiwaySwitchButton switchState={state} position={i} click={this.setPositionFromClick}/>
+                <MultiwaySwitchButton
+                    switchState={state}
+                    position={i}
+                    click={this.setPositionFromClick}
+                    currentPos={this.state.position}
+                    reversed={this.props.reversed}
+                />
             </li>
         );
 
