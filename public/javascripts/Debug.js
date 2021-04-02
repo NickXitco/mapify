@@ -88,6 +88,17 @@ const Debug = {
         p.pop();
     },
 
+    latLongStats: function (p, camera) {
+        let mP = MouseEvents.getVirtualMouseCoordinates(p, camera);
+        const latLong = Utils.latLong(mP.x, mP.y);
+        p.push();
+        p.fill("white");
+        p.noStroke();
+        p.text("Longitude: " + latLong.longitude, 10, 375);
+        p.text("Latitude: " + latLong.latitude, 10, 400);
+        p.pop();
+    },
+
     averageTimingEvents: {},
     timingGraph: function (p) {
         p.push();
@@ -141,6 +152,7 @@ const Debug = {
         this.printFPS(p);
         this.printMouseCoordinates(p, camera);
         this.loadingStats(p, unloadedQuads, loadingQuads, unprocessedResponses, numNodes);
+        this.latLongStats(p, camera)
         this.timingGraph(p);
     }
 }
