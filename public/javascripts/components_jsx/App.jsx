@@ -11,6 +11,9 @@ class App extends React.Component {
             clickedArtist: null,
             hoverPoint: {},
 
+            fencing: false,
+            fence: [],
+
             activeGenre: null,
 
             quadHead: null,
@@ -91,6 +94,10 @@ class App extends React.Component {
 
         this.tryRemoveChangelog = this.tryRemoveChangelog.bind(this);
         this.checkVersion = this.checkVersion.bind(this);
+
+        this.setFencing = this.setFencing.bind(this);
+        this.addFencepost = this.addFencepost.bind(this);
+        this.clearFence = this.clearFence.bind(this);
     }
 
     checkVersion(versionNumber) {
@@ -124,6 +131,19 @@ class App extends React.Component {
             });
         }
         this.setState({hoveredArtist: null});
+    }
+
+    setFencing(state) {
+        this.setState({fencing: state});
+    }
+
+    addFencepost(post) {
+        const newFence = [...this.state.fence].push(post);
+        this.setState({fence: newFence});
+    }
+
+    clearFence() {
+        this.setState({fence: []});
     }
 
     setSidebarState(artist, genre, path, camera, state) {
@@ -449,6 +469,13 @@ class App extends React.Component {
                     updateClickedArtist={this.updateClickedArtist}
                     handleEmptyClick={this.handleEmptyClick}
                     updateHoveredArtist={this.updateHoveredArtist}
+
+                    setFencing={this.setFencing}
+                    addFencepost={this.addFencepost}
+                    clearFence={this.clearFence}
+
+                    fence={this.state.fence}
+                    fencing={this.state.fencing}
                 />
             </div>
         );

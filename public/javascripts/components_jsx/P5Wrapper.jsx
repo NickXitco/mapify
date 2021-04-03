@@ -148,11 +148,17 @@ class P5Wrapper extends React.Component {
             }
         }
 
-        p.mousePressed = () => {
+        p.mousePressed = (e) => {
             if (!this.props.uiHover) {
-                MouseEvents.dragging = true;
-                MouseEvents.drag = {x: p.mouseX, y: p.mouseY};
-                MouseEvents.start = {x: p.mouseX, y: p.mouseY};
+
+                if (e.ctrlKey) { // Fence Click
+
+
+                } else { // Start Drag
+                    MouseEvents.dragging = true;
+                    MouseEvents.drag = {x: p.mouseX, y: p.mouseY};
+                    MouseEvents.start = {x: p.mouseX, y: p.mouseY};
+                }
             }
         }
 
@@ -173,7 +179,10 @@ class P5Wrapper extends React.Component {
                 this.props.camera.x += (oldDrag.x - newDrag.x);
                 this.props.camera.y += (oldDrag.y - newDrag.y);
 
-                if (Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y) < 5) {
+                const dragDist = Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y);
+                const smallDrag = dragDist < 5;
+
+                if (smallDrag) {
                     const clickedArtist = handlePointClick(this.props.quadHead, this.props.hoveredArtist, this.props.clickedArtist, this.props.nodeLookup, p);
                     if (clickedArtist) {
                         this.props.updateClickedArtist(clickedArtist)
