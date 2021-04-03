@@ -6,3 +6,5 @@ resources/
 .idea/
 
 public/javascripts/components/
+
+backend/GnomicProjection.js

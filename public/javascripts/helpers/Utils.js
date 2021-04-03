@@ -1,6 +1,8 @@
 Number.prototype.mod = function(n) {
-    return ((this%n)+n)%n;
+    return ((this % n) + n) % n;
 }
+
+const PLANE_RADIUS = 4457.086193532795 //DO NOT CHANGE UNLESS DATASET CHANGES
 
 const Utils = {
     map: function(n, a, b, c, d) {
@@ -16,29 +18,38 @@ const Utils = {
     },
 
     /***
-     * Computes the latitude and longitude of a coordinate as projected onto the predefined stereographic
-     * projection of the map. The radius of the projection is predefined and should not be changed.
-     * @param x x-coordinate of the point
-     * @param y y-coordinate of the point
+     * Calculates the inverse of the gnomic projection of a plane onto a unit sphere
+     * @param x x-coordinate of input point on plane
+     * @param y y-coordinate of input point on plane
+     * @param lambda0 - central longitude of projection
+     * @param phi1 - central latitude of projection
+     * @param r - max radius of plane
      * @return {{latitude: number, longitude: number}}
      */
-    latLong: function (x, y) {
-        const RADIUS = 4457.086193532795 //DO NOT CHANGE UNLESS DATASET CHANGES
+    gnomicProjection: function(x, y, lambda0, phi1, r) {
+        const X = x / r;
+        const Y = y / r;
+        const p = Math.hypot(X, Y);
+        const c = Math.atan(p);
 
-        const X = (x / RADIUS);
-        const Y = (y / RADIUS);
+        const sinPhi1 = Math.sin(phi1);
+        const cosPhi1 = Math.cos(phi1);
+        const cosC = Math.cos(c);
+        const sinC = Math.sin(c);
 
-        // Perform stereographic projection on (X, Y) to (X', Y', Z')
-        const projX = (2 * X) / (1 + X * X + Y * Y);
-        const projY = (2 * Y) / (1 + X * X + Y * Y);
-        const projZ = (-1 + X * X + Y * Y) / (1 + X * X + Y * Y);
+        let lat, long;
 
-        const lat = ((Math.PI / 2) - Math.acos(projZ)) * (180 / Math.PI);
-        const long = (Math.atan2(projY, projX) * (180 / Math.PI));
+        if (p === 0) {
+            lat = Math.asin(cosC * sinPhi1);
+        } else {
+            lat = Math.asin(cosC * sinPhi1 + ((Y * sinC * cosPhi1) / p));
+        }
+
+        long = lambda0 + Math.atan2(X * sinC, (p * cosPhi1 * cosC) - (Y * sinPhi1 * sinC));
 
         return {
-            longitude: long,
-            latitude: lat
+            latitude: lat * (180 / Math.PI),
+            longitude: long * (180 / Math.PI)
         }
     }
 }

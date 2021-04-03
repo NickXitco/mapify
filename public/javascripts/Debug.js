@@ -90,7 +90,7 @@ const Debug = {
 
     latLongStats: function (p, camera) {
         let mP = MouseEvents.getVirtualMouseCoordinates(p, camera);
-        const latLong = Utils.latLong(mP.x, mP.y);
+        const latLong = Utils.gnomicProjection(mP.x, mP.y, 0, -0.5 * Math.PI, PLANE_RADIUS);
         p.push();
         p.fill("white");
         p.noStroke();

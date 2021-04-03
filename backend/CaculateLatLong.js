@@ -13,17 +13,7 @@ async function runLatLong() {
     radius += 100 //Don't want anything too close to the border for precision issues
 
     for (const a of artists) {
-        const geo = calculateLatLong(a.x, a.y, radius);
-
-        if (Math.abs(geo[0]) > 180) {
-            console.log(`Out of bounds longitude! Artist ${a}`);
-        }
-
-        if (Math.abs(geo[1]) > 90) {
-            console.log(`Out of bounds latitude! Artist ${a}`);
-        }
-
-        a.geo = geo
+        a.geo = gnomicProjection(a.x, a.y, 0, -0.5 * Math.PI, radius);
     }
 
     for (const a of artists) {
@@ -37,7 +27,7 @@ async function updateArtist(a) {
         `
         FOR a in artists
         FILTER a._key == "${a.key}"
-        UPDATE a WITH { _key: a._key, geo: [${a.geo[0]}, ${a.geo[1]}] } IN artists
+        UPDATE a WITH { _key: a._key, geo: [${a.geo.longitude}, ${a.geo.latitude}] } IN artists
         RETURN NEW.geo
         `
     )
@@ -57,19 +47,38 @@ function getAllArtists() {
     );
 }
 
+/***
+ * Calculates the inverse of the gnomic projection of a plane onto a unit sphere
+ * @param x x-coordinate of input point on plane
+ * @param y y-coordinate of input point on plane
+ * @param lambda0 - central longitude of projection
+ * @param phi1 - central latitude of projection
+ * @param r - max radius of plane
+ * @return {{latitude: number, longitude: number}}
+ */
+function gnomicProjection(x, y, lambda0, phi1, r) {
+    const X = x / r;
+    const Y = y / r;
+    const p = Math.hypot(X, Y);
+    const c = Math.atan(p);
+    
+    const sinPhi1 = Math.sin(phi1);
+    const cosPhi1 = Math.cos(phi1);
+    const cosC = Math.cos(c);
+    const sinC = Math.sin(c);
 
-function calculateLatLong(x, y, r) {
-    // Map x, y to the unit circle by dividing by the radius of the plane
-    const X = (x / r);
-    const Y = (y / r);
+    let lat, long;
 
-    // Perform stereographic projection on (X, Y) to (X', Y', Z')
-    const projX = (2 * X) / (1 + X * X + Y * Y);
-    const projY = (2 * Y) / (1 + X * X + Y * Y);
-    const projZ = (-1 + X * X + Y * Y) / (1 + X * X + Y * Y);
+    if (p === 0) {
+        lat = Math.asin(cosC * sinPhi1);
+    } else {
+        lat = Math.asin(cosC * sinPhi1 + ((Y * sinC * cosPhi1) / p));
+    }
 
-    const lat = ((Math.PI / 2) - Math.acos(projZ)) * (180 / Math.PI);
-    const long = (Math.atan2(projY, projX) * (180 / Math.PI));
+    long = lambda0 + Math.atan2(X * sinC, (p * cosPhi1 * cosC) - (Y * sinPhi1 * sinC));
 
-    return [long, lat]; //Ordered for RFC 7946 Position
+    return {
+        latitude: lat * (180 / Math.PI),
+        longitude: long * (180 / Math.PI)
+    }
 }
