@@ -58,7 +58,9 @@ class App extends React.Component {
                 "Performance improvements",
                 "Personal spotify integration",
                 "Wider trackpad support"
-            ]
+            ],
+
+            cursor: 'auto',
         }
 
         this.setCanvas = this.setCanvas.bind(this);
@@ -98,6 +100,8 @@ class App extends React.Component {
         this.setFencing = this.setFencing.bind(this);
         this.addFencepost = this.addFencepost.bind(this);
         this.clearFence = this.clearFence.bind(this);
+
+        this.setCursor = this.setCursor.bind(this);
     }
 
     checkVersion(versionNumber) {
@@ -134,11 +138,27 @@ class App extends React.Component {
     }
 
     setFencing(state) {
+        if (state === false && this.state.fence.length > 0) {
+
+            const latLongFence = [];
+            for (const post of this.state.fence) {
+                const projection = Utils.gnomicProjection(post.x, post.y, 0, -0.5 * Math.PI, PLANE_RADIUS);
+                latLongFence.push(projection);
+            }
+
+            fetch(`fence`,
+                {method: 'POST', headers: {'Content-Type': 'application/json',}, body: JSON.stringify(latLongFence)}
+                )
+                .then(response => response.json())
+                .then(data => console.log(data));
+        }
+
         this.setState({fencing: state});
     }
 
     addFencepost(post) {
-        const newFence = [...this.state.fence].push(post);
+        const newFence = [...this.state.fence]
+        newFence.push(post);
         this.setState({fence: newFence});
     }
 
@@ -357,6 +377,10 @@ class App extends React.Component {
         this.ro.observe(document.getElementById("root"));
     }
 
+    setCursor(cursor) {
+        this.setState({cursor: cursor})
+    }
+
 
     render() {
         let changelog = null;
@@ -376,8 +400,11 @@ class App extends React.Component {
 
         let colorant = this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre ? this.state.activeGenre : this.state.activePath.nodes.length > 0 ? this.state.activePath.nodes[0] : null;
 
+        let cursorStyle = {
+            cursor: this.state.cursor
+        }
         return (
-            <div className={"fullScreen"}>
+            <div className={"fullScreen"} style={cursorStyle}>
                 {changelog}
 
                 <ShortestPathDialog
@@ -469,6 +496,8 @@ class App extends React.Component {
                     updateClickedArtist={this.updateClickedArtist}
                     handleEmptyClick={this.handleEmptyClick}
                     updateHoveredArtist={this.updateHoveredArtist}
+
+                    setCursor={this.setCursor}
 
                     setFencing={this.setFencing}
                     addFencepost={this.addFencepost}

@@ -4,6 +4,9 @@ Number.prototype.mod = function(n) {
 
 const PLANE_RADIUS = 4457.086193532795 //DO NOT CHANGE UNLESS DATASET CHANGES
 
+const FENCE_CLICK_RADIUS = 10;
+const FENCE_CLICK_MIN_VIRTUAL_RADIUS = 1.75;
+
 const Utils = {
     map: function(n, a, b, c, d) {
         return (n - a) / (b - a) * (d - c) + c;
@@ -24,7 +27,7 @@ const Utils = {
      * @param lambda0 - central longitude of projection
      * @param phi1 - central latitude of projection
      * @param r - max radius of plane
-     * @return {{latitude: number, longitude: number}}
+     * @return {{latitude: number, longitude: number}} Latitude and longitude in degrees
      */
     gnomicProjection: function(x, y, lambda0, phi1, r) {
         const X = x / r;

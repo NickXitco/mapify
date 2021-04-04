@@ -123,7 +123,6 @@ function drawOnscreenQuads(p, quadHead, camera, hoveredArtist, loadingQuads, unl
         p.textSize(q.r / 20);
         p.fill('green');
         p.noStroke();
-        p.textAlign(LEFT, TOP);
         p.text('Displayed Size: (' + q.r * 2 * camera.getZoomFactor().x + ', ' + q.r * 2 * camera.getZoomFactor().y + ')', q.x - q.r, -(q.y + q.r * 0.95));
         p.text('Number of Nodes Inside: ' + q.renderableNodes.size, q.x - q.r, -(q.y + q.r * 0.90));
         if (q.image) {
