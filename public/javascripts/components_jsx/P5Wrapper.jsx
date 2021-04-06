@@ -265,7 +265,6 @@ class P5Wrapper extends React.Component {
                     MouseEvents.lastClickTime = clickTime;
 
                     if (isDoubleClick) {
-                        console.log(clickTime);
                         MouseEvents.zooming = true;
                         MouseEvents.scrollStep = 0;
                         MouseEvents.zoomCoordinates = {x: newDrag.x, y: newDrag.y};

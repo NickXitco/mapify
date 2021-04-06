@@ -8,6 +8,8 @@ class ReactSidebar extends React.Component {
         }
 
         this.updateSidebarContent = this.updateSidebarContent.bind(this);
+        this.scrollbar = this.scrollbar.bind(this);
+        this.undoRedo = this.undoRedo.bind(this);
     }
 
     updateSidebarContent(artist, genre) {
@@ -17,7 +19,48 @@ class ReactSidebar extends React.Component {
     }
 
     shouldComponentUpdate(nextProps) {
-        return (this.props.artist !== nextProps.artist || this.props.genre !== nextProps.genre);
+        return (
+            this.props.artist !== nextProps.artist ||
+            this.props.genre !== nextProps.genre ||
+            this.props.path !== nextProps.path
+        );
+    }
+
+    scrollbar(colorant) {
+        return (
+            <style>
+                {`::-webkit-scrollbar-track {box-shadow: 0 0 5px ${colorant};}  \n` +
+                `::-webkit-scrollbar-thumb {background: ${colorant};`}
+            </style>
+        )
+    }
+
+    undoRedo(colorant) {
+        return (
+            <UndoRedoComponent
+                color={[colorant.r, colorant.g, colorant.b]}
+                sidebarState={this.props.sidebarState}
+                undoSidebarState={this.props.undoSidebarState}
+                redoSidebarState={this.props.redoSidebarState}
+            />
+        )
+    }
+
+    shadowBox(width, height, direction, bottom) {
+        let mod = direction === "UP" ? "-" : "";
+
+        return (
+            <div style={{
+                position: 'absolute',
+                width: `${width}px`,
+                height: `${height}px`,
+                boxShadow: `0 ${mod}20px 10px -10px black`,
+                bottom: bottom,
+                pointerEvents: 'none',
+                zIndex: 4,
+            }}
+            />
+        )
     }
 
     render() {
@@ -31,25 +74,14 @@ class ReactSidebar extends React.Component {
                      onMouseLeave={() => {this.props.updateHoverFlag(false)}}
                 >
 
-                    <style>
-                        {`::-webkit-scrollbar-track {box-shadow: 0 0 5px ${start.colorToString()};}  \n` +
-                        `::-webkit-scrollbar-thumb {background: ${start.colorToString()};`}
-                    </style>
+                    {this.scrollbar(start.colorToString())}
 
                     <SidebarStroke color={start.colorToString()}/>
 
                     <ArtistProfile artist={start} fontDecrement={3} showPlayer={false} size={"Small"} align={'left'}/>
                     <ArtistProfile artist={end} fontDecrement={3} showPlayer={false} size={"Small"}  align={'right'}/>
 
-                    <div style={{
-                        position: 'absolute',
-                        width: '440px',
-                        height: '200px',
-                        boxShadow: '0 20px 10px -10px black',
-                        pointerEvents: 'none',
-                        zIndex: 4,
-                    }}
-                    />
+                    {this.shadowBox(440, 200, "DOWN", "auto")}
 
                     <HopsList path={this.props.path}
                               loadArtistFromUI={this.props.loadArtistFromUI}
@@ -58,23 +90,8 @@ class ReactSidebar extends React.Component {
 
                     <div className="flexSpacer"/>
 
-                    <div style={{
-                        position: 'absolute',
-                        width: '440px',
-                        height: '90px',
-                        boxShadow: '0 -20px 10px -10px black',
-                        bottom: 0,
-                        pointerEvents: 'none',
-                        zIndex: 4,
-                    }}
-                    />
-
-                    <UndoRedoComponent
-                        color={[start.r, start.g, start.b]}
-                        sidebarState={this.props.sidebarState}
-                        undoSidebarState={this.props.undoSidebarState}
-                        redoSidebarState={this.props.redoSidebarState}
-                    />
+                    {this.shadowBox(440, 90, "UP", 0)}
+                    {this.undoRedo(start)}
                 </div>
             )
         }
@@ -88,10 +105,7 @@ class ReactSidebar extends React.Component {
                              onMouseLeave={() => {this.props.updateHoverFlag(false)}}
                         >
 
-                            <style>
-                                {`::-webkit-scrollbar-track {box-shadow: 0 0 5px ${this.state.artist.colorToString()};}  \n` +
-                                `::-webkit-scrollbar-thumb {background: ${this.state.artist.colorToString()};`}
-                            </style>
+                            {this.scrollbar(this.state.artist.colorToString())}
 
                             <SidebarStroke color={this.state.artist.colorToString()}/>
 
@@ -111,12 +125,7 @@ class ReactSidebar extends React.Component {
                             />
 
                             <div className="flexSpacer"/>
-                            <UndoRedoComponent
-                                color={[this.state.artist.r, this.state.artist.g, this.state.artist.b]}
-                                sidebarState={this.props.sidebarState}
-                                undoSidebarState={this.props.undoSidebarState}
-                                redoSidebarState={this.props.redoSidebarState}
-                            />
+                            {this.undoRedo(this.state.artist)}
                         </div>
                 );
             }
@@ -127,10 +136,7 @@ class ReactSidebar extends React.Component {
                          onMouseLeave={() => {this.props.updateHoverFlag(false)}}
                     >
 
-                        <style>
-                            {`::-webkit-scrollbar-track {box-shadow: 0 0 5px ${this.state.genre.colorToString()};}  \n` +
-                            `::-webkit-scrollbar-thumb {background: ${this.state.genre.colorToString()};`}
-                        </style>
+                        {this.scrollbar(this.state.genre.colorToString())}
 
                         <SidebarStroke color={this.state.genre.colorToString()}/>
 
@@ -144,13 +150,7 @@ class ReactSidebar extends React.Component {
                         />
 
                         <div className="flexSpacer"/>
-                        <UndoRedoComponent
-                            color={[this.state.genre.r, this.state.genre.g, this.state.genre.b]}
-                            sidebarState={this.props.sidebarState}
-                            undoSidebarState={this.props.undoSidebarState}
-                            redoSidebarState={this.props.redoSidebarState}
-                        />
-
+                        {this.undoRedo(this.state.genre)}
                     </div>
                 );
             }
@@ -158,12 +158,7 @@ class ReactSidebar extends React.Component {
                          onMouseEnter={() => {this.props.updateHoverFlag(true)}}
                          onMouseLeave={() => {this.props.updateHoverFlag(false)}}
             >
-
-                <style>
-                    {`::-webkit-scrollbar-track {box-shadow: 0 0 5px white;}  \n` +
-                    `::-webkit-scrollbar-thumb {background: white};`}
-                </style>
-
+                {this.scrollbar("white")}
                 <SidebarStroke color={'white'}/>
             </div>);
         }
@@ -176,11 +171,7 @@ class ReactSidebar extends React.Component {
                      onMouseEnter={() => {this.props.updateHoverFlag(true)}}
                      onMouseLeave={() => {this.props.updateHoverFlag(false)}}
                 >
-
-                    <style>
-                        {`::-webkit-scrollbar-track {box-shadow: 0 0 5px ${this.props.artist.colorToString()};}  \n` +
-                        `::-webkit-scrollbar-thumb {background: ${this.props.artist.colorToString()};`}
-                    </style>
+                    {this.scrollbar(this.props.artist.colorToString())}
 
                     <SidebarStroke color={this.props.artist.colorToString()}/>
 
@@ -200,12 +191,7 @@ class ReactSidebar extends React.Component {
 
                     <div className="flexSpacer"/>
 
-                    <UndoRedoComponent
-                        color={[this.props.artist.r, this.props.artist.g, this.props.artist.b]}
-                        sidebarState={this.props.sidebarState}
-                        undoSidebarState={this.props.undoSidebarState}
-                        redoSidebarState={this.props.redoSidebarState}
-                    />
+                    {this.undoRedo(this.props.artist)}
                 </div>
             );
         }
@@ -216,11 +202,7 @@ class ReactSidebar extends React.Component {
                      onMouseEnter={() => {this.props.updateHoverFlag(true)}}
                      onMouseLeave={() => {this.props.updateHoverFlag(false)}}
                 >
-
-                    <style>
-                        {`::-webkit-scrollbar-track {box-shadow: 0 0 5px ${this.props.genre.colorToString()};}  \n` +
-                        `::-webkit-scrollbar-thumb {background: ${this.props.genre.colorToString()};`}
-                    </style>
+                    {this.scrollbar(this.props.genre.colorToString())}
 
                     <SidebarStroke color={this.props.genre.colorToString()}/>
 
@@ -235,13 +217,7 @@ class ReactSidebar extends React.Component {
 
                     <div className="flexSpacer"/>
 
-                    <UndoRedoComponent
-                        color={[this.props.genre.r, this.props.genre.g, this.props.genre.b]}
-                        sidebarState={this.props.sidebarState}
-                        undoSidebarState={this.props.undoSidebarState}
-                        redoSidebarState={this.props.redoSidebarState}
-                    />
-
+                    {this.undoRedo(this.props.genre)}
                 </div>
             );
         }
