@@ -249,7 +249,7 @@ class P5Wrapper extends React.Component {
             }
         }
 
-        p.mouseReleased = () => {
+        p.mouseReleased = (e) => {
             if (MouseEvents.dragging) {
                 const newDrag = MouseEvents.getVirtualMouseCoordinates(p, this.props.camera);
                 const oldDrag = this.props.camera.screen2virtual(MouseEvents.drag);
@@ -267,6 +267,18 @@ class P5Wrapper extends React.Component {
                         this.props.handleEmptyClick();
                     }
 
+                    const clickTime = new Date().getTime();
+                    const isDoubleClick = MouseEvents.isDoubleClick(clickTime);
+                    MouseEvents.lastClickTime = clickTime;
+
+                    if (isDoubleClick) {
+                        console.log(clickTime);
+                        MouseEvents.zooming = true;
+                        MouseEvents.scrollStep = 0;
+                        MouseEvents.zoomCoordinates = {x: newDrag.x, y: newDrag.y};
+                        MouseEvents.scrollDelta = -0.5;
+                    }
+
                     this.props.clearFence();
                     this.props.setFencing(false);
                 }
@@ -275,6 +287,10 @@ class P5Wrapper extends React.Component {
                 MouseEvents.drifting = true;
                 MouseEvents.dragging = false;
             }
+        }
+
+        p.keyPressed = (e) => {
+            this.props.keyDownEvents(e);
         }
     }
 
