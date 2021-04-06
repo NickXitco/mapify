@@ -5,6 +5,7 @@
 
 const DRIFT_THRESHOLD = 0.1;
 const SCROLL_STEPS = 8;
+const DELTA_MULTIPLIER = 1;
 
 const MouseEvents = {
     dragging: false,
@@ -20,7 +21,7 @@ const MouseEvents = {
     zoom: function (camera) {
         if (this.zooming) {
             this.scrollStep++;
-            camera.zoom += this.scrollDelta / SCROLL_STEPS;
+            camera.zoom += (this.scrollDelta * DELTA_MULTIPLIER) / SCROLL_STEPS;
             camera.zoom = Math.min(camera.zoom, 8.5);
             camera.zoomCamera(this.zoomCoordinates);
             if (this.scrollStep === SCROLL_STEPS) {
