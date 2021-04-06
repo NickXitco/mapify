@@ -46,6 +46,23 @@ class ReactSidebar extends React.Component {
         )
     }
 
+    shadowBox(width, height, direction, bottom) {
+        let mod = direction === "UP" ? "-" : "";
+
+        return (
+            <div style={{
+                position: 'absolute',
+                width: `${width}px`,
+                height: `${height}px`,
+                boxShadow: `0 ${mod}20px 10px -10px black`,
+                bottom: bottom,
+                pointerEvents: 'none',
+                zIndex: 4,
+            }}
+            />
+        )
+    }
+
     render() {
         if (this.props.path.length > 0) {
             const start = this.props.path[0];
@@ -64,15 +81,7 @@ class ReactSidebar extends React.Component {
                     <ArtistProfile artist={start} fontDecrement={3} showPlayer={false} size={"Small"} align={'left'}/>
                     <ArtistProfile artist={end} fontDecrement={3} showPlayer={false} size={"Small"}  align={'right'}/>
 
-                    <div style={{
-                        position: 'absolute',
-                        width: '440px',
-                        height: '200px',
-                        boxShadow: '0 20px 10px -10px black',
-                        pointerEvents: 'none',
-                        zIndex: 4,
-                    }}
-                    />
+                    {this.shadowBox(440, 200, "DOWN", "auto")}
 
                     <HopsList path={this.props.path}
                               loadArtistFromUI={this.props.loadArtistFromUI}
@@ -81,17 +90,7 @@ class ReactSidebar extends React.Component {
 
                     <div className="flexSpacer"/>
 
-                    <div style={{
-                        position: 'absolute',
-                        width: '440px',
-                        height: '90px',
-                        boxShadow: '0 -20px 10px -10px black',
-                        bottom: 0,
-                        pointerEvents: 'none',
-                        zIndex: 4,
-                    }}
-                    />
-
+                    {this.shadowBox(440, 90, "UP", 0)}
                     {this.undoRedo(start)}
                 </div>
             )
