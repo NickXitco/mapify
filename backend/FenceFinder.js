@@ -18,16 +18,25 @@ async function getFence(fence) {
         }
     }
 
+    genres["NO_GENRE"] = {
+        r: 0,
+        g: 0,
+        b: 0,
+        counts: 0,
+        followers: 0,
+        name: "No Genre"
+    }
+
     let numArtists = 0
 
     for (const artist of artists) {
         numArtists++;
-        for (const genre of artist.genres) {
-            if (!(genre in genres)) {
-                console.log(genre);
-                continue;
-            }
+        if (artist.genres.length === 0) {
+            genres["NO_GENRE"].counts++;
+            genres["NO_GENRE"].followers += artist.followers;
+        }
 
+        for (const genre of artist.genres) {
             genres[genre].counts++;
             genres[genre].followers += artist.followers;
         }
@@ -40,6 +49,11 @@ async function getFence(fence) {
             g.followers = g.followers > 0 ? g.followers : 1;
             filtered.push(g)
         }
+    }
+
+    if (genres["NO_GENRE"].counts > 0) {
+        genres["NO_GENRE"].followers = genres["NO_GENRE"].followers > 0 ? genres["NO_GENRE"].followers : 1;
+        filtered.push(genres["NO_GENRE"]);
     }
 
     filtered.sort((a, b) => b.followers - a.followers);
