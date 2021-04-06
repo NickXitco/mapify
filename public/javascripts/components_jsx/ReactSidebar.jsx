@@ -9,6 +9,7 @@ class ReactSidebar extends React.Component {
 
         this.updateSidebarContent = this.updateSidebarContent.bind(this);
         this.scrollbar = this.scrollbar.bind(this);
+        this.undoRedo = this.undoRedo.bind(this);
     }
 
     updateSidebarContent(artist, genre) {
@@ -31,6 +32,17 @@ class ReactSidebar extends React.Component {
                 {`::-webkit-scrollbar-track {box-shadow: 0 0 5px ${colorant};}  \n` +
                 `::-webkit-scrollbar-thumb {background: ${colorant};`}
             </style>
+        )
+    }
+
+    undoRedo(colorant) {
+        return (
+            <UndoRedoComponent
+                color={[colorant.r, colorant.g, colorant.b]}
+                sidebarState={this.props.sidebarState}
+                undoSidebarState={this.props.undoSidebarState}
+                redoSidebarState={this.props.redoSidebarState}
+            />
         )
     }
 
@@ -80,12 +92,7 @@ class ReactSidebar extends React.Component {
                     }}
                     />
 
-                    <UndoRedoComponent
-                        color={[start.r, start.g, start.b]}
-                        sidebarState={this.props.sidebarState}
-                        undoSidebarState={this.props.undoSidebarState}
-                        redoSidebarState={this.props.redoSidebarState}
-                    />
+                    {this.undoRedo(start)}
                 </div>
             )
         }
@@ -119,12 +126,7 @@ class ReactSidebar extends React.Component {
                             />
 
                             <div className="flexSpacer"/>
-                            <UndoRedoComponent
-                                color={[this.state.artist.r, this.state.artist.g, this.state.artist.b]}
-                                sidebarState={this.props.sidebarState}
-                                undoSidebarState={this.props.undoSidebarState}
-                                redoSidebarState={this.props.redoSidebarState}
-                            />
+                            {this.undoRedo(this.state.artist)}
                         </div>
                 );
             }
@@ -149,13 +151,7 @@ class ReactSidebar extends React.Component {
                         />
 
                         <div className="flexSpacer"/>
-                        <UndoRedoComponent
-                            color={[this.state.genre.r, this.state.genre.g, this.state.genre.b]}
-                            sidebarState={this.props.sidebarState}
-                            undoSidebarState={this.props.undoSidebarState}
-                            redoSidebarState={this.props.redoSidebarState}
-                        />
-
+                        {this.undoRedo(this.state.genre)}
                     </div>
                 );
             }
@@ -196,12 +192,7 @@ class ReactSidebar extends React.Component {
 
                     <div className="flexSpacer"/>
 
-                    <UndoRedoComponent
-                        color={[this.props.artist.r, this.props.artist.g, this.props.artist.b]}
-                        sidebarState={this.props.sidebarState}
-                        undoSidebarState={this.props.undoSidebarState}
-                        redoSidebarState={this.props.redoSidebarState}
-                    />
+                    {this.undoRedo(this.props.artist)}
                 </div>
             );
         }
@@ -227,13 +218,7 @@ class ReactSidebar extends React.Component {
 
                     <div className="flexSpacer"/>
 
-                    <UndoRedoComponent
-                        color={[this.props.genre.r, this.props.genre.g, this.props.genre.b]}
-                        sidebarState={this.props.sidebarState}
-                        undoSidebarState={this.props.undoSidebarState}
-                        redoSidebarState={this.props.redoSidebarState}
-                    />
-
+                    {this.undoRedo(this.props.genre)}
                 </div>
             );
         }
