@@ -260,13 +260,6 @@ class P5Wrapper extends React.Component {
                 const smallDrag = dragDist < 5;
 
                 if (smallDrag) {
-                    const clickedArtist = handlePointClick(this.props.quadHead, this.props.hoveredArtist, this.props.clickedArtist, this.props.nodeLookup, p);
-                    if (clickedArtist) {
-                        this.props.updateClickedArtist(clickedArtist)
-                    } else {
-                        this.props.handleEmptyClick();
-                    }
-
                     const clickTime = new Date().getTime();
                     const isDoubleClick = MouseEvents.isDoubleClick(clickTime);
                     MouseEvents.lastClickTime = clickTime;
@@ -277,10 +270,17 @@ class P5Wrapper extends React.Component {
                         MouseEvents.scrollStep = 0;
                         MouseEvents.zoomCoordinates = {x: newDrag.x, y: newDrag.y};
                         MouseEvents.scrollDelta = -0.5;
-                    }
+                    } else {
+                        const clickedArtist = handlePointClick(this.props.quadHead, this.props.hoveredArtist, this.props.clickedArtist, this.props.nodeLookup, p);
+                        if (clickedArtist) {
+                            this.props.updateClickedArtist(clickedArtist)
+                        } else {
+                            this.props.handleEmptyClick();
+                        }
 
-                    this.props.clearFence();
-                    this.props.setFencing(false);
+                        this.props.clearFence();
+                        this.props.setFencing(false);
+                    }
                 }
 
                 MouseEvents.driftVec = p.createVector(p.winMouseX - p.pwinMouseX, p.winMouseY - p.pwinMouseY);
