@@ -1,6 +1,5 @@
 const arangoDB = require('./ArangoDB');
 const spotifyApiHolder = require('./SpotifyAPI');
-const gnomicProjector = require('./GnomicProjection');
 
 async function getFence(fence) {
     const artists = await getArtistsInFence(fence);
