@@ -51,7 +51,13 @@ class P5Wrapper extends React.Component {
             loadUnloaded(this.unprocessedResponses, this.unloadedPQ, this.loadingQuads, this.unloadedQuads, this.props.camera);
 
             if (!this.props.uiHover) {
-                this.props.updateHoveredArtist(getHoveredArtist(p, this.props.camera, this.props.clickedArtist, this.props.quadHead, this.props.genre, this.props.path));
+                const hA = getHoveredArtist(p, this.props.camera, this.props.clickedArtist, this.props.quadHead, this.props.genre, this.props.path);
+                if (hA) {
+                    this.props.setCursor('pointer');
+                } else {
+                    this.props.setCursor('auto');
+                }
+                this.props.updateHoveredArtist(hA);
             }
 
             if (this.props.clickedArtist && !this.props.clickedArtist.loaded && !this.clickedLoading) {
@@ -80,6 +86,48 @@ class P5Wrapper extends React.Component {
             }
 
             Debug.createTimingEvent("Draw Genre Nodes");
+
+            if (this.props.fence.length > 0) {
+
+                let postPoint = MouseEvents.getVirtualMouseCoordinates(p, this.props.camera);
+                let firstPoint = {x: Infinity, y: Infinity}
+
+                if (this.props.fence.length > 0) {
+                    firstPoint = this.props.fence[0];
+                }
+
+                const postFirstDist = Utils.dist(postPoint.x, postPoint.y, firstPoint.x, firstPoint.y);
+                const validDist = Math.max(FENCE_CLICK_MIN_VIRTUAL_RADIUS * 2, (FENCE_CLICK_RADIUS * 2) / this.props.camera.getZoomFactor().x);
+
+                if (postFirstDist < validDist / 2 && this.props.fence.length > 2) {
+                    this.props.setCursor('pointer');
+                } else {
+                    this.props.setCursor('auto');
+                }
+
+                p.push();
+
+                p.stroke('white');
+
+                p.strokeWeight(Math.max(0.5, 1 / this.props.camera.getZoomFactor().x));
+
+                p.beginShape();
+
+                for (const point of this.props.fence) {
+                    p.noFill();
+                    //p.circle(point.x, -point.y, Math.max(FENCE_CLICK_MIN_VIRTUAL_RADIUS * 2, (FENCE_CLICK_RADIUS * 2) / this.props.camera.getZoomFactor().x));
+                    p.vertex(point.x, -point.y);
+                    //p.fill('white');
+                    p.square(point.x, -point.y, Math.max(1, 2 / this.props.camera.getZoomFactor().x));
+
+                }
+                p.noFill();
+                //p.vertex(this.props.fence[0].x, -this.props.fence[0].y);
+                p.endShape();
+
+                p.pop();
+            }
+
 
             if (this.props.clickedArtist) {
                 this.darken.related = darkenScene(p, this.darken.related, this.props.camera);
@@ -148,11 +196,46 @@ class P5Wrapper extends React.Component {
             }
         }
 
-        p.mousePressed = () => {
+        p.mousePressed = (e) => {
             if (!this.props.uiHover) {
-                MouseEvents.dragging = true;
-                MouseEvents.drag = {x: p.mouseX, y: p.mouseY};
-                MouseEvents.start = {x: p.mouseX, y: p.mouseY};
+
+                if (e.ctrlKey) { // Fence Click
+                    if (!this.props.fencing) {
+                        this.props.clearFence();
+                    }
+
+                    this.props.setFencing(true);
+
+                    let postPoint = MouseEvents.getVirtualMouseCoordinates(p, this.props.camera);
+                    let firstPoint = {x: Infinity, y: Infinity}
+
+                    if (this.props.fence.length > 0) {
+                        firstPoint = this.props.fence[0];
+                    }
+
+                    //TODO click on most recent point to delete?
+
+                    const postFirstDist = Utils.dist(postPoint.x, postPoint.y, firstPoint.x, firstPoint.y);
+                    const validDist = Math.max(FENCE_CLICK_MIN_VIRTUAL_RADIUS * 2, (FENCE_CLICK_RADIUS * 2) / this.props.camera.getZoomFactor().x);
+
+                    if (postFirstDist < validDist / 2) {
+                        if (this.props.fence.length > 2) {
+                            let postPoint = this.props.fence[0];
+                            this.props.addFencepost(postPoint);
+                            this.props.setFencing(false);
+                        } else {
+                            this.props.clearFence();
+                            this.props.setFencing(false);
+                        }
+                    } else {
+                        this.props.addFencepost(postPoint);
+                    }
+
+                } else { // Start Drag
+                    MouseEvents.dragging = true;
+                    MouseEvents.drag = {x: p.mouseX, y: p.mouseY};
+                    MouseEvents.start = {x: p.mouseX, y: p.mouseY};
+                }
             }
         }
 
@@ -173,13 +256,19 @@ class P5Wrapper extends React.Component {
                 this.props.camera.x += (oldDrag.x - newDrag.x);
                 this.props.camera.y += (oldDrag.y - newDrag.y);
 
-                if (Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y) < 5) {
+                const dragDist = Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y);
+                const smallDrag = dragDist < 5;
+
+                if (smallDrag) {
                     const clickedArtist = handlePointClick(this.props.quadHead, this.props.hoveredArtist, this.props.clickedArtist, this.props.nodeLookup, p);
                     if (clickedArtist) {
                         this.props.updateClickedArtist(clickedArtist)
                     } else {
                         this.props.handleEmptyClick();
                     }
+
+                    this.props.clearFence();
+                    this.props.setFencing(false);
                 }
 
                 MouseEvents.driftVec = p.createVector(p.winMouseX - p.pwinMouseX, p.winMouseY - p.pwinMouseY);

@@ -1,6 +1,11 @@
 Number.prototype.mod = function(n) {
-    return ((this%n)+n)%n;
+    return ((this % n) + n) % n;
 }
+
+const PLANE_RADIUS = 4457.086193532795 //DO NOT CHANGE UNLESS DATASET CHANGES
+
+const FENCE_CLICK_RADIUS = 10;
+const FENCE_CLICK_MIN_VIRTUAL_RADIUS = 1.75;
 
 const Utils = {
     map: function(n, a, b, c, d) {
@@ -13,5 +18,41 @@ const Utils = {
 
     lerp: function(start, end, t) {
         return start + t * (end - start);
+    },
+
+    /***
+     * Calculates the inverse of the gnomic projection of a plane onto a unit sphere
+     * @param x x-coordinate of input point on plane
+     * @param y y-coordinate of input point on plane
+     * @param lambda0 - central longitude of projection
+     * @param phi1 - central latitude of projection
+     * @param r - max radius of plane
+     * @return {{latitude: number, longitude: number}} Latitude and longitude in degrees
+     */
+    gnomicProjection: function(x, y, lambda0, phi1, r) {
+        const X = x / r;
+        const Y = y / r;
+        const p = Math.hypot(X, Y);
+        const c = Math.atan(p);
+
+        const sinPhi1 = Math.sin(phi1);
+        const cosPhi1 = Math.cos(phi1);
+        const cosC = Math.cos(c);
+        const sinC = Math.sin(c);
+
+        let lat, long;
+
+        if (p === 0) {
+            lat = Math.asin(cosC * sinPhi1);
+        } else {
+            lat = Math.asin(cosC * sinPhi1 + ((Y * sinC * cosPhi1) / p));
+        }
+
+        long = lambda0 + Math.atan2(X * sinC, (p * cosPhi1 * cosC) - (Y * sinPhi1 * sinC));
+
+        return {
+            latitude: lat * (180 / Math.PI),
+            longitude: long * (180 / Math.PI)
+        }
     }
 }
