@@ -4,8 +4,8 @@
  */
 
 const DRIFT_THRESHOLD = 0.1;
-const SCROLL_STEPS = 8;
-const DELTA_MULTIPLIER = 1;
+const SCROLL_STEPS = 10;
+const DELTA_MULTIPLIER = 3;
 
 const MouseEvents = {
     dragging: false,
