@@ -8,6 +8,7 @@ class ReactSidebar extends React.Component {
         }
 
         this.updateSidebarContent = this.updateSidebarContent.bind(this);
+        this.scrollbar = this.scrollbar.bind(this);
     }
 
     updateSidebarContent(artist, genre) {
@@ -17,7 +18,20 @@ class ReactSidebar extends React.Component {
     }
 
     shouldComponentUpdate(nextProps) {
-        return (this.props.artist !== nextProps.artist || this.props.genre !== nextProps.genre);
+        return (
+            this.props.artist !== nextProps.artist ||
+            this.props.genre !== nextProps.genre ||
+            this.props.path !== nextProps.path
+        );
+    }
+
+    scrollbar(colorant) {
+        return (
+            <style>
+                {`::-webkit-scrollbar-track {box-shadow: 0 0 5px ${colorant};}  \n` +
+                `::-webkit-scrollbar-thumb {background: ${colorant};`}
+            </style>
+        )
     }
 
     render() {
@@ -31,10 +45,7 @@ class ReactSidebar extends React.Component {
                      onMouseLeave={() => {this.props.updateHoverFlag(false)}}
                 >
 
-                    <style>
-                        {`::-webkit-scrollbar-track {box-shadow: 0 0 5px ${start.colorToString()};}  \n` +
-                        `::-webkit-scrollbar-thumb {background: ${start.colorToString()};`}
-                    </style>
+                    {this.scrollbar(start.colorToString())}
 
                     <SidebarStroke color={start.colorToString()}/>
 
@@ -88,10 +99,7 @@ class ReactSidebar extends React.Component {
                              onMouseLeave={() => {this.props.updateHoverFlag(false)}}
                         >
 
-                            <style>
-                                {`::-webkit-scrollbar-track {box-shadow: 0 0 5px ${this.state.artist.colorToString()};}  \n` +
-                                `::-webkit-scrollbar-thumb {background: ${this.state.artist.colorToString()};`}
-                            </style>
+                            {this.scrollbar(this.state.artist.colorToString())}
 
                             <SidebarStroke color={this.state.artist.colorToString()}/>
 
@@ -127,10 +135,7 @@ class ReactSidebar extends React.Component {
                          onMouseLeave={() => {this.props.updateHoverFlag(false)}}
                     >
 
-                        <style>
-                            {`::-webkit-scrollbar-track {box-shadow: 0 0 5px ${this.state.genre.colorToString()};}  \n` +
-                            `::-webkit-scrollbar-thumb {background: ${this.state.genre.colorToString()};`}
-                        </style>
+                        {this.scrollbar(this.state.genre.colorToString())}
 
                         <SidebarStroke color={this.state.genre.colorToString()}/>
 
@@ -158,12 +163,7 @@ class ReactSidebar extends React.Component {
                          onMouseEnter={() => {this.props.updateHoverFlag(true)}}
                          onMouseLeave={() => {this.props.updateHoverFlag(false)}}
             >
-
-                <style>
-                    {`::-webkit-scrollbar-track {box-shadow: 0 0 5px white;}  \n` +
-                    `::-webkit-scrollbar-thumb {background: white};`}
-                </style>
-
+                {this.scrollbar("white")}
                 <SidebarStroke color={'white'}/>
             </div>);
         }
@@ -176,11 +176,7 @@ class ReactSidebar extends React.Component {
                      onMouseEnter={() => {this.props.updateHoverFlag(true)}}
                      onMouseLeave={() => {this.props.updateHoverFlag(false)}}
                 >
-
-                    <style>
-                        {`::-webkit-scrollbar-track {box-shadow: 0 0 5px ${this.props.artist.colorToString()};}  \n` +
-                        `::-webkit-scrollbar-thumb {background: ${this.props.artist.colorToString()};`}
-                    </style>
+                    {this.scrollbar(this.props.artist.colorToString())}
 
                     <SidebarStroke color={this.props.artist.colorToString()}/>
 
@@ -216,11 +212,7 @@ class ReactSidebar extends React.Component {
                      onMouseEnter={() => {this.props.updateHoverFlag(true)}}
                      onMouseLeave={() => {this.props.updateHoverFlag(false)}}
                 >
-
-                    <style>
-                        {`::-webkit-scrollbar-track {box-shadow: 0 0 5px ${this.props.genre.colorToString()};}  \n` +
-                        `::-webkit-scrollbar-thumb {background: ${this.props.genre.colorToString()};`}
-                    </style>
+                    {this.scrollbar(this.props.genre.colorToString())}
 
                     <SidebarStroke color={this.props.genre.colorToString()}/>
 
