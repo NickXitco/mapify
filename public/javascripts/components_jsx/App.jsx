@@ -102,6 +102,8 @@ class App extends React.Component {
         this.clearFence = this.clearFence.bind(this);
 
         this.setCursor = this.setCursor.bind(this);
+
+        this.keyDownEvents = this.keyDownEvents.bind(this);
     }
 
     checkVersion(versionNumber) {
@@ -381,6 +383,12 @@ class App extends React.Component {
         this.setState({cursor: cursor})
     }
 
+    keyDownEvents(e) {
+        if (e.key === "Escape") {
+            this.resetCamera();
+        }
+    }
+
 
     render() {
         let changelog = null;
@@ -505,6 +513,7 @@ class App extends React.Component {
 
                     fence={this.state.fence}
                     fencing={this.state.fencing}
+                    keyDownEvents={this.keyDownEvents}
                 />
             </div>
         );

@@ -17,12 +17,13 @@ const MouseEvents = {
     scrollStep: 0,
     zooming: false,
     zoomCoordinates: {},
+    lastClickTime: 0,
 
     zoom: function (camera) {
         if (this.zooming) {
             this.scrollStep++;
             camera.zoom += (this.scrollDelta * DELTA_MULTIPLIER) / SCROLL_STEPS;
-            camera.zoom = Math.min(camera.zoom, 8.5);
+            camera.zoom = Math.min(camera.zoom, 2.5);
             camera.zoomCamera(this.zoomCoordinates);
             if (this.scrollStep === SCROLL_STEPS) {
                 this.zooming = false;
@@ -45,6 +46,11 @@ const MouseEvents = {
 
     getVirtualMouseCoordinates: function(p, camera) {
         return camera.screen2virtual({x: p.mouseX, y: p.mouseY});
+    },
+
+    isDoubleClick: function(clickTime) {
+        const THRESHOLD = 300;
+        return Math.abs(clickTime - this.lastClickTime) < THRESHOLD;
     }
 }
 

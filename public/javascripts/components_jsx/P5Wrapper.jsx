@@ -249,7 +249,7 @@ class P5Wrapper extends React.Component {
             }
         }
 
-        p.mouseReleased = () => {
+        p.mouseReleased = (e) => {
             if (MouseEvents.dragging) {
                 const newDrag = MouseEvents.getVirtualMouseCoordinates(p, this.props.camera);
                 const oldDrag = this.props.camera.screen2virtual(MouseEvents.drag);
@@ -260,21 +260,37 @@ class P5Wrapper extends React.Component {
                 const smallDrag = dragDist < 5;
 
                 if (smallDrag) {
-                    const clickedArtist = handlePointClick(this.props.quadHead, this.props.hoveredArtist, this.props.clickedArtist, this.props.nodeLookup, p);
-                    if (clickedArtist) {
-                        this.props.updateClickedArtist(clickedArtist)
-                    } else {
-                        this.props.handleEmptyClick();
-                    }
+                    const clickTime = new Date().getTime();
+                    const isDoubleClick = MouseEvents.isDoubleClick(clickTime);
+                    MouseEvents.lastClickTime = clickTime;
 
-                    this.props.clearFence();
-                    this.props.setFencing(false);
+                    if (isDoubleClick) {
+                        console.log(clickTime);
+                        MouseEvents.zooming = true;
+                        MouseEvents.scrollStep = 0;
+                        MouseEvents.zoomCoordinates = {x: newDrag.x, y: newDrag.y};
+                        MouseEvents.scrollDelta = -0.5;
+                    } else {
+                        const clickedArtist = handlePointClick(this.props.quadHead, this.props.hoveredArtist, this.props.clickedArtist, this.props.nodeLookup, p);
+                        if (clickedArtist) {
+                            this.props.updateClickedArtist(clickedArtist)
+                        } else {
+                            this.props.handleEmptyClick();
+                        }
+
+                        this.props.clearFence();
+                        this.props.setFencing(false);
+                    }
                 }
 
                 MouseEvents.driftVec = p.createVector(p.winMouseX - p.pwinMouseX, p.winMouseY - p.pwinMouseY);
                 MouseEvents.drifting = true;
                 MouseEvents.dragging = false;
             }
+        }
+
+        p.keyPressed = (e) => {
+            this.props.keyDownEvents(e);
         }
     }
 
