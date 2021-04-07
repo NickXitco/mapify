@@ -101,6 +101,8 @@ class App extends React.Component {
         this.setFencing = this.setFencing.bind(this);
         this.addFencepost = this.addFencepost.bind(this);
         this.clearFence = this.clearFence.bind(this);
+        this.setActiveGenreAppearance = this.setActiveGenreAppearance.bind(this);
+        this.clearActiveGenreAppearance = this.clearActiveGenreAppearance.bind(this);
 
         this.setCursor = this.setCursor.bind(this);
 
@@ -177,6 +179,31 @@ class App extends React.Component {
 
     clearFence() {
         this.setState({fence: [], fenceData: null});
+    }
+
+    setActiveGenreAppearance(genreName) {
+        fetch(`genre/${genreName}`)
+            .then(response => response.json())
+            .then(data => {
+                if (!data.artists || data.artists.length === 0) {
+                    return;
+                }
+
+                const name = data.name;
+                const r = data.r;
+                const g = data.g;
+                const b = data.b;
+
+                const nodes = new Set(data.artists);
+
+                const newGenre = new Genre(name, nodes, r, g, b, 0.75);
+
+                this.setState({activeGenre: newGenre});
+            });
+    }
+
+    clearActiveGenreAppearance() {
+        this.setState({activeGenre: null});
     }
 
     setSidebarState(artist, genre, path, camera, state) {
@@ -463,6 +490,8 @@ class App extends React.Component {
                     loadGenreFromSearch={this.loadGenreFromSearch}
                     updateHoveredArtist={this.updateHoveredArtist}
                     updateHoverFlag={this.updateHoverFlag}
+                    setActiveGenreAppearance={this.setActiveGenreAppearance}
+                    clearActiveGenreAppearance={this.clearActiveGenreAppearance}
                 />
 
                 <div className="rightSideDiv">

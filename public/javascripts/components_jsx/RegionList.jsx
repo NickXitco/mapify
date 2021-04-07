@@ -8,7 +8,13 @@ class RegionList extends React.Component {
         const topGenre = this.props.fence.genres[0];
 
         const genres = this.props.fence.genres.map((g, i) => {
-            return <GenreBubble key={i} genre={g} top={topGenre} loadGenreFromSearch={this.props.loadGenreFromSearch}/>
+            return <GenreBubble key={i}
+                                genre={g}
+                                top={topGenre}
+                                loadGenreFromSearch={this.props.loadGenreFromSearch}
+                                setActiveGenreAppearance={this.props.setActiveGenreAppearance}
+                                clearActiveGenreAppearance={this.props.clearActiveGenreAppearance}
+            />
         })
 
 

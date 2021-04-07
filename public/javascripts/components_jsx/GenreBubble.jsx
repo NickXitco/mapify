@@ -18,10 +18,12 @@ class GenreBubble extends React.Component {
 
     setHover() {
         this.setState({hover: true});
+        this.props.setActiveGenreAppearance(this.props.genre.name);
     }
 
     unsetHover() {
         this.setState({hover: false});
+        this.props.clearActiveGenreAppearance();
     }
 
     clickBubble() {

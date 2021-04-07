@@ -66,10 +66,11 @@ class ReactSidebar extends React.Component {
 
     render() {
         if (this.props.fence) {
+
             const topArtist = this.props.fence.top100[0];
             const topGenre = this.props.fence.genres[0];
 
-            const topGenreColor = `rgb(${topGenre.r}, ${topGenre.g}, ${topGenre.b})`;
+            const topGenreColor = topGenre ? `rgb(${topGenre.r}, ${topGenre.g}, ${topGenre.b})` : 'white';
 
             return (
                 <div className="sidebar sidebar-open"
@@ -89,6 +90,8 @@ class ReactSidebar extends React.Component {
                     <RegionList fence={this.props.fence}
                                 loadGenreFromSearch={this.props.loadGenreFromSearch}
                                 style={{height: "200%"}}
+                                setActiveGenreAppearance={this.props.setActiveGenreAppearance}
+                                clearActiveGenreAppearance={this.props.clearActiveGenreAppearance}
                     />
 
                     <ArtistsList artists={this.props.fence.top100}
