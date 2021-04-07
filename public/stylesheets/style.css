@@ -957,14 +957,49 @@ input {
   margin: 10px;
   cursor: pointer;
 
-  justify-content: center;
   align-items: center;
+}
+
+.bubbleTextBox {
+  position: relative;
+
+  width: auto;
+  user-select: none;
+  background: rgba(0, 0, 0, 0.75);
+
+  text-align: left;
+  border-radius: 10px 10px 10px 0;
+
+  padding: 15px;
+  box-shadow: white 0 0 7px 0;
+
+  bottom: 48px;
+
+  text-transform: uppercase;
 }
 
 .bubbleText {
   position: static;
-  text-align: center;
-  width: auto;
-  user-select: none;
-  background: rgba(0, 0, 0, 0.5);
+  display: block;
+  white-space: nowrap;
+}
+
+.bubbleGenreName {
+  font-weight: bolder;
+  font-size: 22px;
+  position: static;
+  white-space: pre-wrap;
+}
+
+.bubbleNumber {
+  font-weight: 600;
+  font-size: 14px;
+  position: static;
+}
+
+.bubbleNumName {
+  font-weight: 200;
+  font-size: 14px;
+  padding-left: 5px;
+  position: static;
 }
