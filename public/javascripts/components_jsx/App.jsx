@@ -154,8 +154,14 @@ class App extends React.Component {
                 )
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);
                     data.posts = this.state.fence;
+
+                    const artists = [];
+                    for (const artist of data.top100) {
+                        artists.push(createNewNode(artist, this.state.quadHead, this.state.nodeLookup));
+                    }
+                    data.top100 = artists;
+
                     this.setState({fenceData: data});
                 });
         }

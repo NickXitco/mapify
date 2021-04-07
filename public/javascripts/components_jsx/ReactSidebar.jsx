@@ -65,11 +65,11 @@ class ReactSidebar extends React.Component {
     }
 
     render() {
-        console.log(this.props.fence);
         if (this.props.fence) {
+            const topArtist = this.props.fence.top100[0];
+            const topGenre = this.props.fence.genres[0];
 
-
-
+            const topGenreColor = `rgb(${topGenre.r}, ${topGenre.g}, ${topGenre.b})`;
 
             return (
                 <div className="sidebar sidebar-open"
@@ -77,15 +77,29 @@ class ReactSidebar extends React.Component {
                      onMouseLeave={() => {this.props.updateHoverFlag(false)}}
                 >
 
-                    {this.scrollbar('white')}
+                    {this.scrollbar(topGenreColor)}
 
-                    <SidebarStroke color={'white'}/>
+                    <SidebarStroke color={topGenreColor}/>
 
 
                     <RegionProfile fence={this.props.fence} fontDecrement={3}/>
                     <FollowersStats number={this.props.fence.numArtists} text={"Artist"} size={"Large"}/>
                     <FollowersStats number={this.props.fence.numGenres} text={"Genre"} size={"Large"}/>
-                    <RegionList fence={this.props.fence} loadGenreFromSearch={this.props.loadGenreFromSearch}/>
+
+                    <RegionList fence={this.props.fence}
+                                loadGenreFromSearch={this.props.loadGenreFromSearch}
+                                style={{height: "200%"}}
+                    />
+
+                    <ArtistsList artists={this.props.fence.top100}
+                                 loadArtistFromUI={this.props.loadArtistFromUI}
+                                 updateHoveredArtist={this.props.updateHoveredArtist}
+                                 header={"Top 100 Artists"}
+                                 color={topGenreColor}
+                    />
+
+
+
 
                 </div>
                 );
