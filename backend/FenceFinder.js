@@ -19,9 +19,9 @@ async function getFence(fence) {
     }
 
     genres["NO_GENRE"] = {
-        r: 255,
-        g: 255,
-        b: 255,
+        r: 50,
+        g: 50,
+        b: 50,
         counts: 0,
         followers: 0,
         name: "No Genre"
