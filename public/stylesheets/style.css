@@ -518,7 +518,6 @@ canvas {
   width: 113px;
   height: 113px;
   display: block;
-  margin: 23px;
   position: static;
 }
 
@@ -595,6 +594,7 @@ canvas {
   position: static;
   margin-left: 1em;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .relatedArtistsSection {
@@ -603,6 +603,7 @@ canvas {
   padding: 10px 22px;
   display: flex;
   overflow-y: auto;
+  overflow-x: hidden;
   flex-direction: column;
 }
 
@@ -933,4 +934,37 @@ input {
   text-transform: lowercase;
   font-size: 12px;
   white-space: nowrap;
+}
+
+.bubbleList {
+  width: 100%;
+  position: static;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+
+.bubble {
+  position: static;
+  border-radius: 50%;
+  background: linear-gradient(43deg, rgba(255,255,255,0.75) 0%, rgb(170 170 170) 100%);
+  display: inline-flex;
+  box-shadow: white 0 0 10px 0;
+  margin: 10px;
+  cursor: pointer;
+
+  justify-content: center;
+  align-items: center;
+}
+
+.bubbleText {
+  position: static;
+  text-align: center;
+  width: auto;
+  user-select: none;
+  background: rgba(0, 0, 0, 0.5);
 }

@@ -19,9 +19,9 @@ async function getFence(fence) {
     }
 
     genres["NO_GENRE"] = {
-        r: 0,
-        g: 0,
-        b: 0,
+        r: 255,
+        g: 255,
+        b: 255,
         counts: 0,
         followers: 0,
         name: "No Genre"
@@ -37,6 +37,10 @@ async function getFence(fence) {
         }
 
         for (const genre of artist.genres) {
+            if (genres[genre] === undefined) {
+                console.log(genre);
+            }
+
             genres[genre].counts++;
             genres[genre].followers += artist.followers;
         }

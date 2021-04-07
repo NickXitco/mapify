@@ -22,7 +22,8 @@ class ReactSidebar extends React.Component {
         return (
             this.props.artist !== nextProps.artist ||
             this.props.genre !== nextProps.genre ||
-            this.props.path !== nextProps.path
+            this.props.path !== nextProps.path ||
+            this.props.fence !== nextProps.fence
         );
     }
 
@@ -64,6 +65,32 @@ class ReactSidebar extends React.Component {
     }
 
     render() {
+        console.log(this.props.fence);
+        if (this.props.fence) {
+
+
+
+
+            return (
+                <div className="sidebar sidebar-open"
+                     onMouseEnter={() => {this.props.updateHoverFlag(true)}}
+                     onMouseLeave={() => {this.props.updateHoverFlag(false)}}
+                >
+
+                    {this.scrollbar('white')}
+
+                    <SidebarStroke color={'white'}/>
+
+
+                    <RegionProfile fence={this.props.fence} fontDecrement={3}/>
+                    <FollowersStats number={this.props.fence.numArtists} text={"Artist"} size={"Large"}/>
+                    <FollowersStats number={this.props.fence.numGenres} text={"Genre"} size={"Large"}/>
+                    <RegionList fence={this.props.fence} loadGenreFromSearch={this.props.loadGenreFromSearch}/>
+
+                </div>
+                );
+        }
+
         if (this.props.path.length > 0) {
             const start = this.props.path[0];
             const end = this.props.path[this.props.path.length - 1];

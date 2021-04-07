@@ -13,6 +13,7 @@ class App extends React.Component {
 
             fencing: false,
             fence: [],
+            fenceData: null,
 
             activeGenre: null,
 
@@ -152,7 +153,11 @@ class App extends React.Component {
                 {method: 'POST', headers: {'Content-Type': 'application/json',}, body: JSON.stringify(latLongFence)}
                 )
                 .then(response => response.json())
-                .then(data => console.log(data));
+                .then(data => {
+                    console.log(data);
+                    data.posts = this.state.fence;
+                    this.setState({fenceData: data});
+                });
         }
 
         this.setState({fencing: state});
@@ -165,7 +170,7 @@ class App extends React.Component {
     }
 
     clearFence() {
-        this.setState({fence: []});
+        this.setState({fence: [], fenceData: null});
     }
 
     setSidebarState(artist, genre, path, camera, state) {
@@ -442,6 +447,7 @@ class App extends React.Component {
                     artist={this.state.clickedArtist}
                     genre={this.state.activeGenre}
                     path={this.state.activePath.nodes}
+                    fence={this.state.fenceData}
 
                     sidebarState={this.state.currentSidebarState}
                     undoSidebarState={this.undoSidebarState}
