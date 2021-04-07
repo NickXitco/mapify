@@ -54,5 +54,37 @@ const Utils = {
             latitude: lat * (180 / Math.PI),
             longitude: long * (180 / Math.PI)
         }
+    },
+
+    nameShape: function (numPosts) {
+        switch (numPosts - 1) {
+            case 3: return "triangle"
+            case 4: return "quadrilateral"
+            case 5: return "pentagon"
+            case 6: return "hexagon"
+            case 7: return "heptagon"
+            case 8: return "octagon"
+            case 9: return "nonagon"
+            case 10: return "decagon"
+            case 11: return "hendecagon"
+            case 12: return "dodecagon"
+            case 13: return "tridecagon"
+            case 14: return "tetradecagon"
+            case 15: return "pentadecagon"
+            case 16: return "hexadecagon"
+            case 17: return "heptadecagon"
+            case 18: return "octadecagon"
+            case 19: return "enneadecagon"
+            case 20: return "icosagon"
+            case 21: return "icosihenagon"
+            case 22: return "icosidigon"
+            case 23: return "icositrigon"
+            case 24: return "icositetragon"
+            case 25: return "icosipentagon"
+            case 26: return "icosihexagon"
+            case 69: return "niceagon"
+            default: return "region"
+        }
     }
+
 }
