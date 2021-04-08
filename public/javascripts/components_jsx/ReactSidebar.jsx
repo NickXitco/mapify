@@ -89,7 +89,6 @@ class ReactSidebar extends React.Component {
 
                     <RegionList fence={this.props.fence}
                                 loadGenreFromSearch={this.props.loadGenreFromSearch}
-                                style={{height: "200%"}}
                                 setActiveGenreAppearance={this.props.setActiveGenreAppearance}
                                 clearActiveGenreAppearance={this.props.clearActiveGenreAppearance}
                     />
