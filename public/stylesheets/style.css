@@ -965,6 +965,7 @@ input {
 
   width: auto;
   user-select: none;
+  pointer-events: none;
   background: rgba(0, 0, 0, 0.75);
 
   text-align: left;
