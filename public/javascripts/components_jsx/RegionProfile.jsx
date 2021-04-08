@@ -114,7 +114,7 @@ class RegionProfile extends React.Component {
                     <div className={"nameLarge"}>
                         <h1 className={"sidebarArtistNameLarge"} style={nameStyle}
                             ref={(nameElement) => {this.nameElement = nameElement}}>
-                            {"Custom " + Utils.nameShape(this.props.fence.posts.length)}
+                            {`Custom ${topGenre.name} ${Utils.nameShape(this.props.fence.posts.length)}`}
                         </h1>
                     </div>
                 </div>
