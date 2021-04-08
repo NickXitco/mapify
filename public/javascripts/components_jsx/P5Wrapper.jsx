@@ -88,7 +88,6 @@ class P5Wrapper extends React.Component {
             Debug.createTimingEvent("Draw Genre Nodes");
 
             if (this.props.fence.length > 0) {
-
                 let postPoint = MouseEvents.getVirtualMouseCoordinates(p, this.props.camera);
                 let firstPoint = {x: Infinity, y: Infinity}
 
@@ -124,6 +123,35 @@ class P5Wrapper extends React.Component {
                 p.noFill();
                 //p.vertex(this.props.fence[0].x, -this.props.fence[0].y);
                 p.endShape();
+
+                let signedArea = 0;
+
+                for (let i = 0; i < this.props.fence.length - 1; i++) {
+                    const point = this.props.fence[i];
+                    const nextPoint = this.props.fence[i + 1];
+                    signedArea += (point.x * (-nextPoint.y) - nextPoint.x * (-point.y));
+                }
+
+                if (signedArea > 0) {
+                    this.props.fence = this.props.fence.reverse();
+                }
+
+                if (this.props.fence[0] === this.props.fence[this.props.fence.length - 1] && this.props.fence.length > 2) {
+                    p.fill(0, 200);
+                    p.noStroke();
+                    p.beginShape();
+                    p.vertex(-20000, -20000);
+                    p.vertex(20000, -20000);
+                    p.vertex(20000, 20000);
+                    p.vertex(-20000, 20000);
+                    p.beginContour();
+                    for (let i = 0; i < this.props.fence.length - 1; i++) {
+                        const point = this.props.fence[i];
+                        p.vertex(point.x, -point.y);
+                    }
+                    p.endContour();
+                    p.endShape();
+                }
 
                 p.pop();
             }
