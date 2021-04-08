@@ -132,11 +132,12 @@ class P5Wrapper extends React.Component {
                     signedArea += (point.x * (-nextPoint.y) - nextPoint.x * (-point.y));
                 }
 
+                let fence = [...this.props.fence];
                 if (signedArea > 0) {
-                    this.props.fence = this.props.fence.reverse();
+                    fence = fence.reverse();
                 }
 
-                if (this.props.fence[0] === this.props.fence[this.props.fence.length - 1] && this.props.fence.length > 2) {
+                if (fence[0] === fence[fence.length - 1] && fence.length > 2) {
                     p.fill(0, 200);
                     p.noStroke();
                     p.beginShape();
@@ -145,8 +146,8 @@ class P5Wrapper extends React.Component {
                     p.vertex(20000, 20000);
                     p.vertex(-20000, 20000);
                     p.beginContour();
-                    for (let i = 0; i < this.props.fence.length - 1; i++) {
-                        const point = this.props.fence[i];
+                    for (let i = 0; i < fence.length - 1; i++) {
+                        const point = fence[i];
                         p.vertex(point.x, -point.y);
                     }
                     p.endContour();
