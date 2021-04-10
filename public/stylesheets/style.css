@@ -534,7 +534,7 @@ canvas {
 .followersSection {
   position: static;
   width: 100%;
-  padding: 10px 22px;
+  padding: 0 22px;
 
   font-size: 22px;
 }
@@ -600,7 +600,7 @@ canvas {
 .relatedArtistsSection {
   width: 90%;
   position: static;
-  padding: 10px 22px;
+  padding: 20px 22px;
   display: flex;
   overflow-y: auto;
   overflow-x: hidden;
