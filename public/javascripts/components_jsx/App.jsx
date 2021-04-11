@@ -240,6 +240,9 @@ class App extends React.Component {
     }
 
     loadArtistFromUI(artist) {
+        //TODO remove this from here and manage it in sidebar state
+        this.setState({fencing: false, fence: [], fenceData: null});
+
         this.updateClickedArtist(artist);
         this.state.camera.setCameraMove(artist.x, artist.y, this.state.camera.getZoomFromWidth(artist.size * 50), 45);
     }
@@ -265,7 +268,6 @@ class App extends React.Component {
     loadGenreFromSearch(genreName) {
         //TODO remove this from here and manage it in sidebar state
         this.setState({fencing: false, fence: [], fenceData: null});
-
 
         fetch(`genre/${genreName}`)
             .then(response => response.json())
