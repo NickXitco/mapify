@@ -227,7 +227,6 @@ class P5Wrapper extends React.Component {
 
         p.mousePressed = (e) => {
             if (!this.props.uiHover) {
-
                 if (e.ctrlKey) { // Fence Click
                     if (!this.props.fencing) {
                         this.props.clearFence();

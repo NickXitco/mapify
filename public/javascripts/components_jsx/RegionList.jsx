@@ -17,10 +17,9 @@ class RegionList extends React.Component {
             />
         })
 
-
         return(
             <div className={"relatedArtistsSection"} style={{height: "200%"}}>
-                <h2>Genre Breakdown</h2>
+                <h2 className={"bubbleListHeader"}>Genre Breakdown</h2>
                 <div className={"bubbleList"}>
                     {genres}
                 </div>

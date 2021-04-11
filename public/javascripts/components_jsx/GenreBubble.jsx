@@ -9,7 +9,8 @@ class GenreBubble extends React.Component {
             offsetHeight: 0,
         }
 
-        this.myRef = React.createRef();
+        this.textBoxRef = React.createRef();
+        this.bubbleRef = React.createRef();
 
         this.setHover = this.setHover.bind(this);
         this.unsetHover = this.unsetHover.bind(this);
@@ -31,16 +32,16 @@ class GenreBubble extends React.Component {
     }
 
     componentDidMount() {
-        if (this.myRef.current && this.myRef.current.offsetLeft > 230) {
+        if (this.bubbleRef.current && this.bubbleRef.current.offsetLeft > 200) {
             this.setState({
                 leftSide: false,
-                offset: -this.myRef.current.clientWidth,
+                offset: -this.textBoxRef.current.clientWidth,
             });
         }
 
-        if (this.myRef.current) {
+        if (this.textBoxRef.current) {
             this.setState({
-                offsetHeight: this.myRef.current.offsetHeight,
+                offsetHeight: this.textBoxRef.current.offsetHeight,
             });
         }
     }
@@ -74,17 +75,39 @@ class GenreBubble extends React.Component {
             visibility: this.state.hover ? 'visible' : 'hidden',
         }
 
+        let genreName = null;
+
+        const thumbnailStyling = {
+            width: `${size * 0.75}px`,
+            fontSize: `${size * 0.1}px`
+        }
+
+        const thumbnailDivStyling = {
+            width: `${size}px`
+        }
+
+        if (size > 5) {
+            genreName = (
+                <div className={"smallGenreBubbleName"} style={thumbnailDivStyling}>
+                    <p className={"genreBubbleThumbnailText"} style={thumbnailStyling}>{g.name}</p>
+                </div>
+            );
+        }
+
         return (
             <div style={sizing} className={"bubble"}
                  onMouseEnter={this.setHover}
                  onMouseLeave={this.unsetHover}
                  onClick={this.clickBubble}
+                 ref={this.bubbleRef}
             >
-                <div className={"bubbleTextBox"} style={textBoxStyling} ref={this.myRef}>
+                {genreName}
+                <div className={"bubbleTextBox"} style={textBoxStyling} ref={this.textBoxRef}>
                     <p className={"bubbleText bubbleGenreName"}>{g.name}</p>
                     <p className={"bubbleText bubbleNumber"}>{g.counts}<span className={"bubbleNumName"}>artists</span></p>
                     <p className={"bubbleText bubbleNumber"}>{Utils.formatNum(g.followers)}<span className={"bubbleNumName"}>followers</span></p>
                 </div>
+
             </div>
         )
     }
