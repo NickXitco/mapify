@@ -56,6 +56,10 @@ const Utils = {
         }
     },
 
+    formatNum: function (x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
+
     nameShape: function (numPosts) {
         switch (numPosts - 1) {
             case 3: return "triangle"

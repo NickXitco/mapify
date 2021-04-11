@@ -85,7 +85,7 @@ class ArtistProfile extends React.Component {
                         </div>
                     </div>
 
-                    <FollowersStats artist={this.props.artist}  size={"Large"}/>
+                    <FollowersStats number={this.props.artist.followers} text={"Follower"} size={"Large"}/>
                     {player}
                 </div>
             )
@@ -101,7 +101,7 @@ class ArtistProfile extends React.Component {
                                 ref={(nameElement) => {this.nameElement = nameElement}}>
                                 {this.props.artist.name}
                             </h1>
-                            <FollowersStats artist={this.props.artist} size={"Small"}/>
+                            <FollowersStats number={this.props.artist.followers} text={"Follower"} size={"Small"}/>
                         </div>
                     </div>
                     {player}
@@ -117,7 +117,7 @@ class ArtistProfile extends React.Component {
                                     ref={(nameElement) => {this.nameElement = nameElement}}>
                                     {this.props.artist.name}
                                 </h1>
-                                <FollowersStats artist={this.props.artist}  size={"Small"}/>
+                                <FollowersStats number={this.props.artist.followers} text={"Follower"} size={"Small"}/>
                             </div>
                             <div className={"sidebarPictureSmall"} style={pictureStyle}>
                                 {picture}
@@ -140,7 +140,7 @@ class ArtistProfile extends React.Component {
                                 ref={(nameElement) => {this.nameElement = nameElement}}>
                                 {this.props.artist.name}
                             </h1>
-                            <FollowersStats artist={this.props.artist}  size={"Small"}/>
+                            <FollowersStats number={this.props.artist.followers} text={"Follower"} size={"Small"}/>
                         </div>
                     </div>
                     {player}

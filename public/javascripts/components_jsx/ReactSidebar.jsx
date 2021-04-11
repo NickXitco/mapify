@@ -22,7 +22,8 @@ class ReactSidebar extends React.Component {
         return (
             this.props.artist !== nextProps.artist ||
             this.props.genre !== nextProps.genre ||
-            this.props.path !== nextProps.path
+            this.props.path !== nextProps.path ||
+            this.props.fence !== nextProps.fence
         );
     }
 
@@ -64,6 +65,48 @@ class ReactSidebar extends React.Component {
     }
 
     render() {
+        if (this.props.fence) {
+
+            const topArtist = this.props.fence.top100[0];
+            const topGenre = this.props.fence.genres[0];
+
+            const topGenreColor = topGenre ? `rgb(${topGenre.r}, ${topGenre.g}, ${topGenre.b})` : 'white';
+
+            return (
+                <div className="sidebar sidebar-open"
+                     onMouseEnter={() => {this.props.updateHoverFlag(true)}}
+                     onMouseLeave={() => {this.props.updateHoverFlag(false)}}
+                >
+
+                    {this.scrollbar(topGenreColor)}
+
+                    <SidebarStroke color={topGenreColor}/>
+
+
+                    <RegionProfile fence={this.props.fence} fontDecrement={3}/>
+                    <FollowersStats number={this.props.fence.numArtists} text={"Artist"} size={"Large"}/>
+                    <FollowersStats number={this.props.fence.numGenres} text={"Genre"} size={"Large"}/>
+
+                    <RegionList fence={this.props.fence}
+                                loadGenreFromSearch={this.props.loadGenreFromSearch}
+                                setActiveGenreAppearance={this.props.setActiveGenreAppearance}
+                                clearActiveGenreAppearance={this.props.clearActiveGenreAppearance}
+                    />
+
+                    <ArtistsList artists={this.props.fence.top100}
+                                 loadArtistFromUI={this.props.loadArtistFromUI}
+                                 updateHoveredArtist={this.props.updateHoveredArtist}
+                                 header={"Top 100 Artists"}
+                                 color={topGenreColor}
+                    />
+
+
+
+
+                </div>
+                );
+        }
+
         if (this.props.path.length > 0) {
             const start = this.props.path[0];
             const end = this.props.path[this.props.path.length - 1];

@@ -13,6 +13,7 @@ class App extends React.Component {
 
             fencing: false,
             fence: [],
+            fenceData: null,
 
             activeGenre: null,
 
@@ -100,6 +101,8 @@ class App extends React.Component {
         this.setFencing = this.setFencing.bind(this);
         this.addFencepost = this.addFencepost.bind(this);
         this.clearFence = this.clearFence.bind(this);
+        this.setActiveGenreAppearance = this.setActiveGenreAppearance.bind(this);
+        this.clearActiveGenreAppearance = this.clearActiveGenreAppearance.bind(this);
 
         this.setCursor = this.setCursor.bind(this);
 
@@ -152,7 +155,17 @@ class App extends React.Component {
                 {method: 'POST', headers: {'Content-Type': 'application/json',}, body: JSON.stringify(latLongFence)}
                 )
                 .then(response => response.json())
-                .then(data => console.log(data));
+                .then(data => {
+                    data.posts = this.state.fence;
+
+                    const artists = [];
+                    for (const artist of data.top100) {
+                        artists.push(createNewNode(artist, this.state.quadHead, this.state.nodeLookup));
+                    }
+                    data.top100 = artists;
+
+                    this.setState({fenceData: data});
+                });
         }
 
         this.setState({fencing: state});
@@ -165,7 +178,32 @@ class App extends React.Component {
     }
 
     clearFence() {
-        this.setState({fence: []});
+        this.setState({fence: [], fenceData: null});
+    }
+
+    setActiveGenreAppearance(genreName) {
+        fetch(`genre/${genreName}`)
+            .then(response => response.json())
+            .then(data => {
+                if (!data.artists || data.artists.length === 0) {
+                    return;
+                }
+
+                const name = data.name;
+                const r = data.r;
+                const g = data.g;
+                const b = data.b;
+
+                const nodes = new Set(data.artists);
+
+                const newGenre = new Genre(name, nodes, r, g, b, 0.75);
+
+                this.setState({activeGenre: newGenre});
+            });
+    }
+
+    clearActiveGenreAppearance() {
+        this.setState({activeGenre: null});
     }
 
     setSidebarState(artist, genre, path, camera, state) {
@@ -202,6 +240,9 @@ class App extends React.Component {
     }
 
     loadArtistFromUI(artist) {
+        //TODO remove this from here and manage it in sidebar state
+        this.setState({fencing: false, fence: [], fenceData: null});
+
         this.updateClickedArtist(artist);
         this.state.camera.setCameraMove(artist.x, artist.y, this.state.camera.getZoomFromWidth(artist.size * 50), 45);
     }
@@ -225,6 +266,9 @@ class App extends React.Component {
     //</editor-fold>
 
     loadGenreFromSearch(genreName) {
+        //TODO remove this from here and manage it in sidebar state
+        this.setState({fencing: false, fence: [], fenceData: null});
+
         fetch(`genre/${genreName}`)
             .then(response => response.json())
             .then(data => {
@@ -442,6 +486,7 @@ class App extends React.Component {
                     artist={this.state.clickedArtist}
                     genre={this.state.activeGenre}
                     path={this.state.activePath.nodes}
+                    fence={this.state.fenceData}
 
                     sidebarState={this.state.currentSidebarState}
                     undoSidebarState={this.undoSidebarState}
@@ -451,6 +496,8 @@ class App extends React.Component {
                     loadGenreFromSearch={this.loadGenreFromSearch}
                     updateHoveredArtist={this.updateHoveredArtist}
                     updateHoverFlag={this.updateHoverFlag}
+                    setActiveGenreAppearance={this.setActiveGenreAppearance}
+                    clearActiveGenreAppearance={this.clearActiveGenreAppearance}
                 />
 
                 <div className="rightSideDiv">

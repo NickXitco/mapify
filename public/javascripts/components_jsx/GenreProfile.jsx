@@ -86,16 +86,16 @@ class GenreProfile extends React.Component {
 
         let polygonString = "";
         for (const p of this.props.genre.hull) {
-            polygonString += `${Utils.map(p.x, bBox.w, bBox.e, 10, 103)} `
-            polygonString += `${Utils.map(p.y, bBox.s, bBox.n, 103, 10)} `
+            polygonString += `${Utils.map(p.x + 23, bBox.w, bBox.e, 10, 103) + 23} `
+            polygonString += `${Utils.map(p.y + 23, bBox.s, bBox.n, 103, 10) + 23} `
         }
 
         return (
             <div className={"nameAndPictureLarge"}>
                 <div className={"genrePictureLarge"}>
-                    <svg width="113" height="113">
+                    <svg width="159" height="159">
                         <defs>
-                            <filter id="sofGlow" height="300%" width="300%" x="-75%" y="-75%">
+                            <filter id="sofGlow" height="2000%" width="2000%" x="-500%" y="-500%">
                                 <feMorphology operator="dilate" radius="1" in="SourceAlpha" result="thicken" />
                                 <feGaussianBlur in="thicken" stdDeviation="10" result="blurred" />
                                 <feFlood floodColor={this.props.genre.colorToString()} result="glowColor" />

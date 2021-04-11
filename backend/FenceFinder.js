@@ -37,6 +37,10 @@ async function getFence(fence) {
         }
 
         for (const genre of artist.genres) {
+            if (genres[genre] === undefined) {
+                console.log(genre);
+            }
+
             genres[genre].counts++;
             genres[genre].followers += artist.followers;
         }
@@ -61,7 +65,8 @@ async function getFence(fence) {
     return JSON.stringify({
         numArtists: numArtists,
         numGenres: filtered.length,
-        genres: filtered
+        genres: filtered,
+        top100: await getTopXInFence(fence, 100)
     });
 }
 
@@ -84,6 +89,29 @@ function getArtistsInFence(fence) {
                     FOR x IN artists
                         FILTER GEO_CONTAINS(polygon, x.geo)
                         RETURN {genres: x.genres, followers: x.followers}
+                    `
+    return db.query(
+        query
+    ).then(
+        cursor => cursor.all()
+    );
+}
+
+function getTopXInFence(fence, x) {
+    const db = arangoDB.getDB();
+
+    const fenceString = fence.map(post => {
+        return `[${post.longitude}, ${post.latitude}]`;
+    })
+
+    const query = `LET polygon = GEO_POLYGON(
+                        [[${fenceString.toString()}]]
+                        )
+                    FOR x IN artists
+                        FILTER GEO_CONTAINS(polygon, x.geo)
+                        SORT x.followers DESC
+                        LIMIT ${x}
+                        RETURN x
                     `
     return db.query(
         query

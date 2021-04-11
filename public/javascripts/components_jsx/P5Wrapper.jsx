@@ -88,7 +88,6 @@ class P5Wrapper extends React.Component {
             Debug.createTimingEvent("Draw Genre Nodes");
 
             if (this.props.fence.length > 0) {
-
                 let postPoint = MouseEvents.getVirtualMouseCoordinates(p, this.props.camera);
                 let firstPoint = {x: Infinity, y: Infinity}
 
@@ -118,12 +117,44 @@ class P5Wrapper extends React.Component {
                     //p.circle(point.x, -point.y, Math.max(FENCE_CLICK_MIN_VIRTUAL_RADIUS * 2, (FENCE_CLICK_RADIUS * 2) / this.props.camera.getZoomFactor().x));
                     p.vertex(point.x, -point.y);
                     //p.fill('white');
-                    p.square(point.x, -point.y, Math.max(1, 2 / this.props.camera.getZoomFactor().x));
 
+                    if (this.props.fence[0] !== this.props.fence[this.props.fence.length - 1] || this.props.fence.length <= 2) {
+                        p.square(point.x, -point.y, Math.max(1, 2 / this.props.camera.getZoomFactor().x));
+                    }
                 }
                 p.noFill();
                 //p.vertex(this.props.fence[0].x, -this.props.fence[0].y);
                 p.endShape();
+
+                let signedArea = 0;
+
+                for (let i = 0; i < this.props.fence.length - 1; i++) {
+                    const point = this.props.fence[i];
+                    const nextPoint = this.props.fence[i + 1];
+                    signedArea += (point.x * (-nextPoint.y) - nextPoint.x * (-point.y));
+                }
+
+                let fence = [...this.props.fence];
+                if (signedArea > 0) {
+                    fence = fence.reverse();
+                }
+
+                if (fence[0] === fence[fence.length - 1] && fence.length > 2) {
+                    p.fill(0, 200);
+                    p.noStroke();
+                    p.beginShape();
+                    p.vertex(-20000, -20000);
+                    p.vertex(20000, -20000);
+                    p.vertex(20000, 20000);
+                    p.vertex(-20000, 20000);
+                    p.beginContour();
+                    for (let i = 0; i < fence.length - 1; i++) {
+                        const point = fence[i];
+                        p.vertex(point.x, -point.y);
+                    }
+                    p.endContour();
+                    p.endShape();
+                }
 
                 p.pop();
             }
@@ -198,7 +229,6 @@ class P5Wrapper extends React.Component {
 
         p.mousePressed = (e) => {
             if (!this.props.uiHover) {
-
                 if (e.ctrlKey) { // Fence Click
                     if (!this.props.fencing) {
                         this.props.clearFence();
