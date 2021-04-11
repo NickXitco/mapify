@@ -263,6 +263,10 @@ class App extends React.Component {
     //</editor-fold>
 
     loadGenreFromSearch(genreName) {
+        //TODO remove this from here and manage it in sidebar state
+        this.setState({fencing: false, fence: [], fenceData: null});
+
+
         fetch(`genre/${genreName}`)
             .then(response => response.json())
             .then(data => {
