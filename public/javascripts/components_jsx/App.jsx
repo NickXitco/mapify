@@ -124,9 +124,7 @@ class App extends React.Component {
     }
 
     updateHoverFlag(value) {
-        if (this.state.uiHover !== value) {
-            this.setState({uiHover: value});
-        }
+        this.setState({uiHover: value});
     }
 
     //<editor-fold desc="Clicked Artist Handling">
@@ -487,6 +485,7 @@ class App extends React.Component {
                     genre={this.state.activeGenre}
                     path={this.state.activePath.nodes}
                     fence={this.state.fenceData}
+                    uiHover={this.state.uiHover}
 
                     sidebarState={this.state.currentSidebarState}
                     undoSidebarState={this.undoSidebarState}

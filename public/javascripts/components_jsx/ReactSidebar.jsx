@@ -23,7 +23,8 @@ class ReactSidebar extends React.Component {
             this.props.artist !== nextProps.artist ||
             this.props.genre !== nextProps.genre ||
             this.props.path !== nextProps.path ||
-            this.props.fence !== nextProps.fence
+            this.props.fence !== nextProps.fence ||
+            this.props.uiHover !== nextProps.uiHover
         );
     }
 
@@ -65,6 +66,11 @@ class ReactSidebar extends React.Component {
     }
 
     render() {
+        console.log(this.props.uiHover);
+        const hoverStyle = {
+            userSelect: this.props.uiHover ? "auto" : "none"
+        }
+
         if (this.props.fence) {
 
             const topArtist = this.props.fence.top100[0];
@@ -74,6 +80,7 @@ class ReactSidebar extends React.Component {
 
             return (
                 <div className="sidebar sidebar-open"
+                     style={hoverStyle}
                      onMouseEnter={() => {this.props.updateHoverFlag(true)}}
                      onMouseLeave={() => {this.props.updateHoverFlag(false)}}
                 >
@@ -113,6 +120,7 @@ class ReactSidebar extends React.Component {
 
             return (
                 <div className="sidebar sidebar-open"
+                     style={hoverStyle}
                      onMouseEnter={() => {this.props.updateHoverFlag(true)}}
                      onMouseLeave={() => {this.props.updateHoverFlag(false)}}
                 >
@@ -144,6 +152,7 @@ class ReactSidebar extends React.Component {
                 setTimeout(() => this.setState({artist: null}), 600);
 
                 return (<div className="sidebar sidebar-closed"
+                             style={hoverStyle}
                              onMouseEnter={() => {this.props.updateHoverFlag(true)}}
                              onMouseLeave={() => {this.props.updateHoverFlag(false)}}
                         >
@@ -175,6 +184,7 @@ class ReactSidebar extends React.Component {
             if (this.state.genre) {
                 return (
                     <div className="sidebar sidebar-closed"
+                         style={hoverStyle}
                          onMouseEnter={() => {this.props.updateHoverFlag(true)}}
                          onMouseLeave={() => {this.props.updateHoverFlag(false)}}
                     >
@@ -198,6 +208,7 @@ class ReactSidebar extends React.Component {
                 );
             }
             return (<div className="sidebar sidebar-closed"
+                         style={hoverStyle}
                          onMouseEnter={() => {this.props.updateHoverFlag(true)}}
                          onMouseLeave={() => {this.props.updateHoverFlag(false)}}
             >
@@ -211,6 +222,7 @@ class ReactSidebar extends React.Component {
         if (this.props.artist) {
             return (
                 <div className="sidebar sidebar-open"
+                     style={hoverStyle}
                      onMouseEnter={() => {this.props.updateHoverFlag(true)}}
                      onMouseLeave={() => {this.props.updateHoverFlag(false)}}
                 >
@@ -242,6 +254,7 @@ class ReactSidebar extends React.Component {
         if (this.props.genre) {
             return (
                 <div className="sidebar sidebar-open"
+                     style={hoverStyle}
                      onMouseEnter={() => {this.props.updateHoverFlag(true)}}
                      onMouseLeave={() => {this.props.updateHoverFlag(false)}}
                 >
