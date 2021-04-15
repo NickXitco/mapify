@@ -169,6 +169,7 @@ class P5Wrapper extends React.Component {
 
                 Debug.createTimingEvent("Draw Related Edges");
                 drawRelatedNodes(p, this.props.camera, this.props.clickedArtist);
+
                 Debug.createTimingEvent("Draw Related Nodes");
             }
 
