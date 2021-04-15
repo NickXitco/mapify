@@ -9,23 +9,44 @@ const WEIGHT_THRESHOLD = 1.025;
 
 
 class EdgeDrawer {
+    /**
+     * Main function for drawing edges on the graph.
+     * @param p{p5} The p5 canvas object to draw on.
+     * @param camera{Camera} The camera object of the canvas.
+     * @param e An object containing the following fields:
+     *          u, v (Artist objects representing endpoints),
+     *          cURad and cVRad (0 - 0.5 floats representing how far along the the line between
+     *                           u and v are the control points for the bezier curve. cURad = 0.25 would
+     *                           mean the control point closer to u is 25% of the distance from u to v
+     *                           away from u. The angle is decided by the next parameters)
+     *          cUAng and cVAng (-90 - 90 floats representing the angle for which to rotate the
+     *                           control points for u and v respectively. This angle is relative to the
+     *                           axis created by the line between u and v.)
+     *          tMax (0 - 1 float determining how much of the line should be drawn)
+     *          points (An array of points in the curve, to be populated with points)
+     */
     static drawEdge(p, camera, e) {
+        //Create shorthand variables to represent the edges two endpoints.
         const u = e.u;
         const v = e.v;
 
-        const uVec = p.createVector(u.x, u.y);
-        const vVec = p.createVector(v.x, v.y);
+        //Create p5 vectors for control point manipulation
+        const cU = p.createVector(u.x, u.y);
+        const cV = p.createVector(v.x, v.y);
 
         p.push();
-        uVec.lerp(vVec, e.cURad);
-        vVec.lerp(uVec, e.cVRad);
-        uVec.sub(u.x, u.y);
-        vVec.sub(v.x, v.y);
-        uVec.rotate(e.cUAng);
-        vVec.rotate(e.cVAng);
-        uVec.add(u.x, u.y);
-        vVec.add(v.x, v.y);
+        //Push the control points towards the other endpoint
+        cU.lerp(cV, e.cURad);
+        cV.lerp(cU, e.cVRad);
+        //Rotate the control points by transforming to the origin and back again
+        cU.sub(u.x, u.y);
+        cV.sub(v.x, v.y);
+        cU.rotate(e.cUAng);
+        cV.rotate(e.cVAng);
+        cU.add(u.x, u.y);
+        cV.add(v.x, v.y);
 
+        //Convert the rgb colors of the endpoints to HSV values
         let uHSV = ColorUtilities.rgb2hsv(u.r, u.g, u.b);
         let vHSV = ColorUtilities.rgb2hsv(v.r, v.g, v.b);
 
@@ -35,87 +56,51 @@ class EdgeDrawer {
         let vSat = vHSV.s;
 
         p.noFill();
+
+        //If we don't have edge points, get them!
         if (e.points.length === 0) {
-            e.points = this.flatten(p, this.getEdgePoints(p, u, uHue, uSat, 1, v, uVec, vVec, vHue, vSat));
+            e.points = this.flatten(p, this.getEdgePoints(p, 1, u, v, cU, cV, uHue, vHue, uSat, vSat));
         }
 
         p.colorMode(p.HSB);
 
         let points = [];
-
         points.push(e.points[0]);
         for (let i = 1; i < e.points.length; i++) {
             if (e.points[i].t < e.tMax) {
                 points.push(e.points[i]);
             }
         }
-        points.push(this.getPoint(p, e.tMax, u, v, uVec, vVec, uHue, vHue, uSat, vSat));
+
+        //Get the last point on the line. This is important as we increment e.tMax with every frame, but we only
+        //complete a full segment every few frames, so this ensures that the line is being drawn smoothly and not
+        //in chunks.
+        points.push(this.getPoint(p, e.tMax, u, v, cU, cV, uHue, vHue, uSat, vSat));
 
         let segments = [];
         for (let i = 0; i < points.length - 1; i++) {
             segments.push({u: points[i], v: points[i + 1]});
         }
 
-        let boundedSegments = [];
-        let uBoundarySegment = null;
-        let vBoundarySegment = null;
-        let vBoundary = false;
-        for (const segment of segments) {
-            const uUDist = Utils.dist(segment.u.x, segment.u.y, u.x, -u.y);
-            const uVDist = Utils.dist(segment.v.x, segment.v.y, u.x, -u.y);
-            const vDist = Utils.dist(segment.v.x, segment.v.y, v.x, -v.y);
+        let segmentsInCamera = this.getSegmentsInCamera(segments, camera);
 
-            if (uUDist > u.size * 0.6 && vDist > v.size * 0.6) {
-                if (boundedSegments.length === 0) {
-                    boundedSegments.push(JSON.parse(JSON.stringify(uBoundarySegment)));
-                }
-                boundedSegments.push(segment);
-            } else if (boundedSegments.length === 0) {
-                uBoundarySegment = segment;
+        this.drawSegments(p, camera, segmentsInCamera);
 
-                //This line is super jank so I'll try to explain it while it's still in my head.
-                //In this current setup, if the last line of the segment has one endpoint in the circle and one endpoint
-                //out of the circle, it will not be drawn, since it will fail the first condition, and since there are no
-                //more segments to go through, it just doesn't draw a line.
+        p.pop();
 
-                //But we DO want to draw the line and then adjust the u-side endpoint
+        //Increment tMax up to a max value of 1
+        e.tMax = Math.min(1, e.tMax + (EASE_SPEED / Utils.dist(u.x, u.y, v.x, v.y)));
+    }
 
-                //TODO figure out a better way of doing this
-                if (segment === segments[segments.length - 1] && uVDist > u.size * 0.6) {
-                    boundedSegments.push(JSON.parse(JSON.stringify(uBoundarySegment)));
-                }
-            } else {
-                vBoundarySegment = segment;
-                boundedSegments.push(JSON.parse(JSON.stringify(vBoundarySegment)));
-                vBoundary = true;
-                break;
-            }
-        }
-
-        if (boundedSegments.length > 0) {
-            let uDPrime = u.size * 0.6 - Utils.dist(boundedSegments[0].u.x, boundedSegments[0].u.y, u.x, -u.y);
-            let vDPrime = v.size * 0.6 - Utils.dist(boundedSegments[boundedSegments.length - 1].v.x, boundedSegments[boundedSegments.length - 1].v.y, v.x, -v.y);
-            let uD = Utils.dist(boundedSegments[0].u.x, boundedSegments[0].u.y, boundedSegments[0].v.x, boundedSegments[0].v.y);
-            let vD = Utils.dist(boundedSegments[boundedSegments.length - 1].u.x, boundedSegments[boundedSegments.length - 1].u.y, boundedSegments[boundedSegments.length - 1].v.x, boundedSegments[boundedSegments.length - 1].v.y);
-            let uT = uDPrime / uD;
-            let vT = vDPrime / vD;
-
-            let uXPrime = (1 - uT) * boundedSegments[0].u.x + (uT) * boundedSegments[0].v.x;
-            let uYPrime = (1 - uT) * boundedSegments[0].u.y + (uT) * boundedSegments[0].v.y;
-            let vXPrime = (1 - vT) * boundedSegments[boundedSegments.length - 1].v.x + (vT) * boundedSegments[boundedSegments.length - 1].u.x;
-            let vYPrime = (1 - vT) * boundedSegments[boundedSegments.length - 1].v.y + (vT) * boundedSegments[boundedSegments.length - 1].u.y;
-
-            boundedSegments[0].u.x = uXPrime;
-            boundedSegments[0].u.y = uYPrime;
-
-            if (vBoundary) {
-                boundedSegments[boundedSegments.length - 1].v.x = vXPrime;
-                boundedSegments[boundedSegments.length - 1].v.y = vYPrime;
-            }
-        }
-
+    /**
+     * Gets all line segments in the camera view
+     * @param segments List of edge segments
+     * @param camera Camera object for the canvas
+     * @return {[]} List of edge segments in the camera's view
+     */
+    static getSegmentsInCamera(segments, camera) {
         let segmentsInCamera = [];
-        for (const segment of boundedSegments) {
+        for (const segment of segments) {
             const bbox = {
                 x: (segment.u.x + segment.v.x) / 2,
                 y: (segment.u.y + segment.v.y) / 2,
@@ -124,18 +109,19 @@ class EdgeDrawer {
 
             if (camera.containsRegion(bbox.x, -bbox.y, bbox.r) ||
                 camera.containsPoint(segment.u.x, segment.u.y) ||
-                camera.containsPoint(segment.v.x, segment.v.y)){
+                camera.containsPoint(segment.v.x, segment.v.y)) {
                 segmentsInCamera.push(segment);
             }
         }
-
-        this.drawSegments(p, camera, segmentsInCamera);
-
-        p.pop();
-
-        e.tMax = Math.min(1, e.tMax + (EASE_SPEED / Utils.dist(u.x, u.y, v.x, v.y)));
+        return segmentsInCamera;
     }
 
+    /**
+     * Draws a list of edge segments to the canvas
+     * @param p p5 canvas
+     * @param camera{Camera} Canvas' camera object
+     * @param segments{[]} Array of segments
+     */
     static drawSegments(p, camera, segments) {
         for (const segment of segments) {
             p.stroke(p.color(segment.u.hue, segment.u.sat, 100));
@@ -148,9 +134,16 @@ class EdgeDrawer {
         }
     }
 
+    /**
+     * Flatten a list of edge points by removing superfluous points
+     * @param p p5 canvas object
+     * @param edgePoints{[]} An array of edge points
+     * @return {[]} An array of edge points that has been minimized to remove superfluous points
+     */
     static flatten(p, edgePoints) {
         let flattened = [];
 
+        //Initialize a, b, and c to the first 3 points of the line
         let a = 0;
         let b = 1;
         let c = 2;
@@ -160,6 +153,11 @@ class EdgeDrawer {
             flattened.push(edgePoints[b]);
         }
 
+        /*
+            This loop basically iterates over the line, taking triplets of vertices and checking if the middle
+            vertex is necessary in order for the curve to be aesthetically pleasing. If so, we keep it, if not,
+            we delete it, or rather, don't add it.
+         */
         while (c < edgePoints.length) {
             let angle = this.getMiddleAngle(p, edgePoints, a, b, c);
             let hueDif = this.getHueDif(edgePoints[a].hue, edgePoints[c].hue);
@@ -188,22 +186,51 @@ class EdgeDrawer {
         return flattened;
     }
 
+    /**
+     * Get the "circular difference" of 2 hues
+     * @param a A hue value in degrees
+     * @param b A hue value in degrees
+     * @return {number}
+     */
     static getHueDif(a, b) {
         return Math.min((a - b).mod(360), (b - a).mod(360));
     }
 
-    static getEdgePoints(p, u, uHue, uSat, tMax, v, uVec, vVec, vHue, vSat) {
+    /**
+     * Get all edge points on the curve between u and v
+     * @param p p5 canvas object
+     * @param tMax Max value of t that we're making edges up to
+     * @param u{Artist} Artist object for endpoint u
+     * @param v{Artist} Artist object for endpoint v
+     * @param cU p5 vector representing position of control point cU
+     * @param cV p5 vector representing position of control point cV
+     * @param uHue hue of endpoint u
+     * @param vHue hue of endpoint v
+     * @param uSat saturation of endpoint u
+     * @param vSat saturation of endpoint v
+     * @return An array of edge points on the curve
+     */
+    static getEdgePoints(p, tMax, u, v, cU, cV, uHue, vHue, uSat, vSat) {
         let edgePoints = [];
         edgePoints.push({x: u.x, y: -u.y, hue: uHue, sat: uSat, weight: u.size / STROKE_DIVIDER, t: 0});
 
         let t = 0;
         while (t < tMax) {
             t = Math.min(tMax, t + (1 / MAX_EDGE_SEGMENTS));
-            edgePoints.push(this.getPoint(p, t, u, v, uVec, vVec, uHue, vHue, uSat, vSat));
+            edgePoints.push(this.getPoint(p, t, u, v, cU, cV, uHue, vHue, uSat, vSat));
         }
         return edgePoints;
     }
 
+    /**
+     * Get angle between three points a, b, c.
+     * @param p p5 canvas object to do degree calculation
+     * @param edgePoints Array of edge points on curve
+     * @param a Index of point a
+     * @param b Index of point b
+     * @param c Index of point c
+     * @return Number Angle abc in degrees
+     */
     static getMiddleAngle(p, edgePoints, a, b, c) {
         let dAB = Utils.dist(edgePoints[a].x, edgePoints[a].y, edgePoints[b].x, edgePoints[b].y);
         let dBC = Utils.dist(edgePoints[b].x, edgePoints[b].y, edgePoints[c].x, edgePoints[c].y);
@@ -211,12 +238,35 @@ class EdgeDrawer {
         return p.degrees(Math.acos((dAB * dAB + dBC * dBC - dAC * dAC) / (2 * dAB * dBC)));
     }
 
-    static getPoint(p, t, u, v, uVec, vVec, uHue, vHue, uSat, vSat) {
+    /**
+     * Get a point on the bezier curve at parameter t.
+     * @param p{p5} p5 canvas object for lerps
+     * @param t{Number} 0-1 float representing how far we are into the curve
+     * @param u{Artist} Artist object for endpoint u
+     * @param v{Artist} Artist object for endpoint v
+     * @param cU p5 vector representing position of control point cU
+     * @param cV p5 vector representing position of control point cV
+     * @param uHue hue of endpoint u
+     * @param vHue hue of endpoint v
+     * @param uSat saturation of endpoint u
+     * @param vSat saturation of endpoint v
+     * @return {{t, sat, x, y, hue, weight}} Object containing properties of point on the curve at t.
+     */
+    static getPoint(p, t, u, v, cU, cV, uHue, vHue, uSat, vSat) {
         const tEased = Eases.easeOutQuad(t);
 
+        function getBezierCoordinate(t, u, cU, cV, v) {
+            return (
+                Math.pow(1 - t, 3) * u +
+                3 * Math.pow(1 - t, 2) * t * cU +
+                3 * (1 - t) * Math.pow(t, 2) * cV +
+                Math.pow(t, 3) * v
+            );
+        }
+
         let tV = {
-            x: Math.pow(1 - tEased, 3) * u.x + 3 * Math.pow(1 - tEased, 2) * tEased * uVec.x + 3 * (1 - tEased) * Math.pow(tEased, 2) * vVec.x + Math.pow(tEased, 3) * v.x,
-            y: Math.pow(1 - tEased, 3) * -u.y + 3 * Math.pow(1 - tEased, 2) * tEased * -uVec.y + 3 * (1 - tEased) * Math.pow(tEased, 2) * -vVec.y + Math.pow(tEased, 3) * -v.y
+            x: getBezierCoordinate(tEased, u.x, cU.x, cV.x, v.x),
+            y: getBezierCoordinate(tEased, -u.y, -cU.y, -cV.y, -v.y)
         };
 
         let newHue = ColorUtilities.hueLerp(p, uHue, vHue, tEased);

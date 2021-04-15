@@ -66,7 +66,6 @@ class ReactSidebar extends React.Component {
     }
 
     render() {
-        console.log(this.props.uiHover);
         const hoverStyle = {
             userSelect: this.props.uiHover ? "auto" : "none"
         }
