@@ -1,5 +1,9 @@
 const QuickHull = {
     getHull: function(points) {
+        if (points.length <= 2) {
+            points = QuickHull.addPoints(points);
+        }
+
         const hull = [];
 
         const extrema = this.getHorizontalExtrema(points);
@@ -85,5 +89,27 @@ const QuickHull = {
         }
 
         return largestAreaPoint;
+    },
+
+    addPoints(points) {
+        const addedPoints = [...points];
+
+        for (const point of points) {
+            addedPoints.push(point);
+
+            const x0 = point.x;
+            const y0 = point.y;
+
+            const CIRCLE_RESOLUTION = 0.2;
+            const RADIUS = 2;
+            for (let i = 0; i < 2 * Math.PI; i +=  CIRCLE_RESOLUTION) {
+                addedPoints.push({
+                    x: x0 + RADIUS * Math.cos(i),
+                    y: y0 + RADIUS * Math.sin(i)
+                });
+            }
+        }
+
+        return addedPoints;
     }
 }
