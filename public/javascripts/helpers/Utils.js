@@ -8,6 +8,10 @@ const FENCE_CLICK_RADIUS = 10;
 const FENCE_CLICK_MIN_VIRTUAL_RADIUS = 1.75;
 
 const Utils = {
+    copy: function (obj) {
+        return JSON.parse(JSON.stringify(obj));
+    },
+
     map: function(n, a, b, c, d) {
         return (n - a) / (b - a) * (d - c) + c;
     },
