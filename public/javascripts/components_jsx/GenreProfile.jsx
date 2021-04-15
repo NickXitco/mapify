@@ -86,8 +86,8 @@ class GenreProfile extends React.Component {
 
         let polygonString = "";
         for (const p of this.props.genre.hull) {
-            polygonString += `${Utils.map(p.x + 23, bBox.w, bBox.e, 10, 103) + 23} `
-            polygonString += `${Utils.map(p.y + 23, bBox.s, bBox.n, 103, 10) + 23} `
+            polygonString += `${Utils.map(p.x, bBox.w, bBox.e, 10, 103) + 23} `
+            polygonString += `${Utils.map(p.y, bBox.s, bBox.n, 103, 10) + 23} `
         }
 
         return (
