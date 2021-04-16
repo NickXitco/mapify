@@ -160,7 +160,7 @@ class ReactSidebar extends React.Component {
 
                             <SidebarStroke color={this.state.artist.colorToString()}/>
 
-                            <ArtistProfile artist={this.state.artist} fontDecrement={3} showPlayer={true} size={"Large"} align={'left'}/>
+                            <ArtistProfile artist={this.state.artist} fontDecrement={3} showPlayer={false} size={"Large"} align={'left'}/>
 
 
                             <GenresList genres={this.state.artist.genres}
