@@ -68,6 +68,10 @@ class ArtistProfile extends React.Component {
             player = (
                 <Player uri={`spotify:track:${this.props.artist.track.id}`}/>
             )
+        } else if (this.props.size === "Large") {
+            player = (
+                <div style={{position: "static", height: "140px"}}/>
+            )
         }
 
         if (this.props.size === "Large") {
