@@ -33,6 +33,18 @@ async function findArtist(query, isQueryID) {
         return data.body.tracks.length > 0 ? data.body.tracks[0] : null;
     })
 
+    const realRelated = await spotifyApi.getArtistRelatedArtists(artist.id).then(data => {
+        return data.body.artists;
+    })
+
+    const ourRelated = await getRelated(artist.id);
+
+    if (differentRelated(realRelated, ourRelated)) {
+        console.log(`Updating ${artist.name} related artists...`);
+        await updateRelated(artist, realRelated);
+        return findArtist(query, isQueryID);
+    }
+
     return {
         name: artist.name,
         id: artist.id,
@@ -45,10 +57,55 @@ async function findArtist(query, isQueryID) {
         g: artist.g,
         b: artist.b,
         genres: artist.genres,
-        related: await getRelated(artist.id),
+        related: ourRelated,
         images: images,
         track: track
     };
+}
+
+function updateRelated(artist, realRelated) {
+    const ids = [];
+    const db = arangoDB.getDB();
+    for (const a of realRelated) {
+        ids.push(a.id);
+    }
+
+    const relatedString = JSON.stringify(ids);
+
+    return db.query(
+        `FOR a IN artists
+            FILTER a.id == "${artist.id}"
+            UPDATE a WITH { related: ${relatedString} } IN artists
+        `
+    ).then(
+        cursor => cursor.all()
+    );
+}
+
+function differentRelated(spotify, ours) {
+    const spotifySet = new Set();
+    for (const a of spotify) {
+        spotifySet.add(a.id);
+    }
+
+    const ourSet = new Set();
+    for (const a of ours) {
+        ourSet.add(a.id);
+    }
+
+    for (const a of ours) {
+        if (!spotifySet.has(a.id)) {
+            return true
+        }
+    }
+
+    for (const a of spotify) {
+        if (!ourSet.has(a.id)) {
+            return true
+        }
+    }
+
+    return false;
 }
 
 function findOneArtistByID(id) {
