@@ -1,5 +1,5 @@
 const Order = {
-    DEFAULT: 0,
+    FOLLOWERS: 0,
     ALPHABETIC: 1,
     RANDOM: 2
 }
@@ -9,7 +9,7 @@ class ArtistsList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            order: Order.DEFAULT,
+            order: Order.FOLLOWERS,
             reversed: false
         }
 
@@ -30,7 +30,11 @@ class ArtistsList extends React.Component {
 
         let relatedArray = [...this.props.artists]
 
-        if (this.state.order === Order.ALPHABETIC) {
+        if (this.state.order === Order.FOLLOWERS) {
+            relatedArray = relatedArray.sort(((a, b) => {
+                return b.followers - a.followers;
+            }));
+        } else if (this.state.order === Order.ALPHABETIC) {
             relatedArray = relatedArray.sort(((a, b) => {
                 const nameA = a.name.toUpperCase();
                 const nameB = b.name.toUpperCase();
