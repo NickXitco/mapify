@@ -39,7 +39,11 @@ async function findArtist(query, isQueryID) {
 
     const ourRelated = await getRelated(artist.id);
 
-    if (differentRelated(realRelated, ourRelated)) {
+    //TODO If an artist accrues new artists that aren't in the map, this will loop forever without the length check
+    //  This is because our getRelated function only gets related artists that are actually in the map.
+    //  Sylvester Stallone is an example that as of writing (4/17/2021) has a new artist that broke this function.
+    //  I don't currently know the solution to this problem, something to look into.
+    if (differentRelated(realRelated, ourRelated) && ourRelated.length === artist.related.length) {
         console.log(`Updating ${artist.name} related artists...`);
         await updateRelated(artist, realRelated);
         return findArtist(query, isQueryID);
