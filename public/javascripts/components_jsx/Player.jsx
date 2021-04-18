@@ -23,7 +23,6 @@ class Player extends React.Component {
                     width="406"
                     height="80"
                     frameBorder="0"
-                    allowTransparency="true"
                     allow="encrypted-media"
                 />
                 <p style={{padding: "10px 22px", fontSize: "12px"}}>Headphone warning, this can be pretty loud</p>

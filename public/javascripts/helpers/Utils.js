@@ -7,6 +7,87 @@ const PLANE_RADIUS = 4457.086193532795 //DO NOT CHANGE UNLESS DATASET CHANGES
 const FENCE_CLICK_RADIUS = 10;
 const FENCE_CLICK_MIN_VIRTUAL_RADIUS = 1.75;
 
+const PageStates = Object.freeze({
+    //Sources/Destinations
+    HOME: 0,
+    ARTIST: 1,
+    GENRE: 2,
+    GENRE_ARTIST: 3,
+    REGION: 4,
+    REGION_ARTIST: 5,
+    PATH: 6,
+
+    //Sources
+    SP_DIALOG: 100,
+    RANDOM: 101,
+    SEARCH: 102,
+    INVALID: 103,
+});
+
+const PageActions = Object.freeze({
+    DEFAULT: 0,
+    ARTIST: 1,
+    GENRE: 2,
+    MAP: 3
+});
+
+/**
+ * Maps a source page and an action to a new page.
+ * @param src PageState of source page
+ * @param action PageAction of action taken on source
+ * @return {number} PageState of destination
+ */
+function stateMapper(src, action) {
+    // If we have an invalid url, redirect us home.
+    if (src === PageStates.INVALID) {
+        return PageStates.HOME;
+    }
+
+    // If we have a map click and we aren't currently in the two sub-artist pages, go home.
+    if (action === PageActions.MAP && src !== PageStates.GENRE_ARTIST && src !== PageStates.REGION_ARTIST) {
+        return PageStates.HOME
+    }
+
+    //Only one thing to do with the SP now
+    if (src === PageStates.SP_DIALOG) {
+        return PageStates.PATH;
+    }
+
+    // Unless we're on the genre page or region page, any click on an artist should bring up the artist sidebar
+    if (action === PageActions.ARTIST && src !== PageStates.GENRE && src !== PageStates.REGION) {
+        return PageStates.ARTIST
+    }
+
+    // No matter where we are, clicking on a genre brings us to the genre sidebar
+    if (action === PageActions.GENRE) {
+        return PageStates.GENRE
+    }
+
+    //Now to fulfill the special cases
+    // If we're on the genre page and we click an artist, we want to open the artist but with the genre highlighted
+    if (action === PageActions.ARTIST && src === PageStates.GENRE) {
+        return PageStates.GENRE_ARTIST;
+    }
+
+    // Similarly if we're on a region.
+    if (action === PageActions.ARTIST && src === PageStates.REGION) {
+        return PageStates.REGION_ARTIST;
+    }
+
+    // We need to redirect both back if you click on the map.
+    if (action === PageActions.MAP && src === PageStates.GENRE_ARTIST) {
+        return PageStates.GENRE
+    }
+
+    if (action === PageActions.MAP && src === PageStates.REGION_ARTIST) {
+        return PageStates.REGION;
+    }
+
+    //By default, return home, it's the safest option.
+    return PageStates.HOME;
+}
+
+
 const Utils = {
     copy: function (obj) {
         return JSON.parse(JSON.stringify(obj));

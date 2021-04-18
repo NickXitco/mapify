@@ -107,6 +107,11 @@ class App extends React.Component {
         this.setCursor = this.setCursor.bind(this);
 
         this.keyDownEvents = this.keyDownEvents.bind(this);
+
+        this.stateHandler = this.stateHandler.bind(this);
+        this.popStateHandler = this.popStateHandler.bind(this);
+        this.pushState = this.pushState.bind(this);
+        this.getState = this.getState.bind(this);
     }
 
     checkVersion(versionNumber) {
@@ -219,6 +224,12 @@ class App extends React.Component {
             activePath: path,
             currentSidebarState: state
         });
+        //TODO migrate all this to state router handling
+
+        if (artist) {
+            this.pushState({id: artist.id}, artist.id);
+        }
+
     }
 
     undoSidebarState() {
@@ -299,7 +310,6 @@ class App extends React.Component {
     }
 
     handleEmptyClick() {
-
         if (this.state.clickedArtist) {
             this.setSidebarState(null, this.state.activeGenre, this.state.activePath, null, null);
         } else if (this.state.activeGenre) {
@@ -431,6 +441,27 @@ class App extends React.Component {
         }
     }
 
+    stateHandler(src, action, data) {
+        const destPage = stateMapper(src, action);
+        //TODO do something with the data
+        //this.pushState()
+    }
+
+    popStateHandler(e) {
+        console.log(e);
+    }
+
+    pushState(state, url) {
+        window.history.pushState(state, "", url);
+    }
+
+    getState() {
+        console.log(window.history.state);
+    }
+
+    componentDidMount() {
+        window.addEventListener("popstate", this.popStateHandler);
+    }
 
     render() {
         let changelog = null;
