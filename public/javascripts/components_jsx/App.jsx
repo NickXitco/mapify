@@ -109,9 +109,10 @@ class App extends React.Component {
         this.keyDownEvents = this.keyDownEvents.bind(this);
 
         this.stateHandler = this.stateHandler.bind(this);
-        this.popStateHandler = this.popStateHandler.bind(this);
+        this.hashChangeHandler = this.hashChangeHandler.bind(this);
         this.pushState = this.pushState.bind(this);
         this.getState = this.getState.bind(this);
+        this.processHash = this.processHash.bind(this);
     }
 
     checkVersion(versionNumber) {
@@ -447,20 +448,28 @@ class App extends React.Component {
         //this.pushState()
     }
 
-    popStateHandler(e) {
+    hashChangeHandler(e) {
         console.log(e);
     }
 
     pushState(state, url) {
-        window.history.pushState(state, "", url);
+        //window.history.pushState(state, "", url);
+        window.location.hash = url;
     }
 
     getState() {
         console.log(window.history.state);
     }
 
+    processHash(hash) {
+
+    }
+
     componentDidMount() {
-        window.addEventListener("popstate", this.popStateHandler);
+        window.addEventListener("hashchange", this.hashChangeHandler);
+        if (window.location.hash) {
+            this.processHash(window.location.hash);
+        }
     }
 
     render() {
