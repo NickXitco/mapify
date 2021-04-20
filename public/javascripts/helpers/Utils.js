@@ -9,27 +9,70 @@ const FENCE_CLICK_MIN_VIRTUAL_RADIUS = 1.75;
 
 const PageStates = Object.freeze({
     //Sources/Destinations
-    HOME: 0,
-    ARTIST: 1,
-    GENRE: 2,
-    GENRE_ARTIST: 3,
-    REGION: 4,
-    REGION_ARTIST: 5,
-    PATH: 6,
+    HOME: "HOME",
+    ARTIST: "ARTIST",
+    GENRE: "GENRE",
+    GENRE_ARTIST: "GENRE_ARTIST",
+    REGION: "REGION",
+    REGION_ARTIST: "REGION_ARTIST",
+    PATH: "PATH",
 
     //Sources
-    SP_DIALOG: 100,
-    RANDOM: 101,
-    SEARCH: 102,
-    INVALID: 103,
+    UNKNOWN: "UNKNOWN",
+    SP_DIALOG: "SP_DIALOG",
+    RANDOM: "RANDOM",
+    SEARCH: "SEARCH",
+    INVALID: "INVALID",
 });
 
 const PageActions = Object.freeze({
-    DEFAULT: 0,
-    ARTIST: 1,
-    GENRE: 2,
-    MAP: 3
+    DEFAULT: "DEFAULT",
+    ARTIST: "ARTIST",
+    GENRE: "GENRE",
+    MAP: "MAP",
+    REGION: "REGION",
 });
+
+function parseUnknownSource() {
+    const hash = window.location.hash;
+    const attributes = [];
+
+    let lastIndex = 0;
+    while (true) {
+        const i = hash.indexOf("=", lastIndex);
+        if (i < 0) {
+            break;
+        }
+        lastIndex = i + 1;
+        attributes.push(hash[i - 1]);
+    }
+
+    if (attributes.includes("p")) {
+        return PageStates.PATH;
+    }
+
+    if (attributes.includes("r") && attributes.includes("a")) {
+        return PageStates.REGION_ARTIST;
+    }
+
+    if (attributes.includes("g") && attributes.includes("a")) {
+        return PageStates.GENRE_ARTIST;
+    }
+
+    if (attributes.includes("r")) {
+        return PageStates.REGION;
+    }
+
+    if (attributes.includes("g")) {
+        return PageStates.GENRE;
+    }
+
+    if (attributes.includes("a")) {
+        return PageStates.ARTIST;
+    }
+
+    return PageStates.HOME;
+}
 
 /**
  * Maps a source page and an action to a new page.
@@ -51,6 +94,10 @@ function stateMapper(src, action) {
     //Only one thing to do with the SP now
     if (src === PageStates.SP_DIALOG) {
         return PageStates.PATH;
+    }
+
+    if (action === PageStates.REGION) {
+        return PageStates.REGION;
     }
 
     // Unless we're on the genre page or region page, any click on an artist should bring up the artist sidebar

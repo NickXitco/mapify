@@ -303,7 +303,8 @@ class P5Wrapper extends React.Component {
                     } else {
                         const clickedArtist = handlePointClick(this.props.quadHead, this.props.hoveredArtist, this.props.clickedArtist, this.props.nodeLookup, p);
                         if (clickedArtist) {
-                            this.props.updateClickedArtist(clickedArtist)
+                            this.props.updateClickedArtist(clickedArtist);
+
                         } else {
                             this.props.handleEmptyClick();
                         }

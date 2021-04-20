@@ -111,7 +111,6 @@ class App extends React.Component {
         this.stateHandler = this.stateHandler.bind(this);
         this.hashChangeHandler = this.hashChangeHandler.bind(this);
         this.pushState = this.pushState.bind(this);
-        this.getState = this.getState.bind(this);
         this.processHash = this.processHash.bind(this);
     }
 
@@ -137,10 +136,12 @@ class App extends React.Component {
     updateClickedArtist(artist) {
         if (artist.loaded) {
             this.setSidebarState(artist, this.state.activeGenre, {nodes: [], edges: []}, {x: artist.x, y: artist.y, zoom: this.state.camera.getZoomFromWidth(artist.size * 50)}, null);
+            this.stateHandler(PageStates.UNKNOWN, PageActions.ARTIST, artist);
         } else if (artist.id) {
             loadArtist(this.state.p5, artist, this.state.quadHead, this.state.nodeLookup).then(() =>{
                     artist = this.state.nodeLookup[artist.id];
                     this.setSidebarState(artist, this.state.activeGenre, {nodes: [], edges: []}, {x: artist.x, y: artist.y, zoom: this.state.camera.getZoomFromWidth(artist.size * 50)}, null);
+                    this.stateHandler(PageStates.UNKNOWN, PageActions.ARTIST, artist);
             });
         }
         this.setState({hoveredArtist: null});
@@ -168,6 +169,7 @@ class App extends React.Component {
                     }
                     data.top100 = artists;
 
+                    this.stateHandler(PageStates.UNKNOWN, PageActions.REGION, data);
                     this.setState({fenceData: data});
                 });
         }
@@ -226,11 +228,6 @@ class App extends React.Component {
             currentSidebarState: state
         });
         //TODO migrate all this to state router handling
-
-        if (artist) {
-            this.pushState({id: artist.id}, artist.id);
-        }
-
     }
 
     undoSidebarState() {
@@ -307,6 +304,7 @@ class App extends React.Component {
                                                 this.state.camera.getZoomFromWidth(camWidth), 45);
 
                 this.setSidebarState(null, newGenre, {nodes: [], edges: []}, {x: bubble.center.x, y: bubble.center.y, zoom: this.state.camera.getZoomFromWidth(camWidth)}, null);
+                this.stateHandler(PageStates.SEARCH, PageActions.GENRE, newGenre);
             })
     }
 
@@ -319,6 +317,7 @@ class App extends React.Component {
             this.setSidebarState(null, null, {nodes: [], edges: []}, null, null);
         }
 
+        this.stateHandler(PageStates.UNKNOWN, PageActions.MAP, null);
         this.setState({clearSearch: true, spButtonExpanded: false});
     }
 
@@ -344,9 +343,10 @@ class App extends React.Component {
         const fakeGenre = new Genre('sp', new Set(newPath), 0, 0, 0, 1);
         const bubble = fakeGenre.bubble;
         const camWidth = Math.min(5000, bubble.radius * 4);
-        this.state.camera.setCameraMove(bubble.center.x, bubble.center.y,
-            this.state.camera.getZoomFromWidth(camWidth), 45);
+        const zoom = this.state.camera.getZoomFromWidth(camWidth)
+        this.state.camera.setCameraMove(bubble.center.x, bubble.center.y, zoom, 45);
 
+        this.stateHandler(PageStates.SP_DIALOG, PageActions.DEFAULT, {nodes: newPath, edges: newPathEdges});
         this.setSidebarState(null, null, {nodes: newPath, edges: newPathEdges}, {x: bubble.center.x, y: bubble.center.y, zoom: this.state.camera.getZoomFromWidth(camWidth)}, null);
     }
 
@@ -443,22 +443,49 @@ class App extends React.Component {
     }
 
     stateHandler(src, action, data) {
-        const destPage = stateMapper(src, action);
+        let pageSource = src
+        if (src === PageStates.UNKNOWN) {
+            pageSource = parseUnknownSource();
+        }
+
+        const destPage = stateMapper(pageSource, action);
+
+        console.log({
+            src: pageSource,
+            action: action,
+            data: data,
+            dest: destPage
+        });
+
+        if (destPage === PageStates.ARTIST) {
+            this.pushState(`a=${data.id}`);
+        } else if (destPage === PageStates.GENRE) {
+            this.pushState(`g=${encodeURIComponent(data.name)}`)
+        } else if (destPage === PageStates.PATH) {
+            this.pushState(`p=${data.nodes[0].id},${data.nodes[data.nodes.length - 1].id}`);
+        } else if (destPage === PageStates.REGION) {
+            this.pushState(`r=filler`);
+        } else if (destPage === PageStates.REGION_ARTIST) {
+            this.pushState(`r=filler&a=filler`);
+        } else if (destPage === PageStates.GENRE_ARTIST) {
+            this.pushState(`g=filler&a=filler`);
+        } else {
+            this.pushState("");
+        }
+
         //TODO do something with the data
-        //this.pushState()
     }
 
     hashChangeHandler(e) {
         console.log(e);
     }
 
-    pushState(state, url) {
-        //window.history.pushState(state, "", url);
-        window.location.hash = url;
-    }
+    pushState(url) {
+        if (url === "") {
+            window.history.pushState("", document.title, window.location.pathname + window.location.search);
+        }
 
-    getState() {
-        console.log(window.history.state);
+        window.location.hash = url;
     }
 
     processHash(hash) {
