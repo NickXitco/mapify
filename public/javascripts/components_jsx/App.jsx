@@ -592,6 +592,7 @@ class App extends React.Component {
                     sidebarState={this.state.currentSidebarState}
                     undoSidebarState={this.undoSidebarState}
                     redoSidebarState={this.redoSidebarState}
+                    historyState={this.state.historyState}
 
                     loadArtistFromUI={this.loadArtistFromUI}
                     loadGenreFromSearch={this.loadGenreFromSearch}
