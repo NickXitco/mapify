@@ -221,6 +221,15 @@ const Utils = {
             case 69: return "niceagon"
             default: return "region"
         }
+    },
+
+    regionToString: function (region) {
+        let postCoordinates = [];
+        for (const post of region) {
+            postCoordinates.push(post.x);
+            postCoordinates.push(post.y);
+        }
+        return postCoordinates.join(",");
     }
 
 }

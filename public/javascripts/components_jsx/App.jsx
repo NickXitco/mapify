@@ -62,6 +62,7 @@ class App extends React.Component {
             ],
 
             cursor: 'auto',
+            historyState: new HistoryState(null, PageStates.HOME, null)
         }
 
         this.setCanvas = this.setCanvas.bind(this);
@@ -304,7 +305,7 @@ class App extends React.Component {
                                                 this.state.camera.getZoomFromWidth(camWidth), 45);
 
                 this.setSidebarState(null, newGenre, {nodes: [], edges: []}, {x: bubble.center.x, y: bubble.center.y, zoom: this.state.camera.getZoomFromWidth(camWidth)}, null);
-                this.stateHandler(PageStates.SEARCH, PageActions.GENRE, newGenre);
+                this.stateHandler(PageStates.UNKNOWN, PageActions.GENRE, newGenre);
             })
     }
 
@@ -443,41 +444,75 @@ class App extends React.Component {
     }
 
     stateHandler(src, action, data) {
-        let pageSource = src
+        let srcPage = src
         if (src === PageStates.UNKNOWN) {
-            pageSource = parseUnknownSource();
+            srcPage = parseUnknownSource();
         }
 
-        const destPage = stateMapper(pageSource, action);
+        const destPage = stateMapper(srcPage, action);
+        let newData = data;
+        
+        if (srcPage === PageStates.GENRE && destPage === PageStates.GENRE_ARTIST) {
+            // Last page must have been full of genre data, so let's get it and add it
+            const genreData = this.state.historyState.getData();
+            newData = {
+                artist: data,
+                genre: genreData
+            }
+        }
 
-        console.log({
-            src: pageSource,
-            action: action,
-            data: data,
-            dest: destPage
-        });
+        if (srcPage === PageStates.REGION && destPage === PageStates.REGION_ARTIST) {
+            // Last page must have been full of genre data, so let's get it and add it
+            const regionData = this.state.historyState.getData();
+            newData = {
+                artist: data,
+                region: regionData
+            }
+        }
+
+        // If we're clicking the map but coming from a two-layered page, we need to restore
+        // the data from the next layer.
+        if (action === PageActions.MAP) {
+            if (srcPage === PageStates.GENRE_ARTIST) {
+                newData = this.state.historyState.getData().genre;
+            }
+            if (srcPage === PageStates.REGION_ARTIST) {
+                newData = this.state.historyState.getData().region;
+            }
+        }
 
         if (destPage === PageStates.ARTIST) {
-            this.pushState(`a=${data.id}`);
+            this.pushState(`a=${newData.id}`);
         } else if (destPage === PageStates.GENRE) {
-            this.pushState(`g=${encodeURIComponent(data.name)}`)
+            this.pushState(`g=${encodeURIComponent(newData.name)}`)
         } else if (destPage === PageStates.PATH) {
-            this.pushState(`p=${data.nodes[0].id},${data.nodes[data.nodes.length - 1].id}`);
+            this.pushState(`p=${newData.nodes[0].id},${newData.nodes[newData.nodes.length - 1].id}`);
         } else if (destPage === PageStates.REGION) {
-            this.pushState(`r=filler`);
+            this.pushState(`r=${Utils.regionToString(newData.posts)}`);
         } else if (destPage === PageStates.REGION_ARTIST) {
-            this.pushState(`r=filler&a=filler`);
+            this.pushState(`r=${Utils.regionToString(newData.region.posts)}&a=${newData.artist.id}`);
         } else if (destPage === PageStates.GENRE_ARTIST) {
-            this.pushState(`g=filler&a=filler`);
+            this.pushState(`g=${encodeURIComponent(newData.genre.name)}&a=${newData.artist.id}`);
         } else {
             this.pushState("");
         }
 
+        console.log({
+            src: srcPage,
+            action: action,
+            data: newData,
+            dest: destPage
+        });
+
+        const lastState = this.state.historyState;
+        const newState = new HistoryState(lastState, destPage, newData);
+        lastState.next = newState;
+        this.setState({historyState: newState});
         //TODO do something with the data
     }
 
     hashChangeHandler(e) {
-        console.log(e);
+        //console.log(e);
     }
 
     pushState(url) {
