@@ -7,7 +7,6 @@ class ReactSidebar extends React.Component {
         }
 
         this.scrollbar = this.scrollbar.bind(this);
-        this.undoRedo = this.undoRedo.bind(this);
         this.setHoverFlag = this.setHoverFlag.bind(this);
         this.unsetHoverFlag = this.unsetHoverFlag.bind(this);
 
@@ -31,15 +30,6 @@ class ReactSidebar extends React.Component {
                 {`::-webkit-scrollbar-track {box-shadow: 0 0 5px ${colorant};}  \n` +
                 `::-webkit-scrollbar-thumb {background: ${colorant};`}
             </style>
-        )
-    }
-
-    undoRedo(colorant) {
-        return (
-            <UndoRedoComponent
-                color={[colorant.r, colorant.g, colorant.b]}
-                historyState={this.props.historyState}
-            />
         )
     }
 
@@ -100,7 +90,6 @@ class ReactSidebar extends React.Component {
                 <div className="flexSpacer"/>
 
                 {this.shadowBox(440, 90, "UP", 0)}
-                {this.undoRedo(start)}
             </div>
         );
     }
@@ -132,10 +121,6 @@ class ReactSidebar extends React.Component {
                              header={"Related Artists"}
                              color={data.colorToString()}
                 />
-
-                <div className="flexSpacer"/>
-
-                {this.undoRedo(data)}
             </div>
         );
     }
@@ -162,10 +147,6 @@ class ReactSidebar extends React.Component {
                              header={"Artists in Genre"}
                              color={data.colorToString()}
                 />
-
-                <div className="flexSpacer"/>
-
-                {this.undoRedo(data)}
             </div>
         );
     }
