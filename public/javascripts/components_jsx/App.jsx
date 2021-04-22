@@ -62,7 +62,7 @@ class App extends React.Component {
             ],
 
             cursor: 'auto',
-            historyState: new HistoryState(null, PageStates.HOME, null)
+            historyState: new HistoryState(null, PageStates.HOME, null, "")
         }
 
         this.setCanvas = this.setCanvas.bind(this);
@@ -171,7 +171,7 @@ class App extends React.Component {
                     data.top100 = artists;
 
                     this.stateHandler(PageStates.UNKNOWN, PageActions.REGION, data);
-                    this.setState({fenceData: data});
+                    this.setState({fence: [], fenceData: null});
                 });
         }
 
@@ -481,50 +481,82 @@ class App extends React.Component {
             }
         }
 
+        let url = ""
+
         if (destPage === PageStates.ARTIST) {
-            this.pushState(`a=${newData.id}`);
+            url = `a=${newData.id}`
         } else if (destPage === PageStates.GENRE) {
-            this.pushState(`g=${encodeURIComponent(newData.name)}`)
+            url = `g=${encodeURIComponent(newData.name)}`;
         } else if (destPage === PageStates.PATH) {
-            this.pushState(`p=${newData.nodes[0].id},${newData.nodes[newData.nodes.length - 1].id}`);
+            url = `p=${newData.nodes[0].id},${newData.nodes[newData.nodes.length - 1].id}`;
         } else if (destPage === PageStates.REGION) {
-            this.pushState(`r=${Utils.regionToString(newData.posts)}`);
+            url = `r=${Utils.regionToString(newData.posts)}`
         } else if (destPage === PageStates.REGION_ARTIST) {
-            this.pushState(`r=${Utils.regionToString(newData.region.posts)}&a=${newData.artist.id}`);
+            url = `r=${Utils.regionToString(newData.region.posts)}&a=${newData.artist.id}`;
         } else if (destPage === PageStates.GENRE_ARTIST) {
-            this.pushState(`g=${encodeURIComponent(newData.genre.name)}&a=${newData.artist.id}`);
-        } else {
-            this.pushState("");
+            url = `g=${encodeURIComponent(newData.genre.name)}&a=${newData.artist.id}`;
         }
 
-        console.log({
-            src: srcPage,
-            action: action,
-            data: newData,
-            dest: destPage
-        });
+        this.pushState(url);
+
+        // console.log({
+        //     src: srcPage,
+        //     action: action,
+        //     data: newData,
+        //     dest: destPage
+        // });
 
         const lastState = this.state.historyState;
-        const newState = new HistoryState(lastState, destPage, newData);
+        const newState = new HistoryState(lastState, destPage, newData, url);
         lastState.next = newState;
         this.setState({historyState: newState});
-        //TODO do something with the data
     }
 
     hashChangeHandler(e) {
-        //console.log(e);
+        let hash = e.currentTarget.location.hash;
+        if (hash === "") {
+            window.history.replaceState("", document.title, window.location.pathname + window.location.search);
+        }
+
+        this.processHash(hash.replace("#", ""));
     }
 
     pushState(url) {
-        if (url === "") {
-            window.history.pushState("", document.title, window.location.pathname + window.location.search);
-        }
-
         window.location.hash = url;
     }
 
     processHash(hash) {
+        //Three options:
+        //1. This hash is in our history, which means we can render it
+        //2. This hash is not in our history, which means we have to process and create it.
+        //3. This hash is our current location, which means we just do nothing
 
+        // Scenario 3
+        if (this.state.historyState.url === hash) {
+            return;
+        }
+
+        let current = this.state.historyState.prev;
+        let newState;
+        while (current) {
+            if (current.url === hash) {
+                newState = current;
+                break;
+            }
+            current = current.prev;
+        }
+
+        // Scenario 2
+        if (newState) {
+            newState.detachSelf();
+            const lastState = this.state.historyState;
+            newState.prev = lastState;
+            newState.next = null;
+            lastState.next = newState;
+            this.setState({historyState: newState});
+        }
+
+        // TODO scenario 1
     }
 
     componentDidMount() {
@@ -549,12 +581,51 @@ class App extends React.Component {
                 />
             );
         }
+        
+        const historyState = this.state.historyState
 
-        let colorant = this.state.clickedArtist ? this.state.clickedArtist : this.state.activeGenre ? this.state.activeGenre : this.state.activePath.nodes.length > 0 ? this.state.activePath.nodes[0] : null;
+
+        let clickedArtist = null;
+        let activePath = {nodes: [], edges: []};
+        let activeGenre = this.state.activeGenre; // This is needed for genre hover in region
+        let fence = this.state.fence; // This is needed for active fence drawing
+        let colorant;
+
+        switch (historyState.page) {
+            case PageStates.ARTIST:
+                clickedArtist = historyState.getData();
+                colorant = clickedArtist;
+                break;
+            case PageStates.GENRE_ARTIST:
+                clickedArtist = historyState.getData().artist;
+                activeGenre = historyState.getData().genre;
+                colorant = clickedArtist;
+                break;
+            case PageStates.REGION_ARTIST:
+                clickedArtist = historyState.getData().artist;
+                fence = historyState.getData().region.posts;
+                colorant = clickedArtist;
+                break;
+            case PageStates.PATH:
+                activePath = historyState.getData();
+                colorant = activePath.nodes.length > 0 ? activePath.nodes[0] : null;
+                break;
+            case PageStates.GENRE:
+                activeGenre = historyState.getData();
+                colorant = activeGenre;
+                break;
+            case PageStates.REGION:
+                fence = historyState.getData().posts;
+                const g = historyState.getData().genres[0];
+                colorant = new Colorant(g.r, g.g, g.b, true);
+                break;
+            default:
+        }
 
         let cursorStyle = {
             cursor: this.state.cursor
         }
+
         return (
             <div className={"fullScreen"} style={cursorStyle}>
                 {changelog}
@@ -583,16 +654,12 @@ class App extends React.Component {
                 />
 
                 <ReactSidebar
-                    artist={this.state.clickedArtist}
-                    genre={this.state.activeGenre}
-                    path={this.state.activePath.nodes}
-                    fence={this.state.fenceData}
+                    historyState={this.state.historyState}
                     uiHover={this.state.uiHover}
 
                     sidebarState={this.state.currentSidebarState}
                     undoSidebarState={this.undoSidebarState}
                     redoSidebarState={this.redoSidebarState}
-                    historyState={this.state.historyState}
 
                     loadArtistFromUI={this.loadArtistFromUI}
                     loadGenreFromSearch={this.loadGenreFromSearch}
@@ -633,10 +700,11 @@ class App extends React.Component {
 
                 <P5Wrapper
                     hoveredArtist={this.state.hoveredArtist}
-                    clickedArtist={this.state.clickedArtist}
-                    path={this.state.activePath}
 
-                    genre={this.state.activeGenre}
+                    clickedArtist={clickedArtist}
+                    path={activePath}
+                    genre={activeGenre}
+                    fence={fence}
 
                     nodeLookup={this.state.nodeLookup} //TODO consider removing this from P5 and do all load handling at the app level.
                     quadHead={this.state.quadHead}
@@ -659,9 +727,8 @@ class App extends React.Component {
                     setFencing={this.setFencing}
                     addFencepost={this.addFencepost}
                     clearFence={this.clearFence}
-
-                    fence={this.state.fence}
                     fencing={this.state.fencing}
+
                     keyDownEvents={this.keyDownEvents}
                 />
             </div>

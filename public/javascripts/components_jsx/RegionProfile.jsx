@@ -78,8 +78,6 @@ class RegionProfile extends React.Component {
     render() {
         const topGenre = this.props.fence.genres[0];
 
-        const COLOR = topGenre ? `rgb(${topGenre.r}, ${topGenre.g}, ${topGenre.b})` : 'white';
-
         const nameStyle = {
             fontSize: this.state.fontSize
         }
@@ -100,7 +98,7 @@ class RegionProfile extends React.Component {
                                 <filter id="sofGlow" height="2000%" width="2000%" x="-500%" y="-500%">
                                     <feMorphology operator="dilate" radius="1" in="SourceAlpha" result="thicken" />
                                     <feGaussianBlur in="thicken" stdDeviation="10" result="blurred" />
-                                    <feFlood floodColor={COLOR} result="glowColor" />
+                                    <feFlood floodColor={this.props.color} result="glowColor" />
                                     <feComposite in="glowColor" in2="blurred" operator="in" result="softGlow_colored" />
                                     <feMerge>
                                         <feMergeNode in="softGlow_colored"/>
@@ -108,7 +106,7 @@ class RegionProfile extends React.Component {
                                     </feMerge>
                                 </filter>
                             </defs>
-                            <polygon points={polygonString} stroke={COLOR} fill="transparent" filter="url(#sofGlow)" strokeWidth="2"/>
+                            <polygon points={polygonString} stroke={this.props.color} fill="transparent" filter="url(#sofGlow)" strokeWidth="2"/>
                         </svg>
                     </div>
                     <div className={"nameLarge"}>

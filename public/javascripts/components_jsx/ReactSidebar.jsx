@@ -3,34 +3,26 @@ class ReactSidebar extends React.Component {
         super(props);
 
         this.state = {
-            artist: null,
-            genre: null
+            open: false
         }
 
-        this.updateSidebarContent = this.updateSidebarContent.bind(this);
         this.scrollbar = this.scrollbar.bind(this);
         this.undoRedo = this.undoRedo.bind(this);
+        this.setHoverFlag = this.setHoverFlag.bind(this);
+        this.unsetHoverFlag = this.unsetHoverFlag.bind(this);
 
         this.path = this.path.bind(this);
         this.artist = this.artist.bind(this);
         this.genre = this.genre.bind(this);
         this.region = this.region.bind(this);
+        this.default = this.default.bind(this);
+        this.transitionEnd = this.transitionEnd.bind(this);
+
+        this.myRef = React.createRef();
     }
 
-    updateSidebarContent(artist, genre) {
-        if (this.state.artist !== artist || this.state.genre !== genre) {
-            this.setState({artist: artist, genre: genre});
-        }
-    }
-
-    shouldComponentUpdate(nextProps) {
-        return (
-            this.props.artist !== nextProps.artist ||
-            this.props.genre !== nextProps.genre ||
-            this.props.path !== nextProps.path ||
-            this.props.fence !== nextProps.fence ||
-            this.props.uiHover !== nextProps.uiHover
-        );
+    shouldComponentUpdate(nextProps, nextState) {
+        return this.props.historyState !== nextProps.historyState || this.state.open !== nextState.open;
     }
 
     scrollbar(colorant) {
@@ -70,6 +62,14 @@ class ReactSidebar extends React.Component {
         )
     }
 
+    setHoverFlag() {
+        this.props.updateHoverFlag(true);
+    }
+
+    unsetHoverFlag() {
+        this.props.updateHoverFlag(false);
+    }
+
     path(closed, hoverStyle, data) {
         const start = data[0];
         const end = data[data.length - 1];
@@ -79,8 +79,10 @@ class ReactSidebar extends React.Component {
         return (
             <div className={className}
                  style={hoverStyle}
-                 onMouseEnter={() => {this.props.updateHoverFlag(true)}}
-                 onMouseLeave={() => {this.props.updateHoverFlag(false)}}
+                 onMouseEnter={this.setHoverFlag}
+                 onMouseLeave={this.unsetHoverFlag}
+                 onTransitionEnd={this.transitionEnd}
+                 ontransitionstart={this.transitionStart}
             >
 
                 {this.scrollbar(start.colorToString())}
@@ -111,8 +113,9 @@ class ReactSidebar extends React.Component {
         return (
             <div className={className}
                  style={hoverStyle}
-                 onMouseEnter={() => {this.props.updateHoverFlag(true)}}
-                 onMouseLeave={() => {this.props.updateHoverFlag(false)}}
+                 onMouseEnter={this.setHoverFlag}
+                 onMouseLeave={this.unsetHoverFlag}
+                 onTransitionEnd={this.transitionEnd}
             >
                 {this.scrollbar(data.colorToString())}
 
@@ -145,8 +148,9 @@ class ReactSidebar extends React.Component {
         return (
             <div className={className}
                  style={hoverStyle}
-                 onMouseEnter={() => {this.props.updateHoverFlag(true)}}
-                 onMouseLeave={() => {this.props.updateHoverFlag(false)}}
+                 onMouseEnter={this.setHoverFlag}
+                 onMouseLeave={this.unsetHoverFlag}
+                 onTransitionEnd={this.transitionEnd}
             >
                 {this.scrollbar(data.colorToString())}
 
@@ -171,24 +175,25 @@ class ReactSidebar extends React.Component {
     region(closed, hoverStyle, data) {
         const topArtist = data.top100[0];
         const topGenre = data.genres[0];
+        const genreColorant = new Colorant(topGenre.r, topGenre.g, topGenre.b, true);
 
-        const topGenreColor = topGenre ? `rgb(${topGenre.r}, ${topGenre.g}, ${topGenre.b})` : 'white';
+        const topGenreColor = topGenre ? genreColorant.colorToString() : 'white';
 
         let className = closed ? "sidebar sidebar-closed" : "sidebar sidebar-open"
 
         return (
             <div className={className}
                  style={hoverStyle}
-                 onMouseEnter={() => {this.props.updateHoverFlag(true)}}
-                 onMouseLeave={() => {this.props.updateHoverFlag(false)}}
+                 onMouseEnter={this.setHoverFlag}
+                 onMouseLeave={this.unsetHoverFlag}
+                 onTransitionEnd={this.transitionEnd}
             >
 
                 {this.scrollbar(topGenreColor)}
 
                 <SidebarStroke color={topGenreColor}/>
 
-
-                <RegionProfile fence={data} fontDecrement={3}/>
+                <RegionProfile color={topGenreColor} fence={data} fontDecrement={3}/>
                 <FollowersStats number={data.numArtists} text={"Artist"} size={"Large"}/>
                 <FollowersStats number={data.numGenres} text={"Genre"} size={"Large"}/>
 
@@ -208,37 +213,76 @@ class ReactSidebar extends React.Component {
         );
     }
 
+    default(hoverStyle) {
+        return (
+            <div className={"sidebar sidebar-closed"}
+                 style={hoverStyle}
+                 onMouseEnter={this.setHoverFlag}
+                 onMouseLeave={this.unsetHoverFlag}
+                 onTransitionEnd={this.transitionEnd}
+            >
+                {this.scrollbar("white")}
+                <SidebarStroke color={"white"}/>
+            </div>
+        )
+    }
+
+    transitionEnd() {
+        if (this.props.historyState.page === PageStates.HOME) {
+            this.setState({open: false});
+        } else {
+            this.setState({open: true});
+        }
+    }
+
     render() {
         const hoverStyle = {
             userSelect: this.props.uiHover ? "auto" : "none"
         }
 
-        if (this.props.fence) {
-            return this.region(false, hoverStyle, this.props.fence);
+        let data = this.props.historyState.getData();
+        let closed = false;
+        let page = this.props.historyState.page;
+
+        if (
+            this.props.historyState.prev &&
+            this.props.historyState.page === PageStates.HOME &&
+            this.props.historyState.prev.page !== PageStates.HOME &&
+            this.state.open
+        ) {
+            //We've gone from a content sidebar to the home sidebar
+            //So we want to load instead the closed version of the last page, and then after a delay,
+            //if we're still on the home page, switch to the home page.
+
+            data = this.props.historyState.prev.getData();
+            closed = true;
+            page = this.props.historyState.prev.page;
         }
 
-        if (this.props.path.length > 0) {
-            return this.path(false, hoverStyle, this.props.path);
+        if (!data) {
+            return this.default();
         }
 
-        if (!this.props.artist && !this.props.genre) {
-            if (this.state.artist) {
-                setTimeout(() => this.setState({artist: null}), 600);
-                return this.artist(true, hoverStyle, this.state.artist);
-            }
-            if (this.state.genre) {
-                return this.genre(true, hoverStyle, this.state.genre);
-            }
+        if (page === PageStates.REGION) {
+            return this.region(closed, hoverStyle, data);
         }
 
-        this.updateSidebarContent(this.props.artist, this.props.genre);
-
-        if (this.props.artist) {
-            return this.artist(false, hoverStyle, this.props.artist);
+        if (page === PageStates.PATH) {
+            return this.path(closed, hoverStyle, data);
         }
 
-        if (this.props.genre) {
-            return this.genre(false, hoverStyle, this.props.genre);
+        if (page === PageStates.ARTIST ) {
+            return this.artist(closed, hoverStyle, data);
         }
+
+        if (page === PageStates.REGION_ARTIST || page === PageStates.GENRE_ARTIST) {
+            return this.artist(closed, hoverStyle, data.artist);
+        }
+
+        if (page === PageStates.GENRE) {
+            return this.genre(closed, hoverStyle, data);
+        }
+
+        return this.default(hoverStyle);
     }
 }

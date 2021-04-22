@@ -3,6 +3,10 @@ class Player extends React.Component {
         super(props);
     }
 
+    componentDidMount() {
+        console.log("New player!");
+    }
+
     render() {
 
         const uriSplit = this.props.uri.split(":");

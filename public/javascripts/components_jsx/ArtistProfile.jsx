@@ -8,6 +8,10 @@ class ArtistProfile extends React.Component {
             fontSizeUpdating: false
         }
 
+        //PlayerKey makes the Spotify player unmount and remount on rerender so we don't create new history logging
+        //https://stackoverflow.com/questions/52260258/reactjs-destroy-old-component-instance-and-create-new
+        this.playerKey = 0;
+
     }
 
     componentDidMount() {
@@ -20,12 +24,13 @@ class ArtistProfile extends React.Component {
 
     componentDidUpdate() {
         if (this.props.artist !== this.state.artist) {
+            this.playerKey++;
             this.setState({fontSize: 60, artist: this.props.artist}, () => {
                 this.decrementFontSize(this.props.size);
             })
         }
 
-        if (this.fontSizeUpdating) {
+        if (this.state.fontSizeUpdating) {
             this.decrementFontSize(this.props.size);
         }
     }
@@ -40,9 +45,9 @@ class ArtistProfile extends React.Component {
             this.setState((prevState, props) => ({
                 fontSize: prevState.fontSize - props.fontDecrement
             }));
-            this.fontSizeUpdating = true;
+            this.setState({fontSizeUpdating: true});
         } else {
-            this.fontSizeUpdating = false;
+            this.setState({fontSizeUpdating: false});
         }
     }
 
@@ -66,7 +71,7 @@ class ArtistProfile extends React.Component {
 
         if (this.props.artist.track && this.props.showPlayer) {
             player = (
-                <Player uri={`spotify:track:${this.props.artist.track.id}`}/>
+                <Player uri={`spotify:track:${this.props.artist.track.id}`} key={this.playerKey}/>
             )
         } else if (this.props.size === "Large") {
             player = (
