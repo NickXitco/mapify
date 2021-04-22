@@ -56,7 +56,7 @@ class ReactSearchBox extends React.Component {
 
     sendSubmitIfEnter(e) {
         if (e.key === "Enter") {
-            this.props.loadArtistFromSearch(e.target.value);
+            this.props.loadArtistFromSearch(e.target.value, false);
             this.resetState();
         }
     }

@@ -138,7 +138,6 @@ class App extends React.Component {
                     this.stateHandler(PageStates.UNKNOWN, PageActions.ARTIST, artist);
             });
         }
-        this.setState({hoveredArtist: null});
     }
 
     setFencing(state) {
@@ -163,8 +162,9 @@ class App extends React.Component {
                     }
                     data.top100 = artists;
 
+                    const fakeGenre = new Genre('r', new Set(artists), 0, 0, 0, 1);
+                    this.state.camera.bubbleMove(fakeGenre.bubble);
                     this.stateHandler(PageStates.UNKNOWN, PageActions.REGION, data);
-                    this.setState({fence: [], fenceData: null});
                 });
         }
 
@@ -207,18 +207,15 @@ class App extends React.Component {
     }
 
     loadArtistFromUI(artist) {
-        //TODO remove this from here and manage it in sidebar state
-        this.setState({fencing: false, fence: [], fenceData: null});
-
         this.updateClickedArtist(artist);
-        this.state.camera.setCameraMove(artist.x, artist.y, this.state.camera.getZoomFromWidth(artist.size * 50), 45);
+        this.state.camera.artistMove(artist);
     }
 
-    loadArtistFromSearch(searchTerm) {
-        loadArtistFromSearch(this.state.p5, searchTerm, false, this.state.quadHead, this.state.nodeLookup).then(artist => {
+    loadArtistFromSearch(searchTerm, isQueryID) {
+        loadArtistFromSearch(this.state.p5, searchTerm, isQueryID, this.state.quadHead, this.state.nodeLookup).then(artist => {
             if (artist) {
                 this.updateClickedArtist(artist);
-                this.state.camera.setCameraMove(artist.x, artist.y, this.state.camera.getZoomFromWidth(artist.size * 50), 45);
+                this.state.camera.artistMove(artist);
             }
         });
     }
@@ -233,9 +230,6 @@ class App extends React.Component {
     //</editor-fold>
 
     loadGenreFromSearch(genreName) {
-        //TODO remove this from here and manage it in sidebar state
-        this.setState({fencing: false, fence: [], fenceData: null});
-
         fetch(`genre/${genreName}`)
             .then(response => response.json())
             .then(data => {
@@ -257,12 +251,8 @@ class App extends React.Component {
                 const nodes = new Set(nodesList);
 
                 const newGenre = new Genre(name, nodes, r, g, b, 0.75);
-                const bubble = newGenre.bubble;
-                const camWidth = Math.min(5000, bubble.radius * 4);
 
-                this.state.camera.setCameraMove(bubble.center.x, bubble.center.y,
-                                                this.state.camera.getZoomFromWidth(camWidth), 45);
-
+                this.state.camera.bubbleMove(newGenre.bubble);
                 this.stateHandler(PageStates.UNKNOWN, PageActions.GENRE, newGenre);
             })
     }
@@ -292,11 +282,7 @@ class App extends React.Component {
         }
 
         const fakeGenre = new Genre('sp', new Set(newPath), 0, 0, 0, 1);
-        const bubble = fakeGenre.bubble;
-        const camWidth = Math.min(5000, bubble.radius * 4);
-        const zoom = this.state.camera.getZoomFromWidth(camWidth)
-        this.state.camera.setCameraMove(bubble.center.x, bubble.center.y, zoom, 45);
-
+        this.state.camera.bubbleMove(fakeGenre.bubble);
         this.stateHandler(PageStates.SP_DIALOG, PageActions.DEFAULT, {nodes: newPath, edges: newPathEdges});
     }
 
@@ -342,7 +328,7 @@ class App extends React.Component {
     }
 
     resetCamera() {
-        this.state.camera.setCameraMove(0, 0, 1, 30);
+        this.state.camera.reset(30);
     }
 
     zoomCameraOut() {
@@ -465,12 +451,15 @@ class App extends React.Component {
             this.setState({activeGenre: null});
         }
 
+        this.setState({fencing: false, fence: [], fenceData: null});
+
         this.pushState(url);
 
         const lastState = this.state.historyState;
         const newState = new HistoryState(lastState, destPage, newData, url);
         lastState.next = newState;
         this.setState({historyState: newState});
+        return newState;
     }
 
     hashChangeHandler(e) {
@@ -488,11 +477,12 @@ class App extends React.Component {
 
     processHash(hash) {
         //Three options:
-        //1. This hash is in our history, which means we can render it
-        //2. This hash is not in our history, which means we have to process and create it.
-        //3. This hash is our current location, which means we just do nothing
+        //1. This hash is our current location, which means we just do nothing
+        //2. This hash is in our history, which means we can render it
+        //3. This hash is not in our history, which means we have to process and create it.
 
-        // Scenario 3
+
+        // Scenario 1
         if (this.state.historyState.url === hash) {
             return;
         }
@@ -515,15 +505,137 @@ class App extends React.Component {
             newState.next = null;
             lastState.next = newState;
             this.setState({historyState: newState});
+
+            switch (newState.page) {
+                case PageStates.ARTIST:
+                    this.state.camera.artistMove(newState.getData());
+                    break;
+                case PageStates.REGION_ARTIST:
+                case PageStates.GENRE_ARTIST:
+                    this.state.camera.artistMove(newState.getData().artist);
+                    break;
+                case PageStates.PATH:
+                    this.state.camera.bubbleMove(
+                        new Genre(
+                            'sp', new Set(newState.getData().nodes), 0, 0, 0, 1
+                        ).bubble
+                    );
+                    break;
+                case PageStates.GENRE:
+                    this.state.camera.bubbleMove(newState.getData().bubble);
+                    break;
+                case PageStates.REGION:
+                    this.state.camera.bubbleMove(
+                        new Genre(
+                            'sp', new Set(newState.getData().top100), 0, 0, 0, 1
+                        ).bubble
+                    );
+                    break;
+                default:
+                    this.state.camera.reset(30);
+                    break;
+            }
+
+            return;
         }
 
-        // TODO scenario 1
+        // Scenario 3
+        // Wait for p5 to be defined:
+        // function waitForElement(){
+        //     if(typeof someVariable !== "undefined"){
+        //         //variable exists, do what you want
+        //     }
+        //     else{
+        //         setTimeout(waitForElement, 250);
+        //     }
+        // }
+        // const validatedHash = this.validateHash(hash);
+        //
+        // if (!validatedHash) {
+        //     this.stateHandler(PageStates.UNKNOWN, PageActions.MAP, null);
+        //     this.resetCamera();
+        //     return
+        // }
+        //
+        // switch (validatedHash.page) {
+        //     case PageStates.ARTIST:
+        //         this.loadArtistFromSearch(validatedHash.data.artist, true);
+        //         break;
+        //     case PageStates.GENRE:
+        //         this.loadGenreFromSearch(validatedHash.data.genre);
+        //         break;
+        //     case PageStates.REGION:
+        //         // TODO turn string into array
+        //         //  Loop through array
+        //         //  For every point, call this.addPost(point)
+        //         //  Then setFencing(false)
+        //         break;
+        //     case PageStates.PATH:
+        //         // fetch(`path/${start.id}/${end.id}`)
+        //         //     .then(res => res.json())
+        //         //     .then(path => this.updatePath(path));
+        //         break;
+        //     case PageStates.REGION_ARTIST:
+        //         // No idea, might have to change all of these to do separate loading
+        //     case PageStates.GENRE_ARTIST:
+        //         break;
+        // }
+    }
+
+    validateHash(hash) {
+        const hashSplit = hash.split(/[&=]+/);
+        const MAX_PARAMS = 2;
+        if (hashSplit.length < 2 || hashSplit.length > MAX_PARAMS * 2 || hashSplit.length % 2 !== 0) {
+            return null;
+        }
+
+        const validatedHash = {numParams: hashSplit.length / 2, page: "", data: {}};
+        for (let i = 0; i < hashSplit.length / 2; i++) {
+            const param = hashSplit[i * 2];
+            if (i > 1 && param !== "a") return null;
+            if (i === 0 && hashSplit.length > 2 && (param !== "g" && param !== "r")) return null;
+
+            const value = hashSplit[i + 1];
+            switch (param) {
+                case "a":
+                    validatedHash.data.artist = value;
+                    if (validatedHash.numParams === 1) {
+                        validatedHash.page = PageStates.ARTIST;
+                    }
+                    break;
+                case "g":
+                    validatedHash.data.genre = decodeURIComponent(value);
+                    if (validatedHash.numParams === 1) {
+                        validatedHash.page = PageStates.GENRE;
+                    } else {
+                        validatedHash.page = PageStates.GENRE_ARTIST;
+                    }
+                    break;
+                case "p":
+                    validatedHash.data.path = value;
+                    if (validatedHash.numParams === 1) {
+                        validatedHash.page = PageStates.PATH;
+                    }
+                    break;
+                case "r":
+                    validatedHash.data.region = value;
+                    if (validatedHash.numParams === 1) {
+                        validatedHash.page = PageStates.REGION;
+                    } else {
+                        validatedHash.page = PageStates.REGION_ARTIST;
+                    }
+                    break;
+                default:
+                    return null;
+            }
+        }
+        return validatedHash;
     }
 
     componentDidMount() {
         window.addEventListener("hashchange", this.hashChangeHandler);
         if (window.location.hash) {
-            this.processHash(window.location.hash);
+            this.processHash(window.location.hash.replace("#", ""));
         }
     }
 
