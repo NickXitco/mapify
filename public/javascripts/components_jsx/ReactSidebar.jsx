@@ -38,9 +38,7 @@ class ReactSidebar extends React.Component {
         return (
             <UndoRedoComponent
                 color={[colorant.r, colorant.g, colorant.b]}
-                sidebarState={this.props.sidebarState}
-                undoSidebarState={this.props.undoSidebarState}
-                redoSidebarState={this.props.redoSidebarState}
+                historyState={this.props.historyState}
             />
         )
     }
@@ -227,7 +225,11 @@ class ReactSidebar extends React.Component {
         )
     }
 
-    transitionEnd() {
+    transitionEnd(e) {
+        if (e.propertyName !== "margin-right") {
+            return;
+        }
+
         if (this.props.historyState.page === PageStates.HOME) {
             this.setState({open: false});
         } else {

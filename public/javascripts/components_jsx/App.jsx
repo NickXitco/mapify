@@ -28,8 +28,6 @@ class App extends React.Component {
             uiHover: false,
             clearSearch: false,
 
-            currentSidebarState: null,
-
             spButtonExpanded: false,
             randomButtonExpanded: false,
 
@@ -73,9 +71,6 @@ class App extends React.Component {
         this.zoomCameraIn = this.zoomCameraIn.bind(this);
 
         this.updateClickedArtist = this.updateClickedArtist.bind(this);
-        this.setSidebarState = this.setSidebarState.bind(this);
-        this.undoSidebarState = this.undoSidebarState.bind(this);
-        this.redoSidebarState = this.redoSidebarState.bind(this);
 
         this.handleEmptyClick = this.handleEmptyClick.bind(this);
         this.expandSP = this.expandSP.bind(this);
@@ -136,12 +131,10 @@ class App extends React.Component {
     //<editor-fold desc="Clicked Artist Handling">
     updateClickedArtist(artist) {
         if (artist.loaded) {
-            this.setSidebarState(artist, this.state.activeGenre, {nodes: [], edges: []}, {x: artist.x, y: artist.y, zoom: this.state.camera.getZoomFromWidth(artist.size * 50)}, null);
             this.stateHandler(PageStates.UNKNOWN, PageActions.ARTIST, artist);
         } else if (artist.id) {
             loadArtist(this.state.p5, artist, this.state.quadHead, this.state.nodeLookup).then(() =>{
                     artist = this.state.nodeLookup[artist.id];
-                    this.setSidebarState(artist, this.state.activeGenre, {nodes: [], edges: []}, {x: artist.x, y: artist.y, zoom: this.state.camera.getZoomFromWidth(artist.size * 50)}, null);
                     this.stateHandler(PageStates.UNKNOWN, PageActions.ARTIST, artist);
             });
         }
@@ -213,40 +206,6 @@ class App extends React.Component {
         this.setState({activeGenre: null});
     }
 
-    setSidebarState(artist, genre, path, camera, state) {
-        if (artist) {
-            artist.edges = makeEdges(artist);
-        }
-
-        if (!state && (artist || genre ||  path.nodes.length > 0)) {
-            state = new SidebarState({artist: artist, genre: genre, path: path, camera: camera}, this.state.currentSidebarState);
-        }
-
-        this.setState({
-            clickedArtist: artist,
-            activeGenre: genre,
-            activePath: path,
-            currentSidebarState: state
-        });
-        //TODO migrate all this to state router handling
-    }
-
-    undoSidebarState() {
-        if (this.state.currentSidebarState && this.state.currentSidebarState.canUndo()) {
-            const newSidebarState = this.state.currentSidebarState.undo();
-            this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState.payload.path, newSidebarState.payload.camera, newSidebarState);
-            this.state.camera.setCameraMove(newSidebarState.payload.camera.x, newSidebarState.payload.camera.y, newSidebarState.payload.camera.zoom, 45);
-        }
-    }
-
-    redoSidebarState() {
-        if (this.state.currentSidebarState && this.state.currentSidebarState.canRedo()) {
-            const newSidebarState = this.state.currentSidebarState.redo();
-            this.setSidebarState(newSidebarState.payload.artist, newSidebarState.payload.genre, newSidebarState.payload.path, newSidebarState.payload.camera, newSidebarState);
-            this.state.camera.setCameraMove(newSidebarState.payload.camera.x, newSidebarState.payload.camera.y, newSidebarState.payload.camera.zoom, 45);
-        }
-    }
-
     loadArtistFromUI(artist) {
         //TODO remove this from here and manage it in sidebar state
         this.setState({fencing: false, fence: [], fenceData: null});
@@ -304,20 +263,11 @@ class App extends React.Component {
                 this.state.camera.setCameraMove(bubble.center.x, bubble.center.y,
                                                 this.state.camera.getZoomFromWidth(camWidth), 45);
 
-                this.setSidebarState(null, newGenre, {nodes: [], edges: []}, {x: bubble.center.x, y: bubble.center.y, zoom: this.state.camera.getZoomFromWidth(camWidth)}, null);
                 this.stateHandler(PageStates.UNKNOWN, PageActions.GENRE, newGenre);
             })
     }
 
     handleEmptyClick() {
-        if (this.state.clickedArtist) {
-            this.setSidebarState(null, this.state.activeGenre, this.state.activePath, null, null);
-        } else if (this.state.activeGenre) {
-            this.setSidebarState(null, null, this.state.activePath, null, null);
-        } else {
-            this.setSidebarState(null, null, {nodes: [], edges: []}, null, null);
-        }
-
         this.stateHandler(PageStates.UNKNOWN, PageActions.MAP, null);
         this.setState({clearSearch: true, spButtonExpanded: false});
     }
@@ -348,7 +298,6 @@ class App extends React.Component {
         this.state.camera.setCameraMove(bubble.center.x, bubble.center.y, zoom, 45);
 
         this.stateHandler(PageStates.SP_DIALOG, PageActions.DEFAULT, {nodes: newPath, edges: newPathEdges});
-        this.setSidebarState(null, null, {nodes: newPath, edges: newPathEdges}, {x: bubble.center.x, y: bubble.center.y, zoom: this.state.camera.getZoomFromWidth(camWidth)}, null);
     }
 
     flipClearSearch() {
@@ -497,14 +446,26 @@ class App extends React.Component {
             url = `g=${encodeURIComponent(newData.genre.name)}&a=${newData.artist.id}`;
         }
 
-        this.pushState(url);
+        // If we're looking at an artist, we need to make sure those artists' edges are made.
+        let artist = null;
+        if (destPage === PageStates.ARTIST) {
+            artist = newData;
+        }
 
-        // console.log({
-        //     src: srcPage,
-        //     action: action,
-        //     data: newData,
-        //     dest: destPage
-        // });
+        if (destPage === PageStates.REGION_ARTIST || destPage === PageStates.GENRE_ARTIST) {
+            artist = newData.artist;
+        }
+
+        if (artist) {
+            artist.edges = makeEdges(artist);
+        }
+
+        // Clear the activeGenre (used for hovering)
+        if (destPage !== PageStates.GENRE && destPage !== PageStates.GENRE_ARTIST) {
+            this.setState({activeGenre: null});
+        }
+
+        this.pushState(url);
 
         const lastState = this.state.historyState;
         const newState = new HistoryState(lastState, destPage, newData, url);
@@ -656,10 +617,6 @@ class App extends React.Component {
                 <ReactSidebar
                     historyState={this.state.historyState}
                     uiHover={this.state.uiHover}
-
-                    sidebarState={this.state.currentSidebarState}
-                    undoSidebarState={this.undoSidebarState}
-                    redoSidebarState={this.redoSidebarState}
 
                     loadArtistFromUI={this.loadArtistFromUI}
                     loadGenreFromSearch={this.loadGenreFromSearch}

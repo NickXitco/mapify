@@ -31,5 +31,4 @@ class HistoryState {
         //  and safely return if there's a data mismatch.
         return this.data;
     }
-
 }

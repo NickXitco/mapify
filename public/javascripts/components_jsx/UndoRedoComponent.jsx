@@ -7,14 +7,27 @@ class UndoRedoComponent extends React.Component {
             redoState: 0
         }
 
-
         this.lastState = null;
+
+        this.undo = this.undo.bind(this);
+        this.redo = this.redo.bind(this);
+    }
+
+    undo() {
+        window.history.back();
+    }
+
+    redo() {
+        window.history.forward();
     }
 
     render() {
 
-        const undoClass = "undoRedoButton " + (this.props.sidebarState && this.props.sidebarState.canUndo() ? "undoRedoClickable" : "undoRedoUnclickable");
-        const redoClass = "undoRedoButton " + (this.props.sidebarState && this.props.sidebarState.canRedo() ? "undoRedoClickable" : "undoRedoUnclickable");
+        const canUndo = true; //TODO set this to check the history api if there's a history state ahead of the one we're in with the same host as the page we're in.
+        const canRedo = true;
+
+        const undoClass = "undoRedoButton " + (this.props.historyState && canUndo ? "undoRedoClickable" : "undoRedoUnclickable");
+        const redoClass = "undoRedoButton " + (this.props.historyState && canRedo ? "undoRedoClickable" : "undoRedoUnclickable");
 
         const color = ColorUtilities.rgbToString(this.props.color[0], this.props.color[1], this.props.color[2]);
         const darkerColor = ColorUtilities.rgbToString(this.props.color[0] / 2, this.props.color[1] / 2, this.props.color[2] / 2);
@@ -36,30 +49,30 @@ class UndoRedoComponent extends React.Component {
 
         switch (this.state.undoState) {
             case 0:
-                undoStyle = this.props.sidebarState && this.props.sidebarState.canUndo() ? defaultStyle : {}
+                undoStyle = this.props.historyState && canUndo ? defaultStyle : {}
                 break;
             case 1:
-                undoStyle = this.props.sidebarState && this.props.sidebarState.canUndo() ? hoverStyle : {}
+                undoStyle = this.props.historyState && canUndo ? hoverStyle : {}
                 break;
             case 2:
-                undoStyle = this.props.sidebarState && this.props.sidebarState.canUndo() ? activeStyle : {}
+                undoStyle = this.props.historyState && canUndo ? activeStyle : {}
         }
 
         switch (this.state.redoState) {
             case 0:
-                redoStyle = this.props.sidebarState && this.props.sidebarState.canRedo() ? defaultStyle : {}
+                redoStyle = this.props.historyState && canRedo ? defaultStyle : {}
                 break;
             case 1:
-                redoStyle = this.props.sidebarState && this.props.sidebarState.canRedo() ? hoverStyle : {}
+                redoStyle = this.props.historyState && canRedo ? hoverStyle : {}
                 break;
             case 2:
-                redoStyle = this.props.sidebarState && this.props.sidebarState.canRedo() ? activeStyle : {}
+                redoStyle = this.props.historyState && canRedo ? activeStyle : {}
                 break;
         }
 
 
-        if (this.lastState !== this.props.sidebarState) {
-            this.lastState = this.props.sidebarState;
+        if (this.lastState !== this.props.historyState) {
+            this.lastState = this.props.historyState;
         }
 
 
@@ -71,7 +84,7 @@ class UndoRedoComponent extends React.Component {
                         onMouseLeave={() => {this.setState({undoState: 0})}}
                         onMouseDown={() => {this.setState({undoState: 2})}}
                         onMouseUp={() => {this.setState({undoState: 1})}}
-                        onClick={this.props.undoSidebarState}
+                        onClick={this.undo}
                 >
                     {"<"}
                 </button>
@@ -81,7 +94,7 @@ class UndoRedoComponent extends React.Component {
                         onMouseLeave={() => {this.setState({redoState: 0})}}
                         onMouseDown={() => {this.setState({redoState: 2})}}
                         onMouseUp={() => {this.setState({redoState: 1})}}
-                        onClick={this.props.redoSidebarState}
+                        onClick={this.redo}
                 >
                     {">"}
                 </button>
