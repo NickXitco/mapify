@@ -13,7 +13,7 @@ async function findArtist(query, isQueryID) {
             artist = null;
         }
     } else {
-        artist = await runSearch(query, Artist, 1);
+        artist = await runSearch(query, 1);
         if (artist.length === 1) {
             artist = artist[0];
         } else {

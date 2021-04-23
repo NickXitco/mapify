@@ -164,6 +164,8 @@ async function loadArtistFromSearch(p, query, isQueryID, quadHead, nodeLookup) {
     return node
 }
 
+
+
 function createNewNode(data, quadHead, nodeLookup) {
     let exists = true;
     if (!nodeLookup.hasOwnProperty(data.id)) {

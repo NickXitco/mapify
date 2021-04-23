@@ -12,7 +12,7 @@ class GenresList extends React.Component {
         const genres = this.props.genres.slice(0, SIDEBAR_GENRE_LIMIT).map(genre =>
             <li className={"sidebarListItem"}
                 key={genre.toString()}
-                onClick={() => {this.props.loadGenreFromSearch(genre.toString())}}
+                onClick={() => {this.props.loadGenreFromSearch(genre.toString(), null)}}
             >
                 {genre.toString()}
             </li>

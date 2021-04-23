@@ -18,6 +18,10 @@ class P5Wrapper extends React.Component {
             loadInitialQuads(this.loadingQuads, this.unprocessedResponses).then((qH) => {
                 this.props.setQuadHead(qH);
                 this.loading = false
+
+                if (window.location.hash) {
+                    this.props.processHash(window.location.hash.replace("#", ""));
+                }
             });
 
             p.angleMode(p.DEGREES);
@@ -118,7 +122,7 @@ class P5Wrapper extends React.Component {
                     p.vertex(point.x, -point.y);
                     //p.fill('white');
 
-                    if (this.props.fence[0] !== this.props.fence[this.props.fence.length - 1] || this.props.fence.length <= 2) {
+                    if (this.props.fencing) {
                         p.square(point.x, -point.y, Math.max(1, 2 / this.props.camera.getZoomFactor().x));
                     }
                 }
@@ -139,7 +143,7 @@ class P5Wrapper extends React.Component {
                     fence = fence.reverse();
                 }
 
-                if (fence[0] === fence[fence.length - 1] && fence.length > 2) {
+                if (!this.props.fencing && fence.length > 2) {
                     p.fill(0, 200);
                     p.noStroke();
                     p.beginShape();
@@ -235,7 +239,7 @@ class P5Wrapper extends React.Component {
                         this.props.clearFence();
                     }
 
-                    this.props.setFencing(true);
+                    this.props.setFencing(true, null);
 
                     let postPoint = MouseEvents.getVirtualMouseCoordinates(p, this.props.camera);
                     let firstPoint = {x: Infinity, y: Infinity}
@@ -253,10 +257,10 @@ class P5Wrapper extends React.Component {
                         if (this.props.fence.length > 2) {
                             let postPoint = this.props.fence[0];
                             this.props.addFencepost(postPoint);
-                            this.props.setFencing(false);
+                            this.props.setFencing(false, null);
                         } else {
                             this.props.clearFence();
-                            this.props.setFencing(false);
+                            this.props.setFencing(false, null);
                         }
                     } else {
                         this.props.addFencepost(postPoint);
@@ -303,13 +307,14 @@ class P5Wrapper extends React.Component {
                     } else {
                         const clickedArtist = handlePointClick(this.props.quadHead, this.props.hoveredArtist, this.props.clickedArtist, this.props.nodeLookup, p);
                         if (clickedArtist) {
-                            this.props.updateClickedArtist(clickedArtist)
+                            this.props.updateClickedArtist(clickedArtist);
+
                         } else {
                             this.props.handleEmptyClick();
                         }
 
                         this.props.clearFence();
-                        this.props.setFencing(false);
+                        this.props.setFencing(false, null);
                     }
                 }
 

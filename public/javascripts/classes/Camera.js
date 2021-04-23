@@ -127,6 +127,19 @@ class Camera {
         this.canvas.scale(zoomFactor.x, zoomFactor.y);
     }
 
+    bubbleMove(bubble) {
+        const camWidth = Math.min(5000, bubble.radius * 4);
+        this.setCameraMove(bubble.center.x, bubble.center.y, this.getZoomFromWidth(camWidth), 45);
+    }
+
+    artistMove(artist) {
+        this.setCameraMove(artist.x, artist.y, this.getZoomFromWidth(artist.size * 50), 45);
+    }
+
+    reset(frames) {
+        this.setCameraMove(0, 0, 1, frames);
+    }
+
     contains(q) {
         const l1 = {x: this.x - this.width / 2, y: this.y + this.height / 2};
         const r1 = {x: this.x + this.width / 2, y: this.y - this.height / 2};
