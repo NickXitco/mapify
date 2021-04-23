@@ -193,7 +193,9 @@ const Utils = {
     },
 
     nameShape: function (numPosts) {
-        switch (numPosts - 1) {
+        console.log("naming");
+        const sides = numPosts - 1;
+        switch (sides) {
             case 3: return "triangle"
             case 4: return "quadrilateral"
             case 5: return "pentagon"
@@ -201,25 +203,48 @@ const Utils = {
             case 7: return "heptagon"
             case 8: return "octagon"
             case 9: return "nonagon"
-            case 10: return "decagon"
-            case 11: return "hendecagon"
-            case 12: return "dodecagon"
-            case 13: return "tridecagon"
-            case 14: return "tetradecagon"
-            case 15: return "pentadecagon"
-            case 16: return "hexadecagon"
-            case 17: return "heptadecagon"
-            case 18: return "octadecagon"
-            case 19: return "enneadecagon"
-            case 20: return "icosagon"
-            case 21: return "icosihenagon"
-            case 22: return "icosidigon"
-            case 23: return "icositrigon"
-            case 24: return "icositetragon"
-            case 25: return "icosipentagon"
-            case 26: return "icosihexagon"
             case 69: return "niceagon"
-            default: return "region"
+            default:
+                let s = "";
+                if (sides > 99) return "region";
+                const hundreds = Math.floor(sides / 100);
+                const tens = Math.floor((sides - 100 * hundreds) / 10);
+                const ones = Math.floor(sides - 100 * hundreds - 10 * tens);
+                switch (hundreds) {
+                    case 1: s += "hecta"; break;
+                    case 2: s += "dihecta"; break;
+                    case 3: s += "trihecta"; break;
+                    case 4: s += "tetrahecta"; break;
+                    case 5: s += "pentahecta"; break;
+                    case 6: s += "hexahecta"; break;
+                    case 7: s += "heptahecta"; break;
+                    case 8: s += "octahecta"; break;
+                    case 9: s += "enneahecta"; break;
+                }
+                switch (tens) {
+                    case 1: s += "deca"; break;
+                    case 2: s += "icosa"; break;
+                    case 3: s += "triconta"; break;
+                    case 4: s += "tetraconta"; break;
+                    case 5: s += "pentaconta"; break;
+                    case 6: s += "hexaconta"; break;
+                    case 7: s += "heptaconta"; break;
+                    case 8: s += "octaconta"; break;
+                    case 9: s += "enneaconta"; break;
+                }
+                switch (ones) {
+                    case 1: s += "hena"; break;
+                    case 2: s += "di"; break;
+                    case 3: s += "tri"; break;
+                    case 4: s += "tetra"; break;
+                    case 5: s += "penta"; break;
+                    case 6: s += "hexa"; break;
+                    case 7: s += "hepta"; break;
+                    case 8: s += "octa"; break;
+                    case 9: s += "ennea"; break;
+                }
+                s += "gon";
+                return s
         }
     },
 

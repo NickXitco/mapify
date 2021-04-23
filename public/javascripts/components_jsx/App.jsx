@@ -166,6 +166,7 @@ class App extends React.Component {
                         artists.push(createNewNode(artist, this.state.quadHead, this.state.nodeLookup));
                     }
                     data.top100 = artists;
+                    data.name = Utils.nameShape(data.posts.length);
 
                     let fakeGenre;
                     if (artists.length === 0) {
