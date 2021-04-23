@@ -77,6 +77,7 @@ class RegionProfile extends React.Component {
 
     render() {
         const topGenre = this.props.fence.genres[0];
+        const topGenreName = topGenre ? topGenre.name : "empty";
 
         const nameStyle = {
             fontSize: this.state.fontSize
@@ -112,7 +113,7 @@ class RegionProfile extends React.Component {
                     <div className={"nameLarge"}>
                         <h1 className={"sidebarArtistNameLarge"} style={nameStyle}
                             ref={(nameElement) => {this.nameElement = nameElement}}>
-                            {`Custom ${topGenre.name} ${Utils.nameShape(this.props.fence.posts.length)}`}
+                            {`Custom ${topGenreName} ${Utils.nameShape(this.props.fence.posts.length)}`}
                         </h1>
                     </div>
                 </div>

@@ -151,7 +151,13 @@ class ReactSidebar extends React.Component {
     region(closed, hoverStyle, data) {
         const topArtist = data.top100[0];
         const topGenre = data.genres[0];
-        const genreColorant = new Colorant(topGenre.r, topGenre.g, topGenre.b, true);
+
+        let genreColorant;
+        if (!topGenre) {
+            genreColorant = new Colorant(0, 0, 0, true);
+        } else {
+            genreColorant = new Colorant(topGenre.r, topGenre.g, topGenre.b, true);
+        }
 
         const topGenreColor = topGenre ? genreColorant.colorToString() : 'white';
 

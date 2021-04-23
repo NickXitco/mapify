@@ -142,7 +142,6 @@ class App extends React.Component {
 
     setFencing(state, artistIDToBeLoaded) {
         if (state === false && this.state.fence.length > 0) {
-
             const latLongFence = [];
             for (const post of this.state.fence) {
                 const projection = Utils.gnomicProjection(post.x, post.y, 0, -0.5 * Math.PI, PLANE_RADIUS);
@@ -154,6 +153,12 @@ class App extends React.Component {
                 )
                 .then(response => response.json())
                 .then(data => {
+                    if (!data.posts) {
+                        console.error(data);
+                        this.setState({fencing: false});
+                        this.clearFence();
+                        return;
+                    }
                     data.posts = this.state.fence;
 
                     const artists = [];
@@ -162,7 +167,12 @@ class App extends React.Component {
                     }
                     data.top100 = artists;
 
-                    const fakeGenre = new Genre('r', new Set(artists), 0, 0, 0, 1);
+                    let fakeGenre;
+                    if (artists.length === 0) {
+                        fakeGenre = new Genre('r', new Set(data.posts), 0, 0, 0, 1);
+                    } else {
+                        fakeGenre = new Genre('r', new Set(artists), 0, 0, 0, 1);
+                    }
                     this.state.camera.bubbleMove(fakeGenre.bubble);
                     this.stateHandler(PageStates.UNKNOWN, PageActions.REGION, data);
 
@@ -701,7 +711,11 @@ class App extends React.Component {
             case PageStates.REGION:
                 fence = historyState.getData().posts;
                 const g = historyState.getData().genres[0];
-                colorant = new Colorant(g.r, g.g, g.b, true);
+                if (!g) {
+                    colorant = new Colorant(0, 0, 0, true);
+                } else {
+                    colorant = new Colorant(g.r, g.g, g.b, true);
+                }
                 break;
             default:
         }
