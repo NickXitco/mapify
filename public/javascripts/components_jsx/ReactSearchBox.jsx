@@ -22,6 +22,9 @@ class ReactSearchBox extends React.Component {
 
     processInput(e) {
         const currentInput = e.target.value.valueOf().toString();
+        if (currentInput.length === 0 && (this.state.artistSuggestions.length > 0 || this.state.genreSuggestions.length > 0)) {
+            this.resetState();
+        }
         this.setState({value: currentInput});
         const url = "artistSearch/" + encodeURIComponent(currentInput);
 
@@ -61,21 +64,19 @@ class ReactSearchBox extends React.Component {
         }
     }
 
+    componentDidUpdate(prevProps) {
+        if (this.props.clearSearch && !prevProps.clearSearch) {
+            this.resetState();
+            this.props.flipClearSearch();
+        }
+    }
+
     resetState() {
         this.setState({value: "", artistSuggestions: [], genreSuggestions: []});
         this.props.updateHoverFlag(false);
     }
 
     render() {
-        if (this.props.clearSearch) {
-            this.resetState();
-            this.props.flipClearSearch();
-        }
-
-        if (this.state.value.length === 0 && (this.state.artistSuggestions.length > 0 || this.state.genreSuggestions.length > 0)) {
-            this.resetState();
-        }
-
         let colorStyle = {};
         let borderClassName = "";
         if (this.props.colorant) {
