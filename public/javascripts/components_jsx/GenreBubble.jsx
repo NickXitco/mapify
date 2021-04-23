@@ -28,7 +28,7 @@ class GenreBubble extends React.Component {
     }
 
     clickBubble() {
-        this.props.loadGenreFromSearch(this.props.genre.name);
+        this.props.loadGenreFromSearch(this.props.genre.name, null);
     }
 
     componentDidMount() {

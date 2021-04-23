@@ -50,7 +50,7 @@ class ReactSearchBox extends React.Component {
     }
 
     processGenreSuggestionClick(genre) {
-        this.props.loadGenreFromSearch(genre.name);
+        this.props.loadGenreFromSearch(genre.name, null);
         this.resetState();
     }
 

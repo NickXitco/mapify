@@ -140,7 +140,7 @@ class App extends React.Component {
         }
     }
 
-    setFencing(state) {
+    setFencing(state, artistIDToBeLoaded) {
         if (state === false && this.state.fence.length > 0) {
 
             const latLongFence = [];
@@ -165,6 +165,10 @@ class App extends React.Component {
                     const fakeGenre = new Genre('r', new Set(artists), 0, 0, 0, 1);
                     this.state.camera.bubbleMove(fakeGenre.bubble);
                     this.stateHandler(PageStates.UNKNOWN, PageActions.REGION, data);
+
+                    if (artistIDToBeLoaded) {
+                        this.loadArtistFromSearch(artistIDToBeLoaded, true);
+                    }
                 });
         }
 
@@ -229,7 +233,7 @@ class App extends React.Component {
     }
     //</editor-fold>
 
-    loadGenreFromSearch(genreName) {
+    loadGenreFromSearch(genreName, artistIDToBeLoaded) {
         fetch(`genre/${genreName}`)
             .then(response => response.json())
             .then(data => {
@@ -254,6 +258,10 @@ class App extends React.Component {
 
                 this.state.camera.bubbleMove(newGenre.bubble);
                 this.stateHandler(PageStates.UNKNOWN, PageActions.GENRE, newGenre);
+
+                if (artistIDToBeLoaded) {
+                    this.loadArtistFromSearch(artistIDToBeLoaded, true);
+                }
             })
     }
 
@@ -266,24 +274,28 @@ class App extends React.Component {
         this.setState({spButtonExpanded: true});
     }
 
-    updatePath(path) {
-        const newPath = [];
-        for (const hop of path) {
-            const node = createNewNode(hop, this.state.quadHead, this.state.nodeLookup)
-            node.images = hop.images;
-            node.track = hop.track;
-            newPath.push(node);
-        }
+    updatePath(aID, bID) {
+        fetch(`path/${aID}/${bID}`)
+            .then(res => res.json())
+            .then(path => {
+                const newPath = [];
+                for (const hop of path) {
+                    const node = createNewNode(hop, this.state.quadHead, this.state.nodeLookup)
+                    node.images = hop.images;
+                    node.track = hop.track;
+                    newPath.push(node);
+                }
 
-        const newPathEdges = [];
+                const newPathEdges = [];
 
-        for (let i = 0; i < newPath.length - 1; i++) {
-            newPathEdges.push(makeEdge(newPath[i], newPath[i + 1]));
-        }
+                for (let i = 0; i < newPath.length - 1; i++) {
+                    newPathEdges.push(makeEdge(newPath[i], newPath[i + 1]));
+                }
 
-        const fakeGenre = new Genre('sp', new Set(newPath), 0, 0, 0, 1);
-        this.state.camera.bubbleMove(fakeGenre.bubble);
-        this.stateHandler(PageStates.SP_DIALOG, PageActions.DEFAULT, {nodes: newPath, edges: newPathEdges});
+                const fakeGenre = new Genre('sp', new Set(newPath), 0, 0, 0, 1);
+                this.state.camera.bubbleMove(fakeGenre.bubble);
+                this.stateHandler(PageStates.SP_DIALOG, PageActions.DEFAULT, {nodes: newPath, edges: newPathEdges});
+            });
     }
 
     flipClearSearch() {
@@ -540,46 +552,44 @@ class App extends React.Component {
         }
 
         // Scenario 3
-        // Wait for p5 to be defined:
-        // function waitForElement(){
-        //     if(typeof someVariable !== "undefined"){
-        //         //variable exists, do what you want
-        //     }
-        //     else{
-        //         setTimeout(waitForElement, 250);
-        //     }
-        // }
-        // const validatedHash = this.validateHash(hash);
-        //
-        // if (!validatedHash) {
-        //     this.stateHandler(PageStates.UNKNOWN, PageActions.MAP, null);
-        //     this.resetCamera();
-        //     return
-        // }
-        //
-        // switch (validatedHash.page) {
-        //     case PageStates.ARTIST:
-        //         this.loadArtistFromSearch(validatedHash.data.artist, true);
-        //         break;
-        //     case PageStates.GENRE:
-        //         this.loadGenreFromSearch(validatedHash.data.genre);
-        //         break;
-        //     case PageStates.REGION:
-        //         // TODO turn string into array
-        //         //  Loop through array
-        //         //  For every point, call this.addPost(point)
-        //         //  Then setFencing(false)
-        //         break;
-        //     case PageStates.PATH:
-        //         // fetch(`path/${start.id}/${end.id}`)
-        //         //     .then(res => res.json())
-        //         //     .then(path => this.updatePath(path));
-        //         break;
-        //     case PageStates.REGION_ARTIST:
-        //         // No idea, might have to change all of these to do separate loading
-        //     case PageStates.GENRE_ARTIST:
-        //         break;
-        // }
+        const validatedHash = this.validateHash(hash);
+
+        if (!validatedHash) {
+            this.stateHandler(PageStates.UNKNOWN, PageActions.MAP, null);
+            this.resetCamera();
+            return
+        }
+
+        let coordinates;
+        switch (validatedHash.page) {
+            case PageStates.ARTIST:
+                this.loadArtistFromSearch(validatedHash.data.artist, true);
+                break;
+            case PageStates.GENRE:
+                this.loadGenreFromSearch(validatedHash.data.genre, null);
+                break;
+            case PageStates.REGION:
+                coordinates = validatedHash.data.region.split(",");
+                for (let i = 0; i < coordinates.length - 1; i += 2) {
+                    this.addFencepost({x: Number(coordinates[i]), y: Number(coordinates[i + 1])});
+                }
+                this.setFencing(false, null);
+                break;
+            case PageStates.PATH:
+                const ids = validatedHash.data.path.split(",");
+                this.updatePath(ids[0], ids[1]);
+                break;
+            case PageStates.REGION_ARTIST:
+                coordinates = validatedHash.data.region.split(",");
+                for (let i = 0; i < coordinates.length - 1; i += 2) {
+                    this.addFencepost({x: Number(coordinates[i]), y: Number(coordinates[i + 1])});
+                }
+                this.setFencing(false, validatedHash.data.artist);
+                break;
+            case PageStates.GENRE_ARTIST:
+                this.loadGenreFromSearch(validatedHash.data.genre, validatedHash.data.artist);
+                break;
+        }
     }
 
     validateHash(hash) {
@@ -595,7 +605,7 @@ class App extends React.Component {
             if (i > 1 && param !== "a") return null;
             if (i === 0 && hashSplit.length > 2 && (param !== "g" && param !== "r")) return null;
 
-            const value = hashSplit[i + 1];
+            const value = hashSplit[i * 2 + 1];
             switch (param) {
                 case "a":
                     validatedHash.data.artist = value;
@@ -619,6 +629,10 @@ class App extends React.Component {
                     break;
                 case "r":
                     validatedHash.data.region = value;
+                    const split = value.split(",");
+                    for (const num of split) {
+                        if (isNaN(Number(num))) return null;
+                    }
                     if (validatedHash.numParams === 1) {
                         validatedHash.page = PageStates.REGION;
                     } else {
@@ -634,9 +648,6 @@ class App extends React.Component {
 
     componentDidMount() {
         window.addEventListener("hashchange", this.hashChangeHandler);
-        if (window.location.hash) {
-            this.processHash(window.location.hash.replace("#", ""));
-        }
     }
 
     render() {
@@ -783,6 +794,7 @@ class App extends React.Component {
                     setQuadHead={this.setQuadHead}
                     setCanvas={this.setCanvas}
                     setCamera={this.setCamera}
+                    processHash={this.processHash}
 
                     uiHover={this.state.uiHover}
                     updateHoverFlag={this.updateHoverFlag}

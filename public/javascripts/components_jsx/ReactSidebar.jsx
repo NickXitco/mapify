@@ -59,8 +59,8 @@ class ReactSidebar extends React.Component {
     }
 
     path(closed, hoverStyle, data) {
-        const start = data[0];
-        const end = data[data.length - 1];
+        const start = data.nodes[0];
+        const end = data.nodes[data.nodes.length - 1];
 
         let className = closed ? "sidebar sidebar-closed" : "sidebar sidebar-open"
 
@@ -70,7 +70,6 @@ class ReactSidebar extends React.Component {
                  onMouseEnter={this.setHoverFlag}
                  onMouseLeave={this.unsetHoverFlag}
                  onTransitionEnd={this.transitionEnd}
-                 ontransitionstart={this.transitionStart}
             >
 
                 {this.scrollbar(start.colorToString())}
@@ -82,14 +81,12 @@ class ReactSidebar extends React.Component {
 
                 {this.shadowBox(440, 200, "DOWN", "auto")}
 
-                <HopsList path={data}
+                <HopsList path={data.nodes}
                           loadArtistFromUI={this.props.loadArtistFromUI}
                           updateHoveredArtist={this.props.updateHoveredArtist}
                           header={`Shortest Path`}/>
 
                 <div className="flexSpacer"/>
-
-                {this.shadowBox(440, 90, "UP", 0)}
             </div>
         );
     }

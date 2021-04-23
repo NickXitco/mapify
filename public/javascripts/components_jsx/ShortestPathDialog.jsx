@@ -95,9 +95,7 @@ class ShortestPathDialog extends React.Component {
         const start = this.state.startArtist ? this.state.startArtist : this.state.startSuggestions.length > 0 ? this.state.startSuggestions[0] : null;
         const end = this.state.endArtist ? this.state.endArtist : this.state.endSuggestions.length > 0 ? this.state.endSuggestions[0] : null;
         if (start && end) {
-            fetch(`path/${start.id}/${end.id}`)
-                .then(res => res.json())
-                .then(path => this.props.updatePath(path));
+            this.props.updatePath(start.id, end.id);
         }
     }
 
