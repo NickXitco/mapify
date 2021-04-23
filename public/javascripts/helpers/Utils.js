@@ -229,7 +229,48 @@ const Utils = {
             postCoordinates.push(post.x);
             postCoordinates.push(post.y);
         }
-        return postCoordinates.join(",");
-    }
 
+        const coordinateString = postCoordinates.join(",");
+        const THRESHOLD = 1000;
+        return coordinateString.length > 1000 ?
+               coordinateString.substring(0, THRESHOLD - 3) + "..." :
+               coordinateString.substring(0, THRESHOLD);
+    },
+
+    /**
+     * https://stackoverflow.com/questions/217578/how-can-i-determine-whether-a-2d-point-is-within-a-polygon/17490923#17490923
+     * @param point
+     * @param polygon[]
+     */
+    pointInPolygon: function (point, polygon) {
+        let isInside = false;
+        let minX = polygon[0].x, maxX = polygon[0].x;
+        let minY = polygon[0].y, maxY = polygon[0].y;
+        for (let n = 1; n < polygon.length; n++) {
+            const q = polygon[n];
+            minX = Math.min(q.x, minX);
+            maxX = Math.max(q.x, maxX);
+            minY = Math.min(q.y, minY);
+            maxY = Math.max(q.y, maxY);
+        }
+
+        if (point.x < minX || point.x > maxX || point.y < minY || point.y > maxY) {
+            return false;
+        }
+
+        let i = 0, j = polygon.length - 1;
+        for (i, j; i < polygon.length; j = i++) {
+            if ( (polygon[i].y > point.y) !== (polygon[j].y > point.y) &&
+                point.x < (polygon[j].x - polygon[i].x) * (point.y - polygon[i].y) / (polygon[j].y - polygon[i].y) + polygon[i].x ) {
+                isInside = !isInside;
+            }
+        }
+
+        return isInside;
+    },
+
+    fenceComplete: function (fence) {
+        const end = fence.length - 1;
+        return fence.length > 2 && fence[0].x === fence[end].x && fence[0].y === fence[end].y;
+    }
 }

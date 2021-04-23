@@ -153,7 +153,7 @@ class App extends React.Component {
                 )
                 .then(response => response.json())
                 .then(data => {
-                    if (!data.posts) {
+                    if (typeof data === "string") {
                         console.error(data);
                         this.setState({fencing: false});
                         this.clearFence();
@@ -187,6 +187,8 @@ class App extends React.Component {
 
     addFencepost(post) {
         const newFence = [...this.state.fence]
+        post.x = Math.round(post.x * 10) / 10;
+        post.y = Math.round(post.y * 10) / 10;
         newFence.push(post);
         this.setState({fence: newFence});
     }
@@ -391,7 +393,9 @@ class App extends React.Component {
     }
 
     setCursor(cursor) {
-        this.setState({cursor: cursor})
+        if (cursor !== this.state.cursor) {
+            this.setState({cursor: cursor})
+        }
     }
 
     keyDownEvents(e) {

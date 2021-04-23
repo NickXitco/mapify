@@ -3,6 +3,7 @@ class P5Wrapper extends React.Component {
         super(props);
         this.myRef = React.createRef()
         this.loading = true;
+        this.dragDrawing = false;
     }
 
     Sketch = (p) => {
@@ -55,7 +56,10 @@ class P5Wrapper extends React.Component {
             loadUnloaded(this.unprocessedResponses, this.unloadedPQ, this.loadingQuads, this.unloadedQuads, this.props.camera);
 
             if (!this.props.uiHover) {
-                const hA = getHoveredArtist(p, this.props.camera, this.props.clickedArtist, this.props.quadHead, this.props.genre, this.props.path);
+                const hA = getHoveredArtist(
+                    p, this.props.camera,
+                    this.props.clickedArtist, this.props.quadHead,
+                    this.props.genre, this.props.path, this.props.fence);
                 if (hA) {
                     this.props.setCursor('pointer');
                 } else {
@@ -102,10 +106,12 @@ class P5Wrapper extends React.Component {
                 const postFirstDist = Utils.dist(postPoint.x, postPoint.y, firstPoint.x, firstPoint.y);
                 const validDist = Math.max(FENCE_CLICK_MIN_VIRTUAL_RADIUS * 2, (FENCE_CLICK_RADIUS * 2) / this.props.camera.getZoomFactor().x);
 
-                if (postFirstDist < validDist / 2 && this.props.fence.length > 2) {
-                    this.props.setCursor('pointer');
-                } else {
-                    this.props.setCursor('auto');
+                if (this.props.fencing) {
+                    if (postFirstDist < validDist / 2 && this.props.fence.length > 2) {
+                        this.props.setCursor('pointer');
+                    } else {
+                        this.props.setCursor('auto');
+                    }
                 }
 
                 p.push();
@@ -122,7 +128,7 @@ class P5Wrapper extends React.Component {
                     p.vertex(point.x, -point.y);
                     //p.fill('white');
 
-                    if (this.props.fencing) {
+                    if (this.props.fencing && !this.dragDrawing) {
                         p.square(point.x, -point.y, Math.max(1, 2 / this.props.camera.getZoomFactor().x));
                     }
                 }
@@ -234,53 +240,70 @@ class P5Wrapper extends React.Component {
 
         p.mousePressed = (e) => {
             if (!this.props.uiHover) {
-                if (e.ctrlKey) { // Fence Click
-                    if (!this.props.fencing) {
-                        this.props.clearFence();
-                    }
+                MouseEvents.dragging = true;
+                MouseEvents.drag = {x: p.mouseX, y: p.mouseY};
+                MouseEvents.start = {x: p.mouseX, y: p.mouseY};
+            }
+        }
 
-                    this.props.setFencing(true, null);
+        p.addFencepost = (dragging) => {
+            this.props.setFencing(true, null);
 
-                    let postPoint = MouseEvents.getVirtualMouseCoordinates(p, this.props.camera);
-                    let firstPoint = {x: Infinity, y: Infinity}
+            let postPoint = MouseEvents.getVirtualMouseCoordinates(p, this.props.camera);
+            let firstPoint = {x: Infinity, y: Infinity}
 
-                    if (this.props.fence.length > 0) {
-                        firstPoint = this.props.fence[0];
-                    }
+            if (this.props.fence.length > 0) {
+                firstPoint = this.props.fence[0];
+            }
 
-                    //TODO click on most recent point to delete?
+            const postFirstDist = Utils.dist(postPoint.x, postPoint.y, firstPoint.x, firstPoint.y);
+            const validDist = Math.max(FENCE_CLICK_MIN_VIRTUAL_RADIUS * 2, (FENCE_CLICK_RADIUS * 2) / this.props.camera.getZoomFactor().x);
 
-                    const postFirstDist = Utils.dist(postPoint.x, postPoint.y, firstPoint.x, firstPoint.y);
-                    const validDist = Math.max(FENCE_CLICK_MIN_VIRTUAL_RADIUS * 2, (FENCE_CLICK_RADIUS * 2) / this.props.camera.getZoomFactor().x);
+            if (dragging) {
+                //Play by different rules
+                if (this.props.fence.length === 0) {
+                    this.props.addFencepost(postPoint);
+                    return;
+                }
 
-                    if (postFirstDist < validDist / 2) {
-                        if (this.props.fence.length > 2) {
-                            let postPoint = this.props.fence[0];
-                            this.props.addFencepost(postPoint);
-                            this.props.setFencing(false, null);
-                        } else {
-                            this.props.clearFence();
-                            this.props.setFencing(false, null);
-                        }
-                    } else {
+                const lastPoint = this.props.fence[this.props.fence.length - 1];
+                const dist = Utils.dist(postPoint.x, postPoint.y, lastPoint.x, lastPoint.y);
+                const DRAG_THRESHOLD = 0.25;
+                if (dist > DRAG_THRESHOLD) {
+                    this.props.addFencepost(postPoint);
+                }
+            } else {
+                if (postFirstDist < validDist / 2) {
+                    if (this.props.fence.length > 2) {
+                        let postPoint = this.props.fence[0];
                         this.props.addFencepost(postPoint);
+                        this.props.setFencing(false, null);
+                    } else {
+                        this.props.clearFence();
+                        this.props.setFencing(false, null);
                     }
-
-                } else { // Start Drag
-                    MouseEvents.dragging = true;
-                    MouseEvents.drag = {x: p.mouseX, y: p.mouseY};
-                    MouseEvents.start = {x: p.mouseX, y: p.mouseY};
+                } else {
+                    this.props.addFencepost(postPoint);
                 }
             }
         }
 
-        p.mouseDragged = () => {
+        p.mouseDragged = (e) => {
             if (MouseEvents.dragging) {
                 const newDrag = MouseEvents.getVirtualMouseCoordinates(p, this.props.camera);
                 const oldDrag = this.props.camera.screen2virtual(MouseEvents.drag);
-                this.props.camera.x += (oldDrag.x - newDrag.x);
-                this.props.camera.y += (oldDrag.y - newDrag.y);
                 MouseEvents.drag = {x: p.mouseX, y: p.mouseY};
+                if (e.ctrlKey) {
+                    const dragDist = Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y);
+                    const smallDrag = dragDist < 5;
+                    if (!smallDrag) {
+                        p.addFencepost(true);
+                        this.dragDrawing = true;
+                    }
+                } else {
+                    this.props.camera.x += (oldDrag.x - newDrag.x);
+                    this.props.camera.y += (oldDrag.y - newDrag.y);
+                }
             }
         }
 
@@ -299,7 +322,9 @@ class P5Wrapper extends React.Component {
                     const isDoubleClick = MouseEvents.isDoubleClick(clickTime);
                     MouseEvents.lastClickTime = clickTime;
 
-                    if (isDoubleClick) {
+                    if (e.ctrlKey) { // Fence Click
+                        p.addFencepost();
+                    } else if (isDoubleClick) {
                         MouseEvents.zooming = true;
                         MouseEvents.scrollStep = 0;
                         MouseEvents.zoomCoordinates = {x: newDrag.x, y: newDrag.y};
@@ -318,10 +343,17 @@ class P5Wrapper extends React.Component {
                     }
                 }
 
+                if (e.ctrlKey && this.dragDrawing && this.props.fence.length > 2) {
+                    const postPoint = this.props.fence[0];
+                    this.props.addFencepost(postPoint);
+                    this.props.setFencing(false, null);
+                }
+
                 MouseEvents.driftVec = p.createVector(p.winMouseX - p.pwinMouseX, p.winMouseY - p.pwinMouseY);
                 MouseEvents.drifting = true;
                 MouseEvents.dragging = false;
             }
+            this.dragDrawing = false;
         }
 
         p.keyPressed = (e) => {
