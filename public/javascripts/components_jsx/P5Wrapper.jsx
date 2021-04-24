@@ -243,6 +243,7 @@ class P5Wrapper extends React.Component {
                 MouseEvents.dragging = true;
                 MouseEvents.drag = {x: p.mouseX, y: p.mouseY};
                 MouseEvents.start = {x: p.mouseX, y: p.mouseY};
+                MouseEvents.startTime = new Date().getTime();
             }
         }
 
@@ -293,9 +294,10 @@ class P5Wrapper extends React.Component {
                 const newDrag = MouseEvents.getVirtualMouseCoordinates(p, this.props.camera);
                 const oldDrag = this.props.camera.screen2virtual(MouseEvents.drag);
                 MouseEvents.drag = {x: p.mouseX, y: p.mouseY};
+                const currentTime = new Date().getTime();
                 if (e.ctrlKey) {
                     const dragDist = Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y);
-                    const smallDrag = dragDist < 5;
+                    const smallDrag = dragDist < 10;
                     if (!smallDrag) {
                         p.addFencepost(true);
                         this.dragDrawing = true;
@@ -304,6 +306,18 @@ class P5Wrapper extends React.Component {
                     this.props.camera.x += (oldDrag.x - newDrag.x);
                     this.props.camera.y += (oldDrag.y - newDrag.y);
                 }
+
+                if (!e.ctrlKey && this.dragDrawing) {
+                    this.dragDrawing = false;
+                    if (this.props.fence.length > 2) {
+                        const postPoint = this.props.fence[0];
+                        this.props.addFencepost(postPoint);
+                        this.props.setFencing(false, null);
+                    } else {
+                        this.props.clearFence();
+                        this.props.setFencing(false, null);
+                    }
+                }
             }
         }
 
@@ -311,8 +325,11 @@ class P5Wrapper extends React.Component {
             if (MouseEvents.dragging) {
                 const newDrag = MouseEvents.getVirtualMouseCoordinates(p, this.props.camera);
                 const oldDrag = this.props.camera.screen2virtual(MouseEvents.drag);
-                this.props.camera.x += (oldDrag.x - newDrag.x);
-                this.props.camera.y += (oldDrag.y - newDrag.y);
+
+                if (!e.ctrlKey) {
+                    this.props.camera.x += (oldDrag.x - newDrag.x);
+                    this.props.camera.y += (oldDrag.y - newDrag.y);
+                }
 
                 const dragDist = Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y);
                 const smallDrag = dragDist < 5;
@@ -349,8 +366,10 @@ class P5Wrapper extends React.Component {
                     this.props.setFencing(false, null);
                 }
 
-                MouseEvents.driftVec = p.createVector(p.winMouseX - p.pwinMouseX, p.winMouseY - p.pwinMouseY);
-                MouseEvents.drifting = true;
+                if (!e.ctrlKey) {
+                    MouseEvents.driftVec = p.createVector(p.winMouseX - p.pwinMouseX, p.winMouseY - p.pwinMouseY);
+                    MouseEvents.drifting = true;
+                }
                 MouseEvents.dragging = false;
             }
             this.dragDrawing = false;
