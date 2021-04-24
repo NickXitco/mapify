@@ -25,6 +25,8 @@ class P5Wrapper extends React.Component {
                 }
             });
 
+            //this.dustBunnies = DustBunny.createDustBunnies(10000, 5000, 500);
+
             p.angleMode(p.DEGREES);
             p.rectMode(p.RADIUS);
         };
@@ -52,6 +54,9 @@ class P5Wrapper extends React.Component {
             Debug.createTimingEvent("Camera Moves");
 
             drawOnscreenQuads(p, this.props.quadHead, this.props.camera, this.props.hoveredArtist, this.loadingQuads, this.unloadedQuads, this.unloadedPQ);
+
+            // DustBunny.drawBunnies(this.dustBunnies, p, this.props.camera);
+            // Debug.createTimingEvent("Dust Bunnies");
 
             loadUnloaded(this.unprocessedResponses, this.unloadedPQ, this.loadingQuads, this.unloadedQuads, this.props.camera);
 
@@ -86,7 +91,6 @@ class P5Wrapper extends React.Component {
             if (this.props.genre) {
                 this.darken.genre = darkenScene(p, this.darken.genre, this.props.camera);
             }
-
 
             if (this.props.genre) {
                 this.props.genre.drawGenreFence(p);
@@ -202,7 +206,6 @@ class P5Wrapper extends React.Component {
             Debug.createTimingEvent("Quad Processing");
 
             p.pop();
-
             Debug.createTimingEvent("Info Box");
             if (this.props.showDebug) {
                 Debug.debugAll(
