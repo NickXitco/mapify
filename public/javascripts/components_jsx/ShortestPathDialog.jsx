@@ -41,8 +41,14 @@ class ShortestPathDialog extends React.Component {
 
         if (start) {
             this.setState({startValue: currentInput, startArtist: null});
+            if (currentInput.length === 0 && this.state.startSuggestions.length > 0) {
+                this.resetState(true);
+            }
         } else {
             this.setState({endValue: currentInput, endArtist: null});
+            if (currentInput.length === 0 && this.state.endSuggestions.length > 0) {
+                this.resetState(false);
+            }
         }
 
         const url = "artistSearch/" + encodeURIComponent(currentInput);
@@ -125,24 +131,17 @@ class ShortestPathDialog extends React.Component {
         }
     }
 
+    componentDidUpdate(prevProps) {
+        if (this.state.fullyExpanded && !this.props.expanded) {
+            this.setState({fullyExpanded: false});
+        }
+    }
+
     render() {
-        if (this.state.startValue.length === 0 && this.state.startSuggestions.length > 0) {
-            this.resetState(true);
-        }
-
-        if (this.state.endValue.length === 0 && this.state.endSuggestions.length > 0) {
-            this.resetState(false);
-        }
-
-
         let colorStyle = {};
         let borderClassName = "";
         let expandClass = this.props.expanded ? "uiButtonOuterExpand" : this.state.hoverState === 1 ? "uiButtonOuterHover" : "";
         let fullyExpanded = this.state.fullyExpanded && this.props.expanded ? "uiButtonOuterExpanded" : "";
-
-        if (this.state.fullyExpanded && !this.props.expanded) {
-            this.setState({fullyExpanded: false});
-        }
 
         const color = this.props.colorant ? this.props.colorant.colorToString() : 'white';
 
@@ -225,6 +224,8 @@ class ShortestPathDialog extends React.Component {
                          setTimeout(this.expandFully, 400);
                          this.setState({hoverState: 0});
                      }}
+
+                     onTransitionEnd={this.transitionEnd}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" className="uiButton">
                         <path d="M16 3.5L3.5 16 16 28.5 28.5 16zm2.25 15.3v-2.32H14.5a.41.41 0 00-.42.41v5a.41.41 0 01-.41.42h-2.92v-8.75a.42.42 0 01.42-.42h6.66a.41.41 0 00.42-.41v-1.92a.42.42 0 01.71-.29l4.29 4.29L19 19.1a.42.42 0 01-.75-.3z"
