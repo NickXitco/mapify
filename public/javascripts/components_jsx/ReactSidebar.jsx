@@ -151,7 +151,13 @@ class ReactSidebar extends React.Component {
     region(closed, hoverStyle, data) {
         const topArtist = data.top100[0];
         const topGenre = data.genres[0];
-        const genreColorant = new Colorant(topGenre.r, topGenre.g, topGenre.b, true);
+
+        let genreColorant;
+        if (!topGenre) {
+            genreColorant = new Colorant(0, 0, 0, true);
+        } else {
+            genreColorant = new Colorant(topGenre.r, topGenre.g, topGenre.b, true);
+        }
 
         const topGenreColor = topGenre ? genreColorant.colorToString() : 'white';
 
@@ -172,19 +178,20 @@ class ReactSidebar extends React.Component {
                 <RegionProfile color={topGenreColor} fence={data} fontDecrement={3}/>
                 <FollowersStats number={data.numArtists} text={"Artist"} size={"Large"}/>
                 <FollowersStats number={data.numGenres} text={"Genre"} size={"Large"}/>
+                <div style={{position: "static", overflow: "auto", display: "flex", flexDirection: "column"}}>
+                    <RegionList fence={data}
+                                loadGenreFromSearch={this.props.loadGenreFromSearch}
+                                setActiveGenreAppearance={this.props.setActiveGenreAppearance}
+                                clearActiveGenreAppearance={this.props.clearActiveGenreAppearance}
+                    />
 
-                <RegionList fence={data}
-                            loadGenreFromSearch={this.props.loadGenreFromSearch}
-                            setActiveGenreAppearance={this.props.setActiveGenreAppearance}
-                            clearActiveGenreAppearance={this.props.clearActiveGenreAppearance}
-                />
-
-                <ArtistsList artists={data.top100}
-                             loadArtistFromUI={this.props.loadArtistFromUI}
-                             updateHoveredArtist={this.props.updateHoveredArtist}
-                             header={"Top 100 Artists"}
-                             color={topGenreColor}
-                />
+                    <ArtistsList artists={data.top100}
+                                 loadArtistFromUI={this.props.loadArtistFromUI}
+                                 updateHoveredArtist={this.props.updateHoveredArtist}
+                                 header={"Top 100 Artists"}
+                                 color={topGenreColor}
+                    />
+                </div>
             </div>
         );
     }

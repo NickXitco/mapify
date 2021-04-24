@@ -24,7 +24,7 @@ class ArtistsList extends React.Component {
     }
 
     render() {
-        if (this.props.artists.size === 0) {
+        if (this.props.artists.size === 0 || this.props.artists.length === 0) {
             return null;
         }
 
@@ -66,7 +66,7 @@ class ArtistsList extends React.Component {
         );
 
         return (
-            <div className={"relatedArtistsSection"}>
+            <div className={"relatedArtistsSection"} style={{flex: 1}}>
                 <div className={"artistListHeader"}>
                     <h2>{this.props.header}</h2>
                     <MultiwaySwitch

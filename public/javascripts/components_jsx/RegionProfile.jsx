@@ -77,6 +77,7 @@ class RegionProfile extends React.Component {
 
     render() {
         const topGenre = this.props.fence.genres[0];
+        const topGenreName = topGenre ? topGenre.name : "empty";
 
         const nameStyle = {
             fontSize: this.state.fontSize
@@ -89,6 +90,8 @@ class RegionProfile extends React.Component {
             polygonString += `${Utils.map(p.x, bBox.w, bBox.e, 10, 103) + 23} `
             polygonString += `${Utils.map(p.y, bBox.s, bBox.n, 103, 10) + 23} `
         }
+
+        const shapeName = this.props.fence.name;
 
         return (
                 <div className={"nameAndPictureLarge"}>
@@ -112,7 +115,7 @@ class RegionProfile extends React.Component {
                     <div className={"nameLarge"}>
                         <h1 className={"sidebarArtistNameLarge"} style={nameStyle}
                             ref={(nameElement) => {this.nameElement = nameElement}}>
-                            {`Custom ${topGenre.name} ${Utils.nameShape(this.props.fence.posts.length)}`}
+                            {`Custom ${topGenreName} ${shapeName}`}
                         </h1>
                     </div>
                 </div>

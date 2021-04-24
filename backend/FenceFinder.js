@@ -3,6 +3,12 @@ const spotifyApiHolder = require('./SpotifyAPI');
 
 async function getFence(fence) {
     const artists = await getArtistsInFence(fence);
+
+    if (!artists) {
+        //Error in fence
+        return JSON.stringify("Error in loading fence");
+    }
+
     const genreInfo = await getGenres();
     const genres = {};
 
@@ -93,7 +99,8 @@ function getArtistsInFence(fence) {
     return db.query(
         query
     ).then(
-        cursor => cursor.all()
+        cursor => {return cursor.all();},
+        reason => {return null;}
     );
 }
 

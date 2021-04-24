@@ -193,7 +193,8 @@ const Utils = {
     },
 
     nameShape: function (numPosts) {
-        switch (numPosts - 1) {
+        const sides = numPosts - 1;
+        switch (sides) {
             case 3: return "triangle"
             case 4: return "quadrilateral"
             case 5: return "pentagon"
@@ -201,25 +202,48 @@ const Utils = {
             case 7: return "heptagon"
             case 8: return "octagon"
             case 9: return "nonagon"
-            case 10: return "decagon"
-            case 11: return "hendecagon"
-            case 12: return "dodecagon"
-            case 13: return "tridecagon"
-            case 14: return "tetradecagon"
-            case 15: return "pentadecagon"
-            case 16: return "hexadecagon"
-            case 17: return "heptadecagon"
-            case 18: return "octadecagon"
-            case 19: return "enneadecagon"
-            case 20: return "icosagon"
-            case 21: return "icosihenagon"
-            case 22: return "icosidigon"
-            case 23: return "icositrigon"
-            case 24: return "icositetragon"
-            case 25: return "icosipentagon"
-            case 26: return "icosihexagon"
             case 69: return "niceagon"
-            default: return "region"
+            default:
+                let s = "";
+                if (sides > 99) return "region";
+                const hundreds = Math.floor(sides / 100);
+                const tens = Math.floor((sides - 100 * hundreds) / 10);
+                const ones = Math.floor(sides - 100 * hundreds - 10 * tens);
+                switch (hundreds) {
+                    case 1: s += "hecta"; break;
+                    case 2: s += "dihecta"; break;
+                    case 3: s += "trihecta"; break;
+                    case 4: s += "tetrahecta"; break;
+                    case 5: s += "pentahecta"; break;
+                    case 6: s += "hexahecta"; break;
+                    case 7: s += "heptahecta"; break;
+                    case 8: s += "octahecta"; break;
+                    case 9: s += "enneahecta"; break;
+                }
+                switch (tens) {
+                    case 1: s += "deca"; break;
+                    case 2: s += "icosa"; break;
+                    case 3: s += "triconta"; break;
+                    case 4: s += "tetraconta"; break;
+                    case 5: s += "pentaconta"; break;
+                    case 6: s += "hexaconta"; break;
+                    case 7: s += "heptaconta"; break;
+                    case 8: s += "octaconta"; break;
+                    case 9: s += "enneaconta"; break;
+                }
+                switch (ones) {
+                    case 1: s += "hena"; break;
+                    case 2: s += "di"; break;
+                    case 3: s += "tri"; break;
+                    case 4: s += "tetra"; break;
+                    case 5: s += "penta"; break;
+                    case 6: s += "hexa"; break;
+                    case 7: s += "hepta"; break;
+                    case 8: s += "octa"; break;
+                    case 9: s += "ennea"; break;
+                }
+                s += "gon";
+                return s
         }
     },
 
@@ -229,7 +253,48 @@ const Utils = {
             postCoordinates.push(post.x);
             postCoordinates.push(post.y);
         }
-        return postCoordinates.join(",");
-    }
 
+        const coordinateString = postCoordinates.join(",");
+        const THRESHOLD = 1000;
+        return coordinateString.length > 1000 ?
+               coordinateString.substring(0, THRESHOLD - 3) + "..." :
+               coordinateString.substring(0, THRESHOLD);
+    },
+
+    /**
+     * https://stackoverflow.com/questions/217578/how-can-i-determine-whether-a-2d-point-is-within-a-polygon/17490923#17490923
+     * @param point
+     * @param polygon[]
+     */
+    pointInPolygon: function (point, polygon) {
+        let isInside = false;
+        let minX = polygon[0].x, maxX = polygon[0].x;
+        let minY = polygon[0].y, maxY = polygon[0].y;
+        for (let n = 1; n < polygon.length; n++) {
+            const q = polygon[n];
+            minX = Math.min(q.x, minX);
+            maxX = Math.max(q.x, maxX);
+            minY = Math.min(q.y, minY);
+            maxY = Math.max(q.y, maxY);
+        }
+
+        if (point.x < minX || point.x > maxX || point.y < minY || point.y > maxY) {
+            return false;
+        }
+
+        let i = 0, j = polygon.length - 1;
+        for (i, j; i < polygon.length; j = i++) {
+            if ( (polygon[i].y > point.y) !== (polygon[j].y > point.y) &&
+                point.x < (polygon[j].x - polygon[i].x) * (point.y - polygon[i].y) / (polygon[j].y - polygon[i].y) + polygon[i].x ) {
+                isInside = !isInside;
+            }
+        }
+
+        return isInside;
+    },
+
+    fenceComplete: function (fence) {
+        const end = fence.length - 1;
+        return fence.length > 2 && fence[0].x === fence[end].x && fence[0].y === fence[end].y;
+    }
 }

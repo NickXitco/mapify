@@ -142,7 +142,6 @@ class App extends React.Component {
 
     setFencing(state, artistIDToBeLoaded) {
         if (state === false && this.state.fence.length > 0) {
-
             const latLongFence = [];
             for (const post of this.state.fence) {
                 const projection = Utils.gnomicProjection(post.x, post.y, 0, -0.5 * Math.PI, PLANE_RADIUS);
@@ -154,6 +153,12 @@ class App extends React.Component {
                 )
                 .then(response => response.json())
                 .then(data => {
+                    if (typeof data === "string") {
+                        console.error(data);
+                        this.setState({fencing: false});
+                        this.clearFence();
+                        return;
+                    }
                     data.posts = this.state.fence;
 
                     const artists = [];
@@ -161,8 +166,14 @@ class App extends React.Component {
                         artists.push(createNewNode(artist, this.state.quadHead, this.state.nodeLookup));
                     }
                     data.top100 = artists;
+                    data.name = Utils.nameShape(data.posts.length);
 
-                    const fakeGenre = new Genre('r', new Set(artists), 0, 0, 0, 1);
+                    let fakeGenre;
+                    if (artists.length === 0) {
+                        fakeGenre = new Genre('r', new Set(data.posts), 0, 0, 0, 1);
+                    } else {
+                        fakeGenre = new Genre('r', new Set(artists), 0, 0, 0, 1);
+                    }
                     this.state.camera.bubbleMove(fakeGenre.bubble);
                     this.stateHandler(PageStates.UNKNOWN, PageActions.REGION, data);
 
@@ -177,6 +188,8 @@ class App extends React.Component {
 
     addFencepost(post) {
         const newFence = [...this.state.fence]
+        post.x = Math.round(post.x * 10) / 10;
+        post.y = Math.round(post.y * 10) / 10;
         newFence.push(post);
         this.setState({fence: newFence});
     }
@@ -381,7 +394,9 @@ class App extends React.Component {
     }
 
     setCursor(cursor) {
-        this.setState({cursor: cursor})
+        if (cursor !== this.state.cursor) {
+            this.setState({cursor: cursor})
+        }
     }
 
     keyDownEvents(e) {
@@ -701,7 +716,11 @@ class App extends React.Component {
             case PageStates.REGION:
                 fence = historyState.getData().posts;
                 const g = historyState.getData().genres[0];
-                colorant = new Colorant(g.r, g.g, g.b, true);
+                if (!g) {
+                    colorant = new Colorant(0, 0, 0, true);
+                } else {
+                    colorant = new Colorant(g.r, g.g, g.b, true);
+                }
                 break;
             default:
         }
