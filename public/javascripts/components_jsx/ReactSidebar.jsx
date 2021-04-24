@@ -258,7 +258,7 @@ class ReactSidebar extends React.Component {
             return this.path(closed, hoverStyle, data);
         }
 
-        if (page === PageStates.ARTIST ) {
+        if (page === PageStates.ARTIST) {
             return this.artist(closed, hoverStyle, data);
         }
 
