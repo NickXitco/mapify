@@ -204,15 +204,17 @@ class P5Wrapper extends React.Component {
             p.pop();
 
             Debug.createTimingEvent("Info Box");
-            Debug.debugAll(
-                p,
-                this.props.camera,
-                this.props.hoveredArtist,
-                this.unloadedQuads,
-                this.loadingQuads,
-                this.unprocessedResponses,
-                Object.keys(this.props.nodeLookup).length,
-            );
+            if (this.props.showDebug) {
+                Debug.debugAll(
+                    p,
+                    this.props.camera,
+                    this.props.hoveredArtist,
+                    this.unloadedQuads,
+                    this.loadingQuads,
+                    this.unprocessedResponses,
+                    Object.keys(this.props.nodeLookup).length,
+                );
+            }
         };
 
         p.mouseWheel = (e) => {

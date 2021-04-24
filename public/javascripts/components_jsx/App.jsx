@@ -29,12 +29,15 @@ class App extends React.Component {
             clearSearch: false,
 
             spButtonExpanded: false,
+            settingsButtonExpanded: false,
             randomButtonExpanded: false,
 
             activePath: {
                 nodes: [],
                 edges: []
             },
+
+            showDebug: false,
 
             showChangelog: !this.checkVersion("0.6.0"),
             version: "0.6.0",
@@ -74,6 +77,7 @@ class App extends React.Component {
 
         this.handleEmptyClick = this.handleEmptyClick.bind(this);
         this.expandSP = this.expandSP.bind(this);
+        this.expandSettings = this.expandSettings.bind(this);
         this.updatePath = this.updatePath.bind(this);
 
         this.flipClearSearch = this.flipClearSearch.bind(this);
@@ -101,6 +105,8 @@ class App extends React.Component {
         this.clearActiveGenreAppearance = this.clearActiveGenreAppearance.bind(this);
 
         this.setCursor = this.setCursor.bind(this);
+
+        this.flipDebug = this.flipDebug.bind(this);
 
         this.keyDownEvents = this.keyDownEvents.bind(this);
 
@@ -280,11 +286,15 @@ class App extends React.Component {
 
     handleEmptyClick() {
         this.stateHandler(PageStates.UNKNOWN, PageActions.MAP, null);
-        this.setState({clearSearch: true, spButtonExpanded: false});
+        this.setState({clearSearch: true, spButtonExpanded: false, settingsButtonExpanded: false});
     }
 
     expandSP() {
         this.setState({spButtonExpanded: true});
+    }
+
+    expandSettings() {
+        this.setState({settingsButtonExpanded: true});
     }
 
     updatePath(aID, bID) {
@@ -397,6 +407,11 @@ class App extends React.Component {
         if (cursor !== this.state.cursor) {
             this.setState({cursor: cursor})
         }
+    }
+
+    flipDebug(state) {
+        console.log(state);
+        this.setState({showDebug: state});
     }
 
     keyDownEvents(e) {
@@ -733,6 +748,14 @@ class App extends React.Component {
             <div className={"fullScreen"} style={cursorStyle}>
                 {changelog}
 
+                <SettingsButton
+                    colorant={colorant}
+                    expanded={this.state.settingsButtonExpanded}
+                    updateHoverFlag={this.updateHoverFlag}
+                    clickHandler={this.expandSettings}
+                    flipDebug={this.flipDebug}
+                />
+
                 <ShortestPathDialog
                     colorant={colorant}
                     expanded={this.state.spButtonExpanded}
@@ -828,6 +851,8 @@ class App extends React.Component {
                     addFencepost={this.addFencepost}
                     clearFence={this.clearFence}
                     fencing={this.state.fencing}
+
+                    showDebug={this.state.showDebug}
 
                     keyDownEvents={this.keyDownEvents}
                 />
