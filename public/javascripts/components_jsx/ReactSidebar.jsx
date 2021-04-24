@@ -178,19 +178,20 @@ class ReactSidebar extends React.Component {
                 <RegionProfile color={topGenreColor} fence={data} fontDecrement={3}/>
                 <FollowersStats number={data.numArtists} text={"Artist"} size={"Large"}/>
                 <FollowersStats number={data.numGenres} text={"Genre"} size={"Large"}/>
+                <div style={{position: "static", overflow: "auto", display: "flex", flexDirection: "column"}}>
+                    <RegionList fence={data}
+                                loadGenreFromSearch={this.props.loadGenreFromSearch}
+                                setActiveGenreAppearance={this.props.setActiveGenreAppearance}
+                                clearActiveGenreAppearance={this.props.clearActiveGenreAppearance}
+                    />
 
-                <RegionList fence={data}
-                            loadGenreFromSearch={this.props.loadGenreFromSearch}
-                            setActiveGenreAppearance={this.props.setActiveGenreAppearance}
-                            clearActiveGenreAppearance={this.props.clearActiveGenreAppearance}
-                />
-
-                <ArtistsList artists={data.top100}
-                             loadArtistFromUI={this.props.loadArtistFromUI}
-                             updateHoveredArtist={this.props.updateHoveredArtist}
-                             header={"Top 100 Artists"}
-                             color={topGenreColor}
-                />
+                    <ArtistsList artists={data.top100}
+                                 loadArtistFromUI={this.props.loadArtistFromUI}
+                                 updateHoveredArtist={this.props.updateHoveredArtist}
+                                 header={"Top 100 Artists"}
+                                 color={topGenreColor}
+                    />
+                </div>
             </div>
         );
     }

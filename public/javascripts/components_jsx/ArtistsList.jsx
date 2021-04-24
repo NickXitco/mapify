@@ -24,7 +24,7 @@ class ArtistsList extends React.Component {
     }
 
     render() {
-        if (this.props.artists.size === 0) {
+        if (this.props.artists.size === 0 || this.props.artists.length === 0) {
             return null;
         }
 
