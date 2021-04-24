@@ -66,7 +66,7 @@ class ArtistsList extends React.Component {
         );
 
         return (
-            <div className={"relatedArtistsSection"}>
+            <div className={"relatedArtistsSection"} style={{flex: 1}}>
                 <div className={"artistListHeader"}>
                     <h2>{this.props.header}</h2>
                     <MultiwaySwitch

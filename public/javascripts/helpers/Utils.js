@@ -193,7 +193,6 @@ const Utils = {
     },
 
     nameShape: function (numPosts) {
-        console.log("naming");
         const sides = numPosts - 1;
         switch (sides) {
             case 3: return "triangle"
