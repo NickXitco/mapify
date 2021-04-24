@@ -703,7 +703,7 @@ class App extends React.Component {
         let activePath = {nodes: [], edges: []};
         let activeGenre = this.state.activeGenre; // This is needed for genre hover in region
         let fence = this.state.fence; // This is needed for active fence drawing
-        let colorant;
+        let colorant = new Colorant(255, 255, 255, false);
 
         switch (historyState.page) {
             case PageStates.ARTIST:
@@ -747,6 +747,8 @@ class App extends React.Component {
         return (
             <div className={"fullScreen"} style={cursorStyle}>
                 {changelog}
+
+                <Logo colorant={colorant}/>
 
                 <SettingsButton
                     colorant={colorant}

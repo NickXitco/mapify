@@ -999,3 +999,26 @@ input {
   z-index: 10;
   box-shadow: black 0 5px 20px 10px;
 }
+
+.logoBox {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  margin: 20px;
+}
+
+.logoh2 {
+  position: relative;
+  display: inline;
+  font-size: 15px;
+  font-weight: 400;
+  transition: color 0.2s cubic-bezier(0.5, 1, 0.89, 1);
+}
+
+.logoh1 {
+  position: relative;
+  display: inline;
+  line-height: 15px;
+  font-size: 22px;
+  transition: text-shadow 0.2s cubic-bezier(0.5, 1, 0.89, 1);
+}
