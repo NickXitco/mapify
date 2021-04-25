@@ -750,31 +750,33 @@ class App extends React.Component {
 
                 <Logo colorant={colorant}/>
 
-                <SettingsButton
-                    colorant={colorant}
-                    expanded={this.state.settingsButtonExpanded}
-                    updateHoverFlag={this.updateHoverFlag}
-                    clickHandler={this.expandSettings}
-                    flipDebug={this.flipDebug}
-                />
+                <div className={"buttons"}>
+                    <RandomNodeButton
+                        colorant={colorant}
+                        expanded={this.state.randomButtonExpanded}
+                        updateHoverFlag={this.updateHoverFlag}
+                        clickHandler={this.fetchRandomArtist}
+                    />
 
-                <ShortestPathDialog
-                    colorant={colorant}
-                    expanded={this.state.spButtonExpanded}
-                    updateHoverFlag={this.updateHoverFlag}
-                    clickHandler={this.expandSP}
-                    createNodesFromSuggestions={this.createNodesFromSuggestions}
-                    updateHoveredArtist={this.updateHoveredArtist}
-                    getArtistFromSearch={this.getArtistFromSearch}
-                    updatePath={this.updatePath}
-                />
+                    <ShortestPathDialog
+                        colorant={colorant}
+                        expanded={this.state.spButtonExpanded}
+                        updateHoverFlag={this.updateHoverFlag}
+                        clickHandler={this.expandSP}
+                        createNodesFromSuggestions={this.createNodesFromSuggestions}
+                        updateHoveredArtist={this.updateHoveredArtist}
+                        getArtistFromSearch={this.getArtistFromSearch}
+                        updatePath={this.updatePath}
+                    />
 
-                <RandomNodeButton
-                    colorant={colorant}
-                    expanded={this.state.randomButtonExpanded}
-                    updateHoverFlag={this.updateHoverFlag}
-                    clickHandler={this.fetchRandomArtist}
-                />
+                    <SettingsButton
+                        colorant={colorant}
+                        expanded={this.state.settingsButtonExpanded}
+                        updateHoverFlag={this.updateHoverFlag}
+                        clickHandler={this.expandSettings}
+                        flipDebug={this.flipDebug}
+                    />
+                </div>
 
                 <ReactInfobox
                     artist={this.state.hoveredArtist}
