@@ -4,7 +4,6 @@ class Logo extends React.Component {
     }
 
     render() {
-        console.log(this.props.colorant);
         const h2Style = {
             color: this.props.colorant.colorToString()
         }

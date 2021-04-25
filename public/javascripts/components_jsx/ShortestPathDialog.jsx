@@ -140,7 +140,7 @@ class ShortestPathDialog extends React.Component {
     render() {
         let colorStyle = {};
         let borderClassName = "";
-        let expandClass = this.props.expanded ? "uiButtonOuterExpand" : this.state.hoverState === 1 ? "uiButtonOuterHover" : "";
+        let expandClass = this.props.expanded ? "uiButtonOuterExpand" : this.state.hoverState === 1 ? "spButtonOuterHover" : "";
         let fullyExpanded = this.state.fullyExpanded && this.props.expanded ? "uiButtonOuterExpanded" : "";
 
         const color = this.props.colorant ? this.props.colorant.colorToString() : 'white';

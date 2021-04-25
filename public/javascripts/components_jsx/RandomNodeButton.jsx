@@ -22,7 +22,7 @@ class RandomNodeButton extends React.Component {
     render() {
         let colorStyle = {};
         let borderClassName = "";
-        let expandClass = this.props.expanded ? "uiButtonOuterExpand" : this.state.hoverState === 1 ? "uiButtonOuterHover" : "";
+        let expandClass = this.props.expanded ? "uiButtonOuterExpand" : this.state.hoverState === 1 ? "randomButtonOuterHover" : "";
         let fullyExpanded = this.state.fullyExpanded && this.props.expanded ? "uiButtonOuterExpanded" : "";
 
         if (this.state.fullyExpanded && !this.props.expanded) {

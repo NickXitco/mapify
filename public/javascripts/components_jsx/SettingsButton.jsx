@@ -30,8 +30,7 @@ class SettingsButton extends React.Component {
 
     render() {
         let colorStyle = {};
-        let borderClassName = "";
-        let expandClass = this.props.expanded ? "settingsButtonOuterExpand" : this.state.hoverState === 1 ? "uiButtonOuterHover" : "";
+        let expandClass = this.props.expanded ? "settingsButtonOuterExpand" : this.state.hoverState === 1 ? "settingsButtonOuterHover" : "";
         let fullyExpanded = this.state.fullyExpanded && this.props.expanded ? "settingsButtonOuterExpanded" : "";
 
         const color = this.props.colorant ? this.props.colorant.colorToString() : 'white';
@@ -53,7 +52,7 @@ class SettingsButton extends React.Component {
 
         return (
             <div>
-                <div className={`settingsButtonOuter uiButtonOuter ${borderClassName} ${expandClass} ${fullyExpanded}`}
+                <div className={`settingsButtonOuter uiButtonOuter ${expandClass} ${fullyExpanded}`}
                      style={colorStyle}
 
                      onMouseEnter={() => {
@@ -77,11 +76,8 @@ class SettingsButton extends React.Component {
                      onTransitionEnd={this.transitionEnd}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" className="uiButton">
-                        <path d="M16 3.5L3.5 16 16 28.5 28.5 16zm2.25 15.3v-2.32H14.5a.41.41 0 00-.42.41v5a.41.41 0 01-.41.42h-2.92v-8.75a.42.42 0 01.42-.42h6.66a.41.41 0 00.42-.41v-1.92a.42.42 0 01.71-.29l4.29 4.29L19 19.1a.42.42 0 01-.75-.3z"
-                              className="uiButtonPath"
-                        />
+                        <path className="uiButtonPath" d="M25.72,14.55a1,1,0,0,0-.7-.29H23.54a9,9,0,0,0-.3-1,8.75,8.75,0,0,0-.42-.92L24,11.2a.92.92,0,0,0,.29-.68A.94.94,0,0,0,24,9.83L22.54,8.4a1,1,0,0,0-1.38,0L20.1,9.46A5.56,5.56,0,0,0,19.2,9a8.48,8.48,0,0,0-.95-.37V7a1,1,0,0,0-.29-.7A.94.94,0,0,0,17.27,6h-2a1,1,0,0,0-.69.28,1,1,0,0,0-.29.7V8.46a7.45,7.45,0,0,0-1,.3,9.59,9.59,0,0,0-.91.42L11.2,8a.92.92,0,0,0-.68-.29A.94.94,0,0,0,9.83,8L8.4,9.46a1,1,0,0,0,0,1.38L9.46,11.9a5.56,5.56,0,0,0-.49.9,8.48,8.48,0,0,0-.37.95H7a1,1,0,0,0-.7.29.94.94,0,0,0-.28.69v2a1,1,0,0,0,.28.69,1,1,0,0,0,.7.29H8.46a7.45,7.45,0,0,0,.3,1q.2.48.42.93L8,20.8a.92.92,0,0,0-.29.68.94.94,0,0,0,.29.69l1.43,1.45a1,1,0,0,0,1.38,0l1.06-1.08a5.56,5.56,0,0,0,.9.49,8.48,8.48,0,0,0,.95.37V25a1,1,0,0,0,.29.7.94.94,0,0,0,.69.28h2a1,1,0,0,0,.69-.28,1,1,0,0,0,.29-.7V23.54a7.45,7.45,0,0,0,1-.3q.48-.19.93-.42L20.8,24a.93.93,0,0,0,.69.29.91.91,0,0,0,.68-.29l1.45-1.43a1,1,0,0,0,0-1.38L22.54,20.1a5.56,5.56,0,0,0,.49-.9,8.48,8.48,0,0,0,.37-.95H25a1,1,0,0,0,.7-.29.94.94,0,0,0,.28-.69v-2A1,1,0,0,0,25.72,14.55Zm-6,3a3.93,3.93,0,0,1-2.12,2.12,4,4,0,0,1-3.1,0,3.93,3.93,0,0,1-2.12-2.12,4,4,0,0,1,0-3.1,3.93,3.93,0,0,1,2.12-2.12,4,4,0,0,1,3.1,0,3.93,3.93,0,0,1,2.12,2.12,4,4,0,0,1,0,3.1Z"/>
                     </svg>
-
 
                     <h4 className="uiButtonTitle">
                         Settings
@@ -92,8 +88,8 @@ class SettingsButton extends React.Component {
                         position: 'static',
                         display: 'flex',
                     }}>
-                        <div className="shortestPathForm">
-                            <input type="checkbox" id="debug" name="debug" value="debug" onInput={this.debugCheck}/>
+                        <div className="debugItem">
+                            <input className={"debugCheckbox"} type="checkbox" id="debug" name="debug" value="debug" onInput={this.debugCheck}/>
                             <label htmlFor="debug"> Debug UI</label>
                         </div>
                     </div>

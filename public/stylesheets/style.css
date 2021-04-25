@@ -719,13 +719,21 @@ canvas {
   margin: 450px 10px;
 }
 
-.uiButtonOuterHover {
+.randomButtonOuterHover {
   width: 180px;
+}
+
+.spButtonOuterHover {
+  width: 180px;
+}
+
+.settingsButtonOuterHover {
+  width: 130px;
 }
 
 .settingsButtonOuterExpand {
   height: 242px;
-  width: 300px;
+  width: 200px;
 }
 
 .uiButtonOuterExpand {
@@ -774,6 +782,18 @@ canvas {
   display: block;
 
   padding: 0 10px;
+}
+
+.debugItem {
+  position: static;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  margin: 10px;
+}
+
+.debugCheckbox {
+  margin: 0 10px;
 }
 
 label {
