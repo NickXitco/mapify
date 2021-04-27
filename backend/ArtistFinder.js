@@ -25,9 +25,15 @@ async function findArtist(query, isQueryID) {
         return {};
     }
 
-    const images = await spotifyApi.getArtist(artist.id).then(data => {
-        return data.body.images;
+    const realArtist = await spotifyApi.getArtist(artist.id).then(data => {
+        return data;
     })
+
+    const images = realArtist.body.images;
+    const followers = realArtist.body.followers;
+    const popularity = realArtist.body.popularity;
+    const genres = realArtist.body.genres;
+    //TODO update these values asynchronously?
 
     const track = await spotifyApi.getArtistTopTracks(artist.id, 'US').then(data => {
         return data.body.tracks.length > 0 ? data.body.tracks[0] : null;
@@ -46,25 +52,32 @@ async function findArtist(query, isQueryID) {
     if (differentRelated(realRelated, ourRelated) && ourRelated.length === artist.related.length) {
         console.log(`Updating ${artist.name} related artists...`);
         await updateRelated(artist, realRelated);
+        //updateGraphDB(artist, realRelated);
         return findArtist(query, isQueryID);
     }
 
     return {
         name: artist.name,
         id: artist.id,
-        followers: artist.followers,
-        popularity: artist.popularity,
+        followers: followers,
+        popularity: popularity,
         size: artist.size,
         x: artist.x,
         y: artist.y,
         r: artist.r,
         g: artist.g,
         b: artist.b,
-        genres: artist.genres,
+        genres: genres,
         related: ourRelated,
         images: images,
         track: track
     };
+}
+
+function updateGraphDB(artist, realRelated) {
+    const db = arangoDB.getDB();
+    console.log(artist);
+    console.log(realRelated);
 }
 
 function updateRelated(artist, realRelated) {
