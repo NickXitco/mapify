@@ -30,7 +30,7 @@ async function findArtist(query, isQueryID) {
     })
 
     const images = realArtist.body.images;
-    const followers = realArtist.body.followers;
+    const followers = realArtist.body.followers.total;
     const popularity = realArtist.body.popularity;
     const genres = realArtist.body.genres;
     //TODO update these values asynchronously?
