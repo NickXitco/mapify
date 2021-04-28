@@ -729,7 +729,7 @@ canvas {
 }
 
 .uiButtonOuterExpand {
-  height: 242px;
+  height: 262px;
   width: 400px;
 }
 
@@ -780,7 +780,6 @@ canvas {
   position: absolute;
   display: flex;
   align-items: center;
-  padding: 0 10px;
   margin: 10px;
 }
 
@@ -842,7 +841,6 @@ input {
   border-top: solid white thin;
   width: 100%;
   white-space: nowrap;
-  margin-top: 20px;
 
   position: static;
 

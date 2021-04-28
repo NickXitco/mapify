@@ -5,15 +5,18 @@ const spotifyApiHolder = require('./SpotifyAPI');
  * Gets the shortest path between two points on the graph in the form of an ordered array of hops
  * @param source spotifyID of start point
  * @param target spotifyID of end point
+ * @param weighted If "weighted", uses edge weights. Otherwise, computes pure BFS without edge weights
  * @return Array of artist objects
  */
-async function getShortestPath(source, target) {
+async function getShortestPath(source, target, weighted) {
     const db = arangoDB.getDB();
+    const weightingQuery = weighted === "weighted" ? 'OPTIONS {weightAttribute: "weight"}' : '';
+
     const path = await db.query(
         `
             FOR source IN artists FILTER source.id == '${source}' 
             FOR target IN artists FILTER target.id == '${target}'
-            FOR v, e IN OUTBOUND SHORTEST_PATH source TO target GRAPH 'artistGraph' OPTIONS {weightAttribute: "weight"} RETURN v
+            FOR v, e IN OUTBOUND SHORTEST_PATH source TO target GRAPH 'artistGraph' ${weightingQuery} RETURN v
         `
         ).then(
             cursor => cursor.all()
