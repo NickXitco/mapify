@@ -4,7 +4,7 @@ class Player extends React.Component {
     }
 
     componentDidMount() {
-        console.log("New player!");
+
     }
 
     render() {
