@@ -50,10 +50,10 @@ async function findArtist(query, isQueryID) {
     //  Sylvester Stallone is an example that as of writing (4/17/2021) has a new artist that broke this function.
     //  I don't currently know the solution to this problem, something to look into.
     if (differentRelated(realRelated, ourRelated) && ourRelated.length === artist.related.length) {
-        console.log(`Updating ${artist.name} related artists...`);
-        await updateRelated(artist, realRelated);
-        //updateGraphDB(artist, realRelated);
-        return findArtist(query, isQueryID);
+        console.log(`Updating ${artist.name}'s related artists...`);
+        updateRelated(artist, realRelated).then(() => {
+            console.log(`Updated ${artist.name}'s related artists!`);
+        });
     }
 
     return {
@@ -74,13 +74,7 @@ async function findArtist(query, isQueryID) {
     };
 }
 
-function updateGraphDB(artist, realRelated) {
-    const db = arangoDB.getDB();
-    console.log(artist);
-    console.log(realRelated);
-}
-
-function updateRelated(artist, realRelated) {
+async function updateRelated(artist, realRelated) {
     const ids = [];
     const db = arangoDB.getDB();
     for (const a of realRelated) {
@@ -89,7 +83,7 @@ function updateRelated(artist, realRelated) {
 
     const relatedString = JSON.stringify(ids);
 
-    return db.query(
+    await db.query(
         `FOR a IN artists
             FILTER a.id == "${artist.id}"
             UPDATE a WITH { related: ${relatedString} } IN artists
@@ -97,6 +91,54 @@ function updateRelated(artist, realRelated) {
     ).then(
         cursor => cursor.all()
     );
+
+    const artistLookup = await db.query(
+        `FOR a IN artists 
+            FILTER a.id == "${artist.id}"
+            RETURN a
+        `
+    ).then(cursor => cursor.all());
+
+    const _id = artistLookup[0]._id;
+    const oldEdges = await db.query(
+        `FOR v, e IN 1 OUTBOUND '${_id}' GRAPH 'artistGraph' RETURN {v: v, e: e}`
+    ).then(cursor => cursor.all());
+
+    const edgesToDelete = [];
+    const edgesToAdd = new Map();
+
+    for (const artist of realRelated) {
+        edgesToAdd.set(artist.id, await db.query(`FOR a in artists FILTER a.id == "${artist.id}" RETURN a`).then(cursor => cursor.all()));
+    }
+
+    const realIDs = new Set();
+    for (const artist of realRelated) {
+        realIDs.add(artist.id);
+    }
+
+    for (const edge of oldEdges) {
+        if (!realIDs.has(edge.v.id)) {
+            //this is an edge that shouldn't exist in the db
+            edgesToDelete.push(edge);
+        } else {
+            //this is an edge we don't need to delete or add again, it's fine as is.
+            edgesToAdd.delete(edge.v.id);
+        }
+    }
+
+    for (const edge of edgesToAdd.values()) {
+        if (!edge[0]._id) continue; // artist isn't in the map :(
+        const newEdge = {
+            _from: _id,
+            _to: edge[0]._id,
+        }
+
+        db.query(`INSERT ${JSON.stringify(newEdge)} INTO edges`);
+    }
+
+    for (const edge of edgesToDelete) {
+        db.query(`FOR e IN edges FILTER e._key == ${edge.e._key} REMOVE e IN edges`);
+    }
 }
 
 function differentRelated(spotify, ours) {
