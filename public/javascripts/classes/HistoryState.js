@@ -5,13 +5,15 @@ class HistoryState {
     data;
     page;
     url;
+    title;
 
-    constructor(prev, page, data, url) {
+    constructor(prev, page, data, url, title) {
         this.next = null;
         this.prev = prev;
         this.page = page;
         this.data = data;
         this.url = url;
+        this.title = title;
     }
 
     detachSelf() {

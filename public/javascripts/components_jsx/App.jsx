@@ -62,7 +62,7 @@ class App extends React.Component {
             ],
 
             cursor: 'auto',
-            historyState: new HistoryState(null, PageStates.HOME, null, "")
+            historyState: new HistoryState(null, PageStates.HOME, null, "", "The Artist Observatory")
         }
 
         this.setCanvas = this.setCanvas.bind(this);
@@ -458,19 +458,26 @@ class App extends React.Component {
         }
 
         let url = ""
+        let title = "The Artist Observatory";
 
         if (destPage === PageStates.ARTIST) {
             url = `a=${newData.id}`
+            title = `${newData.name} | The Artist Observatory`;
         } else if (destPage === PageStates.GENRE) {
             url = `g=${encodeURIComponent(newData.name)}`;
+            title = `${newData.name.toUpperCase()} | The Artist Observatory`;
         } else if (destPage === PageStates.PATH) {
             url = `p=${newData.nodes[0].id},${newData.nodes[newData.nodes.length - 1].id},${newData.weighted ? "weighted" : "unweighted"}`;
+            title = `${newData.nodes[0].name} to ${newData.nodes[newData.nodes.length - 1].name} | The Artist Observatory`;
         } else if (destPage === PageStates.REGION) {
             url = `r=${Utils.regionToString(newData.posts)}`
+            title = `Region Selection | The Artist Observatory`;
         } else if (destPage === PageStates.REGION_ARTIST) {
             url = `r=${Utils.regionToString(newData.region.posts)}&a=${newData.artist.id}`;
+            title = `${newData.artist.name} | Region Selection | The Artist Observatory`;
         } else if (destPage === PageStates.GENRE_ARTIST) {
             url = `g=${encodeURIComponent(newData.genre.name)}&a=${newData.artist.id}`;
+            title = `${newData.artist.name} | ${newData.genre.name.toUpperCase()} | The Artist Observatory`;
         }
 
         // If we're looking at an artist, we need to make sure those artists' edges are made.
@@ -494,10 +501,10 @@ class App extends React.Component {
 
         this.setState({fencing: false, fence: [], fenceData: null});
 
-        this.pushState(url);
+        this.pushState(url, title);
 
         const lastState = this.state.historyState;
-        const newState = new HistoryState(lastState, destPage, newData, url);
+        const newState = new HistoryState(lastState, destPage, newData, url, title);
         lastState.next = newState;
         this.setState({historyState: newState});
         return newState;
@@ -512,8 +519,9 @@ class App extends React.Component {
         this.processHash(hash.replace("#", ""));
     }
 
-    pushState(url) {
+    pushState(url, title) {
         window.location.hash = url;
+        document.title = title;
     }
 
     processHash(hash) {
@@ -528,6 +536,7 @@ class App extends React.Component {
             return;
         }
 
+        // Scenario 2
         let current = this.state.historyState.prev;
         let newState;
         while (current) {
@@ -538,13 +547,13 @@ class App extends React.Component {
             current = current.prev;
         }
 
-        // Scenario 2
         if (newState) {
             newState.detachSelf();
             const lastState = this.state.historyState;
             newState.prev = lastState;
             newState.next = null;
             lastState.next = newState;
+            document.title = newState.title;
             this.setState({historyState: newState});
 
             switch (newState.page) {
