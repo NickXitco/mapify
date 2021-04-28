@@ -296,8 +296,8 @@ class App extends React.Component {
         this.setState({settingsButtonExpanded: true});
     }
 
-    updatePath(aID, bID) {
-        fetch(`path/${aID}/${bID}`)
+    updatePath(aID, bID, weighted) {
+        fetch(`path/${aID}/${bID}/${weighted}`)
             .then(res => res.json())
             .then(path => {
                 const newPath = [];
@@ -316,7 +316,7 @@ class App extends React.Component {
 
                 const fakeGenre = new Genre('sp', new Set(newPath), 0, 0, 0, 1);
                 this.state.camera.bubbleMove(fakeGenre.bubble);
-                this.stateHandler(PageStates.SP_DIALOG, PageActions.DEFAULT, {nodes: newPath, edges: newPathEdges});
+                this.stateHandler(PageStates.SP_DIALOG, PageActions.DEFAULT, {nodes: newPath, edges: newPathEdges, weighted: weighted});
             });
     }
 
@@ -464,7 +464,7 @@ class App extends React.Component {
         } else if (destPage === PageStates.GENRE) {
             url = `g=${encodeURIComponent(newData.name)}`;
         } else if (destPage === PageStates.PATH) {
-            url = `p=${newData.nodes[0].id},${newData.nodes[newData.nodes.length - 1].id}`;
+            url = `p=${newData.nodes[0].id},${newData.nodes[newData.nodes.length - 1].id},${newData.weighted ? "weighted" : "unweighted"}`;
         } else if (destPage === PageStates.REGION) {
             url = `r=${Utils.regionToString(newData.posts)}`
         } else if (destPage === PageStates.REGION_ARTIST) {
@@ -606,7 +606,7 @@ class App extends React.Component {
                 break;
             case PageStates.PATH:
                 const ids = validatedHash.data.path.split(",");
-                this.updatePath(ids[0], ids[1]);
+                this.updatePath(ids[0], ids[1], ids[2]);
                 break;
             case PageStates.REGION_ARTIST:
                 coordinates = validatedHash.data.region.split(",");

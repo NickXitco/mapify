@@ -18,6 +18,8 @@ class ShortestPathDialog extends React.Component {
             endFocus: false,
 
             fullyExpanded: false,
+
+            weighted: true,
         }
 
         this.requestCounter = 0;
@@ -34,6 +36,8 @@ class ShortestPathDialog extends React.Component {
 
         this.sendSubmitIfEnter = this.sendSubmitIfEnter.bind(this);
         this.getPath = this.getPath.bind(this);
+
+        this.checkWeighted = this.checkWeighted.bind(this);
     }
 
     processInput(e, start) {
@@ -101,7 +105,7 @@ class ShortestPathDialog extends React.Component {
         const start = this.state.startArtist ? this.state.startArtist : this.state.startSuggestions.length > 0 ? this.state.startSuggestions[0] : null;
         const end = this.state.endArtist ? this.state.endArtist : this.state.endSuggestions.length > 0 ? this.state.endSuggestions[0] : null;
         if (start && end) {
-            this.props.updatePath(start.id, end.id);
+            this.props.updatePath(start.id, end.id, this.state.weighted ? "weighted" : "unweighted");
         }
     }
 
@@ -135,6 +139,10 @@ class ShortestPathDialog extends React.Component {
         if (this.state.fullyExpanded && !this.props.expanded) {
             this.setState({fullyExpanded: false});
         }
+    }
+
+    checkWeighted(e) {
+        this.setState({weighted: e.target.checked});
     }
 
     render() {
@@ -301,6 +309,18 @@ class ShortestPathDialog extends React.Component {
                     </svg>
                 </div>
 
+                <div style={{
+                    position: "static",
+                    display: "flex",
+                    alignItems: "center",
+                    margin: "20px 0",
+                }}>
+                    <div className="settingsItem">
+                        <input className={"settingsCheckbox"} type="checkbox" id="weighted"
+                               name="weighted" value="weighted" onInput={this.checkWeighted} defaultChecked={this.state.weighted}/>
+                        <label htmlFor="weighted"> Prefer Large Artists (Recommended)</label>
+                    </div>
+                </div>
 
                 <button className="mapifyButton"
                         onClick={this.getPath}
