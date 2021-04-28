@@ -56,6 +56,8 @@ async function findArtist(query, isQueryID) {
         });
     }
 
+
+
     return {
         name: artist.name,
         id: artist.id,
@@ -127,10 +129,11 @@ async function updateRelated(artist, realRelated) {
     }
 
     for (const edge of edgesToAdd.values()) {
-        if (!edge[0]._id) continue; // artist isn't in the map :(
+        if (!edge[0]) continue; // artist isn't in the map :(
         const newEdge = {
             _from: _id,
             _to: edge[0]._id,
+            weight: artist.followers > 100000 ? 1 : artist.followers > 10000 ? 2 : artist.followers > 1000 ? 3 : 4
         }
 
         db.query(`INSERT ${JSON.stringify(newEdge)} INTO edges`);

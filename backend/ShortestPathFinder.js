@@ -13,7 +13,7 @@ async function getShortestPath(source, target) {
         `
             FOR source IN artists FILTER source.id == '${source}' 
             FOR target IN artists FILTER target.id == '${target}'
-            FOR v, e IN OUTBOUND SHORTEST_PATH source TO target GRAPH 'artistGraph' RETURN v
+            FOR v, e IN OUTBOUND SHORTEST_PATH source TO target GRAPH 'artistGraph' OPTIONS {weightAttribute: "weight"} RETURN v
         `
         ).then(
             cursor => cursor.all()
