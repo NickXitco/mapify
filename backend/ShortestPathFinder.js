@@ -22,14 +22,6 @@ async function getShortestPath(source, target) {
     return populatePath(path);
 }
 
-//TODO
-//  When you click on an artist, update the graph database with the new related (if they exist)
-//  When you make a shortest path, get the shortest path according to the DB. Then, check if this path is possible
-//  by checking each artist on the finished path to see if the artist has the next artist in its real related artists.
-//  If so, great! Return the path (while updating the graph db). If not, do it again. This _probably_ won't take that long
-//  But if it does, oh well
-//  FOR v IN 1 OUTBOUND 'artists/1338256' GRAPH 'artistGraph' RETURN v <--- gets the related artists according to the graph db
-
 async function populatePath(path) {
     const spotifyApi = spotifyApiHolder.getAPI();
 
