@@ -157,6 +157,7 @@ class App extends React.Component {
                 latLongFence.push(projection);
             }
 
+            this.startLoading();
             fetch(`fence`,
                 {method: 'POST', headers: {'Content-Type': 'application/json',}, body: JSON.stringify(latLongFence)}
                 )
@@ -166,6 +167,7 @@ class App extends React.Component {
                         console.error(data);
                         this.setState({fencing: false});
                         this.clearFence();
+                        this.stopLoading();
                         return;
                     }
                     data.posts = this.state.fence;
@@ -185,6 +187,7 @@ class App extends React.Component {
                     }
                     this.state.camera.bubbleMove(fakeGenre.bubble);
                     this.stateHandler(PageStates.UNKNOWN, PageActions.REGION, data);
+                    this.stopLoading();
 
                     if (artistIDToBeLoaded) {
                         this.loadArtistFromSearch(artistIDToBeLoaded, true);
@@ -358,9 +361,11 @@ class App extends React.Component {
     }
 
     fetchRandomArtist() {
+        this.startLoading();
         fetch(`random`)
             .then(response => response.json())
             .then(data => {
+                this.stopLoading();
                 loadArtist(this.state.p5, data, this.state.quadHead, this.state.nodeLookup).then(() =>{
                     this.loadArtistFromUI(this.state.nodeLookup[data.id]);
                 });
