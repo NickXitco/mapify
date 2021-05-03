@@ -62,7 +62,8 @@ class App extends React.Component {
             ],
 
             cursor: 'auto',
-            historyState: new HistoryState(null, PageStates.HOME, null, "", "The Artist Observatory")
+            historyState: new HistoryState(null, PageStates.HOME, null, "", "The Artist Observatory"),
+            loading: false
         }
 
         this.setCanvas = this.setCanvas.bind(this);
@@ -113,6 +114,9 @@ class App extends React.Component {
         this.hashChangeHandler = this.hashChangeHandler.bind(this);
         this.pushState = this.pushState.bind(this);
         this.processHash = this.processHash.bind(this);
+
+        this.startLoading = this.startLoading.bind(this);
+        this.stopLoading = this.stopLoading.bind(this);
     }
 
     checkVersion(versionNumber) {
@@ -153,6 +157,7 @@ class App extends React.Component {
                 latLongFence.push(projection);
             }
 
+            this.startLoading();
             fetch(`fence`,
                 {method: 'POST', headers: {'Content-Type': 'application/json',}, body: JSON.stringify(latLongFence)}
                 )
@@ -162,6 +167,7 @@ class App extends React.Component {
                         console.error(data);
                         this.setState({fencing: false});
                         this.clearFence();
+                        this.stopLoading();
                         return;
                     }
                     data.posts = this.state.fence;
@@ -181,6 +187,7 @@ class App extends React.Component {
                     }
                     this.state.camera.bubbleMove(fakeGenre.bubble);
                     this.stateHandler(PageStates.UNKNOWN, PageActions.REGION, data);
+                    this.stopLoading();
 
                     if (artistIDToBeLoaded) {
                         this.loadArtistFromSearch(artistIDToBeLoaded, true);
@@ -296,7 +303,19 @@ class App extends React.Component {
         this.setState({settingsButtonExpanded: true});
     }
 
+    startLoading() {
+        //TODO maybe add a short ~100ms delay to this function so we don't do jarring loading screens?
+        //  You'd have to do this in a smart way as to not be locked in a loading state if the loading takes less
+        //  than 100ms, as we'd then set the loading to be true after it was set to false.\\\\\\\\\\\\\\
+        this.setState({loading: true});
+    }
+
+    stopLoading() {
+        this.setState({loading: false});
+    }
+
     updatePath(aID, bID, weighted) {
+        this.startLoading();
         fetch(`path/${aID}/${bID}/${weighted}`)
             .then(res => res.json())
             .then(path => {
@@ -316,6 +335,7 @@ class App extends React.Component {
 
                 const fakeGenre = new Genre('sp', new Set(newPath), 0, 0, 0, 1);
                 this.state.camera.bubbleMove(fakeGenre.bubble);
+                this.stopLoading();
                 this.stateHandler(PageStates.SP_DIALOG, PageActions.DEFAULT, {nodes: newPath, edges: newPathEdges, weighted: weighted});
             });
     }
@@ -341,9 +361,11 @@ class App extends React.Component {
     }
 
     fetchRandomArtist() {
+        this.startLoading();
         fetch(`random`)
             .then(response => response.json())
             .then(data => {
+                this.stopLoading();
                 loadArtist(this.state.p5, data, this.state.quadHead, this.state.nodeLookup).then(() =>{
                     this.loadArtistFromUI(this.state.nodeLookup[data.id]);
                 });
@@ -794,6 +816,7 @@ class App extends React.Component {
                 <ReactSidebar
                     historyState={this.state.historyState}
                     uiHover={this.state.uiHover}
+                    loading={this.state.loading}
 
                     loadArtistFromUI={this.loadArtistFromUI}
                     loadGenreFromSearch={this.loadGenreFromSearch}
