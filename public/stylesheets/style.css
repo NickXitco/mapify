@@ -611,10 +611,6 @@ canvas {
 }
 
 .sidebarListItem {
-  font-family: montserrat, sans-serif;
-  font-size: 16px;
-  text-transform: uppercase;
-  font-weight: 200;
   position: static;
   list-style: none;
   padding: 5px;
@@ -622,7 +618,14 @@ canvas {
   width: 90%;
 }
 
-.sidebarListItem:hover {
+.sidebarListItem p {
+  font-family: montserrat, sans-serif;
+  font-size: 16px;
+  text-transform: uppercase;
+  font-weight: 200;
+}
+
+.sidebarListItem p:hover {
   text-decoration: underline;
   cursor: pointer;
 }
