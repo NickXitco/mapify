@@ -62,7 +62,8 @@ class App extends React.Component {
             ],
 
             cursor: 'auto',
-            historyState: new HistoryState(null, PageStates.HOME, null, "", "The Artist Observatory")
+            historyState: new HistoryState(null, PageStates.HOME, null, "", "The Artist Observatory"),
+            loading: false
         }
 
         this.setCanvas = this.setCanvas.bind(this);
@@ -113,6 +114,9 @@ class App extends React.Component {
         this.hashChangeHandler = this.hashChangeHandler.bind(this);
         this.pushState = this.pushState.bind(this);
         this.processHash = this.processHash.bind(this);
+
+        this.startLoading = this.startLoading.bind(this);
+        this.stopLoading = this.stopLoading.bind(this);
     }
 
     checkVersion(versionNumber) {
@@ -296,7 +300,19 @@ class App extends React.Component {
         this.setState({settingsButtonExpanded: true});
     }
 
+    startLoading() {
+        //TODO maybe add a short ~100ms delay to this function so we don't do jarring loading screens?
+        //  You'd have to do this in a smart way as to not be locked in a loading state if the loading takes less
+        //  than 100ms, as we'd then set the loading to be true after it was set to false.\\\\\\\\\\\\\\
+        this.setState({loading: true});
+    }
+
+    stopLoading() {
+        this.setState({loading: false});
+    }
+
     updatePath(aID, bID, weighted) {
+        this.startLoading();
         fetch(`path/${aID}/${bID}/${weighted}`)
             .then(res => res.json())
             .then(path => {
@@ -316,6 +332,7 @@ class App extends React.Component {
 
                 const fakeGenre = new Genre('sp', new Set(newPath), 0, 0, 0, 1);
                 this.state.camera.bubbleMove(fakeGenre.bubble);
+                this.stopLoading();
                 this.stateHandler(PageStates.SP_DIALOG, PageActions.DEFAULT, {nodes: newPath, edges: newPathEdges, weighted: weighted});
             });
     }
@@ -794,6 +811,7 @@ class App extends React.Component {
                 <ReactSidebar
                     historyState={this.state.historyState}
                     uiHover={this.state.uiHover}
+                    loading={this.state.loading}
 
                     loadArtistFromUI={this.loadArtistFromUI}
                     loadGenreFromSearch={this.loadGenreFromSearch}

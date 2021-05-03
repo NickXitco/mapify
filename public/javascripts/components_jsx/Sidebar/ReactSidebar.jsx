@@ -21,7 +21,9 @@ class ReactSidebar extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        return this.props.historyState !== nextProps.historyState || this.state.open !== nextState.open;
+        return this.props.historyState !== nextProps.historyState ||
+               this.state.open !== nextState.open ||
+               this.props.loading !== nextProps.loading;
     }
 
     scrollbar(colorant) {
@@ -196,6 +198,21 @@ class ReactSidebar extends React.Component {
         );
     }
 
+    loading(hoverStyle) {
+        return (
+                <div className={"sidebar sidebar-open"}
+                     style={hoverStyle}
+                     onMouseEnter={this.setHoverFlag}
+                     onMouseLeave={this.unsetHoverFlag}
+                     onTransitionEnd={this.transitionEnd}
+                >
+                    {this.scrollbar("white")}
+                    <SidebarStroke color={"white"}/>
+                    <Loading/>
+                </div>
+            )
+    }
+
     default(hoverStyle) {
         return (
             <div className={"sidebar sidebar-closed"}
@@ -244,6 +261,10 @@ class ReactSidebar extends React.Component {
             data = this.props.historyState.prev.getData();
             closed = true;
             page = this.props.historyState.prev.page;
+        }
+
+        if (this.props.loading) {
+            return this.loading(hoverStyle);
         }
 
         if (!data) {
