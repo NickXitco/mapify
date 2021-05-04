@@ -608,6 +608,7 @@ canvas {
   overflow-y: auto;
   overflow-x: hidden;
   flex-direction: column;
+  margin-bottom: 5px;
 }
 
 .sidebarListItem {

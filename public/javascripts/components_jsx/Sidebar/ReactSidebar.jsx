@@ -27,10 +27,17 @@ class ReactSidebar extends React.Component {
     }
 
     scrollbar(colorant) {
+        const realColorant = Colorant.fromString(colorant);
         return (
             <style>
-                {`::-webkit-scrollbar-track {box-shadow: 0 0 5px ${colorant};}  \n` +
-                `::-webkit-scrollbar-thumb {background: ${colorant};`}
+                {
+                    `
+                    ::-webkit-scrollbar-track {box-shadow: 0 0 5px ${colorant}; 
+                    background: ${realColorant.colorToStringAlpha(0.2)}; 
+                    border: ${colorant} solid 1px;} \n
+                    ::-webkit-scrollbar-thumb {background: ${colorant};
+                    `
+                }
             </style>
         )
     }
