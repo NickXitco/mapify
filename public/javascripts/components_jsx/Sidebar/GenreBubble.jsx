@@ -15,10 +15,12 @@ class GenreBubble extends React.Component {
         this.setHover = this.setHover.bind(this);
         this.unsetHover = this.unsetHover.bind(this);
         this.clickBubble = this.clickBubble.bind(this);
+        this.updateTooltip = this.updateTooltip.bind(this);
     }
 
     setHover() {
         this.setState({hover: true});
+        this.updateTooltip();
         this.props.setActiveGenreAppearance(this.props.genre.name);
     }
 
@@ -31,7 +33,7 @@ class GenreBubble extends React.Component {
         this.props.loadGenreFromSearch(this.props.genre.name, null);
     }
 
-    componentDidMount() {
+    updateTooltip() {
         if (this.bubbleRef.current && this.bubbleRef.current.offsetLeft > 200) {
             this.setState({
                 leftSide: false,
@@ -44,6 +46,10 @@ class GenreBubble extends React.Component {
                 offsetHeight: this.textBoxRef.current.offsetHeight,
             });
         }
+    }
+
+    componentDidMount() {
+        this.updateTooltip();
     }
 
     render() {
