@@ -49,6 +49,12 @@ const LOADING_MESSAGES = [
     "Wishin' and wishin' and wishin'...",
     "Adaptive circuits engaging...",
     "Playing the lick...",
+    "Left foot, right foot, levitating...",
+    "Everybody clap your hands...",
+    "Right foot lets stomp...",
+    "Cha Cha real smooth...",
+    "Do it faster, makes us stronger...",
+    "Celebrate and dance so free...",
 ]
 
 class Loading extends React.Component {
@@ -74,6 +80,7 @@ class Loading extends React.Component {
     }
 
     tick() {
+        Math.seedrandom();
         this.setState({
             splashIndex: Math.floor(Math.random() * LOADING_MESSAGES.length)
         });
