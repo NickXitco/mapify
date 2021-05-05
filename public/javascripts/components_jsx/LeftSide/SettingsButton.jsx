@@ -6,11 +6,14 @@ class SettingsButton extends React.Component {
             tooltip: false,
             hoverState: 0,
             fullyExpanded: false,
+
+            showContents: false,
         }
 
         this.expandFully = this.expandFully.bind(this);
         this.debugCheck = this.debugCheck.bind(this);
         this.clickHandler = this.clickHandler.bind(this);
+        this.transitionEnd = this.transitionEnd.bind(this);
     }
 
     expandFully() {
@@ -30,9 +33,18 @@ class SettingsButton extends React.Component {
     }
 
     clickHandler() {
+        if (!this.props.expanded) {
+            this.setState({showContents: true});
+        }
         this.props.clickHandler();
         setTimeout(this.expandFully, 400);
         this.setState({hoverState: 0});
+    }
+
+    transitionEnd() {
+        if (!this.props.expanded) {
+            this.setState({showContents: false});
+        }
     }
 
     render() {
@@ -55,6 +67,28 @@ class SettingsButton extends React.Component {
                     boxShadow: `0 0 15px 0 ${color}, inset 0 0 10px 0 ${color}`
                 }
                 break;
+        }
+
+        let contents;
+        if (this.state.showContents) {
+            contents = (
+                <div style={{
+                    position: 'static',
+                    display: 'flex',
+                }}>
+                    <div className="settingsItem">
+                        <input
+                            className={"settingsCheckbox"}
+                            type="checkbox"
+                            id="debug"
+                            name="debug"
+                            value="debug"
+                            onInput={this.debugCheck}
+                        />
+                        <label htmlFor="debug"> Debug UI</label>
+                    </div>
+                </div>
+            );
         }
 
         return (
@@ -83,16 +117,7 @@ class SettingsButton extends React.Component {
                     Settings
                 </h4>
 
-
-                <div style={{
-                    position: 'static',
-                    display: 'flex',
-                }}>
-                    <div className="settingsItem">
-                        <input className={"settingsCheckbox"} type="checkbox" id="debug" name="debug" value="debug" onInput={this.debugCheck}/>
-                        <label htmlFor="debug"> Debug UI</label>
-                    </div>
-                </div>
+                {contents}
             </div>
         )
     }
