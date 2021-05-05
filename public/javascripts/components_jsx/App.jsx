@@ -76,8 +76,9 @@ class App extends React.Component {
         this.updateClickedArtist = this.updateClickedArtist.bind(this);
 
         this.handleEmptyClick = this.handleEmptyClick.bind(this);
-        this.expandSP = this.expandSP.bind(this);
-        this.expandSettings = this.expandSettings.bind(this);
+        this.handleSPClick = this.handleSPClick.bind(this);
+        this.closeSP = this.closeSP.bind(this);
+        this.handleSettingsClick = this.handleSettingsClick.bind(this);
         this.updatePath = this.updatePath.bind(this);
 
         this.flipClearSearch = this.flipClearSearch.bind(this);
@@ -320,12 +321,16 @@ class App extends React.Component {
         this.setState({clearSearch: true, spButtonExpanded: false, settingsButtonExpanded: false});
     }
 
-    expandSP() {
-        this.setState({spButtonExpanded: true});
+    handleSPClick() {
+        this.setState({spButtonExpanded: !this.state.spButtonExpanded});
     }
 
-    expandSettings() {
-        this.setState({settingsButtonExpanded: true});
+    closeSP() {
+        this.setState({spButtonExpanded: false});
+    }
+
+    handleSettingsClick() {
+        this.setState({settingsButtonExpanded: !this.state.settingsButtonExpanded});
     }
 
     startLoading() {
@@ -361,6 +366,7 @@ class App extends React.Component {
                 const fakeGenre = new Genre('sp', new Set(newPath), 0, 0, 0, 1);
                 this.state.camera.bubbleMove(fakeGenre.bubble);
                 this.stopLoading();
+                this.closeSP();
                 this.stateHandler(PageStates.SP_DIALOG, PageActions.DEFAULT, {nodes: newPath, edges: newPathEdges, weighted: weighted});
             });
     }
@@ -816,7 +822,8 @@ class App extends React.Component {
                         colorant={colorant}
                         expanded={this.state.spButtonExpanded}
                         updateHoverFlag={this.updateHoverFlag}
-                        clickHandler={this.expandSP}
+                        clickHandler={this.handleSPClick}
+                        closeSP={this.closeSP}
                         createNodesFromSuggestions={this.createNodesFromSuggestions}
                         updateHoveredArtist={this.updateHoveredArtist}
                         getArtistFromSearch={this.getArtistFromSearch}
@@ -827,7 +834,7 @@ class App extends React.Component {
                         colorant={colorant}
                         expanded={this.state.settingsButtonExpanded}
                         updateHoverFlag={this.updateHoverFlag}
-                        clickHandler={this.expandSettings}
+                        clickHandler={this.handleSettingsClick}
                         flipDebug={this.flipDebug}
                     />
                 </div>
