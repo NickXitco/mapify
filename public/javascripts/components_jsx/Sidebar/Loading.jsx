@@ -51,7 +51,7 @@ const LOADING_MESSAGES = [
     "Playing the lick...",
     "Left foot, right foot, levitating...",
     "Everybody clap your hands...",
-    "Right foot lets stomp...",
+    "Right foot let's stomp...",
     "Cha Cha real smooth...",
     "Do it faster, makes us stronger...",
     "Celebrate and dance so free...",
