@@ -152,7 +152,6 @@ class App extends React.Component {
 
     setFencing(state, artistIDToBeLoaded) {
         if (state === false && this.state.fence.length > 0) {
-            console.log("oops");
             const latLongFence = [];
 
             const fence = Utils.reduceFence(this.state.fence);
@@ -449,7 +448,6 @@ class App extends React.Component {
     }
 
     flipDebug(state) {
-        console.log(state);
         this.setState({showDebug: state});
     }
 

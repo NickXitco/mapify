@@ -347,7 +347,6 @@ const Utils = {
             }
         }
 
-        console.log(`Removed ${pointsRemoved} points`);
         return fence;
     },
 
