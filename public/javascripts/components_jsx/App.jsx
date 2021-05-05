@@ -100,6 +100,7 @@ class App extends React.Component {
 
         this.setFencing = this.setFencing.bind(this);
         this.addFencepost = this.addFencepost.bind(this);
+        this.processIntersection = this.processIntersection.bind(this);
         this.clearFence = this.clearFence.bind(this);
         this.setActiveGenreAppearance = this.setActiveGenreAppearance.bind(this);
         this.clearActiveGenreAppearance = this.clearActiveGenreAppearance.bind(this);
@@ -151,13 +152,22 @@ class App extends React.Component {
 
     setFencing(state, artistIDToBeLoaded) {
         if (state === false && this.state.fence.length > 0) {
+            console.log("oops");
             const latLongFence = [];
-            for (const post of this.state.fence) {
+
+            const fence = Utils.reduceFence(this.state.fence);
+
+            for (const post of fence) {
                 const projection = Utils.gnomicProjection(post.x, post.y, 0, -0.5 * Math.PI, PLANE_RADIUS);
                 latLongFence.push(projection);
             }
 
+            this.setState({fence: fence});
             this.startLoading();
+
+            let fakeGenre = new Genre('r', new Set(this.state.fence), 0, 0, 0, 1);
+            this.state.camera.bubbleMove(fakeGenre.bubble);
+
             fetch(`fence`,
                 {method: 'POST', headers: {'Content-Type': 'application/json',}, body: JSON.stringify(latLongFence)}
                 )
@@ -179,13 +189,6 @@ class App extends React.Component {
                     data.top100 = artists;
                     data.name = Utils.nameShape(data.posts.length);
 
-                    let fakeGenre;
-                    if (artists.length === 0) {
-                        fakeGenre = new Genre('r', new Set(data.posts), 0, 0, 0, 1);
-                    } else {
-                        fakeGenre = new Genre('r', new Set(artists), 0, 0, 0, 1);
-                    }
-                    this.state.camera.bubbleMove(fakeGenre.bubble);
                     this.stateHandler(PageStates.UNKNOWN, PageActions.REGION, data);
                     this.stopLoading();
 
@@ -204,6 +207,21 @@ class App extends React.Component {
         post.y = Math.round(post.y * 10) / 10;
         newFence.push(post);
         this.setState({fence: newFence});
+    }
+
+    processIntersection(intersection) {
+        const newFence = [];
+        const mainPost = {
+            x: Math.round(intersection.intersectionPoint.x * 10) / 10,
+            y: Math.round(intersection.intersectionPoint.y * 10) / 10
+        };
+        newFence.push(mainPost);
+        for (let i = intersection.vIndex; i < this.state.fence.length; i++) {
+            newFence.push(this.state.fence[i]);
+        }
+        newFence.push(mainPost);
+        this.setState({fence: newFence});
+        this.setFencing(false, null);
     }
 
     clearFence() {
@@ -604,7 +622,7 @@ class App extends React.Component {
                     );
                     break;
                 default:
-                    this.state.camera.reset(30);
+                    //this.state.camera.reset(30);
                     break;
             }
 
@@ -884,6 +902,7 @@ class App extends React.Component {
 
                     setFencing={this.setFencing}
                     addFencepost={this.addFencepost}
+                    processIntersection={this.processIntersection}
                     clearFence={this.clearFence}
                     fencing={this.state.fencing}
 

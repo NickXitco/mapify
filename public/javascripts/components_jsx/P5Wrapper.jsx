@@ -111,7 +111,7 @@ class P5Wrapper extends React.Component {
                 const validDist = Math.max(FENCE_CLICK_MIN_VIRTUAL_RADIUS * 2, (FENCE_CLICK_RADIUS * 2) / this.props.camera.getZoomFactor().x);
 
                 if (this.props.fencing) {
-                    if (postFirstDist < validDist / 2 && this.props.fence.length > 2) {
+                    if (postFirstDist < validDist / 2 && this.props.fence.length > 2 && !this.dragDrawing) {
                         this.props.setCursor('pointer');
                     } else {
                         this.props.setCursor('auto');
@@ -140,13 +140,7 @@ class P5Wrapper extends React.Component {
                 //p.vertex(this.props.fence[0].x, -this.props.fence[0].y);
                 p.endShape();
 
-                let signedArea = 0;
-
-                for (let i = 0; i < this.props.fence.length - 1; i++) {
-                    const point = this.props.fence[i];
-                    const nextPoint = this.props.fence[i + 1];
-                    signedArea += (point.x * (-nextPoint.y) - nextPoint.x * (-point.y));
-                }
+                let signedArea = Utils.signedArea(this.props.fence);
 
                 let fence = [...this.props.fence];
                 if (signedArea > 0) {
@@ -265,6 +259,19 @@ class P5Wrapper extends React.Component {
             const postFirstDist = Utils.dist(postPoint.x, postPoint.y, firstPoint.x, firstPoint.y);
             const validDist = Math.max(FENCE_CLICK_MIN_VIRTUAL_RADIUS * 2, (FENCE_CLICK_RADIUS * 2) / this.props.camera.getZoomFactor().x);
 
+            let intersection = null;
+            if (this.props.fence.length > 0) {
+                const u = this.props.fence[this.props.fence.length - 1];
+                intersection = Utils.lineCurveIntersection(this.props.fence, {u: u, v: postPoint});
+            }
+
+            if (intersection) {
+                this.props.processIntersection(intersection);
+                this.dragDrawing = false;
+                MouseEvents.dragging = false;
+                return;
+            }
+
             if (dragging) {
                 //Play by different rules
                 if (this.props.fence.length === 0) {
@@ -304,8 +311,11 @@ class P5Wrapper extends React.Component {
                     const dragDist = Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y);
                     const smallDrag = dragDist < 10;
                     if (!smallDrag) {
-                        p.addFencepost(true);
                         this.dragDrawing = true;
+                    }
+
+                    if (this.dragDrawing) {
+                        p.addFencepost(true);
                     }
                 } else {
                     this.props.camera.x += (oldDrag.x - newDrag.x);
@@ -382,6 +392,14 @@ class P5Wrapper extends React.Component {
 
         p.keyPressed = (e) => {
             this.props.keyDownEvents(e);
+        }
+
+        p.keyReleased = (e) => {
+            if (e.key === "Control" && (this.props.fencing || this.dragDrawing)) {
+                this.props.clearFence();
+                this.props.setFencing(false, null);
+                this.dragDrawing = false;
+            }
         }
     }
 
