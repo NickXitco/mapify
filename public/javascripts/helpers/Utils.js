@@ -194,6 +194,7 @@ const Utils = {
 
     nameShape: function (numPosts) {
         const sides = numPosts - 1;
+        return "region";
         switch (sides) {
             case 3: return "triangle"
             case 4: return "quadrilateral"
@@ -296,5 +297,89 @@ const Utils = {
     fenceComplete: function (fence) {
         const end = fence.length - 1;
         return fence.length > 2 && fence[0].x === fence[end].x && fence[0].y === fence[end].y;
+    },
+
+    signedArea: function (fence) {
+        let signedArea = 0;
+
+        for (let i = 0; i < fence.length - 1; i++) {
+            const point = fence[i];
+            const nextPoint = fence[i + 1];
+            signedArea += (point.x * (-nextPoint.y) - nextPoint.x * (-point.y));
+        }
+
+        return signedArea;
+    },
+
+    reduceFence: function (fence) {
+        //Implementation of Visvalingam–Whyatt algorithm
+
+        const startingArea = Math.abs(this.signedArea(fence));
+        let pointsRemoved = 0;
+
+        //naive O(n^2) implementation (should be fine for now since there's very rarely many points)
+        const MAX_POINTS = 100;
+        while (fence.length > MAX_POINTS) {
+            let minAreaIndex = -1;
+            let minArea = Infinity;
+
+            // Ignore first and (duplicate) last point
+            for (let i = 1; i < fence.length - 1; i++) {
+                const A = fence[(i - 1).mod(fence.length)];
+                const B = fence[i];
+                const C = fence[(i + 1).mod(fence.length)];
+
+                const triangleArea = 0.5 * Math.abs(
+                    A.x * B.y + B.x * C.y + C.x * A.y - A.x * C.y - B.x * A.y - C.x * B.y
+                );
+
+                if (triangleArea < minArea) {
+                    minAreaIndex = i;
+                    minArea = triangleArea;
+                }
+            }
+
+            if (minArea < 0.01 * startingArea) {
+                fence.splice(minAreaIndex, 1);
+                pointsRemoved++;
+            } else {
+                break;
+            }
+        }
+
+        return fence;
+    },
+
+    lineCurveIntersection: function(fence, line) {
+        for (let i = 0; i < fence.length - 2; i++) {
+            const A = fence[i];
+            const B = fence[i + 1];
+            const C = line.u;
+            const D = line.v;
+
+            const intersection = Utils.lineLineIntersection(A, B, C, D);
+            if (intersection) {
+                return {
+                    intersectionPoint: intersection,
+                    uIndex: i,
+                    vIndex: i + 1
+                }
+            }
+        }
+        return null;
+    },
+
+    lineLineIntersection: function (A, B, C, D) {
+        const s1 = {x: B.x - A.x, y: B.y - A.y};
+        const s2 = {x: D.x - C.x, y: D.y - C.y};
+
+        const s = (-s1.y * (A.x - C.x) + s1.x * (A.y - C.y)) / (-s2.x * s1.y + s1.x * s2.y);
+        const t = ( s2.x * (A.y - C.y) - s2.y * (A.x - C.x)) / (-s2.x * s1.y + s1.x * s2.y);
+
+        if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
+            return {x: A.x + (t * s1.x), y: A.y + (t * s1.y)};
+        }
+
+        return null;
     }
 }

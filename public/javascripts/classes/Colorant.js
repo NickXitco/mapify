@@ -25,7 +25,6 @@ class Colorant {
 
     static fromString(string) {
         const split = string.split(/[\s,()]+/);
-        console.log(split);
 
         let r = -1;
         let g = -1;
