@@ -21,9 +21,12 @@ class ReactSidebar extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        return this.props.historyState !== nextProps.historyState ||
-               this.state.open !== nextState.open ||
-               this.props.loading !== nextProps.loading;
+        return (
+            this.props.historyState !== nextProps.historyState ||
+            this.state.open !== nextState.open ||
+            this.props.loading !== nextProps.loading ||
+            this.props.uiHover !== nextProps.uiHover
+        );
     }
 
     scrollbar(colorant) {
