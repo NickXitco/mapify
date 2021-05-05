@@ -136,6 +136,12 @@ class App extends React.Component {
 
     updateHoverFlag(value) {
         this.setState({uiHover: value});
+
+        if (value) {
+            // Unhover artists
+            this.setState({hoveredArtist: null, hoverPoint: {}});
+            this.setCursor('auto');
+        }
     }
 
     //<editor-fold desc="Clicked Artist Handling">
@@ -255,6 +261,8 @@ class App extends React.Component {
     loadArtistFromUI(artist) {
         this.updateClickedArtist(artist);
         this.state.camera.artistMove(artist);
+        this.setState({hoveredArtist: null, hoverPoint: {}});
+        this.setCursor('auto');
     }
 
     loadArtistFromSearch(searchTerm, isQueryID) {
