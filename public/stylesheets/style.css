@@ -751,6 +751,8 @@ canvas {
   padding: 7px;
 
   position: static;
+
+  cursor: pointer;
 }
 
 .uiButtonPath {
@@ -771,6 +773,9 @@ canvas {
 
   text-transform: lowercase;
   text-align: left;
+
+  user-select: none;
+  cursor: pointer;
 }
 
 .shortestPathForm {

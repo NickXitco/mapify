@@ -38,6 +38,7 @@ class ShortestPathDialog extends React.Component {
         this.getPath = this.getPath.bind(this);
 
         this.checkWeighted = this.checkWeighted.bind(this);
+        this.clickHandler = this.clickHandler.bind(this);
     }
 
     processInput(e, start) {
@@ -139,10 +140,25 @@ class ShortestPathDialog extends React.Component {
         if (this.state.fullyExpanded && !this.props.expanded) {
             this.setState({fullyExpanded: false});
         }
+
+        if (!this.props.expanded && (this.state.startValue !== "" || this.state.endValue !== "" || this.state.startSuggestions.length !== 0 || this.state.endSuggestions.length !== 0)) {
+            this.setState({
+                startValue: "",
+                endValue: "",
+                startSuggestions: [],
+                endSuggestions: [],
+            });
+        }
     }
 
     checkWeighted(e) {
         this.setState({weighted: e.target.checked});
+    }
+
+    clickHandler() {
+        this.props.clickHandler();
+        setTimeout(this.expandFully, 400);
+        this.setState({hoverState: 0});
     }
 
     render() {
@@ -226,22 +242,16 @@ class ShortestPathDialog extends React.Component {
                      this.props.updateHoverFlag(false);
                  }}
 
-                 onClick={() => {
-                     this.props.clickHandler();
-                     setTimeout(this.expandFully, 400);
-                     this.setState({hoverState: 0});
-                 }}
-
                  onTransitionEnd={this.transitionEnd}
             >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" className="uiButton">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" className="uiButton" onClick={this.clickHandler}>
                     <path d="M16 3.5L3.5 16 16 28.5 28.5 16zm2.25 15.3v-2.32H14.5a.41.41 0 00-.42.41v5a.41.41 0 01-.41.42h-2.92v-8.75a.42.42 0 01.42-.42h6.66a.41.41 0 00.42-.41v-1.92a.42.42 0 01.71-.29l4.29 4.29L19 19.1a.42.42 0 01-.75-.3z"
                           className="uiButtonPath"
                     />
                 </svg>
 
 
-                <h4 className="uiButtonTitle">
+                <h4 className="uiButtonTitle" onClick={this.clickHandler}>
                     SHORTEST PATH
                 </h4>
 
