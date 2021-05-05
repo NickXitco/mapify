@@ -136,6 +136,12 @@ class App extends React.Component {
 
     updateHoverFlag(value) {
         this.setState({uiHover: value});
+
+        if (value) {
+            // Unhover artists
+            this.setState({hoveredArtist: null, hoverPoint: {}});
+            this.setCursor('auto');
+        }
     }
 
     //<editor-fold desc="Clicked Artist Handling">
