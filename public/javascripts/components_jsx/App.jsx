@@ -261,6 +261,8 @@ class App extends React.Component {
     loadArtistFromUI(artist) {
         this.updateClickedArtist(artist);
         this.state.camera.artistMove(artist);
+        this.setState({hoveredArtist: null, hoverPoint: {}});
+        this.setCursor('auto');
     }
 
     loadArtistFromSearch(searchTerm, isQueryID) {
