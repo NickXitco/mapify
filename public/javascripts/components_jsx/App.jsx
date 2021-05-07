@@ -72,6 +72,7 @@ class App extends React.Component {
         this.resetCamera = this.resetCamera.bind(this);
         this.zoomCameraOut = this.zoomCameraOut.bind(this);
         this.zoomCameraIn = this.zoomCameraIn.bind(this);
+        this.artistCameraMove = this.artistCameraMove.bind(this);
 
         this.updateClickedArtist = this.updateClickedArtist.bind(this);
 
@@ -436,6 +437,10 @@ class App extends React.Component {
         MouseEvents.scrollStep = 0;
         MouseEvents.zoomCoordinates = {x: this.state.camera.x, y: this.state.camera.y};
         MouseEvents.scrollDelta = -1;
+    }
+
+    artistCameraMove(artist) {
+        this.state.camera.artistMove(artist);
     }
 
     setQuadHead(quadHead) {
@@ -861,6 +866,7 @@ class App extends React.Component {
                     updateHoverFlag={this.updateHoverFlag}
                     setActiveGenreAppearance={this.setActiveGenreAppearance}
                     clearActiveGenreAppearance={this.clearActiveGenreAppearance}
+                    moveCamera={this.artistCameraMove}
                 />
 
                 <div className="rightSideDiv">

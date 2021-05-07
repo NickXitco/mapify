@@ -14,6 +14,10 @@ class HopsList extends React.Component {
             //Close artist
             this.setState({openedArtist: null});
         } else {
+            this.props.updateHoveredArtist(null);
+            if (artist) {
+                this.props.moveCamera(artist);
+            }
             this.setState({openedArtist: artist});
         }
     }
