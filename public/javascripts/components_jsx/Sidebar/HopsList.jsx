@@ -10,7 +10,12 @@ class HopsList extends React.Component {
     }
 
     openArtist(artist) {
-        this.setState({openedArtist: artist});
+        if (this.state.openedArtist === artist) {
+            //Close artist
+            this.setState({openedArtist: null});
+        } else {
+            this.setState({openedArtist: artist});
+        }
     }
 
     render() {
@@ -61,17 +66,22 @@ class HopsList extends React.Component {
             return (
                 <li className={"hopListItem"}
                     key={artist.id.toString()}
-                    onClick={() => {
-                        this.openArtist(artist)
-                    }}
-                    onMouseEnter={() => {
-                        this.props.updateHoveredArtist(artist)
-                    }}
-                    onMouseLeave={() => {
-                        this.props.updateHoveredArtist(null)
-                    }}
                 >
-                    <ArtistProfile artist={artist} fontDecrement={3} showPlayer={false} size={"Medium"} align={'left'}/>
+                    <div
+                        className={"hopListProfile"}
+                        onClick={() => {this.openArtist(artist)}}
+                        onMouseEnter={() => {this.props.updateHoveredArtist(artist)}}
+                        onMouseLeave={() => {this.props.updateHoveredArtist(null)}}
+                    >
+                        <ArtistProfile
+                            artist={artist}
+                            fontDecrement={3}
+                            showPlayer={false}
+                            size={"Medium"}
+                            align={'left'}
+                        />
+                    </div>
+
                     {line}
                     {artistExpand}
                 </li>

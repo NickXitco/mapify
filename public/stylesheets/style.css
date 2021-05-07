@@ -445,7 +445,8 @@ canvas {
 }
 
 .nameMedium h1 {
-  margin-right: 30px;
+  margin-right: 15px;
+  width: 300px;
 }
 
 .nameAndPictureSmall {
@@ -496,6 +497,7 @@ canvas {
 
 .nameSmall h1 {
   margin-right: 30px;
+  width: 300px;
 }
 
 .nameSmallRight {
@@ -642,7 +644,11 @@ canvas {
   width: 100%;
 }
 
-.hopListItem:hover {
+.hopListProfile {
+  position: relative;
+}
+
+.hopListProfile:hover {
   text-decoration: underline;
   cursor: pointer;
 }
@@ -680,8 +686,9 @@ canvas {
 }
 
 .pathArtistDetailsOpen {
-  max-height: 800px;
+  max-height: 900px;
 }
+
 
 /*</editor-fold>*/
 
