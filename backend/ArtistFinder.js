@@ -56,8 +56,6 @@ async function findArtist(query, isQueryID) {
         });
     }
 
-
-
     return {
         name: artist.name,
         id: artist.id,
@@ -140,7 +138,7 @@ async function updateRelated(artist, realRelated) {
     }
 
     for (const edge of edgesToDelete) {
-        db.query(`FOR e IN edges FILTER e._key == ${edge.e._key} REMOVE e IN edges`);
+        db.query(`FOR e IN edges FILTER e._key == "${edge.e._key}" REMOVE e IN edges`);
     }
 }
 

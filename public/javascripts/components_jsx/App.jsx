@@ -354,6 +354,12 @@ class App extends React.Component {
                     const node = createNewNode(hop, this.state.quadHead, this.state.nodeLookup)
                     node.images = hop.images;
                     node.track = hop.track;
+
+                    for (const r of hop.related) {
+                        createNewNode(r, this.state.quadHead, this.state.nodeLookup);
+                        node.relatedVertices.add(this.state.nodeLookup[r.id]);
+                    }
+
                     newPath.push(node);
                 }
 
