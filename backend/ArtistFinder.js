@@ -224,7 +224,7 @@ function genreSearch(searchTerm, limit) {
           LET score = BM25(doc)
           LET normalized = score / length
           FILTER normalized > 1
-          SORT normalized DESC, doc.size DESC
+          SORT normalized * doc.size DESC
           LIMIT ${limit}
           RETURN doc
         `
