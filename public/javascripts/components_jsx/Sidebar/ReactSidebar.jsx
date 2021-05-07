@@ -96,7 +96,9 @@ class ReactSidebar extends React.Component {
                 <HopsList path={data.nodes}
                           loadArtistFromUI={this.props.loadArtistFromUI}
                           updateHoveredArtist={this.props.updateHoveredArtist}
-                          header={`Shortest Path`}/>
+                          header={`Shortest Path`}
+                          moveCamera={this.props.moveCamera}
+                />
 
                 <div className="flexSpacer"/>
             </div>

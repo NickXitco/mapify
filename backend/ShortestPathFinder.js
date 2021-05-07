@@ -1,5 +1,6 @@
 const arangoDB = require('./ArangoDB');
 const spotifyApiHolder = require('./SpotifyAPI');
+const artistFinder = require('./ArtistFinder');
 
 /**
  * Gets the shortest path between two points on the graph in the form of an ordered array of hops
@@ -25,27 +26,20 @@ async function getShortestPath(source, target, weighted) {
     return populatePath(path);
 }
 
-async function populatePath(path) {
-    const spotifyApi = spotifyApiHolder.getAPI();
+// TODO run findArtist from ArtistFinder on each step of the path, and return those variables
 
-    let imagePromises = [];
-    let trackPromises = [];
+async function populatePath(path) {
+    let populationPromises = [];
+
     for (const hop of path) {
-        imagePromises.push(spotifyApi.getArtist(hop.id));
-        trackPromises.push(spotifyApi.getArtistTopTracks(hop.id, 'US'));
+        populationPromises.push(artistFinder.findArtist(hop.id, true));
     }
 
-    await Promise.all(imagePromises).then((values) => {
+    await Promise.all(populationPromises).then((values) => {
         for (let i = 0; i < path.length; i++) {
-            path[i].images = values[i].body.images;
+            path[i] = values[i];
         }
-    });
-
-    await Promise.all(trackPromises).then((values) => {
-        for (let i = 0; i < path.length; i++) {
-            path[i].track = values[i].body.tracks.length > 0 ? values[i].body.tracks[0] : null;
-        }
-    });
+    })
 
     return path;
 }
