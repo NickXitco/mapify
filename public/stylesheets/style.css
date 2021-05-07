@@ -636,10 +636,10 @@ canvas {
   font-size: 16px;
   text-transform: uppercase;
   font-weight: 200;
-  position: static;
+  position: relative;
   padding: 5px;
   display: inline-block;
-  width: 90%;
+  width: 100%;
 }
 
 .hopListItem:hover {
@@ -664,6 +664,23 @@ canvas {
   display: flex;
   overflow-y: auto;
   flex-direction: column;
+}
+
+.pathArtistDetails {
+  position: static;
+  float: right;
+  width: 85%;
+  height: auto;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.5, 1, 0.89, 1);
+}
+
+.pathArtistDetailsClosed {
+  max-height: 0;
+}
+
+.pathArtistDetailsOpen {
+  max-height: 800px;
 }
 
 /*</editor-fold>*/
