@@ -38,24 +38,12 @@ class App extends React.Component {
 
             showDebug: false,
 
-            showChangelog: !this.checkVersion("0.8.0-beta"),
-            version: "0.8.0-beta",
-            headline: "Quality of Life Improvements",
+            showChangelog: !this.checkVersion("0.9.0-beta"),
+            version: "0.9.0-beta",
+            headline: "Home stretch",
             changes: [
-                "Added page names (you can now see them in the tab menu)",
-                "Added a new option for the Shortest Path (check it out it's very cool)",
-                "Added loading bars! This should improve the site's feel drastically",
-                "Fixed some sidebar bugs",
-                "Drawing regions should be less janky (Ctrl+Click drag to draw and see)",
-                "Improved Genre Search",
-                "Shortest Path sidebar has been overhauled to show artist info inline",
-                "A few touchpad improvements have been made"
             ],
             upcomingFeatures: [
-                "Add previous versions to this changelog!",
-                "Performance improvements",
-                "Personal spotify integration",
-                "Even wider trackpad support"
             ],
 
             cursor: 'auto',
