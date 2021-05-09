@@ -225,6 +225,41 @@ class ReactSidebar extends React.Component {
             )
     }
 
+    about(closed, hoverStyle) {
+        let className = closed ? "sidebar sidebar-closed" : "sidebar sidebar-open"
+
+        return (
+            <div className={className}
+                 style={hoverStyle}
+                 onMouseEnter={this.setHoverFlag}
+                 onMouseLeave={this.unsetHoverFlag}
+                 onTransitionEnd={this.transitionEnd}
+            >
+
+                {this.scrollbar('white')}
+
+                <SidebarStroke color={'white'}/>
+
+                <div style={{position: "static", padding: "20px", display: "flex", flexDirection: "column"}}>
+                    <h2>the artist</h2>
+                    <h1 style={{fontSize: "44px", lineHeight: "30px"}}>observatory</h1>
+
+                    <div>
+                        <h2>about</h2>
+                    </div>
+
+                    <div>
+                        <h2>faq</h2>
+                    </div>
+
+                    <div>
+                        <h3>controls</h3>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     default(hoverStyle) {
         return (
             <div className={"sidebar sidebar-closed"}
@@ -279,7 +314,7 @@ class ReactSidebar extends React.Component {
             return this.loading(hoverStyle);
         }
 
-        if (!data) {
+        if (!data && page !== PageStates.ABOUT) {
             return this.default();
         }
 
@@ -301,6 +336,10 @@ class ReactSidebar extends React.Component {
 
         if (page === PageStates.GENRE) {
             return this.genre(closed, hoverStyle, data);
+        }
+
+        if (page === PageStates.ABOUT) {
+            return this.about(closed, hoverStyle);
         }
 
         return this.default(hoverStyle);

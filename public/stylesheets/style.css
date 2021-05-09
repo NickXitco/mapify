@@ -1109,3 +1109,14 @@ input {
   margin-top: 200px;
   text-shadow: 0 0 4px white;
 }
+
+.version {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  margin: 20px;
+  user-select: none;
+  bottom: 0;
+  text-shadow: 0 0 2px white;
+  font-size: 12px;
+}

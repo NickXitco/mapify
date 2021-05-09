@@ -16,6 +16,7 @@ const PageStates = Object.freeze({
     REGION: "REGION",
     REGION_ARTIST: "REGION_ARTIST",
     PATH: "PATH",
+    ABOUT: "ABOUT",
 
     //Sources
     UNKNOWN: "UNKNOWN",
@@ -31,6 +32,7 @@ const PageActions = Object.freeze({
     GENRE: "GENRE",
     MAP: "MAP",
     REGION: "REGION",
+    ABOUT: "ABOUT",
 });
 
 function parseUnknownSource() {
@@ -84,6 +86,10 @@ function stateMapper(src, action) {
     // If we have an invalid url, redirect us home.
     if (src === PageStates.INVALID) {
         return PageStates.HOME;
+    }
+
+    if (action === PageActions.ABOUT) {
+        return PageStates.ABOUT;
     }
 
     // If we have a map click and we aren't currently in the two sub-artist pages, go home.
