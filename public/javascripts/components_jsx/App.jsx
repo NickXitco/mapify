@@ -30,7 +30,6 @@ class App extends React.Component {
 
             spButtonExpanded: false,
             settingsButtonExpanded: false,
-            randomButtonExpanded: false,
 
             activePath: {
                 nodes: [],
@@ -115,6 +114,8 @@ class App extends React.Component {
         this.hashChangeHandler = this.hashChangeHandler.bind(this);
         this.pushState = this.pushState.bind(this);
         this.processHash = this.processHash.bind(this);
+
+        this.showAboutPage = this.showAboutPage.bind(this);
 
         this.startLoading = this.startLoading.bind(this);
         this.stopLoading = this.stopLoading.bind(this);
@@ -539,6 +540,9 @@ class App extends React.Component {
         } else if (destPage === PageStates.GENRE_ARTIST) {
             url = `g=${encodeURIComponent(newData.genre.name)}&a=${newData.artist.id}`;
             title = `${newData.artist.name} | ${newData.genre.name.toUpperCase()} | The Artist Observatory`;
+        } else if (destPage === PageStates.ABOUT) {
+            url= `about`;
+            title = `About | The Artist Observatory`;
         }
 
         // If we're looking at an artist, we need to make sure those artists' edges are made.
@@ -688,17 +692,26 @@ class App extends React.Component {
             case PageStates.GENRE_ARTIST:
                 this.loadGenreFromSearch(validatedHash.data.genre, validatedHash.data.artist);
                 break;
+            case PageStates.ABOUT:
+                this.showAboutPage();
+                break;
         }
     }
 
     validateHash(hash) {
         const hashSplit = hash.split(/[&=]+/);
+        const validatedHash = {numParams: hashSplit.length / 2, page: "", data: {}};
+
+        if (hashSplit.length === 1 && hashSplit[0] === "about") {
+            validatedHash.page = PageStates.ABOUT;
+            return validatedHash;
+        }
+
         const MAX_PARAMS = 2;
         if (hashSplit.length < 2 || hashSplit.length > MAX_PARAMS * 2 || hashSplit.length % 2 !== 0) {
             return null;
         }
 
-        const validatedHash = {numParams: hashSplit.length / 2, page: "", data: {}};
         for (let i = 0; i < hashSplit.length / 2; i++) {
             const param = hashSplit[i * 2];
             if (i > 1 && param !== "a") return null;
@@ -743,6 +756,10 @@ class App extends React.Component {
             }
         }
         return validatedHash;
+    }
+
+    showAboutPage() {
+        this.stateHandler(PageStates.UNKNOWN, PageActions.ABOUT, null);
     }
 
     componentDidMount() {
@@ -822,7 +839,6 @@ class App extends React.Component {
                 <div className={"buttons"}>
                     <RandomNodeButton
                         colorant={colorant}
-                        expanded={this.state.randomButtonExpanded}
                         updateHoverFlag={this.updateHoverFlag}
                         clickHandler={this.fetchRandomArtist}
                     />
@@ -845,6 +861,15 @@ class App extends React.Component {
                         updateHoverFlag={this.updateHoverFlag}
                         clickHandler={this.handleSettingsClick}
                         flipDebug={this.flipDebug}
+                    />
+
+                    <LeftSideButton
+                        colorant={colorant}
+                        updateHoverFlag={this.updateHoverFlag}
+                        clickHandler={this.showAboutPage}
+
+                        icon={ICONS.about}
+                        heading={"about"}
                     />
                 </div>
 
