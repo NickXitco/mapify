@@ -240,8 +240,21 @@ class ReactSidebar extends React.Component {
 
                 <SidebarStroke color={'white'}/>
 
-                <div style={{position: "static", overflow: "auto", display: "flex", flexDirection: "column"}}>
-                    THE ARTIST OBSERVATORY
+                <div style={{position: "static", padding: "20px", display: "flex", flexDirection: "column"}}>
+                    <h2>the artist</h2>
+                    <h1 style={{fontSize: "44px", lineHeight: "30px"}}>observatory</h1>
+
+                    <div>
+                        <h2>about</h2>
+                    </div>
+
+                    <div>
+                        <h2>faq</h2>
+                    </div>
+
+                    <div>
+                        <h3>controls</h3>
+                    </div>
                 </div>
             </div>
         );
