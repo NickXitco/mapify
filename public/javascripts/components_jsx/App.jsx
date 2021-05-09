@@ -39,26 +39,24 @@ class App extends React.Component {
 
             showDebug: false,
 
-            showChangelog: !this.checkVersion("0.7.1-beta"),
-            version: "0.7.1-beta",
-            headline: "Private Beta Deployed!",
+            showChangelog: !this.checkVersion("0.8.0-beta"),
+            version: "0.8.0-beta",
+            headline: "Quality of Life Improvements",
             changes: [
-                "Added genre fence to genre sidebar",
-                "Heavily optimized edge drawing",
-                "Edges now travel from/to the outside of the vertices, not the center",
-                "Added filters/sorting buttons to sidebar",
-                "Improved scrolling behavior",
-                "Added double-click zoom (a la Google Maps)",
-                "Added region selection breakdowns! Use Ctrl + Click to use this.",
-                "Added settings button for debug UI",
-                "Added logo",
-                "Added support for using browser's forward/backward buttons",
+                "Added page names (you can now see them in the tab menu)",
+                "Added a new option for the Shortest Path (check it out it's very cool)",
+                "Added loading bars! This should improve the site's feel drastically",
+                "Fixed some sidebar bugs",
+                "Drawing regions should be less janky (Ctrl+Click drag to draw and see)",
+                "Improved Genre Search",
+                "Shortest Path sidebar has been overhauled to show artist info inline",
+                "A few touchpad improvements have been made"
             ],
             upcomingFeatures: [
                 "Add previous versions to this changelog!",
                 "Performance improvements",
                 "Personal spotify integration",
-                "Wider trackpad support"
+                "Even wider trackpad support"
             ],
 
             cursor: 'auto',

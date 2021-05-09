@@ -223,8 +223,8 @@ class P5Wrapper extends React.Component {
             const isTouchPad = e.wheelDeltaY ? e.wheelDeltaY === -3 * e.deltaY : e.deltaMode === 0
 
             if (isTouchPad && !e.ctrlKey) {
-                this.props.camera.x -= e.deltaX * (1 / this.props.camera.getZoomFactor().x);
-                this.props.camera.y += e.deltaY * (1 / this.props.camera.getZoomFactor().y);
+                this.props.camera.x += e.deltaX * (1 / this.props.camera.getZoomFactor().x);
+                this.props.camera.y -= e.deltaY * (1 / this.props.camera.getZoomFactor().y);
             } else {
                 MouseEvents.zooming = true;
                 MouseEvents.scrollStep = 0;
