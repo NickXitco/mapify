@@ -279,7 +279,7 @@ class ReactSidebar extends React.Component {
             return;
         }
 
-        if (this.props.historyState.page === PageStates.HOME) {
+        if (this.props.historyState.page === PageStates.HOME && !this.props.loading) {
             this.setState({open: false});
         } else {
             this.setState({open: true});
