@@ -44,7 +44,7 @@ class P5Wrapper extends React.Component {
 
             MouseEvents.drift(this.props.camera, p);
             MouseEvents.zoom(this.props.camera);
-
+            this.props.camera.bound(6000, 6000);
 
             this.props.camera.doCameraMove();
 

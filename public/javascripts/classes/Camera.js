@@ -162,4 +162,22 @@ class Camera {
 
         return !((l1.x >= r2.x || l2.x >= r1.x) || (l1.y <= r2.y || l2.y <= r1.y));
     }
+
+    bound(x, y) {
+        if (this.x > x) {
+            this.x = x;
+        }
+
+        if (this.x < -x) {
+            this.x = -x;
+        }
+
+        if (this.y > y) {
+            this.y = y;
+        }
+
+        if (this.y < -y) {
+            this.y = -y;
+        }
+    }
 }
