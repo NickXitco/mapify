@@ -835,6 +835,7 @@ class App extends React.Component {
                 {changelog}
 
                 <Logo colorant={colorant}/>
+                <p className={"version"}>{this.state.version}</p>
 
                 <div className={"buttons"}>
                     <RandomNodeButton
