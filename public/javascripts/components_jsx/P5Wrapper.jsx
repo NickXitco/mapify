@@ -4,26 +4,21 @@ class P5Wrapper extends React.Component {
         this.myRef = React.createRef()
         this.loading = true;
         this.dragDrawing = false;
+        this.frameCount = 0;
+
+
+        this.setup = this.setup.bind(this);
+        this.draw = this.draw.bind(this);
+        this.captureWheel = this.captureWheel.bind(this);
+        this.mousePressed = this.mousePressed.bind(this);
+        this.mouseMove = this.mouseMove.bind(this);
+        this.mouseReleased = this.mouseReleased.bind(this);
+        this.keyPressed = this.keyPressed.bind(this);
     }
 
     Sketch = (p) => {
         p.setup = () => {
-            const canvas = p.createCanvas(window.innerWidth, window.innerHeight);
             canvas.mouseOver(() => {this.props.updateHoverFlag(false)});
-
-            const camera = new Camera(0, 0, window.innerHeight, window.innerWidth, 1, this.props.p5);
-            this.props.setCamera(camera);
-            this.unloadedPQ = new PriorityQueue((a, b) => Utils.dist(camera.x, camera.y, a.x, a.y)
-                                                                  - Utils.dist(camera.x, camera.y, b.x, b.y));
-
-            loadInitialQuads(this.loadingQuads, this.unprocessedResponses).then((qH) => {
-                this.props.setQuadHead(qH);
-                this.loading = false
-
-                if (window.location.hash) {
-                    this.props.processHash(window.location.hash.replace("#", ""));
-                }
-            });
 
             // this.dustBunnies = DustBunny.createDustBunnies(10000, 5000, 500);
 
@@ -32,54 +27,6 @@ class P5Wrapper extends React.Component {
         };
 
         p.draw = () => {
-            if (this.loading) {
-                drawLoading();
-                return;
-            }
-
-            p.background(3);
-
-            Debug.resetTiming();
-            Debug.createTimingEvent("Drawing Setup");
-
-            MouseEvents.drift(this.props.camera, p);
-            MouseEvents.zoom(this.props.camera);
-            this.props.camera.bound(6000, 6000);
-
-            this.props.camera.doCameraMove();
-
-            p.push();
-            this.props.camera.setView();
-
-            Debug.createTimingEvent("Camera Moves");
-
-            drawOnscreenQuads(p, this.props.quadHead, this.props.camera, this.props.hoveredArtist, this.loadingQuads, this.unloadedQuads, this.unloadedPQ, this.props.showDebug);
-
-            // DustBunny.drawBunnies(this.dustBunnies, p, this.props.camera);
-            // Debug.createTimingEvent("Dust Bunnies");
-
-            loadUnloaded(this.unprocessedResponses, this.unloadedPQ, this.loadingQuads, this.unloadedQuads, this.props.camera);
-
-            if (!this.props.uiHover) {
-                const hA = getHoveredArtist(
-                    p, this.props.camera,
-                    this.props.clickedArtist, this.props.quadHead,
-                    this.props.genre, this.props.path, this.props.fence);
-                if (hA) {
-                    this.props.setCursor('pointer');
-                } else {
-                    this.props.setCursor('auto');
-                }
-                this.props.updateHoveredArtist(hA);
-            }
-
-            if (this.props.clickedArtist && !this.props.clickedArtist.loaded && !this.clickedLoading) {
-                this.clickedLoading = true;
-                loadArtist(p, this.props.clickedArtist, this.props.quadHead, this.props.nodeLookup).then(() => {this.clickedLoading = false});
-            }
-
-            Debug.createTimingEvent("Get Hovered Artist");
-
             if (!this.props.clickedArtist && !this.props.genre && this.props.path.nodes.length === 0) {
                 this.darken = {
                     related: 0,
@@ -100,7 +47,7 @@ class P5Wrapper extends React.Component {
             Debug.createTimingEvent("Draw Genre Nodes");
 
             if (this.props.fence.length > 0) {
-                let postPoint = MouseEvents.getVirtualMouseCoordinates(p, this.props.camera);
+                let postPoint = MouseEvents.getVirtualMouseCoordinates(this.app, this.props.camera);
                 let firstPoint = {x: Infinity, y: Infinity}
 
                 if (this.props.fence.length > 0) {
@@ -193,12 +140,6 @@ class P5Wrapper extends React.Component {
 
             Debug.createTimingEvent("Sidebar");
 
-            if (p.frameCount % 5 === 0) {
-                processOne(p, this.props.camera, this.props.quadHead, this.props.nodeLookup, this.loadingQuads, this.unprocessedResponses);
-            }
-
-            Debug.createTimingEvent("Quad Processing");
-
             p.pop();
             Debug.createTimingEvent("Info Box");
             if (this.props.showDebug) {
@@ -214,42 +155,10 @@ class P5Wrapper extends React.Component {
             }
         };
 
-        p.mouseWheel = (e) => {
-            if (this.props.uiHover) {
-                return;
-            }
-            e.preventDefault();
-
-            const isTouchPad = e.wheelDeltaY ? e.wheelDeltaY === -3 * e.deltaY : e.deltaMode === 0
-
-            if (isTouchPad && !e.ctrlKey) {
-                this.props.camera.x += e.deltaX * (1 / this.props.camera.getZoomFactor().x);
-                this.props.camera.y -= e.deltaY * (1 / this.props.camera.getZoomFactor().y);
-            } else {
-                MouseEvents.zooming = true;
-                MouseEvents.scrollStep = 0;
-                MouseEvents.zoomCoordinates = MouseEvents.getVirtualMouseCoordinates(p, this.props.camera);
-                if (e.ctrlKey && Math.abs(e.deltaY) < 10) {
-                    MouseEvents.scrollDelta = e.deltaY / 10;
-                } else {
-                    MouseEvents.scrollDelta = e.deltaY / 300;
-                }
-            }
-        }
-
-        p.mousePressed = (e) => {
-            if (!this.props.uiHover) {
-                MouseEvents.dragging = true;
-                MouseEvents.drag = {x: p.mouseX, y: p.mouseY};
-                MouseEvents.start = {x: p.mouseX, y: p.mouseY};
-                MouseEvents.startTime = new Date().getTime();
-            }
-        }
-
         p.addFencepost = (dragging) => {
             this.props.setFencing(true, null);
 
-            let postPoint = MouseEvents.getVirtualMouseCoordinates(p, this.props.camera);
+            let postPoint = MouseEvents.getVirtualMouseCoordinates(this.app, this.props.camera);
             let firstPoint = {x: Infinity, y: Infinity}
 
             if (this.props.fence.length > 0) {
@@ -301,95 +210,6 @@ class P5Wrapper extends React.Component {
             }
         }
 
-        p.mouseDragged = (e) => {
-            if (MouseEvents.dragging) {
-                const newDrag = MouseEvents.getVirtualMouseCoordinates(p, this.props.camera);
-                const oldDrag = this.props.camera.screen2virtual(MouseEvents.drag);
-                MouseEvents.drag = {x: p.mouseX, y: p.mouseY};
-                const currentTime = new Date().getTime();
-                if (e.ctrlKey) {
-                    const dragDist = Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y);
-                    const smallDrag = dragDist < 10;
-                    if (!smallDrag) {
-                        this.dragDrawing = true;
-                    }
-
-                    if (this.dragDrawing) {
-                        p.addFencepost(true);
-                    }
-                } else {
-                    this.props.camera.x += (oldDrag.x - newDrag.x);
-                    this.props.camera.y += (oldDrag.y - newDrag.y);
-                }
-
-                if (!e.ctrlKey && this.dragDrawing) {
-                    this.dragDrawing = false;
-                    if (this.props.fence.length > 2) {
-                        const postPoint = this.props.fence[0];
-                        this.props.addFencepost(postPoint);
-                        this.props.setFencing(false, null);
-                    } else {
-                        this.props.clearFence();
-                        this.props.setFencing(false, null);
-                    }
-                }
-            }
-        }
-
-        p.mouseReleased = (e) => {
-            if (MouseEvents.dragging) {
-                const newDrag = MouseEvents.getVirtualMouseCoordinates(p, this.props.camera);
-                const oldDrag = this.props.camera.screen2virtual(MouseEvents.drag);
-
-                if (!e.ctrlKey) {
-                    this.props.camera.x += (oldDrag.x - newDrag.x);
-                    this.props.camera.y += (oldDrag.y - newDrag.y);
-                }
-
-                const dragDist = Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y);
-                const smallDrag = dragDist < 5;
-
-                if (smallDrag) {
-                    const clickTime = new Date().getTime();
-                    const isDoubleClick = MouseEvents.isDoubleClick(clickTime);
-                    MouseEvents.lastClickTime = clickTime;
-
-                    if (e.ctrlKey) { // Fence Click
-                        p.addFencepost();
-                    } else if (isDoubleClick) {
-                        MouseEvents.zooming = true;
-                        MouseEvents.scrollStep = 0;
-                        MouseEvents.zoomCoordinates = {x: newDrag.x, y: newDrag.y};
-                        MouseEvents.scrollDelta = -0.5;
-                    } else {
-                        const clickedArtist = handlePointClick(this.props.quadHead, this.props.hoveredArtist, this.props.clickedArtist, this.props.nodeLookup, p);
-                        if (clickedArtist) {
-                            this.props.updateClickedArtist(clickedArtist);
-
-                        } else {
-                            this.props.handleEmptyClick();
-                        }
-
-                        this.props.clearFence();
-                        this.props.setFencing(false, null);
-                    }
-                }
-
-                if (e.ctrlKey && this.dragDrawing && this.props.fence.length > 2) {
-                    const postPoint = this.props.fence[0];
-                    this.props.addFencepost(postPoint);
-                    this.props.setFencing(false, null);
-                }
-
-                if (!e.ctrlKey) {
-                    MouseEvents.driftVec = p.createVector(p.winMouseX - p.pwinMouseX, p.winMouseY - p.pwinMouseY);
-                    MouseEvents.drifting = true;
-                }
-                MouseEvents.dragging = false;
-            }
-            this.dragDrawing = false;
-        }
-
         p.keyPressed = (e) => {
             this.props.keyDownEvents(e);
         }
@@ -404,7 +224,7 @@ class P5Wrapper extends React.Component {
     }
 
     componentDidMount() {
-        this.props.setCanvas(new p5(this.Sketch, this.myRef.current));
+        //this.props.setCanvas(new p5(this.Sketch, this.myRef.current));
 
         this.clickedLoading = false;
 
@@ -418,11 +238,315 @@ class P5Wrapper extends React.Component {
         this.unprocessedResponses = [];
         this.unloadedQuads = new Set();
         this.loadingQuads = new Set();
+
+        this.setup();
+    }
+
+    componentWillUnmount() {
+        this.app.stop();
+    }
+
+    draw() {
+        this.frameCount++;
+        if (this.loading) {
+            drawLoading();
+            return;
+        }
+
+        if (this.props.resize) {
+            console.log("resize");
+            this.props.camera.zoomCamera({x: this.props.camera.x, y: this.props.camera.y});
+            this.props.resetResize();
+        }
+
+        Debug.resetTiming();
+
+        MouseEvents.drift(this.props.camera, this.app);
+        MouseEvents.zoom(this.props.camera);
+        this.props.camera.bound(6000, 6000);
+        this.props.camera.doCameraMove();
+
+        const zoomFactor = this.props.camera.getZoomFactor();
+        const xOffset = this.app.screen.width / 2 - (this.props.camera.x * zoomFactor.x);
+        const yOffset = this.app.screen.height / 2 + (this.props.camera.y * zoomFactor.y);
+        const scale = zoomFactor.x;
+
+        this.mainStage.x = xOffset;
+        this.mainStage.y = yOffset;
+        this.mainStage.scale.set(scale);
+
+        Debug.createTimingEvent("Camera Moves");
+
+        drawOnscreenQuads(
+            this.quads, this.props.quadHead, this.props.camera,
+            this.props.hoveredArtist, this.loadingQuads,
+            this.unloadedQuads, this.unloadedPQ, this.props.showDebug
+        );
+
+        loadUnloaded(
+            this.unprocessedResponses, this.unloadedPQ, this.loadingQuads,
+            this.unloadedQuads, this.props.camera
+        );
+
+        if (!this.props.uiHover) {
+            const hA = getHoveredArtist(
+                this.app, this.props.camera,
+                this.props.clickedArtist, this.props.quadHead,
+                this.props.genre, this.props.path, this.props.fence);
+            if (hA) {
+                this.props.setCursor('pointer');
+            } else {
+                this.props.setCursor('auto');
+            }
+            this.props.updateHoveredArtist(hA);
+        }
+
+        if (this.props.clickedArtist && !this.props.clickedArtist.loaded && !this.clickedLoading) {
+            this.clickedLoading = true;
+            loadArtist(
+                this.props.clickedArtist, this.props.quadHead, this.props.nodeLookup
+            ).then(() => {this.clickedLoading = false});
+        }
+
+        Debug.createTimingEvent("Get Hovered Artist");
+
+        // DustBunny.drawBunnies(this.dustBunnies, p, this.props.camera);
+        // Debug.createTimingEvent("Dust Bunnies");
+
+        if (this.frameCount % 5 === 0) {
+            processOne(
+                this.props.camera, this.props.quadHead,
+                this.props.nodeLookup, this.loadingQuads, this.unprocessedResponses
+            );
+        }
+
+        Debug.createTimingEvent("Quad Processing");
+
+        if (!this.props.clickedArtist && this.nodes.children.length > 0) {
+            this.nodes.removeChildren();
+        }
+
+        if (this.props.clickedArtist && this.props.clickedArtist.loaded) {
+            // drawEdges(
+            //     p, this.props.camera, this.props.clickedArtist.edges,
+            //     this.props.clickedArtist, this.props.hoveredArtist, this.props.uiHover
+            // );
+
+            Debug.createTimingEvent("Draw Related Edges");
+
+            // if (this.nodes.children.length === 0) {
+            //     drawRelatedNodes(this.nodes, this.props.camera, this.props.clickedArtist);
+            // }
+
+            Debug.createTimingEvent("Draw Related Nodes");
+        }
+
+        if (this.props.showDebug) {
+            Debug.debugAll(
+                this.debug,
+                this.app,
+                this.props.camera,
+                this.props.hoveredArtist,
+                this.unloadedQuads,
+                this.loadingQuads,
+                this.unprocessedResponses,
+                Object.keys(this.props.nodeLookup).length,
+                this.quads,
+                this.nodes,
+                this.edges
+            );
+        }
+    }
+
+    setup() {
+        this.app = new PIXI.Application({ resizeTo: window , backgroundColor: 0x030303});
+        this.canvas.appendChild(this.app.view);
+        this.app.start();
+        this.app.ticker.add(this.draw);
+
+        this.quads = new PIXI.Container();
+        this.debug = new PIXI.Container();
+        this.nodes = new PIXI.Container();
+        this.edges = new PIXI.Container();
+
+        this.mainStage = new PIXI.Container();
+        this.mainStage.addChild(this.quads);
+        this.mainStage.addChild(this.nodes);
+        this.mainStage.addChild(this.edges);
+
+        this.app.stage.addChild(this.mainStage);
+        this.app.stage.addChild(this.debug);
+
+        const camera = new Camera(0, 0, window.innerHeight, window.innerWidth, 1, this.app.screen);
+        this.props.setCamera(camera);
+
+        //TODO check this out, is camera.x being evaluated at declaration??
+        this.unloadedPQ = new PriorityQueue(
+            (a, b) => Utils.dist(camera.x, camera.y, a.x, a.y) - Utils.dist(camera.x, camera.y, b.x, b.y)
+        );
+
+        loadInitialQuads(this.loadingQuads, this.unprocessedResponses).then((qH) => {
+            this.props.setQuadHead(qH);
+            this.loading = false
+
+            if (window.location.hash) {
+                this.props.processHash(window.location.hash.replace("#", ""));
+            }
+        });
+    }
+
+    captureWheel(e) {
+        if (this.props.uiHover) {
+            return;
+        }
+
+        //TODO fix
+        //const isTouchPad = e.wheelDeltaY ? e.wheelDeltaY === -3 * e.deltaY : e.deltaMode === 0
+        const isTouchPad = false;
+        if (isTouchPad && !e.ctrlKey) {
+            this.props.camera.x += e.deltaX * (1 / this.props.camera.getZoomFactor().x);
+            this.props.camera.y -= e.deltaY * (1 / this.props.camera.getZoomFactor().y);
+        } else {
+            MouseEvents.zooming = true;
+            MouseEvents.scrollStep = 0;
+            MouseEvents.zoomCoordinates = MouseEvents.getVirtualMouseCoordinates(this.app, this.props.camera);
+            if (e.ctrlKey && Math.abs(e.deltaY) < 10) {
+                MouseEvents.scrollDelta = e.deltaY / 10;
+            } else {
+                MouseEvents.scrollDelta = e.deltaY / 300;
+            }
+        }
+    }
+
+    mousePressed(e) {
+        const point = this.app.renderer.plugins.interaction.mouse.global;
+        MouseEvents.speed = {x: 0, y: 0};
+        if (!this.props.uiHover) {
+            MouseEvents.dragging = true;
+            MouseEvents.drag = {x: point.x, y: point.y};
+            MouseEvents.start = {x: point.x, y: point.y};
+            MouseEvents.startTime = new Date().getTime();
+        }
+    }
+
+    mouseMove(e) {
+        if (this.props.uiHover) {
+            this.props.updateHoverFlag(false);
+        }
+
+        if (MouseEvents.dragging) {
+            const newDrag = MouseEvents.getVirtualMouseCoordinates(this.app, this.props.camera);
+            const oldDrag = this.props.camera.screen2virtual(MouseEvents.drag);
+            const point = this.app.renderer.plugins.interaction.mouse.global;
+            MouseEvents.drag = {x: point.x, y: point.y};
+            MouseEvents.speed = {x: e.movementX, y: e.movementY};
+            const currentTime = new Date().getTime();
+            if (e.ctrlKey) {
+                const dragDist = Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y);
+                const smallDrag = dragDist < 10;
+                if (!smallDrag) {
+                    this.dragDrawing = true;
+                }
+
+                if (this.dragDrawing) {
+                    //TODO implement
+                    //p.addFencepost(true);
+                }
+            } else {
+                this.props.camera.x += (oldDrag.x - newDrag.x);
+                this.props.camera.y += (oldDrag.y - newDrag.y);
+            }
+
+            if (!e.ctrlKey && this.dragDrawing) {
+                this.dragDrawing = false;
+                if (this.props.fence.length > 2) {
+                    const postPoint = this.props.fence[0];
+                    this.props.addFencepost(postPoint);
+                    this.props.setFencing(false, null);
+                } else {
+                    this.props.clearFence();
+                    this.props.setFencing(false, null);
+                }
+            }
+        }
+    }
+
+    mouseReleased(e) {
+        if (MouseEvents.dragging) {
+            const newDrag = MouseEvents.getVirtualMouseCoordinates(this.app, this.props.camera);
+            const oldDrag = this.props.camera.screen2virtual(MouseEvents.drag);
+
+            if (!e.ctrlKey) {
+                this.props.camera.x += (oldDrag.x - newDrag.x);
+                this.props.camera.y += (oldDrag.y - newDrag.y);
+            }
+
+            const dragDist = Utils.dist(MouseEvents.start.x, MouseEvents.start.y, MouseEvents.drag.x, MouseEvents.drag.y);
+            const smallDrag = dragDist < 5;
+
+            if (smallDrag) {
+                const clickTime = new Date().getTime();
+                const isDoubleClick = MouseEvents.isDoubleClick(clickTime);
+                MouseEvents.lastClickTime = clickTime;
+
+                if (e.ctrlKey) { // Fence Click
+                    //TODO implement
+                    //p.addFencepost();
+                } else if (isDoubleClick) {
+                    MouseEvents.zooming = true;
+                    MouseEvents.scrollStep = 0;
+                    MouseEvents.zoomCoordinates = {x: newDrag.x, y: newDrag.y};
+                    MouseEvents.scrollDelta = -0.5;
+                } else {
+                    const clickedArtist = handlePointClick(this.props.quadHead, this.props.hoveredArtist,);
+                    if (clickedArtist) {
+                        this.props.updateClickedArtist(clickedArtist);
+
+                    } else {
+                        this.props.handleEmptyClick();
+                    }
+
+                    this.props.clearFence();
+                    this.props.setFencing(false, null);
+                }
+            }
+
+            if (e.ctrlKey && this.dragDrawing && this.props.fence.length > 2) {
+                const postPoint = this.props.fence[0];
+                this.props.addFencepost(postPoint);
+                this.props.setFencing(false, null);
+            }
+
+            if (!e.ctrlKey) {
+                MouseEvents.driftVec = {
+                    x: MouseEvents.speed.x,
+                    y: MouseEvents.speed.y,
+                };
+                MouseEvents.drifting = true;
+            }
+            MouseEvents.dragging = false;
+        }
+        this.dragDrawing = false;
+    }
+
+    keyPressed(e) {
+        //TODO this doesn't work. Move to a document listener
+        this.props.keyDownEvents(e);
     }
 
     render() {
         return (
-            <div ref={this.myRef}>
+            <div
+                style={{
+                    width: "100%",
+                    height: "100%",
+                }}
+                ref={r => {this.canvas = r}}
+                onWheel={this.captureWheel}
+                onMouseDown={this.mousePressed}
+                onMouseMove={this.mouseMove}
+                onMouseUp={this.mouseReleased}
+            >
 
             </div>
         );

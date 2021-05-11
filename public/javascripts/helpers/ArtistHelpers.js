@@ -1,9 +1,9 @@
 const MAX_CURVE_ANGLE = 180;
 
 
-function getHoveredArtist(p, camera, clickedArtist, quadHead, genre, path, region) {
+function getHoveredArtist(canvas, camera, clickedArtist, quadHead, genre, path, region) {
     let stack = [];
-    const mP = MouseEvents.getVirtualMouseCoordinates(p, camera);
+    const mP = MouseEvents.getVirtualMouseCoordinates(canvas, camera);
     stack.push(quadHead);
     let foundQuad;
     while (stack.length > 0) {
@@ -73,27 +73,51 @@ function getHoveredArtist(p, camera, clickedArtist, quadHead, genre, path, regio
     return closest;
 }
 
-function drawNodes(p, camera, nodeList) {
+function drawNodes(container, camera, nodeList) {
+    const graphics = new PIXI.Graphics();
     for (const node of nodeList) {
         if (camera.containsRegion(node.x, node.y, node.size)) {
-            p.push();
-            p.strokeWeight(node.size / 5);
-            p.fill(p.color(node.r / 2, node.g / 2, node.b / 2));
-            p.stroke(p.color(node.r, node.g, node.b));
-            p.circle(node.x, -node.y, node.size);
-            p.pop();
+            const darkerColor = (
+                ((node.r / 2) << 16) +
+                ((node.g / 2) << 8) +
+                (node.b / 2)
+            );
+
+            const color = (
+                (node.r << 16) +
+                (node.g << 8) +
+                (node.b)
+            );
+
+            graphics.beginFill(darkerColor);
+            graphics.lineStyle(node.size / 5, color);
+            graphics.drawCircle(node.x, -node.y, node.size / 2);
         }
     }
+    container.addChild(graphics);
 }
 
-function drawRelatedNodes(p, camera, clickedArtist) {
-    drawNodes(p, camera, clickedArtist.relatedVertices);
-    p.push();
-    p.fill(p.color(clickedArtist.r / 6, clickedArtist.g / 6, clickedArtist.b / 6));
-    p.stroke(clickedArtist.r, clickedArtist.g, clickedArtist.b);
-    p.strokeWeight(clickedArtist.size / 5);
-    p.circle(clickedArtist.x, -clickedArtist.y, clickedArtist.size);
-    p.pop();
+function drawRelatedNodes(container, camera, clickedArtist) {
+    drawNodes(container, camera, clickedArtist.relatedVertices);
+    const graphics = new PIXI.Graphics();
+
+    const darkerColor = (
+        ((clickedArtist.r / 6) << 16) +
+        ((clickedArtist.g / 6) << 8) +
+        (clickedArtist.b / 6)
+    );
+
+    const color = (
+        (clickedArtist.r << 16) +
+        (clickedArtist.g << 8) +
+        (clickedArtist.b)
+    );
+
+    graphics.beginFill(darkerColor);
+    graphics.lineStyle(clickedArtist.size / 5, color);
+    graphics.drawCircle(clickedArtist.x, -clickedArtist.y, clickedArtist.size / 2);
+
+    container.addChild(graphics);
 }
 
 function makeEdges(artist) {
@@ -150,7 +174,7 @@ function drawPathEdges(p, camera, edges) {
     }
 }
 
-async function loadArtistFromSearch(p, query, isQueryID, quadHead, nodeLookup) {
+async function loadArtistFromSearch(query, isQueryID, quadHead, nodeLookup) {
     const response = await fetch('artist/' + query + "/" + isQueryID);
     const data = await response.json();
 
@@ -192,7 +216,7 @@ function createNewNode(data, quadHead, nodeLookup) {
     return nodeLookup[data.id];
 }
 
-async function loadArtist(p, artist, quadHead, nodeLookup) {
+async function loadArtist(artist, quadHead, nodeLookup) {
     const response = await fetch('artist/' + artist.id + "/true");
     const data = await response.json();
 

@@ -4,8 +4,8 @@ class App extends React.Component {
 
         this.state = {
             canvas: null,
-            p5: null,
             camera: null,
+            resize: false,
 
             hoveredArtist: null,
             clickedArtist: null,
@@ -51,7 +51,6 @@ class App extends React.Component {
             loading: false
         }
 
-        this.setCanvas = this.setCanvas.bind(this);
         this.setCamera = this.setCamera.bind(this);
 
         this.resetCamera = this.resetCamera.bind(this);
@@ -102,6 +101,7 @@ class App extends React.Component {
         this.hashChangeHandler = this.hashChangeHandler.bind(this);
         this.pushState = this.pushState.bind(this);
         this.processHash = this.processHash.bind(this);
+        this.resetResize = this.resetResize.bind(this);
 
         this.showAboutPage = this.showAboutPage.bind(this);
 
@@ -138,7 +138,7 @@ class App extends React.Component {
         if (artist.loaded) {
             this.stateHandler(PageStates.UNKNOWN, PageActions.ARTIST, artist);
         } else if (artist.id) {
-            loadArtist(this.state.p5, artist, this.state.quadHead, this.state.nodeLookup).then(() =>{
+            loadArtist(artist, this.state.quadHead, this.state.nodeLookup).then(() =>{
                     artist = this.state.nodeLookup[artist.id];
                     this.stateHandler(PageStates.UNKNOWN, PageActions.ARTIST, artist);
             });
@@ -255,7 +255,7 @@ class App extends React.Component {
     }
 
     loadArtistFromSearch(searchTerm, isQueryID) {
-        loadArtistFromSearch(this.state.p5, searchTerm, isQueryID, this.state.quadHead, this.state.nodeLookup).then(artist => {
+        loadArtistFromSearch(searchTerm, isQueryID, this.state.quadHead, this.state.nodeLookup).then(artist => {
             if (artist) {
                 this.updateClickedArtist(artist);
                 this.state.camera.artistMove(artist);
@@ -391,15 +391,10 @@ class App extends React.Component {
             .then(response => response.json())
             .then(data => {
                 this.stopLoading();
-                loadArtist(this.state.p5, data, this.state.quadHead, this.state.nodeLookup).then(() =>{
+                loadArtist(data, this.state.quadHead, this.state.nodeLookup).then(() =>{
                     this.loadArtistFromUI(this.state.nodeLookup[data.id]);
                 });
             });
-    }
-
-    setCanvas(p5) {
-        this.setState({p5: p5});
-        this.initializeResizeObserver();
     }
 
     setCamera(camera) {
@@ -439,18 +434,14 @@ class App extends React.Component {
             if (entries.length !== 1) {
                 console.log("I don't know what this is");
             } else {
-                const cr = entries[0].contentRect;
-                const w = cr.width;
-                const h = cr.height;
-                if (this.state.p5) {
-                    this.state.p5.resizeCanvas(w,h);
-                }
-                if (this.state.camera) {
-                    this.state.camera.zoomCamera({x: this.state.camera.x, y: this.state.camera.y});
-                }
+                this.setState({resize: true});
             }
         })
         this.ro.observe(document.getElementById("root"));
+    }
+
+    resetResize() {
+        this.setState({resize: false});
     }
 
     setCursor(cursor) {
@@ -752,6 +743,7 @@ class App extends React.Component {
 
     componentDidMount() {
         window.addEventListener("hashchange", this.hashChangeHandler);
+        this.initializeResizeObserver();
     }
 
     render() {
@@ -921,12 +913,14 @@ class App extends React.Component {
                     nodeLookup={this.state.nodeLookup} //TODO consider removing this from P5 and do all load handling at the app level.
                     quadHead={this.state.quadHead}
                     camera={this.state.camera}
-                    p5={this.state.p5}
 
                     setQuadHead={this.setQuadHead}
                     setCanvas={this.setCanvas}
                     setCamera={this.setCamera}
                     processHash={this.processHash}
+
+                    resize={this.state.resize}
+                    resetResize={this.resetResize}
 
                     uiHover={this.state.uiHover}
                     updateHoverFlag={this.updateHoverFlag}

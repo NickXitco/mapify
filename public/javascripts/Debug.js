@@ -1,117 +1,129 @@
 const Debug = {
     timingEvents: {},
     lastTime: 0,
+    defaultStyle: new PIXI.TextStyle({
+        fontFamily: 'Arial',
+        fontSize: 12,
+        fill:['#ffffff']
+    }),
 
-    drawCrosshairs: function (p) {
-        p.push();
-        strokeWeight(3);
-        p.stroke("white");
-        line(0, 10, 0, -10);
-        line(-10, 0, 10, 0);
-        p.pop();
+    textObjects: {},
+
+    initDebug: function() {
+        // TODO create all text objects
     },
 
-    printMouseCoordinates: function (p, camera) {
-        let mP = MouseEvents.getVirtualMouseCoordinates(p, camera);
-        p.push();
-        p.translate(0, 0);
-        p.scale(1);
-        p.fill("white");
-        p.noStroke();
-        p.text(mP.x, 10, 25);
-        p.text(mP.y, 10, 50);
-        p.pop();
+    printMouseCoordinates: function (canvas, container, camera) {
+        let mP = MouseEvents.getVirtualMouseCoordinates(canvas, camera);
+        const mouse = new PIXI.Text(
+            `Virtual Coordinates: (${mP.x.toFixed(1)}, ${mP.y.toFixed(1)})`,
+            Debug.defaultStyle
+        );
+        mouse.x = 20;
+        mouse.y = 275;
+        container.addChild(mouse);
     },
 
-    drawScreenCrosshairs: function (p) {
-        p.push();
-        strokeWeight(1);
-        p.stroke("aqua");
-        line(p.width / 2, 0, p.width / 2, p.height);
-        line(0, p.height / 2, p.width, p.height / 2);
-        p.pop();
+    printFPS: function (canvas, container) {
+        const fps = canvas.ticker.FPS;
+        const fpsText = new PIXI.Text(`FPS: ${Math.round(fps)}`, Debug.defaultStyle);
+        fpsText.x = 20;
+        fpsText.y = canvas.renderer.height - 70;
+        container.addChild(fpsText);
     },
 
-    printFPS: function (p) {
-        p.push();
-        let fps = p.frameRate(p);
-        p.fill(255);
-        p.stroke(0);
-        p.text("FPS: " + fps.toFixed(2), 10, p.height - 10);
-        p.pop();
+    debugCamera: function (container, camera) {
+        const center = new PIXI.Text(`Camera Center: (${camera.x.toFixed(2)}, ${camera.y.toFixed(2)})`, Debug.defaultStyle);
+        const width = new PIXI.Text(`Camera Width: ${camera.width.toFixed(2)}`, Debug.defaultStyle);
+        const height = new PIXI.Text(`Camera Height: ${camera.height.toFixed(2)}`, Debug.defaultStyle);
+        const zoom = new PIXI.Text(`Camera Zoom: ${camera.zoom.toFixed(2)}`, Debug.defaultStyle);
+        const zoomFactor = new PIXI.Text(`Camera Zoom Factor: ${camera.getZoomFactor().x.toFixed(2)}`, Debug.defaultStyle);
+        center.x = 20;
+        width.x = 20;
+        height.x = 20;
+        zoom.x = 20;
+        zoomFactor.x = 20;
+
+        center.y = 75;
+        width.y = 100;
+        height.y = 125;
+        zoom.y = 150;
+        zoomFactor.y = 175;
+
+        container.addChild(center);
+        container.addChild(width);
+        container.addChild(height);
+        container.addChild(zoom);
+        container.addChild(zoomFactor);
     },
 
-    debugCamera: function (p, camera) {
-        p.push();
-        p.translate(0, 0);
-        p.scale(1);
-        p.fill("white");
-        p.noStroke();
-        p.text("Camera Center: (" + camera.x + ", " + camera.y + ")", 10, 75);
-        p.text("Camera Width: " + camera.width, 10, 100);
-        p.text("Camera Height: " + camera.height, 10, 125);
-        p.text("Camera Zoom: " + camera.zoom, 10, 150);
-        p.text("Camera Zoom Factor: " + camera.getZoomFactor().x, 10, 175);
-        p.pop();
-    },
-
-    debugHovered: function (p, hoveredArtist) {
-        p.push();
-        p.translate(0, 0);
-        p.scale(1);
-        p.fill("white");
-        p.noStroke();
+    debugHovered: function (container, hoveredArtist) {
         let name = (hoveredArtist !== null) ? hoveredArtist.name : "None";
-        p.text("Hovered Artist: " + name, 10, 200);
-        p.pop();
+        const a = new PIXI.Text(`Hovered Artist:${name}`, Debug.defaultStyle);
+        a.x = 20;
+        a.y = 200;
+        container.addChild(a);
     },
 
-    canvasSize: function (p) {
-        p.push();
-        p.translate(0, 0);
-        p.scale(1);
-        p.fill("white");
-        p.noStroke();
-        p.text("Canvas Width: " + p.width, 10, 225);
-        p.text("Canvas Height: " + p.height, 10, 250);
-        p.pop();
+    canvasSize: function (canvas, container) {
+        const width = new PIXI.Text(`Canvas Width: ${canvas.renderer.width}`, Debug.defaultStyle);
+        const height = new PIXI.Text(`Canvas Height: ${canvas.renderer.height}`, Debug.defaultStyle);
+        width.x = 20;
+        width.y = 225;
+        height.x = 20;
+        height.y = 250;
+        container.addChild(width);
+        container.addChild(height);
     },
 
-    loadingStats: function (p, unloadedQuads, loadingQuads, unprocessedResponses, loadedNodes) {
-        p.push();
-        p.fill("white");
-        p.noStroke();
-        p.text("Unloaded Quads " + unloadedQuads.size, 10, 275);
-        p.text("Loading Quads " + loadingQuads.size, 10, 300);
-        p.text("Unprocessed Requests " + unprocessedResponses.length, 10, 325);
-        p.text("Loaded Nodes " + loadedNodes, 10, 350);
-        p.pop();
+    loadingStats: function (container, unloadedQuads, loadingQuads, unprocessedResponses, loadedNodes) {
+        const unloaded = new PIXI.Text(`Unloaded Quads: ${unloadedQuads.size}`, Debug.defaultStyle);
+        const loading = new PIXI.Text(`Loading Quads: ${loadingQuads.size}`, Debug.defaultStyle);
+        const unprocessed = new PIXI.Text(`Unprocessed Responses: ${unprocessedResponses.length}`, Debug.defaultStyle);
+        const loaded = new PIXI.Text(`Loaded Nodes: ${loadedNodes}`, Debug.defaultStyle);
+
+        unloaded.x = 20;
+        loading.x = 20;
+        unprocessed.x = 20;
+        loaded.x = 20;
+
+        unloaded.y = 325;
+        loading.y = 350;
+        unprocessed.y = 375;
+        loaded.y = 400;
+
+        container.addChild(unloaded);
+        container.addChild(loading);
+        container.addChild(unprocessed);
+        container.addChild(loaded);
     },
 
-    latLongStats: function (p, camera) {
-        let mP = MouseEvents.getVirtualMouseCoordinates(p, camera);
+    latLongStats: function (canvas, container, camera) {
+        let mP = MouseEvents.getVirtualMouseCoordinates(canvas, camera);
         const latLong = Utils.gnomicProjection(mP.x, mP.y, 0, -0.5 * Math.PI, PLANE_RADIUS);
-        p.push();
-        p.fill("white");
-        p.noStroke();
-        p.text("Longitude: " + latLong.longitude, 10, 375);
-        p.text("Latitude: " + latLong.latitude, 10, 400);
-        p.pop();
+
+        const mouse = new PIXI.Text(
+            `Projected Lat/Long: (${latLong.longitude.toFixed(2)}, ${latLong.latitude.toFixed(2)})`,
+            Debug.defaultStyle
+        );
+
+        mouse.x = 20;
+        mouse.y = 300;
+        container.addChild(mouse);
     },
 
     averageTimingEvents: {},
-    timingGraph: function (p) {
-        p.push();
-        p.rectMode(p.CORNER);
-        p.fill('white');
-        p.noStroke();
+    timingGraph: function (canvas, container) {
         let total = 0;
+
+        const graphics = new PIXI.Graphics();
+        graphics.beginFill(0xFFFFFF);
 
         for (const timingName of Object.keys(this.timingEvents)) {
             total += this.timingEvents[timingName];
         }
 
-        let currentHeight = p.height - 40
+        let currentHeight = canvas.renderer.height - 90;
         for (const timingName of Object.keys(this.timingEvents)) {
             const percentage = this.timingEvents[timingName] / total;
 
@@ -121,11 +133,20 @@ const Debug = {
                 this.averageTimingEvents[timingName] = percentage;
             }
 
-            p.rect(10, currentHeight, this.averageTimingEvents[timingName] * 50, 10);
-            p.text(timingName + " - " + this.timingEvents[timingName].toFixed(2), 100, currentHeight + 8);
+            graphics.drawRect(20, currentHeight, this.averageTimingEvents[timingName] * 50, 10);
+            const label = new PIXI.Text(
+                timingName + " - " + this.timingEvents[timingName].toFixed(2),
+                Debug.defaultStyle
+            );
+            label.x = 100;
+            label.y = currentHeight - 2;
+
+            container.addChild(label);
+
             currentHeight -= 20;
         }
-        p.pop();
+
+        container.addChild(graphics);
     },
 
     createTimingEvent: function(name) {
@@ -140,19 +161,45 @@ const Debug = {
         }
     },
 
-    debugAll: function (p, camera, hoveredArtist, unloadedQuads, loadingQuads, unprocessedResponses, numNodes) {
-        p.push();
-        camera.setView();
-        //this.drawCrosshairs(p);
-        p.pop();
-        this.debugCamera(p, camera);
-        //this.drawScreenCrosshairs(p);
-        this.debugHovered(p, hoveredArtist);
-        this.canvasSize(p);
-        this.printFPS(p);
-        this.printMouseCoordinates(p, camera);
-        this.loadingStats(p, unloadedQuads, loadingQuads, unprocessedResponses, numNodes);
-        this.latLongStats(p, camera)
-        this.timingGraph(p);
+    containerStats: function(debug, quad, node, edge) {
+        const debugLength = new PIXI.Text(`Debug Container: ${debug.children.length}`, Debug.defaultStyle);
+        const quadLength = new PIXI.Text(`Quad Container: ${quad.children.length}`, Debug.defaultStyle);
+        const nodeLength = new PIXI.Text(`Node Container: ${node.children.length}`, Debug.defaultStyle);
+        const edgeLength = new PIXI.Text(`Edge Container: ${edge.children.length}`, Debug.defaultStyle);
+
+        debugLength.x = 20;
+        quadLength.x = 20;
+        nodeLength.x = 20;
+        edgeLength.x = 20;
+
+        debugLength.y = 425;
+        quadLength.y = 450;
+        nodeLength.y = 475;
+        edgeLength.y = 500;
+
+        debug.addChild(debugLength);
+        debug.addChild(quadLength);
+        debug.addChild(nodeLength);
+        debug.addChild(edgeLength);
+    },
+
+    debugAll: function (
+        debugContainer, canvas, camera, hoveredArtist, unloadedQuads,
+        loadingQuads, unprocessedResponses, numNodes,
+
+        quadContainer, nodeContainer, edgeContainer
+    ) {
+        debugContainer.removeChildren(); //TODO this is technically inefficient (I think?)
+        this.debugCamera(debugContainer, camera);
+        this.debugHovered(debugContainer, hoveredArtist);
+        this.canvasSize(canvas, debugContainer);
+        this.printFPS(canvas, debugContainer);
+        this.printMouseCoordinates(canvas, debugContainer, camera);
+        this.latLongStats(canvas, debugContainer, camera);
+        this.loadingStats(debugContainer, unloadedQuads, loadingQuads, unprocessedResponses, numNodes);
+        this.timingGraph(canvas, debugContainer);
+        this.containerStats(debugContainer, quadContainer, nodeContainer, edgeContainer);
     }
 }
+
+Debug.initDebug()
