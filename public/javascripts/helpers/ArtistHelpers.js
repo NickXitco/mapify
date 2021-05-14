@@ -1,9 +1,9 @@
 const MAX_CURVE_ANGLE = 180;
 
 
-function getHoveredArtist(p, camera, clickedArtist, quadHead, genre, path, region) {
+function getHoveredArtist(canvas, camera, clickedArtist, quadHead, genre, path, region) {
     let stack = [];
-    const mP = MouseEvents.getVirtualMouseCoordinates(p, camera);
+    const mP = MouseEvents.getVirtualMouseCoordinates(canvas, camera);
     stack.push(quadHead);
     let foundQuad;
     while (stack.length > 0) {
@@ -54,7 +54,7 @@ function getHoveredArtist(p, camera, clickedArtist, quadHead, genre, path, regio
         }
     }
 
-    if (path.nodes.length > 0) {
+    if (path) {
         if (path.nodes.includes(closest)) {
             return closest;
         } else {
@@ -73,45 +73,56 @@ function getHoveredArtist(p, camera, clickedArtist, quadHead, genre, path, regio
     return closest;
 }
 
-function drawNodes(p, camera, nodeList) {
-    for (const node of nodeList) {
-        if (camera.containsRegion(node.x, node.y, node.size)) {
-            p.push();
-            p.strokeWeight(node.size / 5);
-            p.fill(p.color(node.r / 2, node.g / 2, node.b / 2));
-            p.stroke(p.color(node.r, node.g, node.b));
-            p.circle(node.x, -node.y, node.size);
-            p.pop();
+
+const SPRITE_OFFSET = 1725;
+
+function drawNodes(container, vertices) {
+    let i = 0;
+    for (const v of vertices) {
+        if (i === container.children.length) break;
+        const darkerColor = (
+            ((v.r / 2) << 16) +
+            ((v.g / 2) << 8) +
+            (v.b / 2)
+        );
+
+        const color = (
+            (v.r << 16) +
+            (v.g << 8) +
+            (v.b)
+        );
+
+        const node = container.children[i];
+        if (!node.visible) {
+            node.x = v.x;
+            node.y = -v.y;
+            node.scale.x = v.size / SPRITE_OFFSET;
+            node.scale.y = v.size / SPRITE_OFFSET;
+            node.tint = color;
+            node.visible = true;
         }
+        i++;
+    }
+    return i;
+}
+
+function undraw(container, index) {
+    for (let i = index; i < container.children.length; i++) {
+        const node = container.children[i];
+        node.visible = false;
     }
 }
 
-function drawRelatedNodes(p, camera, clickedArtist) {
-    drawNodes(p, camera, clickedArtist.relatedVertices);
-    p.push();
-    p.fill(p.color(clickedArtist.r / 6, clickedArtist.g / 6, clickedArtist.b / 6));
-    p.stroke(clickedArtist.r, clickedArtist.g, clickedArtist.b);
-    p.strokeWeight(clickedArtist.size / 5);
-    p.circle(clickedArtist.x, -clickedArtist.y, clickedArtist.size);
-    p.pop();
+function drawRelatedNodes(container, clickedArtist) {
+    const nodes = [...clickedArtist.relatedVertices];
+    nodes.push(clickedArtist)
+    return drawNodes(container, nodes);
 }
 
 function makeEdges(artist) {
     let edges = [];
     for (const related of artist.relatedVertices) {
-        const u = artist;
-        const v = related;
-        Math.seedrandom(u.id + v.id);
-        edges.push({
-            u: u,
-            v: v,
-            cURad: Math.random() / 2,
-            cUAng: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
-            cVRad: Math.random() / 2,
-            cVAng: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
-            tMax: 0,
-            points: [],
-        });
+        edges.push(makeEdge(artist, related));
     }
     return edges;
 }
@@ -127,30 +138,34 @@ function makeEdge(u, v) {
         cVAng: Math.random() * MAX_CURVE_ANGLE - MAX_CURVE_ANGLE / 2,
         tMax: 0,
         points: [],
+        segmentsDrawn: 0,
+        graphicsHead: new PIXI.Graphics(),
+        graphicsTail: new PIXI.Graphics()
     };
 }
 
 
-function drawEdges(p, camera, edges, clickedArtist, hoveredArtist, uiHover) {
+function drawEdges(camera, edges, clickedArtist, hoveredArtist, uiHover) {
     for (const e of edges) {
-        if (hoveredArtist === null || !uiHover) {
-            EdgeDrawer.drawEdge(p, camera, e);
-        } else if (hoveredArtist === e.v && uiHover) {
-            EdgeDrawer.drawEdge(p, camera, e);
+        if (hoveredArtist === null || !uiHover || (hoveredArtist === e.v && uiHover)) {
+            EdgeDrawer.drawEdge(camera, e);
+        } else {
+            e.graphicsHead.visible = false;
+            e.graphicsTail.visible = false;
         }
     }
 }
 
-function drawPathEdges(p, camera, edges) {
+function drawPathEdges(camera, edges) {
     for (const e of edges) {
-        EdgeDrawer.drawEdge(p, camera, e);
+        EdgeDrawer.drawEdge(camera, e);
         if (e.tMax < 1) {
             break;
         }
     }
 }
 
-async function loadArtistFromSearch(p, query, isQueryID, quadHead, nodeLookup) {
+async function loadArtistFromSearch(query, isQueryID, quadHead, nodeLookup) {
     const response = await fetch('artist/' + query + "/" + isQueryID);
     const data = await response.json();
 
@@ -192,7 +207,7 @@ function createNewNode(data, quadHead, nodeLookup) {
     return nodeLookup[data.id];
 }
 
-async function loadArtist(p, artist, quadHead, nodeLookup) {
+async function loadArtist(artist, quadHead, nodeLookup) {
     const response = await fetch('artist/' + artist.id + "/true");
     const data = await response.json();
 

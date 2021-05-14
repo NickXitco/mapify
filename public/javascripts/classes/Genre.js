@@ -14,6 +14,8 @@ class Genre {
     g;
     b;
 
+    graphics
+
     constructor(name, nodes, r, g, b, bubbleThreshold) {
         this.name = name;
         this.nodes = nodes;
@@ -25,6 +27,7 @@ class Genre {
         this.offsetHull = this.getOffsetHull(20);
         this.centroid = Genre.centroid(this.hull);
         this.bubble = this.getBubble(bubbleThreshold);
+        this.graphics = new PIXI.Graphics();
     }
 
     getBubble(percentageThreshold) {
@@ -168,28 +171,25 @@ class Genre {
         return offsetHull;
     }
 
-    drawGenreFence(p, showDebug) {
-        p.push();
+    drawGenreFence() {
+        this.graphics.lineStyle(
+            2,
+            ColorUtilities.rgb2hex(this.r, this.g, this.b)
+        )
 
-        p.stroke(p.color(this.r, this.g, this.b));
-        p.noFill();
-        p.strokeWeight(2);
-        p.beginShape();
-
-        for (const point of this.offsetHull) {
-            p.vertex(point.x, -point.y);
+        this.graphics.moveTo(this.offsetHull[0].x, -this.offsetHull[0].y);
+        for (let i = 1; i < this.offsetHull.length; i++) {
+            this.graphics.lineTo(this.offsetHull[i].x, -this.offsetHull[i].y);
         }
-        p.vertex(this.offsetHull[0].x, -this.offsetHull[0].y);
-        p.endShape();
+        this.graphics.lineTo(this.offsetHull[0].x, -this.offsetHull[0].y);
+        this.graphics.closePath();
 
-        if (showDebug) {
-            p.rect(this.centroid.x, -this.centroid.y, this.getWidth() / 2, this.getHeight() / 2);
-
-            p.noFill();
-            p.circle(this.bubble.center.x, -this.bubble.center.y, this.bubble.radius * 2);
-        }
-
-        p.pop();
+        // if (showDebug) {
+        //     p.rect(this.centroid.x, -this.centroid.y, this.getWidth() / 2, this.getHeight() / 2);
+        //
+        //     p.noFill();
+        //     p.circle(this.bubble.center.x, -this.bubble.center.y, this.bubble.radius * 2);
+        // }
     }
 
 

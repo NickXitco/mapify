@@ -1,117 +1,113 @@
 const Debug = {
     timingEvents: {},
     lastTime: 0,
+    defaultStyle: new PIXI.TextStyle({
+        fontFamily: 'Arial',
+        fontSize: 12,
+        fill:['#ffffff']
+    }),
 
-    drawCrosshairs: function (p) {
-        p.push();
-        strokeWeight(3);
-        p.stroke("white");
-        line(0, 10, 0, -10);
-        line(-10, 0, 10, 0);
-        p.pop();
+    textObjects: {},
+    isInitialized: false,
+    graphicsObject: null,
+
+    initDebug: function(container) {
+        let y = 75;
+        const x = 20;
+        this.textObjects.cameraCenter = Debug.createText(x, y, container); y += 25;
+        this.textObjects.cameraWidth = Debug.createText(x, y, container); y += 25;
+        this.textObjects.cameraHeight = Debug.createText(x, y, container); y += 25;
+        this.textObjects.cameraZoom = Debug.createText(x, y, container); y += 25;
+        this.textObjects.cameraZoomFactor = Debug.createText(x, y, container); y += 25;
+        this.textObjects.hoveredArtist = Debug.createText(x, y, container); y += 25;
+        this.textObjects.canvasWidth = Debug.createText(x, y, container); y += 25;
+        this.textObjects.canvasHeight = Debug.createText(x, y, container); y += 25;
+        this.textObjects.virtualCoords = Debug.createText(x, y, container); y += 25;
+        this.textObjects.latLong = Debug.createText(x, y, container); y += 25;
+        this.textObjects.unloaded = Debug.createText(x, y, container); y += 25;
+        this.textObjects.loading = Debug.createText(x, y, container); y += 25;
+        this.textObjects.unprocessed = Debug.createText(x, y, container); y += 25;
+        this.textObjects.loaded = Debug.createText(x, y, container); y += 25;
+        this.textObjects.fps = Debug.createText(x, y, container);
+
+        this.textObjects.labels = [];
+        for (const timingName of Object.keys(this.timingEvents)) {
+            this.textObjects.labels.push(Debug.createText(100, y, container));
+        }
+
+        this.isInitialized = true;
     },
 
-    printMouseCoordinates: function (p, camera) {
-        let mP = MouseEvents.getVirtualMouseCoordinates(p, camera);
-        p.push();
-        p.translate(0, 0);
-        p.scale(1);
-        p.fill("white");
-        p.noStroke();
-        p.text(mP.x, 10, 25);
-        p.text(mP.y, 10, 50);
-        p.pop();
+    createText: function(x, y, container) {
+        const text = new PIXI.Text(`_`, Debug.defaultStyle);
+        text.x = x;
+        text.y = y;
+        container.addChild(text);
+        return text;
     },
 
-    drawScreenCrosshairs: function (p) {
-        p.push();
-        strokeWeight(1);
-        p.stroke("aqua");
-        line(p.width / 2, 0, p.width / 2, p.height);
-        line(0, p.height / 2, p.width, p.height / 2);
-        p.pop();
+    printMouseCoordinates: function (canvas, camera) {
+        let mP = MouseEvents.getVirtualMouseCoordinates(canvas, camera);
+        this.textObjects.virtualCoords.text = `Virtual Coordinates: (${mP.x.toFixed(1)}, ${mP.y.toFixed(1)})`;
     },
 
-    printFPS: function (p) {
-        p.push();
-        let fps = p.frameRate(p);
-        p.fill(255);
-        p.stroke(0);
-        p.text("FPS: " + fps.toFixed(2), 10, p.height - 10);
-        p.pop();
+    printFPS: function (canvas, container) {
+        const fps = canvas.ticker.FPS;
+        this.textObjects.fps.text = `FPS: ${Math.round(fps)}`;
+        this.textObjects.fps.y = canvas.renderer.height - 70;
     },
 
-    debugCamera: function (p, camera) {
-        p.push();
-        p.translate(0, 0);
-        p.scale(1);
-        p.fill("white");
-        p.noStroke();
-        p.text("Camera Center: (" + camera.x + ", " + camera.y + ")", 10, 75);
-        p.text("Camera Width: " + camera.width, 10, 100);
-        p.text("Camera Height: " + camera.height, 10, 125);
-        p.text("Camera Zoom: " + camera.zoom, 10, 150);
-        p.text("Camera Zoom Factor: " + camera.getZoomFactor().x, 10, 175);
-        p.pop();
+    debugCamera: function (camera) {
+        this.textObjects.cameraCenter.text = `Camera Center: (${camera.x.toFixed(2)}, ${camera.y.toFixed(2)})`;
+        this.textObjects.cameraWidth.text = `Camera Width: ${camera.width.toFixed(2)}`;
+        this.textObjects.cameraHeight.text = `Camera Height: ${camera.height.toFixed(2)}`;
+        this.textObjects.cameraZoom.text = `Camera Zoom: ${camera.zoom.toFixed(2)}`;
+        this.textObjects.cameraZoomFactor.text = `Camera Zoom Factor: ${camera.getZoomFactor().x.toFixed(2)}`;
     },
 
-    debugHovered: function (p, hoveredArtist) {
-        p.push();
-        p.translate(0, 0);
-        p.scale(1);
-        p.fill("white");
-        p.noStroke();
+    debugHovered: function (hoveredArtist) {
         let name = (hoveredArtist !== null) ? hoveredArtist.name : "None";
-        p.text("Hovered Artist: " + name, 10, 200);
-        p.pop();
+        this.textObjects.hoveredArtist.text = `Hovered Artist: ${name}`;
     },
 
-    canvasSize: function (p) {
-        p.push();
-        p.translate(0, 0);
-        p.scale(1);
-        p.fill("white");
-        p.noStroke();
-        p.text("Canvas Width: " + p.width, 10, 225);
-        p.text("Canvas Height: " + p.height, 10, 250);
-        p.pop();
+    canvasSize: function (canvas) {
+        this.textObjects.canvasWidth.text = `Canvas Width: ${canvas.renderer.width}`;
+        this.textObjects.canvasHeight.text = `Canvas Height: ${canvas.renderer.height}`;
     },
 
-    loadingStats: function (p, unloadedQuads, loadingQuads, unprocessedResponses, loadedNodes) {
-        p.push();
-        p.fill("white");
-        p.noStroke();
-        p.text("Unloaded Quads " + unloadedQuads.size, 10, 275);
-        p.text("Loading Quads " + loadingQuads.size, 10, 300);
-        p.text("Unprocessed Requests " + unprocessedResponses.length, 10, 325);
-        p.text("Loaded Nodes " + loadedNodes, 10, 350);
-        p.pop();
+    loadingStats: function (unloadedQuads, loadingQuads, unprocessedResponses, loadedNodes) {
+        this.textObjects.unloaded.text = `Unloaded Quads: ${unloadedQuads.size}`;
+        this.textObjects.loading.text = `Loading Quads: ${loadingQuads.size}`;
+        this.textObjects.unprocessed.text = `Unprocessed Responses: ${unprocessedResponses.length}`;
+        this.textObjects.loaded.text = `Loaded Nodes: ${loadedNodes}`;
     },
 
-    latLongStats: function (p, camera) {
-        let mP = MouseEvents.getVirtualMouseCoordinates(p, camera);
+    latLongStats: function (canvas, camera) {
+        let mP = MouseEvents.getVirtualMouseCoordinates(canvas, camera);
         const latLong = Utils.gnomicProjection(mP.x, mP.y, 0, -0.5 * Math.PI, PLANE_RADIUS);
-        p.push();
-        p.fill("white");
-        p.noStroke();
-        p.text("Longitude: " + latLong.longitude, 10, 375);
-        p.text("Latitude: " + latLong.latitude, 10, 400);
-        p.pop();
+        this.textObjects.latLong.text = (
+            `Projected Lat/Long: (${latLong.longitude.toFixed(2)}, ${latLong.latitude.toFixed(2)})`
+        );
     },
 
     averageTimingEvents: {},
-    timingGraph: function (p) {
-        p.push();
-        p.rectMode(p.CORNER);
-        p.fill('white');
-        p.noStroke();
+    timingGraph: function (canvas, container) {
         let total = 0;
+
+        if (!this.graphicsObject) {
+            this.graphicsObject = new PIXI.Graphics();
+            container.addChild(this.graphicsObject);
+        }
+
+        this.graphicsObject.clear();
+        this.graphicsObject.beginFill(0xFFFFFF);
 
         for (const timingName of Object.keys(this.timingEvents)) {
             total += this.timingEvents[timingName];
         }
 
-        let currentHeight = p.height - 40
+        let currentHeight = canvas.renderer.height - 90;
+        let i = 0;
         for (const timingName of Object.keys(this.timingEvents)) {
             const percentage = this.timingEvents[timingName] / total;
 
@@ -121,11 +117,13 @@ const Debug = {
                 this.averageTimingEvents[timingName] = percentage;
             }
 
-            p.rect(10, currentHeight, this.averageTimingEvents[timingName] * 50, 10);
-            p.text(timingName + " - " + this.timingEvents[timingName].toFixed(2), 100, currentHeight + 8);
+            this.graphicsObject.drawRect(20, currentHeight, this.averageTimingEvents[timingName] * 50, 10);
+            this.textObjects.labels[i].text = timingName + " - " + this.timingEvents[timingName].toFixed(2);
+            this.textObjects.labels[i].y = currentHeight - 2;
+
             currentHeight -= 20;
+            i++;
         }
-        p.pop();
     },
 
     createTimingEvent: function(name) {
@@ -140,19 +138,21 @@ const Debug = {
         }
     },
 
-    debugAll: function (p, camera, hoveredArtist, unloadedQuads, loadingQuads, unprocessedResponses, numNodes) {
-        p.push();
-        camera.setView();
-        //this.drawCrosshairs(p);
-        p.pop();
-        this.debugCamera(p, camera);
-        //this.drawScreenCrosshairs(p);
-        this.debugHovered(p, hoveredArtist);
-        this.canvasSize(p);
-        this.printFPS(p);
-        this.printMouseCoordinates(p, camera);
-        this.loadingStats(p, unloadedQuads, loadingQuads, unprocessedResponses, numNodes);
-        this.latLongStats(p, camera)
-        this.timingGraph(p);
+    debugAll: function (
+        debugContainer, canvas, camera, hoveredArtist, unloadedQuads,
+        loadingQuads, unprocessedResponses, numNodes,
+    ) {
+        if (!this.isInitialized) {
+            this.initDebug(debugContainer);
+        }
+
+        this.debugCamera(camera);
+        this.debugHovered(hoveredArtist);
+        this.canvasSize(canvas);
+        this.printFPS(canvas, debugContainer);
+        this.printMouseCoordinates(canvas, camera);
+        this.latLongStats(canvas, camera);
+        this.loadingStats(unloadedQuads, loadingQuads, unprocessedResponses, numNodes);
+        this.timingGraph(canvas, debugContainer);
     }
 }

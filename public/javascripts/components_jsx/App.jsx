@@ -4,7 +4,6 @@ class App extends React.Component {
 
         this.state = {
             canvas: null,
-            p5: null,
             camera: null,
 
             hoveredArtist: null,
@@ -31,10 +30,7 @@ class App extends React.Component {
             spButtonExpanded: false,
             settingsButtonExpanded: false,
 
-            activePath: {
-                nodes: [],
-                edges: []
-            },
+            activePath: null,
 
             showDebug: false,
 
@@ -51,7 +47,6 @@ class App extends React.Component {
             loading: false
         }
 
-        this.setCanvas = this.setCanvas.bind(this);
         this.setCamera = this.setCamera.bind(this);
 
         this.resetCamera = this.resetCamera.bind(this);
@@ -138,7 +133,7 @@ class App extends React.Component {
         if (artist.loaded) {
             this.stateHandler(PageStates.UNKNOWN, PageActions.ARTIST, artist);
         } else if (artist.id) {
-            loadArtist(this.state.p5, artist, this.state.quadHead, this.state.nodeLookup).then(() =>{
+            loadArtist(artist, this.state.quadHead, this.state.nodeLookup).then(() =>{
                     artist = this.state.nodeLookup[artist.id];
                     this.stateHandler(PageStates.UNKNOWN, PageActions.ARTIST, artist);
             });
@@ -169,7 +164,6 @@ class App extends React.Component {
                 .then(data => {
                     if (typeof data === "string") {
                         console.error(data);
-                        this.setState({fencing: false});
                         this.clearFence();
                         this.stopLoading();
                         return;
@@ -195,12 +189,19 @@ class App extends React.Component {
         this.setState({fencing: state});
     }
 
-    addFencepost(post) {
+    addFencepost(post, artistToBeLoadedOnClose) {
         const newFence = [...this.state.fence]
         post.x = Math.round(post.x * 10) / 10;
         post.y = Math.round(post.y * 10) / 10;
         newFence.push(post);
-        this.setState({fence: newFence});
+        this.setState({fence: newFence}, () => {
+            const firstPoint = this.state.fence[0];
+            const lastPoint = this.state.fence[this.state.fence.length - 1];
+
+            if (firstPoint.x === lastPoint.x && firstPoint.y === lastPoint.y && this.state.fence.length > 2) {
+                this.setFencing(false, artistToBeLoadedOnClose);
+            }
+        });
     }
 
     processIntersection(intersection) {
@@ -214,12 +215,13 @@ class App extends React.Component {
             newFence.push(this.state.fence[i]);
         }
         newFence.push(mainPost);
-        this.setState({fence: newFence});
-        this.setFencing(false, null);
+        this.setState({fence: newFence}, () => {
+            this.setFencing(false, null);
+        });
     }
 
     clearFence() {
-        this.setState({fence: [], fenceData: null});
+        this.setState({fence: [], fenceData: null, fencing: false});
     }
 
     setActiveGenreAppearance(genreName) {
@@ -255,7 +257,7 @@ class App extends React.Component {
     }
 
     loadArtistFromSearch(searchTerm, isQueryID) {
-        loadArtistFromSearch(this.state.p5, searchTerm, isQueryID, this.state.quadHead, this.state.nodeLookup).then(artist => {
+        loadArtistFromSearch(searchTerm, isQueryID, this.state.quadHead, this.state.nodeLookup).then(artist => {
             if (artist) {
                 this.updateClickedArtist(artist);
                 this.state.camera.artistMove(artist);
@@ -391,15 +393,10 @@ class App extends React.Component {
             .then(response => response.json())
             .then(data => {
                 this.stopLoading();
-                loadArtist(this.state.p5, data, this.state.quadHead, this.state.nodeLookup).then(() =>{
+                loadArtist(data, this.state.quadHead, this.state.nodeLookup).then(() =>{
                     this.loadArtistFromUI(this.state.nodeLookup[data.id]);
                 });
             });
-    }
-
-    setCanvas(p5) {
-        this.setState({p5: p5});
-        this.initializeResizeObserver();
     }
 
     setCamera(camera) {
@@ -434,24 +431,6 @@ class App extends React.Component {
         this.setState({quadHead: quadHead});
     }
 
-    initializeResizeObserver() {
-        this.ro = new ResizeObserver(entries => {
-            if (entries.length !== 1) {
-                console.log("I don't know what this is");
-            } else {
-                const cr = entries[0].contentRect;
-                const w = cr.width;
-                const h = cr.height;
-                if (this.state.p5) {
-                    this.state.p5.resizeCanvas(w,h);
-                }
-                if (this.state.camera) {
-                    this.state.camera.zoomCamera({x: this.state.camera.x, y: this.state.camera.y});
-                }
-            }
-        })
-        this.ro.observe(document.getElementById("root"));
-    }
 
     setCursor(cursor) {
         if (cursor !== this.state.cursor) {
@@ -612,10 +591,16 @@ class App extends React.Component {
             switch (newState.page) {
                 case PageStates.ARTIST:
                     this.state.camera.artistMove(newState.getData());
+                    newState.getData().edges = makeEdges(newState.getData());
                     break;
                 case PageStates.REGION_ARTIST:
+                    this.state.camera.artistMove(newState.getData().artist);
+                    newState.getData().artist.edges = makeEdges(newState.getData().artist);
+                    break;
                 case PageStates.GENRE_ARTIST:
                     this.state.camera.artistMove(newState.getData().artist);
+                    newState.getData().artist.edges = makeEdges(newState.getData().artist);
+                    newState.getData().genre.graphics = new PIXI.Graphics();
                     break;
                 case PageStates.PATH:
                     this.state.camera.bubbleMove(
@@ -626,6 +611,7 @@ class App extends React.Component {
                     break;
                 case PageStates.GENRE:
                     this.state.camera.bubbleMove(newState.getData().bubble);
+                    newState.getData().graphics = new PIXI.Graphics();
                     break;
                 case PageStates.REGION:
                     this.state.camera.bubbleMove(
@@ -662,9 +648,8 @@ class App extends React.Component {
             case PageStates.REGION:
                 coordinates = validatedHash.data.region.split(",");
                 for (let i = 0; i < coordinates.length - 1; i += 2) {
-                    this.addFencepost({x: Number(coordinates[i]), y: Number(coordinates[i + 1])});
+                    this.addFencepost({x: Number(coordinates[i]), y: Number(coordinates[i + 1])}, null);
                 }
-                this.setFencing(false, null);
                 break;
             case PageStates.PATH:
                 const ids = validatedHash.data.path.split(",");
@@ -673,9 +658,8 @@ class App extends React.Component {
             case PageStates.REGION_ARTIST:
                 coordinates = validatedHash.data.region.split(",");
                 for (let i = 0; i < coordinates.length - 1; i += 2) {
-                    this.addFencepost({x: Number(coordinates[i]), y: Number(coordinates[i + 1])});
+                    this.addFencepost({x: Number(coordinates[i]), y: Number(coordinates[i + 1])}, validatedHash.data.artist);
                 }
-                this.setFencing(false, validatedHash.data.artist);
                 break;
             case PageStates.GENRE_ARTIST:
                 this.loadGenreFromSearch(validatedHash.data.genre, validatedHash.data.artist);
@@ -752,6 +736,7 @@ class App extends React.Component {
 
     componentDidMount() {
         window.addEventListener("hashchange", this.hashChangeHandler);
+        window.addEventListener('keydown', this.keyDownEvents)
     }
 
     render() {
@@ -774,7 +759,7 @@ class App extends React.Component {
 
 
         let clickedArtist = null;
-        let activePath = {nodes: [], edges: []};
+        let activePath = null;
         let activeGenre = this.state.activeGenre; // This is needed for genre hover in region
         let fence = this.state.fence; // This is needed for active fence drawing
         let colorant = new Colorant(255, 255, 255, false);
@@ -910,7 +895,7 @@ class App extends React.Component {
                     />
                 </div>
 
-                <P5Wrapper
+                <PIXIWrapper
                     hoveredArtist={this.state.hoveredArtist}
 
                     clickedArtist={clickedArtist}
@@ -921,7 +906,6 @@ class App extends React.Component {
                     nodeLookup={this.state.nodeLookup} //TODO consider removing this from P5 and do all load handling at the app level.
                     quadHead={this.state.quadHead}
                     camera={this.state.camera}
-                    p5={this.state.p5}
 
                     setQuadHead={this.setQuadHead}
                     setCanvas={this.setCanvas}
@@ -944,8 +928,6 @@ class App extends React.Component {
                     fencing={this.state.fencing}
 
                     showDebug={this.state.showDebug}
-
-                    keyDownEvents={this.keyDownEvents}
                 />
             </div>
         );

@@ -121,12 +121,6 @@ class Camera {
         return {x: this.canvas.width / this.width, y: this.canvas.height / this.height};
     }
 
-    setView() {
-        const zoomFactor = this.getZoomFactor();
-        this.canvas.translate(this.canvas.width / 2 - (this.x * zoomFactor.x), this.canvas.height / 2 + (this.y * zoomFactor.y));
-        this.canvas.scale(zoomFactor.x, zoomFactor.y);
-    }
-
     bubbleMove(bubble) {
         const camWidth = Math.min(5000, bubble.radius * 4);
         this.setCameraMove(bubble.center.x, bubble.center.y, this.getZoomFromWidth(camWidth), 45);
@@ -166,18 +160,30 @@ class Camera {
     bound(x, y) {
         if (this.x > x) {
             this.x = x;
+            if (MouseEvents.drifting) {
+                MouseEvents.driftVec.x *= -1;
+            }
         }
 
         if (this.x < -x) {
             this.x = -x;
+            if (MouseEvents.drifting) {
+                MouseEvents.driftVec.x *= -1;
+            }
         }
 
         if (this.y > y) {
             this.y = y;
+            if (MouseEvents.drifting) {
+                MouseEvents.driftVec.y *= -1;
+            }
         }
 
         if (this.y < -y) {
             this.y = -y;
+            if (MouseEvents.drifting) {
+                MouseEvents.driftVec.y *= -1;
+            }
         }
     }
 }
