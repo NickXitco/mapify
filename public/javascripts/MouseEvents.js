@@ -6,6 +6,7 @@
 const DRIFT_THRESHOLD = 0.1;
 const SCROLL_STEPS = 10;
 const DELTA_MULTIPLIER = 3;
+const NUM_AVG_STEPS = 4;
 
 const MouseEvents = {
     dragging: false,
@@ -19,6 +20,13 @@ const MouseEvents = {
     zoomCoordinates: {},
     lastClickTime: 0,
     speed: {},
+
+    updateSpeed: function (newSpeed) {
+        this.speed = {
+            x: (newSpeed.x * (NUM_AVG_STEPS / 2) + (NUM_AVG_STEPS / 2) * this.speed.x) / NUM_AVG_STEPS,
+            y: (newSpeed.y * (NUM_AVG_STEPS / 2) + (NUM_AVG_STEPS / 2) * this.speed.y) / NUM_AVG_STEPS
+        }
+    },
 
     zoom: function (camera) {
         if (this.zooming) {

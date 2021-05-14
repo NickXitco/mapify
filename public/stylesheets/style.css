@@ -120,6 +120,7 @@ canvas {
 /*<editor-fold desc="INFO BOX STYLINGS">*/
 .infoBox {
   user-select: none;
+  pointer-events: none;
 
   visibility: visible;
 
@@ -288,7 +289,13 @@ canvas {
   height: 100%;
   align-items: flex-end;
 
+  pointer-events: none;
+
   z-index: 3;
+}
+
+.rightSideDiv * {
+  pointer-events: all;
 }
 
 .zoomModuleDiv {
@@ -722,6 +729,8 @@ canvas {
   height: 40px;
   width: 40px;
 
+  pointer-events: all;
+
   overflow: hidden;
 
   background: rgba(0, 0, 0, 0.8);
@@ -829,6 +838,7 @@ canvas {
   flex-direction: column;
   justify-content: center;
   width: 100px;
+  pointer-events: none;
 
   z-index: 3;
 }

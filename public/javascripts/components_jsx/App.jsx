@@ -5,7 +5,6 @@ class App extends React.Component {
         this.state = {
             canvas: null,
             camera: null,
-            resize: false,
 
             hoveredArtist: null,
             clickedArtist: null,
@@ -31,10 +30,7 @@ class App extends React.Component {
             spButtonExpanded: false,
             settingsButtonExpanded: false,
 
-            activePath: {
-                nodes: [],
-                edges: []
-            },
+            activePath: null,
 
             showDebug: false,
 
@@ -101,7 +97,6 @@ class App extends React.Component {
         this.hashChangeHandler = this.hashChangeHandler.bind(this);
         this.pushState = this.pushState.bind(this);
         this.processHash = this.processHash.bind(this);
-        this.resetResize = this.resetResize.bind(this);
 
         this.showAboutPage = this.showAboutPage.bind(this);
 
@@ -169,7 +164,6 @@ class App extends React.Component {
                 .then(data => {
                     if (typeof data === "string") {
                         console.error(data);
-                        this.setState({fencing: false});
                         this.clearFence();
                         this.stopLoading();
                         return;
@@ -195,12 +189,19 @@ class App extends React.Component {
         this.setState({fencing: state});
     }
 
-    addFencepost(post) {
+    addFencepost(post, artistToBeLoadedOnClose) {
         const newFence = [...this.state.fence]
         post.x = Math.round(post.x * 10) / 10;
         post.y = Math.round(post.y * 10) / 10;
         newFence.push(post);
-        this.setState({fence: newFence});
+        this.setState({fence: newFence}, () => {
+            const firstPoint = this.state.fence[0];
+            const lastPoint = this.state.fence[this.state.fence.length - 1];
+
+            if (firstPoint.x === lastPoint.x && firstPoint.y === lastPoint.y && this.state.fence.length > 2) {
+                this.setFencing(false, artistToBeLoadedOnClose);
+            }
+        });
     }
 
     processIntersection(intersection) {
@@ -214,12 +215,13 @@ class App extends React.Component {
             newFence.push(this.state.fence[i]);
         }
         newFence.push(mainPost);
-        this.setState({fence: newFence});
-        this.setFencing(false, null);
+        this.setState({fence: newFence}, () => {
+            this.setFencing(false, null);
+        });
     }
 
     clearFence() {
-        this.setState({fence: [], fenceData: null});
+        this.setState({fence: [], fenceData: null, fencing: false});
     }
 
     setActiveGenreAppearance(genreName) {
@@ -429,20 +431,6 @@ class App extends React.Component {
         this.setState({quadHead: quadHead});
     }
 
-    initializeResizeObserver() {
-        this.ro = new ResizeObserver(entries => {
-            if (entries.length !== 1) {
-                console.log("I don't know what this is");
-            } else {
-                this.setState({resize: true});
-            }
-        })
-        this.ro.observe(document.getElementById("root"));
-    }
-
-    resetResize() {
-        this.setState({resize: false});
-    }
 
     setCursor(cursor) {
         if (cursor !== this.state.cursor) {
@@ -603,10 +591,16 @@ class App extends React.Component {
             switch (newState.page) {
                 case PageStates.ARTIST:
                     this.state.camera.artistMove(newState.getData());
+                    newState.getData().edges = makeEdges(newState.getData());
                     break;
                 case PageStates.REGION_ARTIST:
+                    this.state.camera.artistMove(newState.getData().artist);
+                    newState.getData().artist.edges = makeEdges(newState.getData().artist);
+                    break;
                 case PageStates.GENRE_ARTIST:
                     this.state.camera.artistMove(newState.getData().artist);
+                    newState.getData().artist.edges = makeEdges(newState.getData().artist);
+                    newState.getData().genre.graphics = new PIXI.Graphics();
                     break;
                 case PageStates.PATH:
                     this.state.camera.bubbleMove(
@@ -617,6 +611,7 @@ class App extends React.Component {
                     break;
                 case PageStates.GENRE:
                     this.state.camera.bubbleMove(newState.getData().bubble);
+                    newState.getData().graphics = new PIXI.Graphics();
                     break;
                 case PageStates.REGION:
                     this.state.camera.bubbleMove(
@@ -653,9 +648,8 @@ class App extends React.Component {
             case PageStates.REGION:
                 coordinates = validatedHash.data.region.split(",");
                 for (let i = 0; i < coordinates.length - 1; i += 2) {
-                    this.addFencepost({x: Number(coordinates[i]), y: Number(coordinates[i + 1])});
+                    this.addFencepost({x: Number(coordinates[i]), y: Number(coordinates[i + 1])}, null);
                 }
-                this.setFencing(false, null);
                 break;
             case PageStates.PATH:
                 const ids = validatedHash.data.path.split(",");
@@ -664,9 +658,8 @@ class App extends React.Component {
             case PageStates.REGION_ARTIST:
                 coordinates = validatedHash.data.region.split(",");
                 for (let i = 0; i < coordinates.length - 1; i += 2) {
-                    this.addFencepost({x: Number(coordinates[i]), y: Number(coordinates[i + 1])});
+                    this.addFencepost({x: Number(coordinates[i]), y: Number(coordinates[i + 1])}, validatedHash.data.artist);
                 }
-                this.setFencing(false, validatedHash.data.artist);
                 break;
             case PageStates.GENRE_ARTIST:
                 this.loadGenreFromSearch(validatedHash.data.genre, validatedHash.data.artist);
@@ -743,7 +736,7 @@ class App extends React.Component {
 
     componentDidMount() {
         window.addEventListener("hashchange", this.hashChangeHandler);
-        this.initializeResizeObserver();
+        window.addEventListener('keydown', this.keyDownEvents)
     }
 
     render() {
@@ -766,7 +759,7 @@ class App extends React.Component {
 
 
         let clickedArtist = null;
-        let activePath = {nodes: [], edges: []};
+        let activePath = null;
         let activeGenre = this.state.activeGenre; // This is needed for genre hover in region
         let fence = this.state.fence; // This is needed for active fence drawing
         let colorant = new Colorant(255, 255, 255, false);
@@ -902,7 +895,7 @@ class App extends React.Component {
                     />
                 </div>
 
-                <P5Wrapper
+                <PIXIWrapper
                     hoveredArtist={this.state.hoveredArtist}
 
                     clickedArtist={clickedArtist}
@@ -918,9 +911,6 @@ class App extends React.Component {
                     setCanvas={this.setCanvas}
                     setCamera={this.setCamera}
                     processHash={this.processHash}
-
-                    resize={this.state.resize}
-                    resetResize={this.resetResize}
 
                     uiHover={this.state.uiHover}
                     updateHoverFlag={this.updateHoverFlag}
@@ -938,8 +928,6 @@ class App extends React.Component {
                     fencing={this.state.fencing}
 
                     showDebug={this.state.showDebug}
-
-                    keyDownEvents={this.keyDownEvents}
                 />
             </div>
         );

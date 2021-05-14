@@ -36,12 +36,13 @@ function process(r, q, quadHead, nodeLookup, loadingQuads) {
     }
 
     if (r.data.image !== "") {
-        const loader = PIXI.Loader.shared;
+        const loader = new PIXI.Loader();
         const uri = `data:image/png;base64, ${r.data.image}`;
 
         loader.add(uri);
         loader.onComplete.add(() => {
             q.image = loader.resources[uri].texture;
+            q.image.baseTexture.mipmap = false;
             q.loaded = true;
             loadingQuads.delete(q);
         });
@@ -67,7 +68,7 @@ function bubbleAddQuad(q, quads) {
     }
 }
 
-function drawOnscreenQuads(canvas, quadHead, camera, hoveredArtist, loadingQuads, unloadedQuads, unloadedQuadsPriorityQueue, debug) {
+function drawOnscreenQuads(canvas, realNodesContainer, quadHead, camera, hoveredArtist, loadingQuads, unloadedQuads, unloadedQuadsPriorityQueue, debug) {
     let quads = new Set();
     let stack = [];
     stack.push(quadHead);
@@ -102,6 +103,8 @@ function drawOnscreenQuads(canvas, quadHead, camera, hoveredArtist, loadingQuads
     //TODO if these are the same quads as currently rendering, don't rerender
 
     canvas.removeChildren();
+    let i = 0;
+    let nodesToDraw = new Set();
     for (const q of sortedQuads) {
         if (q.image) {
             //If the quad has an image, show it
@@ -113,21 +116,22 @@ function drawOnscreenQuads(canvas, quadHead, camera, hoveredArtist, loadingQuads
             sprite.height = q.r * 2;
             canvas.addChild(sprite);
         } else {
-            //Quad has no image, need to draw nodes individually
-            // p.push();
-            // p.noFill();
-            // for (const n of q.renderableNodes) {
-            //     p.stroke(p.color(n.r, n.g, n.b));
-            //     p.strokeWeight(n.size / 5);
-            //     p.circle(n.x, -n.y, n.size);
-            // }
-            // p.pop();
+            // Otherwise draw the nodes ourselves
+            for (const v of q.renderableNodes) {
+                nodesToDraw.add(v);
+            }
         }
 
         if (debug) {
             //debugText(q);
         }
     }
+
+    if (realNodesContainer) {
+        i = drawNodes(realNodesContainer, nodesToDraw);
+        undraw(realNodesContainer, i);
+    }
+
 
     // for (const q of sortedQuads) {
     //     if (q.image) {
