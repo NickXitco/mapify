@@ -226,7 +226,86 @@ class ReactSidebar extends React.Component {
     }
 
     about(closed, hoverStyle) {
-        let className = closed ? "sidebar sidebar-closed" : "sidebar sidebar-open"
+        let className = closed ? "sidebar sidebar-closed" : "sidebar sidebar-open";
+
+        const aboutContent = (
+            <div style={{position: 'relative'}}>
+                <p style={{marginTop: '10px'}}>
+                    {
+                        'Welcome to the Artist Observatory! This site was built to be a fully interactive atlas' +
+                        ' of just about every artist on Spotify. Please feel free to explore and discover how the' +
+                        ' massive web of over 1.3 million artists is connected!'
+                    }
+                </p>
+                <p style={{marginTop: '10px'}}>
+                    {
+                        'Development started in Winter 2018 and it grew' +
+                        ' into my Johns Hopkins University Master\'s thesis some time at the start of the' +
+                        ' COVID-19 pandemic. If you\'re interested, you can feel free to read that thesis paper' +
+                        ' here to learn more about the process by which this map is created! Though, as I continue to' +
+                        ' work on this site day after day, some of the information can become quickly outdated.'
+                    }
+                </p>
+                <p style={{marginTop: '10px'}}>
+                    {
+                        'As a few acknowledgements, I\'d like to thank all my friends who supported me with this' +
+                        ' project all the way from its inception to the countless late-nights coding to' +
+                        ' the the tedious bug testing at the very end. Specifically Sebastian Durfee, Charlotte Wood' +
+                        ', Matthew Polson, Emily Daly, Lucas Polack, Sydney Thomas, Jeffrey Carrano, Matthew Flynn' +
+                        ', Sophia Lipkin, and everyone else who helped along the way.'
+                    }
+                </p>
+                <p style={{marginTop: '10px'}}>
+                    {
+                        'I\d also like to thank my advisor and professor Misha Kazhdan for teaching me how to write' +
+                        ' 90% of all the graphics and geometry processing algorithms in this app. I\'d also like to' +
+                        ' thank Daniel Shiffman for being a constant inspiration to make coding beautiful. And lastly' +
+                        ' thanks everyone at Spotify for creating such a amazing platform to share music with the' +
+                        ' world and for me to obsess over.'
+                    }
+                </p>
+            </div>
+        )
+
+        const faqContent = (
+            <div style={{position: 'relative'}}>
+                <h3 style={{marginTop: '10px', position: 'relative', fontWeight: 800}}>
+                    {'The site is running very slowly/crashing on me!'}
+                </h3>
+                <p style={{marginTop: '10px'}}>
+                    {'Oh no! I\'m sorry to hear that. < insert info about bug submission lmao >'}
+                </p>
+            </div>
+        )
+
+        const changelogContent = (
+            <div style={{position: 'relative'}}>
+                <h3 style={{marginTop: '10px', position: 'relative', fontWeight: 800}}>
+                    {'0.9.0'}
+                    <span style={{fontWeight: 400, paddingLeft: '10px'}}>
+                        {'The Home Stretch'}
+                    </span>
+                </h3>
+                <ul style={{position: 'relative', margin: '10px 20px'}}>
+                    <li>{'Test Item 1'}</li>
+                    <li>{'Test Item 2'}</li>
+                </ul>
+            </div>
+        )
+
+        const controlsContent = (
+            <div style={{position: 'relative'}}>
+                <p style={{marginTop: '10px'}}>
+                    {'Ctrl-Click on the map to draw region points'}
+                </p>
+                <p style={{marginTop: '10px'}}>
+                    {'Ctrl-Click Drag to draw a continuous region'}
+                </p>
+                <p style={{marginTop: '10px'}}>
+                    {'Esc to reset the camera'}
+                </p>
+            </div>
+        )
 
         return (
             <div className={className}
@@ -240,21 +319,17 @@ class ReactSidebar extends React.Component {
 
                 <SidebarStroke color={'white'}/>
 
-                <div style={{position: "static", padding: "20px", display: "flex", flexDirection: "column"}}>
-                    <h2>the artist</h2>
-                    <h1 style={{fontSize: "44px", lineHeight: "30px"}}>observatory</h1>
-
-                    <div>
-                        <h2>about</h2>
+                <div className={'aboutSidebar'}>
+                    <div className={'aboutBanner'}>
+                        <h2>the artist</h2>
+                        <h1 style={{fontSize: "44px", lineHeight: "30px"}}>observatory</h1>
+                        <p className={'credits'}>Created by <a href={'https://nickxit.co'}>Nick Xitco</a></p>
                     </div>
 
-                    <div>
-                        <h2>faq</h2>
-                    </div>
-
-                    <div>
-                        <h3>controls</h3>
-                    </div>
+                    <AboutSection title={'about'} content={aboutContent}/>
+                    <AboutSection title={'faq'} content={faqContent}/>
+                    <AboutSection title={'changelog'} content={changelogContent}/>
+                    <AboutSection title={'controls'} content={controlsContent}/>
                 </div>
             </div>
         );

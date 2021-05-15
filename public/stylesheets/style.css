@@ -1134,3 +1134,70 @@ input {
   text-shadow: 0 0 2px white;
   font-size: 12px;
 }
+
+.aboutSidebar {
+  position: static;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.aboutBanner {
+  position: relative;
+}
+
+.aboutBanner h1 {
+  font-size: 44px;
+  line-height: 30px;
+}
+
+.aboutBanner p {
+  color: white;
+}
+
+.credits {
+  text-transform: lowercase;
+  font-style: italic;
+  padding: 5px 2px;
+  font-weight: 200;
+}
+
+.credits a {
+  color: white;
+  font-style: italic;
+  text-transform: lowercase;
+  padding: 0 3px;
+  text-decoration: none;
+}
+
+.credits a:hover {
+  text-decoration: underline;
+}
+
+.aboutSection {
+  width: 100%;
+  position: relative;
+  display: block;
+  margin: 10px 0;
+}
+
+.aboutSection h2:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.aboutSectionContent {
+  position: relative;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.5, 1, 0.89, 1);
+  padding: 0 10px;
+  font-size: 15px;
+}
+
+.aboutSectionOpen {
+  max-height: 1000px;
+}
+
+.aboutSectionClosed {
+  max-height: 0;
+}
