@@ -34,14 +34,6 @@ class App extends React.Component {
 
             showDebug: false,
 
-            showChangelog: !this.checkVersion("0.9.0-beta"),
-            version: "0.9.0-beta",
-            headline: "Home stretch",
-            changes: [
-            ],
-            upcomingFeatures: [
-            ],
-
             cursor: 'auto',
             historyState: new HistoryState(null, PageStates.HOME, null, "", "The Artist Observatory"),
             loading: false
@@ -77,9 +69,6 @@ class App extends React.Component {
         this.loadGenreFromSearch = this.loadGenreFromSearch.bind(this);
         this.setQuadHead = this.setQuadHead.bind(this);
 
-        this.tryRemoveChangelog = this.tryRemoveChangelog.bind(this);
-        this.checkVersion = this.checkVersion.bind(this);
-
         this.setFencing = this.setFencing.bind(this);
         this.addFencepost = this.addFencepost.bind(this);
         this.processIntersection = this.processIntersection.bind(this);
@@ -102,20 +91,6 @@ class App extends React.Component {
 
         this.startLoading = this.startLoading.bind(this);
         this.stopLoading = this.stopLoading.bind(this);
-    }
-
-    checkVersion(versionNumber) {
-        const clientVersion = localStorage.getItem('mapify-version');
-        if (clientVersion !== versionNumber) {
-            localStorage.setItem('mapify-version', versionNumber);
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    tryRemoveChangelog() {
-        this.setState({showChangelog: false});
     }
 
     updateHoverFlag(value) {
@@ -740,23 +715,7 @@ class App extends React.Component {
     }
 
     render() {
-        let changelog = null;
-        if (this.state.showChangelog) {
-            changelog = (
-                <Changelog
-                    version={this.state.version}
-                    headline={this.state.headline}
-                    changes={this.state.changes}
-                    upcoming={this.state.upcomingFeatures}
-
-                    updateHoverFlag={this.updateHoverFlag}
-                    tryRemoveChangelog={this.tryRemoveChangelog}
-                />
-            );
-        }
-        
-        const historyState = this.state.historyState
-
+        const historyState = this.state.historyState;
 
         let clickedArtist = null;
         let activePath = null;
