@@ -60,7 +60,7 @@ class LeftSideButton extends React.Component {
     render() {
         let colorStyle = {};
         let borderClassName = "";
-        let expandClass = this.props.expanded ? "uiButtonOuterExpand" : this.state.hoverState === 1 ? "randomButtonOuterHover" : "";
+        let expandClass = this.props.expanded ? "uiButtonOuterExpand" : this.state.hoverState === 1 ? "aboutButtonOuterHover" : "";
         let fullyExpanded = this.state.fullyExpanded && this.props.expanded ? "uiButtonOuterExpanded" : "";
 
         if (this.state.fullyExpanded && !this.props.expanded) {

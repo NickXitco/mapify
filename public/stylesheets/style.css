@@ -754,6 +754,10 @@ canvas {
   width: 180px;
 }
 
+.aboutButtonOuterHover {
+  width: 110px;
+}
+
 .spButtonOuterHover {
   width: 180px;
 }

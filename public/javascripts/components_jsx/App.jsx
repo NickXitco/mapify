@@ -764,8 +764,6 @@ class App extends React.Component {
 
         return (
             <div className={"fullScreen"} style={cursorStyle}>
-                {changelog}
-
                 <Logo colorant={colorant}/>
                 <p className={"version"}>{this.state.version}</p>
 
