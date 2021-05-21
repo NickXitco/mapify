@@ -41,6 +41,15 @@ class SettingsButton extends React.Component {
         this.setState({hoverState: 0});
     }
 
+    spotifyLogin() {
+        console.log("hello");
+        fetch(`login`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            });
+    }
+
     transitionEnd() {
         if (!this.props.expanded) {
             this.setState({showContents: false});
@@ -86,6 +95,10 @@ class SettingsButton extends React.Component {
                             onInput={this.debugCheck}
                         />
                         <label htmlFor="debug"> Debug UI</label>
+
+                        <button className="mapifyButton" onClick={this.spotifyLogin}>
+                            Login with Spotify
+                        </button>
                     </div>
                 </div>
             );
