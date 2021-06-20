@@ -93,12 +93,13 @@ function drawNodes(container, vertices) {
         );
 
         const node = container.children[i];
+        node.x = v.x;
+        node.y = -v.y;
+        node.scale.x = v.size / SPRITE_OFFSET;
+        node.scale.y = v.size / SPRITE_OFFSET;
+        node.tint = color;
+
         if (!node.visible) {
-            node.x = v.x;
-            node.y = -v.y;
-            node.scale.x = v.size / SPRITE_OFFSET;
-            node.scale.y = v.size / SPRITE_OFFSET;
-            node.tint = color;
             node.visible = true;
         }
         i++;
