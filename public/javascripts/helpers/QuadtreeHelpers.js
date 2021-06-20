@@ -1,4 +1,4 @@
-function processOne(p, camera, quadHead, nodeLookup, loadingQuads, unprocessedResponses) {
+function processOne(camera, quadHead, nodeLookup, loadingQuads, unprocessedResponses) {
     if (unprocessedResponses.length === 0) {
         return;
     }
@@ -8,7 +8,7 @@ function processOne(p, camera, quadHead, nodeLookup, loadingQuads, unprocessedRe
         const q = response.quad;
 
         if (camera.contains(q)) {
-            process(p, response, q, quadHead, nodeLookup, loadingQuads);
+            process(response, q, quadHead, nodeLookup, loadingQuads);
             unprocessedResponses.splice(i, 1);
             return;
         }
@@ -17,10 +17,10 @@ function processOne(p, camera, quadHead, nodeLookup, loadingQuads, unprocessedRe
 
     const r = unprocessedResponses.pop();
     const q = r.quad;
-    process(p, r, q, quadHead, nodeLookup, loadingQuads);
+    process(r, q, quadHead, nodeLookup, loadingQuads);
 }
 
-function process(p, r, q, quadHead, nodeLookup, loadingQuads) {
+function process(r, q, quadHead, nodeLookup, loadingQuads) {
     if (Object.keys(r.data).length === 0) {
         q.loaded = true;
         loadingQuads.delete(q);
@@ -36,11 +36,17 @@ function process(p, r, q, quadHead, nodeLookup, loadingQuads) {
     }
 
     if (r.data.image !== "") {
-        p.loadImage('data:image/png;base64, ' + r.data.image, (img) => {
-            q.image = img;
+        const loader = new PIXI.Loader();
+        const uri = `data:image/png;base64, ${r.data.image}`;
+
+        loader.add(uri);
+        loader.onComplete.add(() => {
+            q.image = loader.resources[uri].texture;
+            q.image.baseTexture.mipmap = false;
             q.loaded = true;
             loadingQuads.delete(q);
         });
+        loader.load();
     } else {
         q.loaded = true;
         loadingQuads.delete(q);
@@ -62,7 +68,7 @@ function bubbleAddQuad(q, quads) {
     }
 }
 
-function drawOnscreenQuads(p, quadHead, camera, hoveredArtist, loadingQuads, unloadedQuads, unloadedQuadsPriorityQueue, debug) {
+function drawOnscreenQuads(canvas, realNodesContainer, quadHead, camera, hoveredArtist, loadingQuads, unloadedQuads, unloadedQuadsPriorityQueue, debug) {
     let quads = new Set();
     let stack = [];
     stack.push(quadHead);
@@ -94,31 +100,64 @@ function drawOnscreenQuads(p, quadHead, camera, hoveredArtist, loadingQuads, unl
     Debug.createTimingEvent("Visible Quads Finding");
 
     const sortedQuads = [...quads].sort((a, b) => a.name.length - b.name.length);
+    //TODO if these are the same quads as currently rendering, don't rerender
+
+    canvas.removeChildren();
+    let i = 0;
+    let nodesToDraw = new Set();
     for (const q of sortedQuads) {
         if (q.image) {
-            p.image(q.image, q.x - q.r, -(q.y + q.r), q.r * 2, q.r * 2, 0, 0);
+            //If the quad has an image, show it
+            const sprite = new PIXI.Sprite(q.image);
+            sprite.anchor.set(0.5);
+            sprite.x = q.x;
+            sprite.y = -q.y;
+            sprite.width = q.r * 2;
+            sprite.height = q.r * 2;
+            canvas.addChild(sprite);
         } else {
-            p.push();
-            p.noFill();
-            for (const n of q.renderableNodes) {
-                p.stroke(p.color(n.r, n.g, n.b));
-                p.strokeWeight(n.size / 5);
-                p.circle(n.x, -n.y, n.size);
+            // Otherwise draw the nodes ourselves
+            for (const v of q.renderableNodes) {
+                nodesToDraw.add(v);
             }
-            p.pop();
         }
+
         if (debug) {
-            debugText(q);
+            //debugText(q);
         }
     }
 
-    if (hoveredArtist) {
-        p.push();
-        p.noStroke();
-        p.fill(hoveredArtist.r, hoveredArtist.g, hoveredArtist.b, 127);
-        p.circle(hoveredArtist.x, -hoveredArtist.y, hoveredArtist.size);
-        p.pop();
+    if (realNodesContainer) {
+        i = drawNodes(realNodesContainer, nodesToDraw);
+        undraw(realNodesContainer, i);
     }
+
+
+    // for (const q of sortedQuads) {
+    //     if (q.image) {
+    //         p.image(q.image, q.x - q.r, -(q.y + q.r), q.r * 2, q.r * 2, 0, 0);
+    //     } else {
+    //         p.push();
+    //         p.noFill();
+    //         for (const n of q.renderableNodes) {
+    //             p.stroke(p.color(n.r, n.g, n.b));
+    //             p.strokeWeight(n.size / 5);
+    //             p.circle(n.x, -n.y, n.size);
+    //         }
+    //         p.pop();
+    //     }
+    //     if (debug) {
+    //         debugText(q);
+    //     }
+    // }
+    //
+    // if (hoveredArtist) {
+    //     p.push();
+    //     p.noStroke();
+    //     p.fill(hoveredArtist.r, hoveredArtist.g, hoveredArtist.b, 127);
+    //     p.circle(hoveredArtist.x, -hoveredArtist.y, hoveredArtist.size);
+    //     p.pop();
+    // }
 
 
     function debugText(q) {

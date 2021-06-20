@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 8 10.04" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<style>.cls-1{fill:#fff;}</style>
+</defs>
+<path class="cls-1" d="M0,3.05V7a.25.25,0,0,0,.25.25H1.83L4.9,10a.26.26,0,0,0,.43-.19V.25A.25.25,0,0,0,4.92.06L1.83,2.81H.25A.25.25,0,0,0,0,3.05Z"/>
+<path class="cls-1" d="M6.81,2.81l-.14-.09v.92a1.93,1.93,0,0,1,0,2.78v.92l.14-.09a2.67,2.67,0,0,0,0-4.44Z"/>
+</svg>

@@ -1,19 +1,23 @@
 const arangoDB = require('./ArangoDB');
 const spotifyApiHolder = require('./SpotifyAPI');
+const artistFinder = require('./ArtistFinder');
 
 /**
  * Gets the shortest path between two points on the graph in the form of an ordered array of hops
  * @param source spotifyID of start point
  * @param target spotifyID of end point
+ * @param weighted If "weighted", uses edge weights. Otherwise, computes pure BFS without edge weights
  * @return Array of artist objects
  */
-async function getShortestPath(source, target) {
+async function getShortestPath(source, target, weighted) {
     const db = arangoDB.getDB();
+    const weightingQuery = weighted === "weighted" ? 'OPTIONS {weightAttribute: "weight"}' : '';
+
     const path = await db.query(
         `
             FOR source IN artists FILTER source.id == '${source}' 
             FOR target IN artists FILTER target.id == '${target}'
-            FOR v, e IN OUTBOUND SHORTEST_PATH source TO target GRAPH 'artistGraph' RETURN v
+            FOR v, e IN OUTBOUND SHORTEST_PATH source TO target GRAPH 'artistGraph' ${weightingQuery} RETURN v
         `
         ).then(
             cursor => cursor.all()
@@ -22,35 +26,20 @@ async function getShortestPath(source, target) {
     return populatePath(path);
 }
 
-//TODO
-//  When you click on an artist, update the graph database with the new related (if they exist)
-//  When you make a shortest path, get the shortest path according to the DB. Then, check if this path is possible
-//  by checking each artist on the finished path to see if the artist has the next artist in its real related artists.
-//  If so, great! Return the path (while updating the graph db). If not, do it again. This _probably_ won't take that long
-//  But if it does, oh well
-//  FOR v IN 1 OUTBOUND 'artists/1338256' GRAPH 'artistGraph' RETURN v <--- gets the related artists according to the graph db
+// TODO run findArtist from ArtistFinder on each step of the path, and return those variables
 
 async function populatePath(path) {
-    const spotifyApi = spotifyApiHolder.getAPI();
+    let populationPromises = [];
 
-    let imagePromises = [];
-    let trackPromises = [];
     for (const hop of path) {
-        imagePromises.push(spotifyApi.getArtist(hop.id));
-        trackPromises.push(spotifyApi.getArtistTopTracks(hop.id, 'US'));
+        populationPromises.push(artistFinder.findArtist(hop.id, true));
     }
 
-    await Promise.all(imagePromises).then((values) => {
+    await Promise.all(populationPromises).then((values) => {
         for (let i = 0; i < path.length; i++) {
-            path[i].images = values[i].body.images;
+            path[i] = values[i];
         }
-    });
-
-    await Promise.all(trackPromises).then((values) => {
-        for (let i = 0; i < path.length; i++) {
-            path[i].track = values[i].body.tracks.length > 0 ? values[i].body.tracks[0] : null;
-        }
-    });
+    })
 
     return path;
 }

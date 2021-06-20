@@ -6,6 +6,7 @@
 const DRIFT_THRESHOLD = 0.1;
 const SCROLL_STEPS = 10;
 const DELTA_MULTIPLIER = 3;
+const NUM_AVG_STEPS = 4;
 
 const MouseEvents = {
     dragging: false,
@@ -18,6 +19,14 @@ const MouseEvents = {
     zooming: false,
     zoomCoordinates: {},
     lastClickTime: 0,
+    speed: {},
+
+    updateSpeed: function (newSpeed) {
+        this.speed = {
+            x: (newSpeed.x * (NUM_AVG_STEPS / 2) + (NUM_AVG_STEPS / 2) * this.speed.x) / NUM_AVG_STEPS,
+            y: (newSpeed.y * (NUM_AVG_STEPS / 2) + (NUM_AVG_STEPS / 2) * this.speed.y) / NUM_AVG_STEPS
+        }
+    },
 
     zoom: function (camera) {
         if (this.zooming) {
@@ -32,20 +41,24 @@ const MouseEvents = {
         }
     },
 
-    drift: function (camera, p) {
+    drift: function (camera, canvas) {
         if (this.drifting) {
-            if (this.driftVec.mag() < DRIFT_THRESHOLD) {
+            const mag = Utils.dist(0, 0, this.driftVec.x, this.driftVec.y);
+            if (mag < DRIFT_THRESHOLD) {
                 this.drifting = false;
                 return;
             }
-            this.driftVec.div(1.1);
-            camera.x -= this.driftVec.x * (camera.width / p.width);
-            camera.y += this.driftVec.y * (camera.height / p.height);
+
+            this.driftVec.x /= 1.1;
+            this.driftVec.y /= 1.1;
+            camera.x -= this.driftVec.x * (camera.width / canvas.screen.width);
+            camera.y += this.driftVec.y * (camera.height / canvas.screen.height);
         }
     },
 
-    getVirtualMouseCoordinates: function(p, camera) {
-        return camera.screen2virtual({x: p.mouseX, y: p.mouseY});
+    getVirtualMouseCoordinates: function(canvas, camera) {
+        const point = canvas.renderer.plugins.interaction.mouse.global;
+        return camera.screen2virtual({x: point.x, y: point.y});
     },
 
     isDoubleClick: function(clickTime) {

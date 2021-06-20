@@ -120,6 +120,7 @@ canvas {
 /*<editor-fold desc="INFO BOX STYLINGS">*/
 .infoBox {
   user-select: none;
+  pointer-events: none;
 
   visibility: visible;
 
@@ -287,6 +288,14 @@ canvas {
   flex-direction: column;
   height: 100%;
   align-items: flex-end;
+
+  pointer-events: none;
+
+  z-index: 3;
+}
+
+.rightSideDiv * {
+  pointer-events: all;
 }
 
 .zoomModuleDiv {
@@ -445,7 +454,8 @@ canvas {
 }
 
 .nameMedium h1 {
-  margin-right: 30px;
+  margin-right: 15px;
+  width: 300px;
 }
 
 .nameAndPictureSmall {
@@ -496,6 +506,7 @@ canvas {
 
 .nameSmall h1 {
   margin-right: 30px;
+  width: 300px;
 }
 
 .nameSmallRight {
@@ -608,13 +619,10 @@ canvas {
   overflow-y: auto;
   overflow-x: hidden;
   flex-direction: column;
+  margin-bottom: 5px;
 }
 
 .sidebarListItem {
-  font-family: montserrat, sans-serif;
-  font-size: 16px;
-  text-transform: uppercase;
-  font-weight: 200;
   position: static;
   list-style: none;
   padding: 5px;
@@ -622,7 +630,14 @@ canvas {
   width: 90%;
 }
 
-.sidebarListItem:hover {
+.sidebarListItem p {
+  font-family: montserrat, sans-serif;
+  font-size: 16px;
+  text-transform: uppercase;
+  font-weight: 200;
+}
+
+.sidebarListItem p:hover {
   text-decoration: underline;
   cursor: pointer;
 }
@@ -632,13 +647,17 @@ canvas {
   font-size: 16px;
   text-transform: uppercase;
   font-weight: 200;
-  position: static;
+  position: relative;
   padding: 5px;
   display: inline-block;
-  width: 90%;
+  width: 100%;
 }
 
-.hopListItem:hover {
+.hopListProfile {
+  position: relative;
+}
+
+.hopListProfile:hover {
   text-decoration: underline;
   cursor: pointer;
 }
@@ -661,6 +680,24 @@ canvas {
   overflow-y: auto;
   flex-direction: column;
 }
+
+.pathArtistDetails {
+  position: static;
+  float: right;
+  width: 85%;
+  height: auto;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.5, 1, 0.89, 1);
+}
+
+.pathArtistDetailsClosed {
+  max-height: 0;
+}
+
+.pathArtistDetailsOpen {
+  max-height: 900px;
+}
+
 
 /*</editor-fold>*/
 
@@ -692,9 +729,11 @@ canvas {
   height: 40px;
   width: 40px;
 
+  pointer-events: all;
+
   overflow: hidden;
 
-  background: rgba(0, 0, 0, 0.90);
+  background: rgba(0, 0, 0, 0.8);
 
   border: solid white 2px;
   border-radius: 22px;
@@ -715,6 +754,10 @@ canvas {
   width: 180px;
 }
 
+.aboutButtonOuterHover {
+  width: 110px;
+}
+
 .spButtonOuterHover {
   width: 180px;
 }
@@ -724,12 +767,12 @@ canvas {
 }
 
 .settingsButtonOuterExpand {
-  height: 100px;
+  height: 120px;
   width: 180px;
 }
 
 .uiButtonOuterExpand {
-  height: 242px;
+  height: 262px;
   width: 400px;
 }
 
@@ -747,6 +790,8 @@ canvas {
   padding: 7px;
 
   position: static;
+
+  cursor: pointer;
 }
 
 .uiButtonPath {
@@ -767,6 +812,9 @@ canvas {
 
   text-transform: lowercase;
   text-align: left;
+
+  user-select: none;
+  cursor: pointer;
 }
 
 .shortestPathForm {
@@ -777,10 +825,9 @@ canvas {
 }
 
 .settingsItem {
-  position: absolute;
+  position: relative;
   display: flex;
   align-items: center;
-  padding: 0 10px;
   margin: 10px;
 }
 
@@ -795,6 +842,9 @@ canvas {
   flex-direction: column;
   justify-content: center;
   width: 100px;
+  pointer-events: none;
+
+  z-index: 3;
 }
 
 label {
@@ -842,11 +892,12 @@ input {
   border-top: solid white thin;
   width: 100%;
   white-space: nowrap;
-  margin-top: 20px;
 
   position: static;
 
   border-radius: 0 0 20px 20px;
+
+  cursor: pointer;
 }
 
 .mapifyButton:hover {
@@ -891,7 +942,7 @@ input {
   width: 22px;
   height: 22px;
   box-shadow: white 0 0 5px 3px, inset black 0 0 5px 0;
-  z-index: -1;
+  z-index: 0;
   transition: margin-left 0.15s ease-out;
 }
 
@@ -919,6 +970,8 @@ input {
   justify-content: center;
   width: 22px;
   height: 22px;
+
+  cursor: pointer;
 }
 
 .tooltip {
@@ -1027,6 +1080,7 @@ input {
   display: flex;
   flex-direction: column;
   margin: 20px;
+  user-select: none;
 }
 
 .logoh2 {
@@ -1043,4 +1097,378 @@ input {
   line-height: 15px;
   font-size: 22px;
   transition: text-shadow 0.2s cubic-bezier(0.5, 1, 0.89, 1);
+}
+
+.loadingContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loadingItems {
+  width: 400px;
+  height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.loadingIcon {
+  width: 400px;
+}
+
+.loadingText {
+  font-weight: 400;
+  font-size: 16px;
+  font-style: italic;
+  margin-top: 200px;
+  text-shadow: 0 0 4px white;
+}
+
+.version {
+  position: relative;
+  margin: 1px 0;
+  font-size: 10px;
+  font-weight: 400;
+}
+
+.aboutSidebar {
+  position: static;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.aboutBanner {
+  position: relative;
+}
+
+.aboutBanner h1 {
+  font-size: 44px;
+  line-height: 30px;
+}
+
+.aboutBanner p {
+  color: white;
+}
+
+.credits {
+  text-transform: lowercase;
+  font-style: italic;
+  padding: 5px 2px;
+  font-weight: 200;
+}
+
+.credits a {
+  color: white;
+  font-style: italic;
+  text-transform: lowercase;
+  padding: 0 3px;
+  text-decoration: none;
+}
+
+.credits a:hover {
+  text-decoration: underline;
+}
+
+.aboutSection {
+  width: 100%;
+  position: relative;
+  display: block;
+  margin: 10px 0;
+}
+
+.aboutSection h2:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.aboutSectionContent {
+  position: relative;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.5, 1, 0.89, 1);
+  padding: 0 10px;
+  font-size: 15px;
+}
+
+.aboutSectionOpen {
+  max-height: 1000px;
+}
+
+.aboutSectionClosed {
+  max-height: 0;
+}
+
+
+/**
+PLAYER SECTION
+ */
+
+.playerFullContainer {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+
+  justify-content: flex-start;
+  align-items: flex-end;
+
+  pointer-events: none;
+
+  z-index: 1;
+}
+
+.playerFrame {
+  height: 100px;
+  width: 500px;
+  display: flex;
+  position: relative;
+
+  margin: 20px;
+  border: white solid 2px;
+  border-radius: 0 10px 0 0;
+  box-shadow: 0 0 3px 0px white;
+  background: linear-gradient(180deg, black, transparent);
+
+  pointer-events: all;
+}
+
+.playerArt {
+  height: 100px;
+  width: 100px;
+  position: relative;
+}
+
+.playerTrackArea {
+  height: 100px;
+  width: 100%;
+  position: relative;
+  padding: 8px 8px 0;
+  border-radius: 0 10px 0 0;
+  overflow: hidden;
+}
+
+.playerInfo {
+  height: 50%;
+  width: calc(100% - 31px);
+  position: relative;
+  margin-top: -4px;
+}
+
+.playerControlsContainer {
+  height: 15px;
+  width: 100%;
+  position: relative;
+  margin: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.playerTrack {
+  width: 100%;
+  position: relative;
+  height: 18px;
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+}
+
+.progressBars {
+  width: 100%;
+  height: 7px;
+  margin-bottom: 11px;
+  position: relative;
+}
+
+.progressBarBG {
+  width: 100%;
+  height: 7px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 5px;
+}
+
+.progressBarFG {
+  width: 0;
+  height: 7px;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 0 4px 0px white;
+  pointer-events: none;
+}
+
+.playerSongName {
+  width: 100%;
+  position: relative;
+  font-size: 18px;
+  font-weight: 700;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.playerArtistName {
+  width: 100%;
+  position: relative;
+  font-size: 12px;
+  font-weight: 300;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  margin-top: -2px;
+}
+
+.playerAlbumName {
+  width: 100%;
+  position: relative;
+  font-size: 12px;
+  font-weight: 100;
+  font-style: italic;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  margin-top: -6px;
+}
+
+.trackProgressNumbers {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+  align-content: center;
+  align-items: flex-end;
+  position: relative;
+}
+
+.trackProgressNumber {
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.volume {
+  width: 34px;
+  height: 100px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.volumeBars {
+  position: relative;
+  height: 60px;
+  width: 34px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.volumeBarBG {
+  width: 5px;
+  height: 60px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 1px;
+}
+
+.volumeBarFG {
+  width: 5px;
+  height: 20px;
+  background: rgb(22 255 106);
+  border-radius: 1px;
+  box-shadow: 0 0 4px 0px rgb(22 255 106);
+  pointer-events: none;
+}
+
+.volumeIconContainer {
+  position: relative;
+  width: 10px;
+  height: 10px;
+
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  margin: 6px;
+}
+
+.playerControl {
+  width: 9px;
+  height: 9px;
+  position: relative;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  margin: 0 5px;
+
+  cursor: pointer;
+}
+
+.playerControls {
+  display: flex;
+  position: relative;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.playButtonOuter {
+  position: absolute;
+  width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+}
+
+.playButtonOuter:hover .playButtonInner {
+  display: flex;
+}
+
+.playButtonInner {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: none;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  border: solid white 1px;
+  background: rgba(0,0,0,0.5);
+  cursor: pointer;
+}
+
+.playButtonInner {
+  transition: 0.1s;
+}
+
+.playButtonInner .pauseSvg {
+  width: 37.5%;
+}
+
+.playButtonInner .playSvg {
+  width: 37.5%;
+  margin-left: 7.5%;
+}
+
+.playButtonInner:hover {
+  width: 55px;
+  height: 55px;
+}
+
+.spotifyLogoContainer {
+  width: 21px;
+  height: 21px;
+  right: 0;
+  margin: 0 8px;
+  z-index: 2;
+}
+
+.spotifyLogo {
+  cursor: pointer;
 }

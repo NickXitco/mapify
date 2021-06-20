@@ -16,7 +16,7 @@ class ArtistProfile extends React.Component {
 
     componentDidMount() {
         if (this.props.artist !== this.state.artist) {
-            this.setState({fontSize: 60, artist: this.props.artist}, () => {
+            this.setState({fontSize: 50, artist: this.props.artist}, () => {
                 this.decrementFontSize(this.props.size);
             })
         }
@@ -25,7 +25,7 @@ class ArtistProfile extends React.Component {
     componentDidUpdate() {
         if (this.props.artist !== this.state.artist) {
             this.playerKey++;
-            this.setState({fontSize: 60, artist: this.props.artist}, () => {
+            this.setState({fontSize: 50, artist: this.props.artist}, () => {
                 this.decrementFontSize(this.props.size);
             })
         }
@@ -36,8 +36,8 @@ class ArtistProfile extends React.Component {
     }
 
     decrementFontSize(size) {
-        const heightLimit = size === "Large" ? 113 : size === "Medium" ? 80 : 50;
-        const widthLimit = size === "Large" ? 265 : size === "Medium" ? 280 : 320;
+        const heightLimit = size === "Large" ? 113 : size === "Medium" ? 60 : 40;
+        const widthLimit = size === "Large" ? 300 : size === "Medium" ? 300 : 300;
         const height = this.nameElement.clientHeight;
         const width = this.nameElement.clientWidth;
 
@@ -69,18 +69,16 @@ class ArtistProfile extends React.Component {
 
         let player = null
 
-        if (this.props.artist.track && this.props.showPlayer) {
+        if (this.props.artist.tracks.length > 0 && this.props.showPlayer) {
             player = (
-                <Player uri={`spotify:track:${this.props.artist.track.id}`} key={this.playerKey}/>
-            )
-        } else if (this.props.size === "Large") {
-            player = (
-                <div style={{position: "static", height: "140px"}}/>
+                <AdaptablePlayer tracks={this.props.artist.tracks} key={this.playerKey} artist={this.props.artist}/>
             )
         }
 
+        let contents;
+
         if (this.props.size === "Large") {
-            return (
+            contents = (
                 <div style={{position: 'static'}}>
                     <div className={"nameAndPictureLarge"}>
                         <div className={"sidebarPictureLarge"} style={pictureStyle}>
@@ -97,9 +95,9 @@ class ArtistProfile extends React.Component {
                     <FollowersStats number={this.props.artist.followers} text={"Follower"} size={"Large"}/>
                     {player}
                 </div>
-            )
+            );
         } else if (this.props.size === "Medium") {
-            return (
+            contents = (
                 <div style={{position: 'static'}}>
                     <div className={"nameAndPictureMedium"}>
                         <div className={"sidebarPictureMedium"} style={pictureStyle}>
@@ -116,29 +114,28 @@ class ArtistProfile extends React.Component {
                     {player}
                 </div>
             );
-        } else {
-            if (this.props.align === "right") {
-                return (
-                    <div style={{position: 'static'}}>
-                        <div className={"nameAndPictureSmallRight"}>
-                            <div className={"nameSmallRight"}>
-                                <h1 className={"sidebarArtistNameSmall"} style={nameStyle}
-                                    ref={(nameElement) => {this.nameElement = nameElement}}>
-                                    {this.props.artist.name}
-                                </h1>
-                                <FollowersStats number={this.props.artist.followers} text={"Follower"} size={"Small"}/>
-                            </div>
-                            <div className={"sidebarPictureSmall"} style={pictureStyle}>
-                                {picture}
-                            </div>
+        } else if (this.props.align === "right") {
+            contents = (
+                <div style={{position: 'static'}}>
+                    <div className={"nameAndPictureSmallRight"}>
+                        <div className={"nameSmallRight"}>
+                            <h1 className={"sidebarArtistNameSmall"} style={nameStyle}
+                                ref={(nameElement) => {
+                                    this.nameElement = nameElement
+                                }}>
+                                {this.props.artist.name}
+                            </h1>
+                            <FollowersStats number={this.props.artist.followers} text={"Follower"} size={"Small"}/>
                         </div>
-                        {player}
+                        <div className={"sidebarPictureSmall"} style={pictureStyle}>
+                            {picture}
+                        </div>
                     </div>
-                )
-            }
-
-
-            return (
+                    {player}
+                </div>
+            )
+        } else {
+            contents = (
                 <div style={{position: 'static'}}>
                     <div className={"nameAndPictureSmall"}>
                         <div className={"sidebarPictureSmall"} style={pictureStyle}>
@@ -146,7 +143,9 @@ class ArtistProfile extends React.Component {
                         </div>
                         <div className={"nameSmall"}>
                             <h1 className={"sidebarArtistNameSmall"} style={nameStyle}
-                                ref={(nameElement) => {this.nameElement = nameElement}}>
+                                ref={(nameElement) => {
+                                    this.nameElement = nameElement
+                                }}>
                                 {this.props.artist.name}
                             </h1>
                             <FollowersStats number={this.props.artist.followers} text={"Follower"} size={"Small"}/>
@@ -156,5 +155,13 @@ class ArtistProfile extends React.Component {
                 </div>
             )
         }
+
+        return (
+            <div
+                style={{position: 'static'}}
+            >
+                {contents}
+            </div>
+        );
     }
 }

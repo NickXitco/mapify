@@ -21,14 +21,26 @@ class ReactSidebar extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        return this.props.historyState !== nextProps.historyState || this.state.open !== nextState.open;
+        return (
+            this.props.historyState !== nextProps.historyState ||
+            this.state.open !== nextState.open ||
+            this.props.loading !== nextProps.loading ||
+            this.props.uiHover !== nextProps.uiHover
+        );
     }
 
     scrollbar(colorant) {
+        const realColorant = Colorant.fromString(colorant);
         return (
             <style>
-                {`::-webkit-scrollbar-track {box-shadow: 0 0 5px ${colorant};}  \n` +
-                `::-webkit-scrollbar-thumb {background: ${colorant};`}
+                {
+                    `
+                    ::-webkit-scrollbar-track {box-shadow: 0 0 5px ${colorant}; 
+                    background: ${realColorant.colorToStringAlpha(0.2)}; 
+                    border: ${colorant} solid 1px;} \n
+                    ::-webkit-scrollbar-thumb {background: ${colorant};
+                    `
+                }
             </style>
         )
     }
@@ -84,7 +96,9 @@ class ReactSidebar extends React.Component {
                 <HopsList path={data.nodes}
                           loadArtistFromUI={this.props.loadArtistFromUI}
                           updateHoveredArtist={this.props.updateHoveredArtist}
-                          header={`Shortest Path`}/>
+                          header={`Shortest Path`}
+                          moveCamera={this.props.moveCamera}
+                />
 
                 <div className="flexSpacer"/>
             </div>
@@ -196,6 +210,150 @@ class ReactSidebar extends React.Component {
         );
     }
 
+    loading(hoverStyle) {
+        return (
+                <div className={"sidebar sidebar-open"}
+                     style={hoverStyle}
+                     onMouseEnter={this.setHoverFlag}
+                     onMouseLeave={this.unsetHoverFlag}
+                     onTransitionEnd={this.transitionEnd}
+                >
+                    {this.scrollbar("white")}
+                    <SidebarStroke color={"white"}/>
+                    <Loading/>
+                </div>
+            )
+    }
+
+    about(closed, hoverStyle) {
+        let className = closed ? "sidebar sidebar-closed" : "sidebar sidebar-open";
+
+        const aboutContent = (
+            <div style={{position: 'relative'}}>
+                <p style={{marginTop: '10px'}}>
+                    {
+                        'Welcome to the Artist Observatory! This site was built to be a fully interactive atlas' +
+                        ' of just about every artist on Spotify. Please feel free to explore and discover how the' +
+                        ' massive web of over 1.3 million artists is connected!'
+                    }
+                </p>
+                <p style={{marginTop: '10px'}}>
+                    {
+                        'Development started in Winter 2018 and it grew' +
+                        ' into my Johns Hopkins University Master\'s thesis some time at the start of the' +
+                        ' COVID-19 pandemic. If you\'re interested, you can feel free to read that thesis paper' +
+                        ' here to learn more about the process by which this map is created! Though, as I continue to' +
+                        ' work on this site day after day, some of the information can become quickly outdated.'
+                    }
+                </p>
+                <p style={{marginTop: '10px'}}>
+                    {
+                        'As a few acknowledgements, I\'d like to thank all my friends who supported me with this' +
+                        ' project all the way from its inception to the countless late-nights coding to' +
+                        ' the the tedious bug testing at the very end. Specifically Sebastian Durfee, Charlotte Wood' +
+                        ', Matthew Polson, Emily Daly, Lucas Polack, Sydney Thomas, Jeffrey Carrano, Matthew Flynn' +
+                        ', Sophia Lipkin, and everyone else who helped along the way.'
+                    }
+                </p>
+                <p style={{marginTop: '10px'}}>
+                    {
+                        'I\d also like to thank my advisor and professor Misha Kazhdan for teaching me how to write' +
+                        ' 90% of all the graphics and geometry processing algorithms in this app. I\'d also like to' +
+                        ' thank Daniel Shiffman for being a constant inspiration to make coding beautiful. And lastly' +
+                        ' thanks everyone at Spotify for creating such a amazing platform to share music with the' +
+                        ' world and for me to obsess over.'
+                    }
+                </p>
+            </div>
+        )
+
+        const faqContent = (
+            <div style={{position: 'relative'}}>
+                <h3 style={{marginTop: '10px', position: 'relative', fontWeight: 800}}>
+                    {'The site is running very slowly/crashing on me!'}
+                </h3>
+                <p style={{marginTop: '10px'}}>
+                    {'Oh no! I\'m sorry to hear that. < insert info about bug submission lmao >'}
+                </p>
+            </div>
+        )
+
+        const changelogContent = (
+            <div style={{position: 'relative'}}>
+                <h3 style={{marginTop: '10px', position: 'relative', fontWeight: 800}}>
+                    {'0.9.0'}
+                    <span style={{fontWeight: 400, paddingLeft: '10px'}}>
+                        {'The Home Stretch'}
+                    </span>
+                </h3>
+                <ul style={{position: 'relative', margin: '10px 20px'}}>
+                    <li>{'Added massive graphics and performance improvements by switching to PIXI.js'}</li>
+                    <li>{'Improved trackpad support'}</li>
+                    <li>{'General bug fixes'}</li>
+                    <li>{'Revamped music player'}</li>
+                </ul>
+                <h3 style={{marginTop: '10px', position: 'relative', fontWeight: 800}}>
+                    {'0.8.0'}
+                    <span style={{fontWeight: 400, paddingLeft: '10px'}}>
+                        {'Quality of Life Improvements'}
+                    </span>
+                </h3>
+                <ul style={{position: 'relative', margin: '10px 20px'}}>
+                    <li>{'Added page names (you can now see them in the tab menu)'}</li>
+                    <li>{'Added a new option for the Shortest Path (check it out it\'s very cool)'}</li>
+                    <li>{'Added loading bars!'}</li>
+                    <li>{'Fixed some sidebar bugs'}</li>
+                    <li>{'Drawing regions should be less janky (Ctrl+Click drag)'}</li>
+                    <li>{'Improved genre search'}</li>
+                    <li>{'Improvements to shortest path sidebar'}</li>
+                    <li>{'Minor touchpad improvements'}</li>
+                </ul>
+            </div>
+        )
+
+        const controlsContent = (
+            <div style={{position: 'relative'}}>
+                <p style={{marginTop: '10px'}}>
+                    {'Ctrl-Click on the map to draw region points'}
+                </p>
+                <p style={{marginTop: '10px'}}>
+                    {'Ctrl-Click Drag to draw a continuous region'}
+                </p>
+                <p style={{marginTop: '10px'}}>
+                    {'Esc to reset the camera'}
+                </p>
+            </div>
+        )
+
+        return (
+            <div className={className}
+                 style={hoverStyle}
+                 onMouseEnter={this.setHoverFlag}
+                 onMouseLeave={this.unsetHoverFlag}
+                 onTransitionEnd={this.transitionEnd}
+            >
+
+                {this.scrollbar('white')}
+
+                <SidebarStroke color={'white'}/>
+
+                <div className={'aboutSidebar'} style={{overflow: 'auto'}}>
+                    <div className={'aboutBanner'}>
+                        <h2>the artist</h2>
+                        <h1 style={{fontSize: "44px", lineHeight: "30px"}}>observatory</h1>
+                        <p className={'credits'}>Created by <a href={'https://nickxit.co'}>Nick Xitco</a></p>
+                    </div>
+
+                    <div style={{overflowY: 'scroll', position: 'relative'}}>
+                        <AboutSection title={'about'} content={aboutContent}/>
+                        <AboutSection title={'changelog'} content={changelogContent}/>
+                        <AboutSection title={'controls'} content={controlsContent}/>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     default(hoverStyle) {
         return (
             <div className={"sidebar sidebar-closed"}
@@ -215,7 +373,7 @@ class ReactSidebar extends React.Component {
             return;
         }
 
-        if (this.props.historyState.page === PageStates.HOME) {
+        if (this.props.historyState.page === PageStates.HOME && !this.props.loading) {
             this.setState({open: false});
         } else {
             this.setState({open: true});
@@ -246,7 +404,11 @@ class ReactSidebar extends React.Component {
             page = this.props.historyState.prev.page;
         }
 
-        if (!data) {
+        if (this.props.loading) {
+            return this.loading(hoverStyle);
+        }
+
+        if (!data && page !== PageStates.ABOUT) {
             return this.default();
         }
 
@@ -268,6 +430,10 @@ class ReactSidebar extends React.Component {
 
         if (page === PageStates.GENRE) {
             return this.genre(closed, hoverStyle, data);
+        }
+
+        if (page === PageStates.ABOUT) {
+            return this.about(closed, hoverStyle);
         }
 
         return this.default(hoverStyle);

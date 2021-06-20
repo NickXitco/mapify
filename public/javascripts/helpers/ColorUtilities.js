@@ -1,7 +1,7 @@
 const ColorUtilities = {
-    hueLerp: function(p, start, end, x) {
+    hueLerp: function(start, end, x) {
         let dir;
-        p.colorMode(p.HSB);
+
         if (end > start) {
             if (start >= 145) {
                 dir = 1;
@@ -19,8 +19,6 @@ const ColorUtilities = {
                 dir = -1;
             }
         }
-
-
 
         if (dir === 1) {
             return (start + (x * ((end - start).mod(360) * dir))).mod(360);
@@ -66,7 +64,45 @@ const ColorUtilities = {
         };
     },
 
+    hsv2rgb: function (h, s, v) {
+        let r, g, b;
+        
+        const hNormal = h / 360;
+        const sNormal = s / 100;
+        const vNormal = v / 100;
+        
+
+        const i = Math.floor(hNormal * 6);
+        const f = hNormal * 6 - i;
+        const p = vNormal * (1 - sNormal);
+        const q = vNormal * (1 - f * sNormal);
+        const t = vNormal * (1 - (1 - f) * sNormal);
+
+        switch(i % 6){
+            case 0: r = vNormal; g = t; b = p; break;
+            case 1: r = q; g = vNormal; b = p; break;
+            case 2: r = p; g = vNormal; b = t; break;
+            case 3: r = p; g = q; b = vNormal; break;
+            case 4: r = t; g = p; b = vNormal; break;
+            case 5: r = vNormal; g = p; b = q; break;
+        }
+
+        return {
+            r: Math.round(r * 255),
+            g: Math.round(g * 255),
+            b: Math.round(b * 255)
+        };
+    },
+
+    rgb2hex: function (r, g, b) {
+        return (r << 16) + (g << 8) + (b);
+    },
+
     rgbToString: function (r, g, b) {
         return `rgb(${r}, ${g}, ${b})`
     }
+
+
+
+
 }

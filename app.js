@@ -12,7 +12,6 @@ const genreRouter = require('./routes/genresRouter');
 const shortestPathRouter = require('./routes/shortestPathRouter');
 const randomRouter = require('./routes/randomRouter');
 const fenceRouter = require('./routes/fenceRouter');
-
 const app = express();
 
 app.use(logger('dev'));
