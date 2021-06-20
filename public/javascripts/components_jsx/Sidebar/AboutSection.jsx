@@ -3,14 +3,14 @@ class AboutSection extends React.Component {
         super(props);
 
         this.state = {
-            expanded: false
+            expanded: true
         }
 
         this.titleClick = this.titleClick.bind(this);
     }
 
     titleClick() {
-        this.setState({expanded: !this.state.expanded});
+        this.setState({expanded: true});
     }
 
     render() {

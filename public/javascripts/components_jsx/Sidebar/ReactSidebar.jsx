@@ -287,8 +287,26 @@ class ReactSidebar extends React.Component {
                     </span>
                 </h3>
                 <ul style={{position: 'relative', margin: '10px 20px'}}>
-                    <li>{'Test Item 1'}</li>
-                    <li>{'Test Item 2'}</li>
+                    <li>{'Added massive graphics and performance improvements by switching to PIXI.js'}</li>
+                    <li>{'Improved trackpad support'}</li>
+                    <li>{'General bug fixes'}</li>
+                    <li>{'Revamped music player'}</li>
+                </ul>
+                <h3 style={{marginTop: '10px', position: 'relative', fontWeight: 800}}>
+                    {'0.8.0'}
+                    <span style={{fontWeight: 400, paddingLeft: '10px'}}>
+                        {'Quality of Life Improvements'}
+                    </span>
+                </h3>
+                <ul style={{position: 'relative', margin: '10px 20px'}}>
+                    <li>{'Added page names (you can now see them in the tab menu)'}</li>
+                    <li>{'Added a new option for the Shortest Path (check it out it\'s very cool)'}</li>
+                    <li>{'Added loading bars!'}</li>
+                    <li>{'Fixed some sidebar bugs'}</li>
+                    <li>{'Drawing regions should be less janky (Ctrl+Click drag)'}</li>
+                    <li>{'Improved genre search'}</li>
+                    <li>{'Improvements to shortest path sidebar'}</li>
+                    <li>{'Minor touchpad improvements'}</li>
                 </ul>
             </div>
         )
@@ -319,17 +337,18 @@ class ReactSidebar extends React.Component {
 
                 <SidebarStroke color={'white'}/>
 
-                <div className={'aboutSidebar'}>
+                <div className={'aboutSidebar'} style={{overflow: 'auto'}}>
                     <div className={'aboutBanner'}>
                         <h2>the artist</h2>
                         <h1 style={{fontSize: "44px", lineHeight: "30px"}}>observatory</h1>
                         <p className={'credits'}>Created by <a href={'https://nickxit.co'}>Nick Xitco</a></p>
                     </div>
 
-                    <AboutSection title={'about'} content={aboutContent}/>
-                    <AboutSection title={'faq'} content={faqContent}/>
-                    <AboutSection title={'changelog'} content={changelogContent}/>
-                    <AboutSection title={'controls'} content={controlsContent}/>
+                    <div style={{overflowY: 'scroll', position: 'relative'}}>
+                        <AboutSection title={'about'} content={aboutContent}/>
+                        <AboutSection title={'changelog'} content={changelogContent}/>
+                        <AboutSection title={'controls'} content={controlsContent}/>
+                    </div>
                 </div>
             </div>
         );

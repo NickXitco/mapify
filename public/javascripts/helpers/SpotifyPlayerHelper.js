@@ -2,7 +2,7 @@ let player;
 let deviceID;
 
 window.onSpotifyPlayerAPIReady = () => {
-    initPlayer();
+    setTimeout(() => {initPlayer()}, 100);
 }
 
 function initPlayer() {
@@ -16,7 +16,6 @@ function initPlayer() {
     //Token is _probably_ expired if this test passes
     if (Date.now() - token.timeReceived > 3600 * 1000) {
         player = null;
-        console.log('oh')
         return;
     }
 
