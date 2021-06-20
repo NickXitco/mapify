@@ -6,7 +6,8 @@ class SpotifyPlayer extends React.Component {
         this.state = {
             playerState: null,
             volume: 0,
-            live: this.props.live
+            live: this.props.live,
+            defaultSongID: this.props.defaultSongID
         }
 
         this.playPause = this.playPause.bind(this);
@@ -162,6 +163,14 @@ class SpotifyPlayer extends React.Component {
             this.setState({playerState: null});
             this.setState({volume: 0});
         }
+
+        if (
+            this.state.defaultSongID &&
+            this.state.playerState &&
+            this.state.playerState.track_window.current_track.id !== this.state.defaultSongID
+        ) {
+            this.setState({live: false});
+        }
     }
 
     render() {
@@ -177,6 +186,14 @@ class SpotifyPlayer extends React.Component {
         }
 
         let currentTrack, paused, shuffleState, repeatMode, duration, position;
+
+        if (
+            this.state.defaultSongID &&
+            this.state.playerState &&
+            this.state.playerState.track_window.current_track.id !== this.state.defaultSongID
+        ) {
+            state = null;
+        }
 
         if (this.state.live && state) {
             currentTrack = state.track_window.current_track;

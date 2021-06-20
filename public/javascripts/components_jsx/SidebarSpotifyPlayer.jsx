@@ -20,6 +20,7 @@ class SidebarSpotifyPlayer extends React.Component {
                 artControls={true}
                 trackQueue={this.props.tracks}
                 volume={false}
+                defaultSongID={this.props.tracks[0].id}
             />
         );
     }
