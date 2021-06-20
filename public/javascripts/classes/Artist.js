@@ -26,6 +26,8 @@ class Artist {
 
     images;
 
+    tracks;
+
     constructor(doc) {
         this.name = doc.name;
         this.id = doc.id;
@@ -53,7 +55,7 @@ class Artist {
 
         this.images = [];
 
-        this.track = {};
+        this.tracks = [];
     }
 
     colorToString() {

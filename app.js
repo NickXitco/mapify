@@ -12,8 +12,6 @@ const genreRouter = require('./routes/genresRouter');
 const shortestPathRouter = require('./routes/shortestPathRouter');
 const randomRouter = require('./routes/randomRouter');
 const fenceRouter = require('./routes/fenceRouter');
-const loginRouter = require('./routes/loginRouter');
-
 const app = express();
 
 app.use(logger('dev'));
@@ -31,7 +29,6 @@ app.use('/genre', genreRouter);
 app.use('/path', shortestPathRouter);
 app.use('/random', randomRouter);
 app.use('/fence', fenceRouter);
-app.use('/login', loginRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

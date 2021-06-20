@@ -35,8 +35,8 @@ async function findArtist(query, isQueryID) {
     const genres = realArtist.body.genres;
     //TODO update these values asynchronously?
 
-    const track = await spotifyApi.getArtistTopTracks(artist.id, 'US').then(data => {
-        return data.body.tracks.length > 0 ? data.body.tracks[0] : null;
+    const tracks = await spotifyApi.getArtistTopTracks(artist.id, 'US').then(data => {
+        return data.body.tracks;
     })
 
     const realRelated = await spotifyApi.getArtistRelatedArtists(artist.id).then(data => {
@@ -70,7 +70,7 @@ async function findArtist(query, isQueryID) {
         genres: genres,
         related: ourRelated,
         images: images,
-        track: track
+        tracks: tracks
     };
 }
 

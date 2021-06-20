@@ -182,7 +182,7 @@ async function loadArtistFromSearch(query, isQueryID, quadHead, nodeLookup) {
     }
 
     node.images = data.images;
-    node.track = data.track;
+    node.tracks = data.tracks;
     node.loaded = true;
     return node
 }
@@ -220,6 +220,6 @@ async function loadArtist(artist, quadHead, nodeLookup) {
     }
 
     node.images = data.images;
-    node.track = data.track;
+    node.tracks = data.tracks;
     node.loaded = true;
 }

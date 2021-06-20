@@ -106,7 +106,7 @@ const Debug = {
             total += this.timingEvents[timingName];
         }
 
-        let currentHeight = canvas.renderer.height - 90;
+        let currentHeight = canvas.renderer.height - 190;
         let i = 0;
         for (const timingName of Object.keys(this.timingEvents)) {
             const percentage = this.timingEvents[timingName] / total;

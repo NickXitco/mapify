@@ -24,6 +24,7 @@ const PageStates = Object.freeze({
     RANDOM: "RANDOM",
     SEARCH: "SEARCH",
     INVALID: "INVALID",
+    AUTH: "AUTH"
 });
 
 const PageActions = Object.freeze({
@@ -47,6 +48,10 @@ function parseUnknownSource() {
         }
         lastIndex = i + 1;
         attributes.push(hash[i - 1]);
+    }
+
+    if (attributes.includes("n")) {
+        return PageStates.AUTH;
     }
 
     if (attributes.includes("p")) {
@@ -84,7 +89,8 @@ function parseUnknownSource() {
  */
 function stateMapper(src, action) {
     // If we have an invalid url, redirect us home.
-    if (src === PageStates.INVALID) {
+    // TODO maybe store the last known page when going to auth so that we can return to it
+    if (src === PageStates.INVALID || src === PageStates.AUTH) {
         return PageStates.HOME;
     }
 

@@ -42,12 +42,20 @@ class SettingsButton extends React.Component {
     }
 
     spotifyLogin() {
-        console.log("hello");
-        fetch(`login`)
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-            });
+        const authEndpoint = 'https://accounts.spotify.com/authorize';
+
+        // Replace with your app's client ID, redirect URI and desired scopes
+        const clientId = 'ed5d131653384c60aa71bb39150c4e50';
+        const redirectUri = window.location.origin + "/"; //TODO change for prod
+        const scopes = [
+            'streaming',
+            'user-read-private',
+            'user-modify-playback-state',
+            'user-read-email',
+            'user-read-playback-state'
+        ];
+
+        window.location = `${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join('%20')}&response_type=token&show_dialog=true`;
     }
 
     transitionEnd() {
@@ -84,6 +92,7 @@ class SettingsButton extends React.Component {
                 <div style={{
                     position: 'static',
                     display: 'flex',
+                    flexDirection: 'column'
                 }}>
                     <div className="settingsItem">
                         <input
@@ -95,11 +104,10 @@ class SettingsButton extends React.Component {
                             onInput={this.debugCheck}
                         />
                         <label htmlFor="debug"> Debug UI</label>
-
-                        <button className="mapifyButton" onClick={this.spotifyLogin}>
-                            Login with Spotify
-                        </button>
                     </div>
+                    <button className="mapifyButton" onClick={this.spotifyLogin}>
+                        Login with Spotify
+                    </button>
                 </div>
             );
         }

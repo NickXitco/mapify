@@ -310,7 +310,6 @@ class ShortestPathDialog extends React.Component {
                         position: "static",
                         display: "flex",
                         alignItems: "center",
-                        margin: "20px 0",
                     }}>
                         <div className="settingsItem">
                             <input className={"settingsCheckbox"} type="checkbox" id="weighted"

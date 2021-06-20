@@ -36,7 +36,11 @@ class App extends React.Component {
 
             cursor: 'auto',
             historyState: new HistoryState(null, PageStates.HOME, null, "", "The Artist Observatory"),
-            loading: false
+            loading: false,
+
+            token: {},
+
+            version: 'beta release v0.9.0'
         }
 
         this.setCamera = this.setCamera.bind(this);
@@ -318,7 +322,7 @@ class App extends React.Component {
                 for (const hop of path) {
                     const node = createNewNode(hop, this.state.quadHead, this.state.nodeLookup)
                     node.images = hop.images;
-                    node.track = hop.track;
+                    node.track = hop.tracks.length > 0 ? hop.tracks[0] : null;
 
                     for (const r of hop.related) {
                         createNewNode(r, this.state.quadHead, this.state.nodeLookup);
@@ -423,10 +427,60 @@ class App extends React.Component {
         }
     }
 
+    processAuthToken() {
+        const hash = window.location.hash.substring(1);
+        const split = hash.split('&');
+        const token = {
+            'access_token': '',
+            'token_type': '',
+            'expires_in': 0
+        }
+
+        for (const item of split) {
+            const equalsSplit = item.split('=');
+            switch (equalsSplit[0]) {
+                case 'access_token':
+                    token.access_token = equalsSplit[1];
+                    break;
+                case 'token_type':
+                    token.token_type = equalsSplit[1];
+                    break;
+                case 'expires_in':
+                    token.expires_in = Number(equalsSplit[1]);
+                    break;
+            }
+        }
+
+        this.setState({token: token});
+        window.localStorage.setItem(
+            'spotifyToken',
+            JSON.stringify({
+                accessToken: token.access_token,
+                expiresIn: token.expires_in,
+                timeReceived: Date.now()
+            })
+        );
+
+        fetch("https://api.spotify.com/v1/me", {
+            headers: {
+                Accept: "application/json",
+                Authorization: `Bearer ${token.access_token}`,
+                "Content-Type": "application/json"
+            }
+        }).then(response => response.json())
+        .then(data => console.log(data));
+
+        console.log(token);
+    }
+
     stateHandler(src, action, data) {
         let srcPage = src
         if (src === PageStates.UNKNOWN) {
             srcPage = parseUnknownSource();
+        }
+
+        if (srcPage === PageStates.AUTH) {
+            this.processAuthToken();
         }
 
         const destPage = stateMapper(srcPage, action);
@@ -764,8 +818,7 @@ class App extends React.Component {
 
         return (
             <div className={"fullScreen"} style={cursorStyle}>
-                <Logo colorant={colorant}/>
-                <p className={"version"}>{this.state.version}</p>
+                <Logo colorant={colorant} version={this.state.version}/>
 
                 <div className={"buttons"}>
                     <RandomNodeButton
@@ -822,6 +875,18 @@ class App extends React.Component {
                     clearActiveGenreAppearance={this.clearActiveGenreAppearance}
                     moveCamera={this.artistCameraMove}
                 />
+
+                <div className={'playerFullContainer'}>
+                    <SpotifyPlayer
+                        updateHoverFlag={this.updateHoverFlag}
+                        colorant={colorant}
+                        width={'500px'}
+                        live={true}
+                        artControls={false}
+                        trackQueue={[]}
+                        volume={true}
+                    />
+                </div>
 
                 <div className="rightSideDiv">
                     <ReactSearchBox

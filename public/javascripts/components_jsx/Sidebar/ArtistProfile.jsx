@@ -69,9 +69,9 @@ class ArtistProfile extends React.Component {
 
         let player = null
 
-        if (this.props.artist.track && this.props.showPlayer) {
+        if (this.props.artist.tracks.length > 0 && this.props.showPlayer) {
             player = (
-                <Player uri={`spotify:track:${this.props.artist.track.id}`} key={this.playerKey}/>
+                <AdaptablePlayer tracks={this.props.artist.tracks} key={this.playerKey} artist={this.props.artist}/>
             )
         }
 

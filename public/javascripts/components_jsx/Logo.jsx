@@ -16,6 +16,7 @@ class Logo extends React.Component {
             <div className={"logoBox"}>
                 <h2 className={"logoh2"} style={h2Style}>the artist</h2>
                 <h1 className={"logoh1"} style={h1Style}>observatory</h1>
+                <p className={"version"} style={h1Style}>{this.props.version}</p>
             </div>
         )
     }
