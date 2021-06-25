@@ -15,13 +15,10 @@ const Debug = {
         let y = 75;
         const x = 20;
         this.textObjects.cameraCenter = Debug.createText(x, y, container); y += 25;
-        this.textObjects.cameraWidth = Debug.createText(x, y, container); y += 25;
-        this.textObjects.cameraHeight = Debug.createText(x, y, container); y += 25;
+        this.textObjects.cameraDimensions = Debug.createText(x, y, container); y += 25;
         this.textObjects.cameraZoom = Debug.createText(x, y, container); y += 25;
-        this.textObjects.cameraZoomFactor = Debug.createText(x, y, container); y += 25;
         this.textObjects.hoveredArtist = Debug.createText(x, y, container); y += 25;
-        this.textObjects.canvasWidth = Debug.createText(x, y, container); y += 25;
-        this.textObjects.canvasHeight = Debug.createText(x, y, container); y += 25;
+        this.textObjects.canvasDimensions = Debug.createText(x, y, container); y += 25;
         this.textObjects.virtualCoords = Debug.createText(x, y, container); y += 25;
         this.textObjects.latLong = Debug.createText(x, y, container); y += 25;
         this.textObjects.unloaded = Debug.createText(x, y, container); y += 25;
@@ -54,15 +51,13 @@ const Debug = {
     printFPS: function (canvas, container) {
         const fps = canvas.ticker.FPS;
         this.textObjects.fps.text = `FPS: ${Math.round(fps)}`;
-        this.textObjects.fps.y = canvas.renderer.height - 70;
+        this.textObjects.fps.y = canvas.renderer.height - 170;
     },
 
     debugCamera: function (camera) {
         this.textObjects.cameraCenter.text = `Camera Center: (${camera.x.toFixed(2)}, ${camera.y.toFixed(2)})`;
-        this.textObjects.cameraWidth.text = `Camera Width: ${camera.width.toFixed(2)}`;
-        this.textObjects.cameraHeight.text = `Camera Height: ${camera.height.toFixed(2)}`;
-        this.textObjects.cameraZoom.text = `Camera Zoom: ${camera.zoom.toFixed(2)}`;
-        this.textObjects.cameraZoomFactor.text = `Camera Zoom Factor: ${camera.getZoomFactor().x.toFixed(2)}`;
+        this.textObjects.cameraDimensions.text = `Camera Dimensions (w,h): (${camera.width.toFixed(2)}, ${camera.height.toFixed(2)})`;
+        this.textObjects.cameraZoom.text = `Camera Zoom: ${camera.zoom.toFixed(2)} @${camera.getZoomFactor().x.toFixed(2)}`;
     },
 
     debugHovered: function (hoveredArtist) {
@@ -71,8 +66,7 @@ const Debug = {
     },
 
     canvasSize: function (canvas) {
-        this.textObjects.canvasWidth.text = `Canvas Width: ${canvas.renderer.width}`;
-        this.textObjects.canvasHeight.text = `Canvas Height: ${canvas.renderer.height}`;
+        this.textObjects.canvasDimensions.text = `Canvas Dimensions (w,h): (${canvas.renderer.width}, ${canvas.renderer.height})`;
     },
 
     loadingStats: function (unloadedQuads, loadingQuads, unprocessedResponses, loadedNodes) {
