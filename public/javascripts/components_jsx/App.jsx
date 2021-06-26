@@ -352,9 +352,11 @@ class App extends React.Component {
 
     updateHoveredArtist(artist) {
         if (this.state.hoveredArtist !== artist) {
+            this.setCursor('pointer');
             this.setState({hoveredArtist: artist});
         }
         if (artist) {
+            this.setCursor('pointer');
             this.updateHoverPoint(artist);
         }
     }
