@@ -1,5 +1,4 @@
-const arangojs = require('arangojs');
-const Database = arangojs.Database;
+const {Database, aql} = require('arangojs');
 let db = process.env.arangoPass ? new Database() : null;
 
 const {SecretManagerServiceClient} = require('@google-cloud/secret-manager');
@@ -22,12 +21,15 @@ if (!process.env.arangoPass) {
         const ca = res.ca;
         const pass = res.pass;
 
-        db = arangojs({url: "https://75ef552e726a.arangodb.cloud:18529", agentOptions: {ca: Buffer.from(ca, "base64")}});
+        db = new Database({url: "https://75ef552e726a.arangodb.cloud:18529", agentOptions: {ca: Buffer.from(ca, "base64")}});
         db.useBasicAuth("root", pass);
     })
 } else {
-    db.useDatabase('_system');
-    db.useBasicAuth("root", "root");
+    db = new Database({url: "https://75ef552e726a.arangodb.cloud:18529", agentOptions: {ca: Buffer.from(process.env.arangoCA, "base64")}});
+    db.useBasicAuth("root", process.env.arangoPass);
+
+    // db.useDatabase('_system');
+    // db.useBasicAuth("root", "root");
 }
 
 

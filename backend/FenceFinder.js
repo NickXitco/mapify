@@ -1,16 +1,29 @@
 const arangoDB = require('./ArangoDB');
+const {aql} = require("arangojs");
 const spotifyApiHolder = require('./SpotifyAPI');
+
+let genreLists = [];
+getGenres().then(
+    genres => {
+        genreLists = genres;
+    }
+)
 
 async function getFence(fence) {
     const artists = await getArtistsInFence(fence);
 
     if (!artists) {
         //Error in fence
-        return JSON.stringify("Error in loading fence");
+        return "Error in getting fence artists";
     }
 
-    const genreInfo = await getGenres();
+    const genreInfo = genreLists.length > 0 ? genreLists : await getGenres();
     const genres = {};
+
+    if (!genreInfo) {
+        //Error in genres
+        return "Error in getting genres";
+    }
 
     for (const genre of genreInfo) {
         genre.name = genre.name.replace('&amp;', '&');
@@ -44,7 +57,7 @@ async function getFence(fence) {
 
         for (const genre of artist.genres) {
             if (genres[genre] === undefined) {
-                console.log(genre);
+                continue;
             }
 
             genres[genre].counts++;
@@ -76,43 +89,57 @@ async function getFence(fence) {
     });
 }
 
-function getGenres() {
+async function getGenres() {
     const db = arangoDB.getDB();
-    const query = `FOR g in genres RETURN g`;
-    return db.query(query).then(cursor => cursor.all());
+    try {
+        const cursor = await db.query(aql`FOR g in genres RETURN g`);
+        let genres = [];
+        for await (const genre of cursor) {
+            genres.push(genre);
+        }
+        return genres;
+    } catch (err) {
+        console.error(err);
+        return [];
+    }
 }
 
-function getArtistsInFence(fence) {
+async function getArtistsInFence(fence) {
     const db = arangoDB.getDB();
 
     const fenceString = fence.map(post => {
-        return `[${post.longitude}, ${post.latitude}]`;
+        return aql`[${post.longitude}, ${post.latitude}]`;
     })
 
-    const query = `LET polygon = GEO_POLYGON(
-                        [[${fenceString.toString()}]]
+    let query = aql`LET polygon = GEO_POLYGON(
+                        [[${aql.join(fenceString, ", ")}]]
                         )
                     FOR x IN artists
                         FILTER GEO_CONTAINS(polygon, x.geo)
                         RETURN {genres: x.genres, followers: x.followers}
                     `
-    return db.query(
-        query
-    ).then(
-        cursor => {return cursor.all();},
-        reason => {return null;}
-    );
+    try {
+        const cursor = await db.query(query);
+        let artists = [];
+        for await (const a of cursor) {
+            artists.push(a);
+        }
+        return artists;
+    } catch (err) {
+        console.error(err);
+        return [];
+    }
 }
 
-function getTopXInFence(fence, x) {
+async function getTopXInFence(fence, x) {
     const db = arangoDB.getDB();
 
     const fenceString = fence.map(post => {
-        return `[${post.longitude}, ${post.latitude}]`;
+        return aql`[${post.longitude}, ${post.latitude}]`;
     })
 
-    const query = `LET polygon = GEO_POLYGON(
-                        [[${fenceString.toString()}]]
+    const query = aql`LET polygon = GEO_POLYGON(
+                        [[${aql.join(fenceString, ", ")}]]
                         )
                     FOR x IN artists
                         FILTER GEO_CONTAINS(polygon, x.geo)
@@ -120,11 +147,18 @@ function getTopXInFence(fence, x) {
                         LIMIT ${x}
                         RETURN x
                     `
-    return db.query(
-        query
-    ).then(
-        cursor => cursor.all()
-    );
+
+    try {
+        const cursor = await db.query(query);
+        let artists = [];
+        for await (const a of cursor) {
+            artists.push(a);
+        }
+        return artists;
+    } catch (err) {
+        console.error(err);
+        return [];
+    }
 }
 
 

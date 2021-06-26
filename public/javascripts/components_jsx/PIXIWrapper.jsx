@@ -541,7 +541,7 @@ class PIXIWrapper extends React.Component {
         } else {
             if (postFirstDist < validDist / 2) {
                 if (this.props.fence.length > 2) {
-                    let postPoint = this.props.fence[0];
+                    postPoint = this.props.fence[0];
                     this.props.addFencepost(postPoint, null);
                 } else {
                     this.props.clearFence();
