@@ -1,3 +1,4 @@
+let resolution = 1;
 class PIXIWrapper extends React.Component {
     constructor(props) {
         super(props);
@@ -365,10 +366,10 @@ class PIXIWrapper extends React.Component {
         this.props.camera.bound(6000, 6000);
         this.props.camera.doCameraMove();
 
-        const zoomFactor = this.props.camera.getZoomFactor();
-        const xOffset = this.app.screen.width / 2 - (this.props.camera.x * zoomFactor.x);
-        const yOffset = this.app.screen.height / 2 + (this.props.camera.y * zoomFactor.y);
-        const scale = zoomFactor.x;
+        const zoomFactor = this.props.camera.getZoomFactor() ;
+        const xOffset = (this.app.screen.width / resolution) / 2 - (this.props.camera.x * zoomFactor.x / resolution);
+        const yOffset = (this.app.screen.height / resolution) / 2 + (this.props.camera.y * zoomFactor.y / resolution);
+        const scale = zoomFactor.x / resolution;
 
         this.mainStage.x = xOffset;
         this.mainStage.y = yOffset;
@@ -376,12 +377,15 @@ class PIXIWrapper extends React.Component {
     }
 
     setup() {
+        //TODO set resolution to device default
+        resolution = 1;
         this.app = new PIXI.Application({
-            resizeTo: window ,
+            resizeTo: window,
             backgroundColor: 0x030303,
             antialias: true,
-            resolution: 1,
+            resolution: resolution,
         });
+
 
         PIXI.settings.MIPMAP_TEXTURES = PIXI.MIPMAP_MODES.ON;
 
@@ -391,6 +395,7 @@ class PIXIWrapper extends React.Component {
 
         this.quads = new PIXI.Container();
         this.debug = new PIXI.Container();
+        this.debug.scale.set(1 / resolution);
         this.edges = new PIXI.Container();
 
         this.nodes = new PIXI.Container();
@@ -471,7 +476,9 @@ class PIXIWrapper extends React.Component {
             }
         });
 
-        const camera = new Camera(0, 0, window.innerHeight, window.innerWidth, 1, this.app.screen);
+        const camera = new Camera(
+            0, 0, window.innerHeight, window.innerWidth,
+            1, this.app.screen, resolution);
         this.props.setCamera(camera);
 
         //TODO check this out, is camera.x being evaluated at declaration??
