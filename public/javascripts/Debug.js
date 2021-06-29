@@ -49,8 +49,7 @@ const Debug = {
     },
 
     printFPS: function (canvas, container) {
-        const fps = canvas.ticker.FPS;
-        this.textObjects.fps.text = `FPS: ${Math.round(fps)}`;
+        this.textObjects.fps.text = `FPS: ${Math.round(canvasFPS)}`;
         this.textObjects.fps.y = canvas.renderer.height - 170;
     },
 
@@ -121,15 +120,17 @@ const Debug = {
     },
 
     createTimingEvent: function(name) {
-        this.timingEvents[name] = performance.now() - this.lastTime;
+        const DAMPENING = (canvasFPS / 60) * 5;
+        if (!this.timingEvents[name]) {
+            this.timingEvents[name] = performance.now() - this.lastTime;
+        } else {
+            this.timingEvents[name] = ((performance.now() - this.lastTime) + this.timingEvents[name] * DAMPENING) / (DAMPENING + 1);
+        }
         this.lastTime = performance.now();
     },
 
     resetTiming: function() {
         this.lastTime = performance.now();
-        for (const timingName of Object.keys(this.timingEvents)) {
-            this.timingEvents[timingName] = 0;
-        }
     },
 
     debugAll: function (

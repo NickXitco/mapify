@@ -5,7 +5,7 @@
 
 const DRIFT_THRESHOLD = 0.1;
 const SCROLL_STEPS = 10;
-const DELTA_MULTIPLIER = 3;
+const DELTA_MULTIPLIER = 4;
 const NUM_AVG_STEPS = 4;
 
 const MouseEvents = {
@@ -30,11 +30,12 @@ const MouseEvents = {
 
     zoom: function (camera) {
         if (this.zooming) {
-            this.scrollStep++;
-            camera.zoom += (this.scrollDelta * DELTA_MULTIPLIER) / SCROLL_STEPS;
+            const fpsMultiplier = 60 / canvasFPS;
+            this.scrollStep += fpsMultiplier;
+            camera.zoom += ((this.scrollDelta * DELTA_MULTIPLIER) / SCROLL_STEPS) * fpsMultiplier;
             camera.zoom = Math.min(camera.zoom, 2.5);
             camera.zoomCamera(this.zoomCoordinates);
-            if (this.scrollStep === SCROLL_STEPS) {
+            if (this.scrollStep >= SCROLL_STEPS) {
                 this.zooming = false;
                 this.scrollStep = 0;
             }
@@ -49,8 +50,9 @@ const MouseEvents = {
                 return;
             }
 
-            this.driftVec.x /= 1.1;
-            this.driftVec.y /= 1.1;
+            const fpsMultiplier = 60 / canvasFPS;
+            this.driftVec.x /= (1 + fpsMultiplier * .1);
+            this.driftVec.y /= (1 + fpsMultiplier * .1);
             camera.x -= this.driftVec.x * (camera.width / canvas.screen.width);
             camera.y += this.driftVec.y * (camera.height / canvas.screen.height);
         }
