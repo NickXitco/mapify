@@ -119,7 +119,8 @@ class EdgeDrawer {
         }
 
         //Increment tMax up to a max value of 1
-        e.tMax = Math.min(1, e.tMax + (EASE_SPEED / Utils.dist(u.x, u.y, v.x, v.y)));
+        const fpsMultiplier = (60 / canvasFPS);
+        e.tMax = Math.min(1, e.tMax + ((EASE_SPEED * fpsMultiplier) / Utils.dist(u.x, u.y, v.x, v.y)));
     }
 
     /**

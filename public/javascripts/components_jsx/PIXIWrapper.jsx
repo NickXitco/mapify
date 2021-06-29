@@ -1,4 +1,5 @@
 let resolution = 1;
+let canvasFPS = 60;
 class PIXIWrapper extends React.Component {
     constructor(props) {
         super(props);
@@ -25,6 +26,9 @@ class PIXIWrapper extends React.Component {
 
     draw() {
         this.frameCount++;
+        //Dampen FPS calculation
+        canvasFPS = (this.app.ticker.FPS + 19 * canvasFPS) / 20;
+        Debug.fps = canvasFPS;
         if (this.loading) {
             drawLoading();
             return;
@@ -675,10 +679,8 @@ class PIXIWrapper extends React.Component {
                     MouseEvents.zoomCoordinates = {x: newDrag.x, y: newDrag.y};
                     MouseEvents.scrollDelta = -0.5;
                 } else {
-                    const clickedArtist = handlePointClick(this.props.quadHead, this.props.hoveredArtist,);
-                    if (clickedArtist) {
-                        this.props.updateClickedArtist(clickedArtist);
-
+                    if (this.props.hoveredArtist) {
+                        this.props.updateClickedArtist(this.props.hoveredArtist);
                     } else {
                         this.props.handleEmptyClick();
                     }
