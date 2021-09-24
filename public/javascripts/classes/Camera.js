@@ -17,7 +17,9 @@ class Camera {
 
     canvas;
 
-    constructor(x, y, height, width, zoom, canvas) {
+    resolution;
+
+    constructor(x, y, height, width, zoom, canvas, resolution) {
         this.x = x;
         this.y = y;
         this.height = height;
@@ -27,6 +29,8 @@ class Camera {
         this.canvas = canvas;
 
         this.moving = false;
+
+        this.resolution = resolution;
     }
 
     setCameraMove(x, y, zoom, frames) {
@@ -102,8 +106,8 @@ class Camera {
     }
 
     screen2virtual(point) {
-        let x = point.x;
-        let y = point.y;
+        let x = point.x * resolution;
+        let y = point.y * resolution;
         x = Utils.map(x, 0, this.canvas.width, this.x - (this.width / 2), this.x + (this.width / 2));
         y = Utils.map(y, 0, this.canvas.height, this.y + (this.height / 2), this.y - (this.height / 2));
         return {x: x, y: y};

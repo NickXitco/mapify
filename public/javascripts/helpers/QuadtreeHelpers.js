@@ -39,6 +39,7 @@ function process(r, q, quadHead, nodeLookup, loadingQuads) {
         const loader = new PIXI.Loader();
         const uri = `data:image/png;base64, ${r.data.image}`;
 
+        //TODO check if an all black image already is loaded
         loader.add(uri);
         loader.onComplete.add(() => {
             q.image = loader.resources[uri].texture;
